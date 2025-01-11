@@ -7,6 +7,7 @@ import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.parameters.RequestBody;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -18,6 +19,7 @@ import umc.GrowIT.Server.apiPayload.ApiResponse;
 import umc.GrowIT.Server.web.dto.GroDTO.GroRequestDTO;
 import umc.GrowIT.Server.web.dto.GroDTO.GroResponseDTO;
 
+@SecurityRequirement(name = "JWT TOKEN")
 @Tag(name = "Gro", description = "Gro 관련 API")
 @RestController
 @RequiredArgsConstructor
@@ -39,8 +41,6 @@ public class GroController {
 
 
     public ApiResponse<GroResponseDTO> createGro(
-            @Parameter(description = "Bearer {kakao_access_token}")
-            @RequestHeader("Authorization") String authorization,
             @Valid @RequestBody GroRequestDTO request
     ) {
         // Service를 통해 엔티티 생성
