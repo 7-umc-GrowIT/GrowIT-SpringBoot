@@ -4,7 +4,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import umc.GrowIT.Server.converter.TermConverter;
 import umc.GrowIT.Server.domain.Term;
-import umc.GrowIT.Server.dto.TermResponseDTO;
+import umc.GrowIT.Server.web.dto.TermDTO.TermResponseDTO;
 import umc.GrowIT.Server.repository.TermRepository;
 
 import java.util.List;

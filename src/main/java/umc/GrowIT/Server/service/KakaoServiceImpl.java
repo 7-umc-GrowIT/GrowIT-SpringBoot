@@ -1,7 +1,7 @@
 package umc.GrowIT.Server.service;
 
 import org.springframework.stereotype.Service;
-import umc.GrowIT.Server.dto.KakaoResponseDTO;
+import umc.GrowIT.Server.web.dto.UserDTO.KakaoResponseDTO;
 
 @Service
 public class KakaoServiceImpl implements KakaoService {

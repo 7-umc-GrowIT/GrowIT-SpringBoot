@@ -1,4 +1,4 @@
-package umc.GrowIT.Server.web.dto;
+package umc.GrowIT.Server.web.dto.DiaryDTO;
 
 import jakarta.validation.constraints.NotNull;
 import lombok.Getter;

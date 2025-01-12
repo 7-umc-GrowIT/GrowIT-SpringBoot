@@ -2,13 +2,10 @@ package umc.GrowIT.Server.service;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -22,8 +19,8 @@ import umc.GrowIT.Server.domain.User;
 import umc.GrowIT.Server.domain.UserTerm;
 import umc.GrowIT.Server.domain.enums.TermType;
 import umc.GrowIT.Server.domain.enums.UserStatus;
-import umc.GrowIT.Server.dto.UserRequestDTO;
-import umc.GrowIT.Server.dto.UserResponseDTO;
+import umc.GrowIT.Server.web.dto.UserDTO.UserRequestDTO;
+import umc.GrowIT.Server.web.dto.UserDTO.UserResponseDTO;
 import umc.GrowIT.Server.repository.TermRepository;
 import umc.GrowIT.Server.repository.UserRepository;
 import umc.GrowIT.Server.jwt.JwtTokenProvider;
@@ -124,24 +121,30 @@ public class UserCommandServiceImpl implements UserCommandService {
         }
     }
 
-
-
-
+    @Transactional
     @Override
     public void updatePassword(UserRequestDTO.PasswordDTO passwordDTO) {
-        if (passwordDTO.getIsVerified() == null || !passwordDTO.getIsVerified()) {
+        //인증 받지 않았을 때 예외 처리
+        if (passwordDTO.getIsVerified() == null || !passwordDTO.getIsVerified())
             throw new UserHandler(ErrorStatus.EMAIL_NOT_VERIFIED);
-        } else {
-            if (passwordDTO.getPassword().equals(passwordDTO.getPasswordCheck())) { //비밀번호와 비밀번호 확인이 일치할 때
-                String hashedPassword = passwordEncoder.encode(passwordDTO.getPassword()); //비밀번호 해싱
+        //인증 확인 받았을 때 비밀번호 일치 확인 후 비밀번호 변경
+        else {
+            if (!passwordDTO.getPassword().equals(passwordDTO.getPasswordCheck()))
+                throw new UserHandler(ErrorStatus.PASSWORD_NOT_MATCH);
+            else {
+                //사용자 정보 없을 때 예외 처리
                 String email = passwordDTO.getEmail();
-                Optional<User> user = userRepository.findByEmail(email); //이메일을 통해 사용자 정보 찾기
-                user.orElseThrow(() -> new UserHandler(ErrorStatus.USER_NOT_FOUND));
+                Optional<User> user = userRepository.findByEmail(email);
+                user.orElseThrow(() ->
+                        new UserHandler(ErrorStatus.USER_NOT_FOUND));
+
+                //탈퇴한 회원일 때 예외 처리
                 if (user.get().getStatus() == UserStatus.INACTIVE)
                     throw new UserHandler(ErrorStatus.USER_STATUS_INACTIVE);
+
+                //사용자 비밀번호 변경
+                String hashedPassword = passwordEncoder.encode(passwordDTO.getPassword());
                 user.get().encodePassword(hashedPassword); //사용자 비밀번호 변경
-            } else {
-                throw new UserHandler(ErrorStatus.PASSWORD_NOT_MATCH);
             }
         }
     }

@@ -3,7 +3,7 @@ package umc.GrowIT.Server.converter;
 import umc.GrowIT.Server.domain.Term;
 import umc.GrowIT.Server.domain.User;
 import umc.GrowIT.Server.domain.UserTerm;
-import umc.GrowIT.Server.dto.TermResponseDTO;
+import umc.GrowIT.Server.web.dto.TermDTO.TermResponseDTO;
 
 public class TermConverter {
 

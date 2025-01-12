@@ -1,4 +1,4 @@
-package umc.GrowIT.Server.controller;
+package umc.GrowIT.Server.web.controller;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
