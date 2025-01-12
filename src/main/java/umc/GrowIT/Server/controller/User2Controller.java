@@ -12,7 +12,7 @@ import umc.GrowIT.Server.service.UserCommandService;
 
 @RestController
 @RequiredArgsConstructor
-public class UserController implements UserSpecification {
+public class User2Controller implements UserSpecification {
 
     private final UserCommandService userCommandService;
 
