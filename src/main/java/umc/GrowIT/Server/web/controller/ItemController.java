@@ -23,6 +23,10 @@ import umc.GrowIT.Server.web.dto.ItemEquipDTO.ItemEquipResponseDTO;
 @RequestMapping("/items")
 public class ItemController {
 
+    @Operation(
+            summary = "카테고리별 아이템 조회",
+            description = "상점이나 보유아이템 조회에서 카테고리를 선택했을 때 실행."
+    )
     @GetMapping("")
     public ApiResponse<ItemResponseDTO.ItemListDTO> getItemList(
             @Parameter(description = "아이템 카테고리 (카테고리 명으로 전달)",
