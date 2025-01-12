@@ -41,7 +41,7 @@ public class UserController {
 
 
     @GetMapping("/credits")
-    @Operation(summary = "보유중인 크레딧 조회", description = "사용자가 현재 보유한 크레딧 조회")
+    @Operation(summary = "현재 보유중인 크레딧 조회", description = "사용자가 현재 보유한 크레딧 조회")
     @ApiResponses({
             @io.swagger.v3.oas.annotations.responses.ApiResponse(
                     responseCode = "COMMON200",

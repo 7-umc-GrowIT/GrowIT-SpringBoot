@@ -19,7 +19,7 @@ public class CreditQueryServiceImpl implements CreditQueryService {
 
     public CreditResponseDTO.CreditDTO getCurrentCredit(Long userId){
 
-        Integer currentCredit = creditRepository.findCreditByUserId(userId);
+        Integer currentCredit = creditRepository.findCurrentCreditById(userId);;
 
         return CreditConverter.toCurrentCreditDTO(currentCredit);
     }
