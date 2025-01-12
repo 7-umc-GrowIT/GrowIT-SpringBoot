@@ -32,7 +32,7 @@ public class UserController implements UserSpecification {
     }
 
     @PatchMapping("/users/password/find")
-    public ApiResponse<Void> findPassword(@RequestHeader(name = "tempToken") String tempToken, @RequestBody @Valid UserRequestDTO.PasswordDTO passwordDTO) {
+    public ApiResponse<Void> findPassword(@RequestBody @Valid UserRequestDTO.PasswordDTO passwordDTO) {
         userCommandService.updatePassword(passwordDTO);
         return ApiResponse.onSuccess();
     }

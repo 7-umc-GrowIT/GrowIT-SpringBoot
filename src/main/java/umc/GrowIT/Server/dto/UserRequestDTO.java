@@ -52,6 +52,11 @@ public class UserRequestDTO {
     @NoArgsConstructor
     @AllArgsConstructor
     public static class PasswordDTO {
+        private Boolean isVerified;
+
+        @NotBlank(message = "필수 입력 항목입니다.")
+        @Email(message = "이메일 형식에 맞춰주세요.")
+        private String email;
 
         @Size(min = 8, max = 30, message = "크기는 8에서 30 사이입니다.")
         private String password;
