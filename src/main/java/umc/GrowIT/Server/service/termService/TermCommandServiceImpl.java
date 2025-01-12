@@ -1,8 +1,8 @@
-package umc.GrowIT.Server.service;
+package umc.GrowIT.Server.service.termService;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-import umc.GrowIT.Server.dto.TermRequestDTO;
+import umc.GrowIT.Server.web.dto.TermDTO.TermRequestDTO;
 
 import java.util.List;
 

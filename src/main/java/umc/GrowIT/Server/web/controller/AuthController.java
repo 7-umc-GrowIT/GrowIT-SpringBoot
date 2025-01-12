@@ -1,18 +1,18 @@
-package umc.GrowIT.Server.controller;
+package umc.GrowIT.Server.web.controller;
 
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 import umc.GrowIT.Server.apiPayload.ApiResponse;
 import umc.GrowIT.Server.apiPayload.code.status.ErrorStatus;
-import umc.GrowIT.Server.controller.specification.UserSpecification;
-import umc.GrowIT.Server.dto.UserRequestDTO;
-import umc.GrowIT.Server.dto.UserResponseDTO;
-import umc.GrowIT.Server.service.UserCommandService;
+import umc.GrowIT.Server.web.controller.specification.AuthSpecification;
+import umc.GrowIT.Server.web.dto.UserDTO.UserRequestDTO;
+import umc.GrowIT.Server.web.dto.UserDTO.UserResponseDTO;
+import umc.GrowIT.Server.service.userService.UserCommandService;
 
 @RestController
 @RequiredArgsConstructor
-public class UserController implements UserSpecification {
+public class AuthController implements AuthSpecification {
 
     private final UserCommandService userCommandService;
 

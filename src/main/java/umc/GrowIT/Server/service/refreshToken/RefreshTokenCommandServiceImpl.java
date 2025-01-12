@@ -1,4 +1,4 @@
-package umc.GrowIT.Server.service;
+package umc.GrowIT.Server.service.refreshToken;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;

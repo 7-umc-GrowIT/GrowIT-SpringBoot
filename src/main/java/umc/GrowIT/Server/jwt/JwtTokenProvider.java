@@ -5,7 +5,6 @@ import io.jsonwebtoken.*;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
 import io.jsonwebtoken.security.SecurityException;
-import jakarta.xml.bind.DatatypeConverter;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Component;
@@ -14,9 +13,7 @@ import java.security.Key;
 import java.util.Date;
 import java.util.stream.Collectors;
 import org.springframework.security.core.GrantedAuthority;
-import umc.GrowIT.Server.apiPayload.code.status.ErrorStatus;
-import umc.GrowIT.Server.apiPayload.exception.AuthHandler;
-import umc.GrowIT.Server.dto.UserResponseDTO;
+import umc.GrowIT.Server.web.dto.UserDTO.UserResponseDTO;
 
 @Component
 public class JwtTokenProvider {

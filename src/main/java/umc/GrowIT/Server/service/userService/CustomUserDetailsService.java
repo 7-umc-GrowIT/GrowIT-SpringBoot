@@ -1,4 +1,4 @@
-package umc.GrowIT.Server.service;
+package umc.GrowIT.Server.service.userService;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;

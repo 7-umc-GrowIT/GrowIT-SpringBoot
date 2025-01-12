@@ -1,4 +1,4 @@
-package umc.GrowIT.Server.web.dto;
+package umc.GrowIT.Server.web.dto.DiaryDTO;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;

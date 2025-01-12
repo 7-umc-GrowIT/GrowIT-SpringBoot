@@ -1,7 +1,7 @@
-package umc.GrowIT.Server.service;
+package umc.GrowIT.Server.service.userService;
 
-import umc.GrowIT.Server.dto.UserRequestDTO;
-import umc.GrowIT.Server.dto.UserResponseDTO;
+import umc.GrowIT.Server.web.dto.UserDTO.UserRequestDTO;
+import umc.GrowIT.Server.web.dto.UserDTO.UserResponseDTO;
 
 
 public interface UserCommandService {

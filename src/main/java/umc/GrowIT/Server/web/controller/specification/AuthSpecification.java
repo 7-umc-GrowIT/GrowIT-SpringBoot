@@ -1,4 +1,4 @@
-package umc.GrowIT.Server.controller.specification;
+package umc.GrowIT.Server.web.controller.specification;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -9,12 +9,11 @@ import jakarta.validation.Valid;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestHeader;
 import umc.GrowIT.Server.apiPayload.ApiResponse;
-import umc.GrowIT.Server.dto.UserRequestDTO;
-import umc.GrowIT.Server.dto.UserResponseDTO;
+import umc.GrowIT.Server.web.dto.UserDTO.UserRequestDTO;
+import umc.GrowIT.Server.web.dto.UserDTO.UserResponseDTO;
 
-public interface UserSpecification {
+public interface AuthSpecification {
 
     @PostMapping("/users")
     @SecurityRequirement(name = "")

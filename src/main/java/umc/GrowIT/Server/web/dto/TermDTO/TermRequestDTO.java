@@ -1,4 +1,4 @@
-package umc.GrowIT.Server.dto;
+package umc.GrowIT.Server.web.dto.TermDTO;
 
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;

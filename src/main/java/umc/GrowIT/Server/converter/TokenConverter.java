@@ -1,8 +1,6 @@
 package umc.GrowIT.Server.converter;
 
 import umc.GrowIT.Server.domain.RefreshToken;
-import umc.GrowIT.Server.domain.Term;
-import umc.GrowIT.Server.dto.TermResponseDTO;
 
 import java.time.LocalDateTime;
 

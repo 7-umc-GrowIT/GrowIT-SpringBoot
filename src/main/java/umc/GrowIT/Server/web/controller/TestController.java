@@ -1,7 +1,8 @@
-package umc.GrowIT.Server.controller;
+package umc.GrowIT.Server.web.controller;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import net.minidev.json.JSONObject;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RestController;
@@ -31,6 +32,7 @@ public class TestController {
         String header = new String(Base64.getDecoder().decode(accessToken.split("\\.")[0])); // Header 디코딩
         String payload = new String(Base64.getDecoder().decode(accessToken.split("\\.")[1])); // Payload 디코딩
         String signature = accessToken.split("\\.")[2]; // Signature는 디코딩하지 않음
+
 
         // 디코딩 결과 로그 출력
         log.info("JWT Header: {}", header);
