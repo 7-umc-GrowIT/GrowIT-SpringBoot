@@ -63,11 +63,20 @@ public class UserController {
 
     @GetMapping("/credits/total")
     @Operation(summary = "누적 크레딧 조회", description = "사용자의 누적 크레딧을 조회합니다.")
-    public ApiResponse<CreditResponseDTO.CreditDTO> getUserTotalCredit(
-
-    )
-    {
-        return ApiResponse.onSuccess(null);
+    @ApiResponses({
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(
+                    responseCode = "COMMON200",
+                    description = "성공"
+            ),
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(
+                    responseCode = "CREDIT4001",
+                    description = "크레딧 정보를 찾을 수 없습니다.",
+                    content = @Content(schema = @Schema(implementation = ApiResponse.class))
+            )
+    })
+    public ApiResponse<CreditResponseDTO.CreditDTO> getUserTotalCredit() {
+        Long userId = 1L; // 임시로 1L 사용
+        return ApiResponse.onSuccess(creditQueryService.getTotalCredit(userId));
     }
 
 
