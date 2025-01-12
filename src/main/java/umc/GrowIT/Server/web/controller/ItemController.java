@@ -37,7 +37,9 @@ public class ItemController {
                     example = "BACKGROUND")
             @RequestParam ItemCategory category)
     {
-        return ApiResponse.onSuccess(itemQueryServiceImpl.getItemList(category));
+
+        return ApiResponse.onSuccess(itemQueryServiceImpl.getItemList(category, 1L));
+        //우선 id가 1인 사용자로 하드코딩하고 후에 사용자 토큰을 통해 사용자 판변하여 userId 전달
     }
 
 

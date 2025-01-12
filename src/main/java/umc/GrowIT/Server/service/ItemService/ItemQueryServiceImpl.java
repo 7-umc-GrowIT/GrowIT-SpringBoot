@@ -18,9 +18,11 @@ import java.util.List;
 public class ItemQueryServiceImpl implements ItemQueryService {
     private final ItemRepository itemRepository;
 
-    @Override
-    public ItemResponseDTO.ItemListDTO getItemList(ItemCategory category) {
+    @Override // 아이템리스트
+    public ItemResponseDTO.ItemListDTO getItemList(ItemCategory category, Long userId) {
         List<Item> itemList = itemRepository.findAllByCategory(category);
-        return ItemConverter.toItemListDTO(itemList);
+        return ItemConverter.toItemListDTO(itemList, userId, itemRepository);
     }
+
+
 }
