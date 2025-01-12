@@ -2,9 +2,11 @@ package umc.GrowIT.Server.service;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -41,6 +43,7 @@ public class UserCommandServiceImpl implements UserCommandService {
     private final PasswordEncoder passwordEncoder;
     private final JwtTokenProvider jwtTokenProvider;
     private final RefreshTokenCommandService refreshTokenCommandService;
+    private final AuthenticationManager authenticationManager;
 
     @Override
     @Transactional
@@ -94,23 +97,35 @@ public class UserCommandServiceImpl implements UserCommandService {
 
 
     @Override
-    public UserResponseDTO.TokenDTO emailLogin(UserRequestDTO.EmailLoginDTO emailLoginDTO){
+    public UserResponseDTO.TokenDTO emailLogin(UserRequestDTO.EmailLoginDTO emailLoginDTO) {
         String email = emailLoginDTO.getEmail();
-        Optional<User> user = userRepository.findByEmail(email);
-        user.orElseThrow(() -> new UserHandler(ErrorStatus.USER_NOT_FOUND)); //사용자 정보가 일치하지 않을 때 예외 처리
-        if (user.get().getStatus() == UserStatus.INACTIVE)
-            throw new UserHandler(ErrorStatus.USER_STATUS_INACTIVE); // 사용자가 탈퇴한 상태일 때 예외 처리
-
         String rawPassword = emailLoginDTO.getPassword();
-        String hashedPassword = user.get().getPassword();
 
-        //비밀번호 해시가 같으면 토큰 생성, 다르면 예외 처리
-        if (passwordEncoder.matches(rawPassword, hashedPassword))
-            return jwtTokenProvider.generateToken(getAuthentication(user.get())); //JWT 토큰 생성 메소드 호출
-        else
+        //사용자 정보 조회
+        Optional<User> optionalUser = userRepository.findByEmail(email);
+        User user = optionalUser.orElseThrow(() -> new UserHandler(ErrorStatus.USER_NOT_FOUND));
+
+        //사용자 상태 확인
+        if (user.getStatus() == UserStatus.INACTIVE) {
+            throw new UserHandler(ErrorStatus.USER_STATUS_INACTIVE); // 탈퇴한 사용자 처리
+        }
+
+        //인증 및 토큰 생성
+        try {
+            UsernamePasswordAuthenticationToken authenticationToken =
+                    new UsernamePasswordAuthenticationToken(email, rawPassword);
+
+            Authentication authentication = authenticationManager.authenticate(authenticationToken);
+
+            return jwtTokenProvider.generateToken(authentication); //JWT 토큰 생성
+        } catch (BadCredentialsException e) {
+            //잘못된 자격 증명: 비밀번호 불일치
             throw new UserHandler(ErrorStatus.USER_NOT_FOUND);
-
+        }
     }
+
+
+
 
     @Override
     public void updatePassword(UserRequestDTO.PasswordDTO passwordDTO) {

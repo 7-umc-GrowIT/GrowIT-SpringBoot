@@ -27,8 +27,12 @@ public enum ErrorStatus implements BaseErrorCode {
     ALL_TERMS_REQUIRED(HttpStatus.BAD_REQUEST, "TERM4003", "전체 약관 정보를 주세요."),
 
     //인증 관련 에러
-    INVALID_TOKEN(HttpStatus.NOT_FOUND, "AUTH4001", "토큰이 유효하지 않습니다."),
-    EMAIL_NOT_VERIFIED(HttpStatus.BAD_REQUEST, "AUTH4002", "이메일 인증을 완료해주세요."),
+    INVALID_TOKEN(HttpStatus.NOT_FOUND, "AUTH4001", "유효하지 않은 JWT 토큰입니다."),
+    EXPIRED_TOKEN(HttpStatus.NOT_FOUND, "AUTH4002", "만료된 JWT 토큰입니다."),
+    UNSUPPORTED_TOKEN(HttpStatus.NOT_FOUND, "AUTH4003", "지원하지 않는 JWT 토큰입니다."),
+    EMPTY_CLAIMS(HttpStatus.NOT_FOUND, "AUTH4004", "JWT 토큰의 클레임 문자열이 비어 있습니다."),
+    EMAIL_NOT_VERIFIED(HttpStatus.BAD_REQUEST, "AUTH4005", "이메일 인증을 완료해주세요."),
+
 
     //기타 에러
     PASSWORD_NOT_MATCH(HttpStatus.BAD_REQUEST, "PWD4001", "비밀번호 확인이 일치하지 않습니다.");

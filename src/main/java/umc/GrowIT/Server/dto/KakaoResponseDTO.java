@@ -13,5 +13,6 @@ public class KakaoResponseDTO {
     @AllArgsConstructor
     public static class KakaoTokenDTO {
         String accessToken;
+        String refreshToken;
     }
 }
