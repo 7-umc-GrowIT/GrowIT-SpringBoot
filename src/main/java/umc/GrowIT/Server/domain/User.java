@@ -1,24 +1,14 @@
 package umc.GrowIT.Server.domain;
 
-<<<<<<< HEAD
-=======
-
->>>>>>> origin/develop
 import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.ColumnDefault;
 import umc.GrowIT.Server.domain.common.BaseEntity;
-<<<<<<< HEAD
 import umc.GrowIT.Server.domain.enums.Provider;
 import umc.GrowIT.Server.domain.enums.Role;
 import umc.GrowIT.Server.domain.enums.UserStatus;
 
-=======
-import umc.GrowIT.Server.domain.enums.UserStatus;
-import umc.GrowIT.Server.domain.enums.Provider;
->>>>>>> origin/develop
 import java.util.List;
-
 
 @Entity
 @Getter
