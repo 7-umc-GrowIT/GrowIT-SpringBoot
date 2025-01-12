@@ -3,7 +3,6 @@ package umc.GrowIT.Server.domain;
 import jakarta.persistence.*;
 import lombok.*;
 import umc.GrowIT.Server.domain.common.BaseEntity;
-import umc.GrowIT.Server.domain.enums.TermType;
 
 import java.util.List;
 
@@ -12,23 +11,21 @@ import java.util.List;
 @Builder
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
-public class Term extends BaseEntity {
+public class Diary extends BaseEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(nullable = false, length = 50)
+    @Column(length = 50)
     private String title;
 
-    @Column(nullable = false)
     private String content;
 
-    @Enumerated(EnumType.STRING)
-    @Column(nullable = false)
-    private TermType type;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_id")
+    private User user;
 
-    @OneToMany(mappedBy = "term", cascade = CascadeType.ALL)
-    private List<UserTerm> userTerm;
-
+    @OneToMany(mappedBy = "diary", cascade = CascadeType.ALL)
+    private List<DiaryKeyword> diaryKeywords;
 }
