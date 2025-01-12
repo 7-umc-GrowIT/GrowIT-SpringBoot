@@ -13,7 +13,6 @@ import umc.GrowIT.Server.apiPayload.exception.UserHandler;
 import umc.GrowIT.Server.converter.TermConverter;
 import umc.GrowIT.Server.converter.UserConverter;
 import umc.GrowIT.Server.domain.Term;
-import umc.GrowIT.Server.domain.User;
 import umc.GrowIT.Server.domain.UserTerm;
 import umc.GrowIT.Server.domain.enums.TermType;
 import umc.GrowIT.Server.dto.UserRequestDTO;
