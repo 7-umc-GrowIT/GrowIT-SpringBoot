@@ -4,6 +4,7 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.Getter;
@@ -11,6 +12,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 import umc.GrowIT.Server.apiPayload.ApiResponse;
 import umc.GrowIT.Server.domain.enums.ItemCategory;
+import umc.GrowIT.Server.service.CreditService.CreditQueryServiceImpl;
 import umc.GrowIT.Server.web.dto.CreditDTO.CreditResponseDTO;
 import umc.GrowIT.Server.web.dto.ItemDTO.ItemResponseDTO;
 import umc.GrowIT.Server.web.dto.PaymentDTO.PaymentRequestDTO;
@@ -21,6 +23,8 @@ import umc.GrowIT.Server.web.dto.PaymentDTO.PaymentResponseDTO;
 @RequiredArgsConstructor
 @RequestMapping("/users")
 public class UserController {
+
+    private final CreditQueryServiceImpl creditQueryService;
 
     @GetMapping("/items")
     @Operation(summary = "보유중인 아이템 조회", description = "사용자가 보유한 아이템들을 조회합니다.")
@@ -38,12 +42,24 @@ public class UserController {
 
     @GetMapping("/credits")
     @Operation(summary = "보유중인 크레딧 조회", description = "사용자가 현재 보유한 크레딧 조회")
-    public ApiResponse<CreditResponseDTO.CreditDTO> getUserCredit(
-
-    )
-    {
-        return ApiResponse.onSuccess(null);
+    @ApiResponses({
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(
+                    responseCode = "COMMON200",
+                    description = "성공"
+            ),
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(
+                    responseCode = "MEMBER4001",
+                    description = "사용자가 없습니다.",
+                    content = @Content(schema = @Schema(implementation = ApiResponse.class))
+            )
+    })
+    public ApiResponse<CreditResponseDTO.CreditDTO> getUserCredit() {
+        // TODO: Security Context에서 현재 로그인한 사용자의 ID를 가져오는 로직 필요
+        Long userId = 1L; // 임시로 1L 사용
+        return ApiResponse.onSuccess(creditQueryService.getCurrentCredit(userId));
     }
+
+
 
     @GetMapping("/credits/total")
     @Operation(summary = "누적 크레딧 조회", description = "사용자의 누적 크레딧을 조회합니다.")
@@ -53,6 +69,9 @@ public class UserController {
     {
         return ApiResponse.onSuccess(null);
     }
+
+
+
 
     @PostMapping("/credits/payment")
     @Operation(
