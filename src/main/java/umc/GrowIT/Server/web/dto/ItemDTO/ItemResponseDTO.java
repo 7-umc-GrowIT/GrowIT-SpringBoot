@@ -46,4 +46,14 @@ public class ItemResponseDTO {
         @Schema(description = "구매 여부", example = "false")
         boolean purchased;
     }
+
+    // 아이템 주문 응답 DTO
+    @Getter
+    @Builder
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class OrderItemResponseDTO {
+        private Long itemId;    // 구매한 아이템 ID
+        private String itemName; // 구매한 아이템 이름
+    }
 }

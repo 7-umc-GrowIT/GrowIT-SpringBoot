@@ -6,6 +6,8 @@ import lombok.*;
 import umc.GrowIT.Server.domain.common.BaseEntity;
 import umc.GrowIT.Server.domain.enums.ItemCategory;
 
+import java.util.List;
+
 @Entity
 @Getter
 @Builder
@@ -29,4 +31,7 @@ public class Item extends BaseEntity {
 
     @Column(nullable = false, columnDefinition = "TEXT")
     private String imageUrl;
+
+    @OneToMany(mappedBy = "item")
+    private List<UserItem> userItems;
 }

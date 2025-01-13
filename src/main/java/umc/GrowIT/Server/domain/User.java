@@ -10,7 +10,6 @@ import umc.GrowIT.Server.domain.enums.UserStatus;
 
 import java.util.List;
 
-
 @Entity
 @Getter
 @Builder

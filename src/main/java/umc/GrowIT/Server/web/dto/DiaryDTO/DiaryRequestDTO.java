@@ -11,8 +11,6 @@ public class DiaryRequestDTO {
     @Setter
     public static class DiaryDTO {
         @NotNull
-        String title;
-        @NotNull
         String content;
         @NotNull
         LocalDate date;

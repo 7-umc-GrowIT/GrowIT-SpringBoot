@@ -12,6 +12,7 @@ import umc.GrowIT.Server.service.userService.UserCommandService;
 
 @RestController
 @RequiredArgsConstructor
+
 public class AuthController implements AuthSpecification {
 
     private final UserCommandService userCommandService;

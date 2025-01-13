@@ -78,7 +78,7 @@ public class UserCommandServiceImpl implements UserCommandService {
                     //존재하지 않는 약관을 요청하면 예외 처리
                     if (term == null) {
                         throw new TermHandler(ErrorStatus.TERM_NOT_FOUND);
-                    //필수 약관에 동의하지 않으면 예외 처리
+                        //필수 약관에 동의하지 않으면 예외 처리
                     } else if (term.getType() == TermType.MANDATORY && !tempUserTerm.getAgreed()) {
                         throw new TermHandler(ErrorStatus.MANDATORY_TERMS_REQUIRED);
                     }
