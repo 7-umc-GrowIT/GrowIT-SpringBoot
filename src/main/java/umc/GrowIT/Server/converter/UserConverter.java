@@ -1,5 +1,6 @@
 package umc.GrowIT.Server.converter;
 
+import umc.GrowIT.Server.domain.User;
 import umc.GrowIT.Server.domain.enums.Role;
 import umc.GrowIT.Server.domain.enums.UserStatus;
 import umc.GrowIT.Server.dto.UserRequestDTO;
