@@ -1,4 +1,4 @@
-package umc.GrowIT.Server.service;
+package umc.GrowIT.Server.service.refreshToken;
 
 public interface RefreshTokenCommandService {
 

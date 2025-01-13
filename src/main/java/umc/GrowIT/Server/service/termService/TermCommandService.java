@@ -1,6 +1,6 @@
-package umc.GrowIT.Server.service;
+package umc.GrowIT.Server.service.termService;
 
-import umc.GrowIT.Server.dto.TermRequestDTO;
+import umc.GrowIT.Server.web.dto.TermDTO.TermRequestDTO;
 
 import java.util.List;
 

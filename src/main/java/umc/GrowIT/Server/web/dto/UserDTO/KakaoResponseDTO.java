@@ -1,4 +1,4 @@
-package umc.GrowIT.Server.dto;
+package umc.GrowIT.Server.web.dto.UserDTO;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -13,5 +13,6 @@ public class KakaoResponseDTO {
     @AllArgsConstructor
     public static class KakaoTokenDTO {
         String accessToken;
+        String refreshToken;
     }
 }

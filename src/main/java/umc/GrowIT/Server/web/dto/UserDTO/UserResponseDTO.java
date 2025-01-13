@@ -9,6 +9,15 @@ import java.util.List;
 
 public class UserResponseDTO {
 
+    @Builder
+    @Getter
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class TokenDTO {
+        private String accessToken;
+        private String refreshToken;
+    }
+
     // 이메일 인증 전송 응답 DTO
     @Getter
     @Builder
@@ -67,4 +76,5 @@ public class UserResponseDTO {
             private String itemStatus; // 아이템 상태 (착용 여부)
         }
     }
+
 }
