@@ -1,4 +1,4 @@
-package umc.GrowIT.Server.web.dto;
+package umc.GrowIT.Server.web.dto.DiaryDTO;
 
 import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
@@ -10,8 +10,6 @@ public class DiaryRequestDTO {
     @Getter
     @Setter
     public static class DiaryDTO {
-        @NotNull
-        String title;
         @NotNull
         String content;
         @NotNull

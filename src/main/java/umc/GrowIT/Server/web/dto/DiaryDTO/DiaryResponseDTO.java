@@ -1,4 +1,4 @@
-package umc.GrowIT.Server.web.dto;
+package umc.GrowIT.Server.web.dto.DiaryDTO;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -30,7 +30,6 @@ public class DiaryResponseDTO {
     @NoArgsConstructor
     @AllArgsConstructor
     public static class DiaryDTO{
-        String title;
         String content;
         LocalDateTime date;    //일기 최종 수정 날짜
     }
@@ -52,7 +51,6 @@ public class DiaryResponseDTO {
     @AllArgsConstructor
     public static class CreateResultDTO{
         Long diaryId;
-        String title;
         String content;
         LocalDateTime createdAt;
     }
@@ -63,7 +61,6 @@ public class DiaryResponseDTO {
     @AllArgsConstructor
     public static class ModifyResultDTO{
         Long diaryId;
-        String title;
         String content;
         LocalDateTime updatedAt;
     }
