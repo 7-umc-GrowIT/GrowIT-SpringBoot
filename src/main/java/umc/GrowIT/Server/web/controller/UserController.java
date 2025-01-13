@@ -53,7 +53,7 @@ public class UserController {
                     content = @Content(schema = @Schema(implementation = ApiResponse.class))
             )
     })
-    public ApiResponse<CreditResponseDTO.CreditDTO> getUserCredit() {
+    public ApiResponse<CreditResponseDTO.CurrentCreditDTO> getUserCredit() {
         // TODO: Security Context에서 현재 로그인한 사용자의 ID를 가져오는 로직 필요
         Long userId = 1L; // 임시로 1L 사용
         return ApiResponse.onSuccess(creditQueryService.getCurrentCredit(userId));
@@ -74,7 +74,7 @@ public class UserController {
                     content = @Content(schema = @Schema(implementation = ApiResponse.class))
             )
     })
-    public ApiResponse<CreditResponseDTO.CreditDTO> getUserTotalCredit() {
+    public ApiResponse<CreditResponseDTO.TotalCreditDTO> getUserTotalCredit() {
         Long userId = 1L; // 임시로 1L 사용
         return ApiResponse.onSuccess(creditQueryService.getTotalCredit(userId));
     }

@@ -17,16 +17,16 @@ import java.util.Optional;
 public class CreditQueryServiceImpl implements CreditQueryService {
     private final CreditRepository creditRepository;
 
-    public CreditResponseDTO.CreditDTO getCurrentCredit(Long userId){
+    public CreditResponseDTO.CurrentCreditDTO getCurrentCredit(Long userId){
 
         Integer currentCredit = creditRepository.findCurrentCreditById(userId);;
 
         return CreditConverter.toCurrentCreditDTO(currentCredit);
     }
 
-    public CreditResponseDTO.CreditDTO getTotalCredit(Long userId){
+    public CreditResponseDTO.TotalCreditDTO getTotalCredit(Long userId){
         Integer totalCredit = creditRepository.findTotalCreditById(userId);
 
-        return CreditConverter.toCurrentCreditDTO(totalCredit);
+        return CreditConverter.toTotalCreditDTO(totalCredit);
     }
 }
