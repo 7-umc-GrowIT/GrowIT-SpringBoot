@@ -8,7 +8,7 @@ import lombok.NoArgsConstructor;
 import java.util.List;
 
 public class UserResponseDTO {
-    
+
     @Builder
     @Getter
     @NoArgsConstructor
@@ -17,7 +17,7 @@ public class UserResponseDTO {
         private String accessToken;
         private String refreshToken;
     }
-    
+
     // 이메일 인증 전송 응답 DTO
     @Getter
     @Builder
