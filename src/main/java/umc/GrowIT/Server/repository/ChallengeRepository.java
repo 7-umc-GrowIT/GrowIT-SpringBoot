@@ -31,7 +31,8 @@ public interface ChallengeRepository extends JpaRepository<Challenge, Long> {
             "WHERE uc.user.id = :userId AND c.id = :challengeId")
     Optional<Challenge> findByIdAndUserId(Long challengeId, Long userId);
 
-    @Query("SELECT MIN(u.createdAt) FROM User u WHERE u.id = :userId")
+    // 사용자 가입날짜 조회
+    @Query("SELECT u.createdAt FROM User u WHERE u.id = :userId")
     Optional<LocalDate> findJoinDateByUserId(Long userId);
 
 }
