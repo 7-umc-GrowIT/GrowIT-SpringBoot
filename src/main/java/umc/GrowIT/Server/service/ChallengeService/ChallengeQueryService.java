@@ -8,6 +8,6 @@ import java.util.List;
 public interface ChallengeQueryService {
     int getTotalCredits(Long userId);
     int getTotalDiaries(Long userId);
-    String getDiaryDate(Long userId);
+    String getUserDate(Long userId);
     ChallengeResponseDTO.ChallengeHomeDTO getChallengeHome(Long userId);
 }

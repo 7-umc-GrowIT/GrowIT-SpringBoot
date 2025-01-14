@@ -19,7 +19,7 @@ public interface ChallengeRepository extends JpaRepository<Challenge, Long> {
     List<Long> findCompletedChallengeIdsByUserId(Long userId);
 
     // 특정 사용자 ID의 총 크레딧 수 조회
-    @Query("SELECT SUM(uc.totalCredit) FROM UserChallenge uc WHERE uc.user.id = :userId")
+    @Query("SELECT SUM(u.totalCredit) FROM User u WHERE u.id = :userId")
     Integer getTotalCreditsByUserId(Long userId);
 
     // 특정 사용자 ID의 작성된 일기 수 조회
@@ -31,7 +31,7 @@ public interface ChallengeRepository extends JpaRepository<Challenge, Long> {
             "WHERE uc.user.id = :userId AND c.id = :challengeId")
     Optional<Challenge> findByIdAndUserId(Long challengeId, Long userId);
 
-    @Query("SELECT MIN(d.date) FROM Diary d WHERE d.user.id = :userId")
-    Optional<LocalDate> findFirstDiaryDateByUserId(Long userId);
+    @Query("SELECT MIN(u.createdAt) FROM User u WHERE u.id = :userId")
+    Optional<LocalDate> findJoinDateByUserId(Long userId);
 
 }

@@ -32,14 +32,13 @@ public class ChallengeQueryServiceImpl implements ChallengeQueryService {
     }
 
     @Override
-    public String getDiaryDate(Long userId) {
-        // TODO: 사용자가 일기를 작성한 기간 조회 로직 구현
-        // 첫 번째 일기 작성 날짜 조회
-        LocalDate firstDiaryDate = challengeRepository.findFirstDiaryDateByUserId(userId)
-                .orElse(LocalDate.now()); // 작성된 일기가 없으면 오늘 날짜를 기본값으로 사용
+    public String getUserDate(Long userId) {
+        // TODO: 사용자가 가입한 날짜와 오늘 날짜 간의 차이를 계산
+        LocalDate joinDate = challengeRepository.findJoinDateByUserId(userId)
+                .orElse(LocalDate.now()); // 가입 날짜가 없으면 오늘 날짜를 기본값으로 사용
 
         // 오늘 날짜와의 차이를 계산
-        long days = ChronoUnit.DAYS.between(firstDiaryDate, LocalDate.now());
+        long days = ChronoUnit.DAYS.between(joinDate, LocalDate.now());
 
         return "D+" + days;
     }
@@ -51,7 +50,7 @@ public class ChallengeQueryServiceImpl implements ChallengeQueryService {
                 challengeRepository.findCompletedChallengeIdsByUserId(userId),
                 getTotalCredits(userId),
                 getTotalDiaries(userId),
-                getDiaryDate(userId)
+                getUserDate(userId)
         );
     }
 }

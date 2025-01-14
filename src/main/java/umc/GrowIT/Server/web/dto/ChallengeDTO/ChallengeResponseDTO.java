@@ -40,7 +40,7 @@ public class ChallengeResponseDTO {
     public static class ChallengeReport {
         private int totalCredits;
         private int totalDiaries;
-        private String diaryDate;
+        private String userDate;
     }
 
     // 챌린지 현황 응답 DTO

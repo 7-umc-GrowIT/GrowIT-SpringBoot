@@ -27,11 +27,11 @@ public class ChallengeConverter {
     }
 
     // 챌린지 리포트를 ChallengeHome.ChallengeReport로 변환
-    public static ChallengeResponseDTO.ChallengeReport toChallengeReportDTO(int totalCredits, int totalDiaries, String diaryDate) {
+    public static ChallengeResponseDTO.ChallengeReport toChallengeReportDTO(int totalCredits, int totalDiaries, String userDate) {
         return ChallengeResponseDTO.ChallengeReport.builder()
                 .totalCredits(totalCredits)
                 .totalDiaries(totalDiaries)
-                .diaryDate(diaryDate)
+                .userDate(userDate)
                 .build();
     }
 
