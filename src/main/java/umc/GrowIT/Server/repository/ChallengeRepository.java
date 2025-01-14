@@ -19,7 +19,7 @@ public interface ChallengeRepository extends JpaRepository<Challenge, Long> {
     List<Long> findCompletedChallengeIdsByUserId(Long userId);
 
     // 특정 사용자 ID의 총 크레딧 수 조회
-    @Query("SELECT SUM(u.totalCredit) FROM User u WHERE u.id = :userId")
+    @Query("SELECT u.totalCredit FROM User u WHERE u.id = :userId")
     Integer getTotalCreditsByUserId(Long userId);
 
     // 특정 사용자 ID의 작성된 일기 수 조회
