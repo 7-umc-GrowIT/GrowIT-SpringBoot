@@ -1,7 +1,7 @@
 package umc.GrowIT.Server.converter;
 
 import umc.GrowIT.Server.domain.Challenge;
-import umc.GrowIT.Server.repository.ChallengeRepository;
+import umc.GrowIT.Server.domain.enums.ChallengeStatus;
 import umc.GrowIT.Server.web.dto.ChallengeDTO.ChallengeResponseDTO;
 
 import java.util.List;
@@ -27,8 +27,8 @@ public class ChallengeConverter {
     }
 
     // 챌린지 리포트를 ChallengeHome.ChallengeReport로 변환
-    public static ChallengeResponseDTO.ChallengeReport toChallengeReportDTO(int totalCredits, int totalDiaries, String userDate) {
-        return ChallengeResponseDTO.ChallengeReport.builder()
+    public static ChallengeResponseDTO.ChallengeReportDTO toChallengeReportDTO(int totalCredits, int totalDiaries, String userDate) {
+        return ChallengeResponseDTO.ChallengeReportDTO.builder()
                 .totalCredits(totalCredits)
                 .totalDiaries(totalDiaries)
                 .userDate(userDate)
@@ -45,5 +45,18 @@ public class ChallengeConverter {
                 .recommendedChallenges(toRecommendedChallengeListDTO(recommendedChallenges, completedChallengeIds))
                 .challengeReport(toChallengeReportDTO(totalCredits, totalDiaries, diaryGoal))
                 .build();
+    }
+
+    // 챌린지 현황
+    public static List<ChallengeResponseDTO.ChallengeStatusDTO> toChallengeStatusListDTO(List<Challenge> challenges) {
+        return challenges.stream()
+                .map(challenge -> ChallengeResponseDTO.ChallengeStatusDTO.builder()
+                        .id(challenge.getId())
+                        .title(challenge.getTitle())
+                        .time(challenge.getTime())
+                        //.status(challenge.getStatus()) // 상태
+                        .completed(challenge.isCompleted()) // 완료 여부
+                        .build())
+                .collect(Collectors.toList());
     }
 }
