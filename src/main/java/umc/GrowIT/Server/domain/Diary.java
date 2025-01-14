@@ -4,7 +4,6 @@ import jakarta.persistence.*;
 import lombok.*;
 import umc.GrowIT.Server.domain.common.BaseEntity;
 
-import java.time.LocalDate;
 import java.util.List;
 
 @Entity
@@ -28,5 +27,4 @@ public class Diary extends BaseEntity {
 
     @OneToMany(mappedBy = "diary", cascade = CascadeType.ALL)
     private List<DiaryKeyword> diaryKeywords;
-
 }

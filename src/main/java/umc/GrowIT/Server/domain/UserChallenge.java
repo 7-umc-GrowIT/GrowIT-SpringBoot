@@ -1,6 +1,5 @@
 package umc.GrowIT.Server.domain;
 
-import org.hibernate.annotations.ColumnDefault;
 import umc.GrowIT.Server.domain.common.BaseEntity;
 import umc.GrowIT.Server.domain.enums.ChallengeStatus;
 import jakarta.persistence.*;
