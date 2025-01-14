@@ -6,8 +6,13 @@ import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 import umc.GrowIT.Server.apiPayload.ApiResponse;
+import umc.GrowIT.Server.converter.ChallengeConverter;
+import umc.GrowIT.Server.domain.Challenge;
+import umc.GrowIT.Server.service.ChallengeService.ChallengeCommandService;
+import umc.GrowIT.Server.service.ChallengeService.ChallengeQueryService;
 import umc.GrowIT.Server.web.dto.ChallengeDTO.ChallengeRequestDTO;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -16,18 +21,22 @@ import org.springframework.web.bind.annotation.RestController;
 import umc.GrowIT.Server.apiPayload.ApiResponse;
 import umc.GrowIT.Server.web.dto.ChallengeDTO.ChallengeResponseDTO;
 
+import java.util.List;
+
 @Tag(name = "Challenge", description = "Challenge 관련 API")
 @RestController
+@RequiredArgsConstructor
 @RequestMapping("/challenges")
 public class ChallengeRestController {
+    private final ChallengeQueryService challengeQueryService;
     @GetMapping("/summary")
     @Operation(summary = "챌린지 홈 조회 API", description = "사용자의 챌린지 홈 화면에 보여질 챌린지 요약 정보를 조회하는 API입니다.")
     @ApiResponses({
             @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "COMMON200", description = "OK, 챌린지 홈 조회 성공"),
             @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "COMMON400", description = "BAD, 잘못된 요청"),
     })
-    public ApiResponse<ChallengeResponseDTO.ChallengeHome> getChallengeHome() {
-        return null;
+    public ApiResponse<ChallengeResponseDTO.ChallengeHomeDTO> getChallengeHome(@RequestParam Long userId) {
+        return ApiResponse.onSuccess(challengeQueryService.getChallengeHome(userId));
     }
 
     @GetMapping
