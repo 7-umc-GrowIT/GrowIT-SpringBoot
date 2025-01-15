@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.*;
 import umc.GrowIT.Server.apiPayload.ApiResponse;
 import umc.GrowIT.Server.converter.ChallengeConverter;
 import umc.GrowIT.Server.domain.Challenge;
+import umc.GrowIT.Server.domain.enums.ChallengeStatus;
 import umc.GrowIT.Server.service.ChallengeService.ChallengeCommandService;
 import umc.GrowIT.Server.service.ChallengeService.ChallengeQueryService;
 import umc.GrowIT.Server.web.dto.ChallengeDTO.ChallengeRequestDTO;
@@ -45,10 +46,17 @@ public class ChallengeRestController {
             @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "COMMON200", description = "OK, 챌린지 현황 조회 성공"),
             @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "COMMON400", description = "BAD, 잘못된 요청"),
     })
-    public ApiResponse<ChallengeResponseDTO.ChallengeStatusList> getChallengeStatus(@RequestParam(required = false) String status,
-                                                                                    @RequestParam(required = false) Boolean completed) {
-        return null;
+    public ApiResponse<ChallengeResponseDTO.ChallengeStatusListDTO> getChallengeStatus(
+            @RequestParam Long userId,
+            @RequestParam(required = false) Boolean completed) {
+        // 서비스 호출
+        ChallengeResponseDTO.ChallengeStatusListDTO challengeStatusList = challengeQueryService.getChallengeStatus(userId, completed);
+
+        // 성공 응답 반환
+        return ApiResponse.onSuccess(challengeStatusList);
     }
+
+
 
     @PostMapping("/{challengeId}/select")
     @Operation(summary = "선택된 챌린지 저장 API", description = "사용자가 선택한 챌린지를 저장합니다.")
@@ -77,7 +85,7 @@ public class ChallengeRestController {
             @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "COMMON200", description = "OK, 챌린지 인증 내용 조회 성공"),
             @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "COMMON400", description = "BAD, 잘못된 요청"),
     })
-    public ApiResponse<ChallengeResponseDTO.ProofDetails> getChallengeProofDetails(@PathVariable Long challengeId) {
+    public ApiResponse<ChallengeResponseDTO.ProofDetailsDTO> getChallengeProofDetails(@PathVariable Long challengeId) {
         return null;
     }
 

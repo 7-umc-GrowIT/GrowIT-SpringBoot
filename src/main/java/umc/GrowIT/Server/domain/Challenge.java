@@ -35,7 +35,6 @@ public class Challenge extends BaseEntity {
     private ChallengeType dtype;
 
     @Column(nullable = false)
-    @ColumnDefault("false")
     private boolean completed;
 
     @OneToMany(mappedBy = "challenge", cascade = CascadeType.ALL, orphanRemoval = true)
@@ -62,5 +61,9 @@ public class Challenge extends BaseEntity {
             throw new IllegalStateException("이미 완료된 챌린지입니다.");
         }
         this.completed = true;
+    }
+
+    public String getStatus() {
+        return "";
     }
 }
