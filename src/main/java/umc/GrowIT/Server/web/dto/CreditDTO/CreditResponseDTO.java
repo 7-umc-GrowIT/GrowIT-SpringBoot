@@ -7,16 +7,21 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 public class CreditResponseDTO {
+    @Builder
+    @Getter
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class CurrentCreditDTO {
+        @Schema(description = "현재 보유한 크레딧", example = "1200")
+        private Integer currentCredit;
+    }
 
     @Builder
     @Getter
     @NoArgsConstructor
     @AllArgsConstructor
-    public static class CreditDTO {
-        @Schema(description = "현재 보유한 크레딧", example = "1200")
-        private Integer credit;
+    public static class TotalCreditDTO {
+        @Schema(description = "누적 크레딧", example = "5000")
+        private Integer totalCredit;
     }
-
-
-
 }
