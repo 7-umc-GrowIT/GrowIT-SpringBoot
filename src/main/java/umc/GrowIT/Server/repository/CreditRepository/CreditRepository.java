@@ -5,9 +5,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import umc.GrowIT.Server.domain.User;
 
-import java.util.Optional;
-
-public interface CreditRepository extends JpaRepository<User, Long>, CreditRepositoryCustom {
+public interface CreditRepository extends JpaRepository<User, Long> {
 
     // 현재 보유 크레딧 조회
 //    public Integer findCurrentCreditById(Long id);

@@ -34,7 +34,7 @@ public class GroController {
                     responseCode = "COMMON200",
                     description = "성공"
             ),
-            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "AUTH001",
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "AUTH4002",
                     description = "acess 토큰 만료",
                     content = @Content(schema = @Schema(implementation = ApiResponse.class))),
     })
