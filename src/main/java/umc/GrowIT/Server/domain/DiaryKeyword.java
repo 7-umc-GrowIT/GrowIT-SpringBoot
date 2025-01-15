@@ -18,11 +18,9 @@ public class DiaryKeyword {
     @JoinColumn(name = "diary_id")
     private Diary diary;
 
-    /* 임시 주석
+    /*
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "keyword_id")
     private Keyword keyword;
-
-     */
-
+*/
 }

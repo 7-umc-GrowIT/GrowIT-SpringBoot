@@ -2,13 +2,21 @@ package umc.GrowIT.Server.web.controller;
 
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.BadCredentialsException;
+import org.springframework.security.authentication.DisabledException;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.web.bind.annotation.*;
 import umc.GrowIT.Server.apiPayload.ApiResponse;
 import umc.GrowIT.Server.apiPayload.code.status.ErrorStatus;
+import umc.GrowIT.Server.apiPayload.exception.UserHandler;
+import umc.GrowIT.Server.jwt.JwtTokenUtil;
 import umc.GrowIT.Server.web.controller.specification.AuthSpecification;
 import umc.GrowIT.Server.web.dto.UserDTO.UserRequestDTO;
 import umc.GrowIT.Server.web.dto.UserDTO.UserResponseDTO;
-import umc.GrowIT.Server.service.userService.UserCommandService;
+import umc.GrowIT.Server.service.authService.UserCommandService;
 
 @RestController
 @RequiredArgsConstructor
@@ -16,6 +24,8 @@ import umc.GrowIT.Server.service.userService.UserCommandService;
 public class AuthController implements AuthSpecification {
 
     private final UserCommandService userCommandService;
+    private final AuthenticationManager authenticationManager;
+    private final JwtTokenUtil JwtTokenUtil;
 
     @PostMapping("/login/email")
     public ApiResponse<UserResponseDTO.TokenDTO> loginEmail(@RequestBody @Valid UserRequestDTO.EmailLoginDTO emailLoginDTO) {
@@ -26,9 +36,6 @@ public class AuthController implements AuthSpecification {
     @PostMapping("/users")
     public ApiResponse<UserResponseDTO.TokenDTO> createUser(@RequestBody @Valid UserRequestDTO.UserInfoDTO userInfoDTO) {
         UserResponseDTO.TokenDTO tokenDTO = userCommandService.createUser(userInfoDTO);
-        if (tokenDTO == null) {
-            return ApiResponse.onFailure(ErrorStatus.EMAIL_ALREADY_EXISTS.getCode(), ErrorStatus.EMAIL_ALREADY_EXISTS.getMessage(), null);
-        }
         return ApiResponse.onSuccess(tokenDTO);
     }
 

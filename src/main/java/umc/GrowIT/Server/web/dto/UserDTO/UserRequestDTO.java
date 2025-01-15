@@ -21,6 +21,8 @@ public class UserRequestDTO {
     @AllArgsConstructor
     public static class UserInfoDTO {
 
+        private Boolean isVerified;
+
         @NotBlank(message = "필수 입력 항목입니다.")
         @Email(message = "이메일 형식에 맞춰주세요.")
         private String email;

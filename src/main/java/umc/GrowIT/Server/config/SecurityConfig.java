@@ -1,26 +1,32 @@
 package umc.GrowIT.Server.config;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.authentication.ProviderManager;
-import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
+import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
-import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
-
-import java.util.List;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import umc.GrowIT.Server.apiPayload.exception.CustomAuthenticationEntryPoint;
+import umc.GrowIT.Server.jwt.JwtAuthenticationFilter;
+import umc.GrowIT.Server.service.authService.CustomUserDetailsService;
 
 @Configuration
 @EnableWebSecurity
 public class SecurityConfig {
 
-    @Autowired
-    private UserDetailsService userDetailsService;
+    private final JwtAuthenticationFilter jwtAuthenticationFilter;
+    private final CustomUserDetailsService customUserDetailsService;
+    private final CustomAuthenticationEntryPoint customAuthenticationEntryPoint;
+
+    public SecurityConfig(JwtAuthenticationFilter jwtAuthenticationFilter, CustomUserDetailsService customUserDetailsService, CustomAuthenticationEntryPoint customAuthenticationEntryPoint) { //DB 기반 인증에 사용할 CustomUserDetailsService 를 주입받아 준비
+        this.jwtAuthenticationFilter = jwtAuthenticationFilter;
+        this.customUserDetailsService = customUserDetailsService;
+        this.customAuthenticationEntryPoint = customAuthenticationEntryPoint;
+    }
 
     @Bean
     public PasswordEncoder passwordEncoder() {
@@ -28,25 +34,47 @@ public class SecurityConfig {
     }
 
     @Bean
-    public AuthenticationManager authenticationManager() {
-        DaoAuthenticationProvider provider = new DaoAuthenticationProvider();
-        provider.setUserDetailsService(userDetailsService);
-        provider.setPasswordEncoder(passwordEncoder());
+    public AuthenticationManager authenticationManager(HttpSecurity http) throws Exception {
+        AuthenticationManagerBuilder authenticationManagerBuilder = http.getSharedObject(AuthenticationManagerBuilder.class);
 
-        return new ProviderManager(List.of(provider));
+        authenticationManagerBuilder
+                .userDetailsService(customUserDetailsService) //DaoAuthenticationProvider 가 CustomUserDetailsService 를 사용해 DB 에서 사용자 정보 조회하도록 지정
+                .passwordEncoder(passwordEncoder()); //DaoAuthenticationProvider 가 BCryptPasswordEncoder 를 사용해 비밀번호를 검증하도록 지정
+
+        return authenticationManagerBuilder.build();
     }
+
 
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
+
+        //csrf, formLogin, httpBasic 비활성화 (REST API 서버에서 JWT 사용 시 비활성화)
         http
                 .csrf(csrf -> csrf.disable())
+                .formLogin(form -> form.disable())
+                .httpBasic(basic -> basic.disable());
+
+        //인증 없이 접근 가능한 URL 설정
+        http
                 .authorizeHttpRequests(auth -> auth
-                                .requestMatchers("/swagger-ui/**", "/v3/api-docs/**").permitAll() // 인증 없이 접근 가능
-                                .requestMatchers("/", "/login/email", "/login/kakao", "/users/password/find", "/users", "/terms").permitAll() // 인증 없이 접근 가능
-                                .anyRequest().permitAll()
-                        //.anyRequest().authenticated() // 나머지 요청은 인증 필요
+                                .requestMatchers("/swagger-ui/**", "/v3/api-docs/**").permitAll() //인증 없이 접근 가능
+                                .requestMatchers("/", "/login/email", "/login/kakao", "/users/password/find", "/users", "/terms").permitAll() //인증 없이 접근 가능
+                                .requestMatchers("/test").authenticated()
+                                .anyRequest().permitAll() //나머지 요청은 인증 없이 접근 가능
+                                //.anyRequest().authenticated() //나머지 요청은 인증 필요
+
                 );
 
-        return http.build();
+        //필터에서 예외 발생 시 처리
+        http
+                .exceptionHandling(exceptions -> exceptions
+                        .authenticationEntryPoint(customAuthenticationEntryPoint));
+
+        //JWT 인증 필터 추가
+        http
+                .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
+
+        return http.build(); //설정을 적용한 후 SecurityFilterChain 객체 반환
     }
+
 }

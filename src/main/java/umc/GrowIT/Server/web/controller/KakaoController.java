@@ -7,7 +7,7 @@ import org.springframework.web.bind.annotation.RestController;
 import umc.GrowIT.Server.apiPayload.ApiResponse;
 import umc.GrowIT.Server.web.controller.specification.KakaoSpecification;
 import umc.GrowIT.Server.web.dto.UserDTO.KakaoResponseDTO;
-import umc.GrowIT.Server.service.userService.KakaoService;
+import umc.GrowIT.Server.service.authService.KakaoService;
 @RestController
 @RequiredArgsConstructor
 public class KakaoController implements KakaoSpecification {
