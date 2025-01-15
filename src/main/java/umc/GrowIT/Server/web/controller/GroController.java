@@ -19,8 +19,7 @@ import umc.GrowIT.Server.apiPayload.ApiResponse;
 import umc.GrowIT.Server.web.dto.GroDTO.GroRequestDTO;
 import umc.GrowIT.Server.web.dto.GroDTO.GroResponseDTO;
 
-@SecurityRequirement(name = "JWT TOKEN")
-@Tag(name = "Gro", description = "Gro 관련 API")
+@Tag(name = "Gro", description = "캐릭터 관련 API")
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/characters")
