@@ -1,8 +1,8 @@
 package umc.GrowIT.Server.web.controller;
 
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import net.minidev.json.JSONObject;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RestController;
@@ -10,6 +10,7 @@ import umc.GrowIT.Server.jwt.JwtTokenProvider;
 
 import java.util.Base64;
 
+@Tag(name = "Test", description = "테스트 관련 API")
 @RestController
 @RequiredArgsConstructor
 @Slf4j // 로그 라이브러리 사용

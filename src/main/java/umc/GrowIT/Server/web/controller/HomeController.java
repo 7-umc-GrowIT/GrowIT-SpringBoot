@@ -11,10 +11,10 @@ import org.springframework.web.bind.annotation.RestController;
 import umc.GrowIT.Server.apiPayload.ApiResponse;
 import umc.GrowIT.Server.web.dto.HomeDTO.HomeResponseDTO;
 
-@Tag(name = "Home", description = "Home 관련 API")
+@Tag(name = "Home", description = "홈화면 관련 API")
 @RestController
 @RequestMapping("/home")
-public class HomeRestController {
+public class HomeController {
 
     @GetMapping()
     @Operation(

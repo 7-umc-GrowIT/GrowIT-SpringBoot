@@ -17,7 +17,6 @@ import umc.GrowIT.Server.web.dto.ItemDTO.ItemResponseDTO;
 import umc.GrowIT.Server.web.dto.ItemEquipDTO.ItemEquipRequestDTO;
 import umc.GrowIT.Server.web.dto.ItemEquipDTO.ItemEquipResponseDTO;
 
-
 @Tag(name="Item", description = "아이템 관련 API")
 @RestController
 @RequiredArgsConstructor
@@ -61,6 +60,19 @@ public class ItemController {
                     )
             ) ItemEquipRequestDTO request
     ) {
+        return ApiResponse.onSuccess(null);
+    }
+
+    @PostMapping("/{itemId}/order")
+    @Operation(
+            summary = "아이템 주문 API",
+            description = "특정 아이템을 주문하는 API입니다. 아이템 ID를 path variable로 전달받아 해당 아이템을 주문합니다."
+    )
+    @ApiResponses({
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "COMMON200", description = "OK, 성공", content = @Content(schema = @Schema(implementation = ApiResponse.class)))
+    })
+    @Parameter(name = "itemId", description = "주문할 아이템의 ID", required = true)
+    public ApiResponse<ItemResponseDTO.OrderItemResponseDTO> orderItem(@PathVariable("itemId") Long itemId) {
         return ApiResponse.onSuccess(null);
     }
 }
