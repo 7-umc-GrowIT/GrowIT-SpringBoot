@@ -1,6 +1,5 @@
 package umc.GrowIT.Server.domain;
 
-
 import jakarta.persistence.*;
 import lombok.*;
 import umc.GrowIT.Server.domain.common.BaseEntity;
@@ -31,6 +30,5 @@ public class Term extends BaseEntity {
 
     @OneToMany(mappedBy = "term", cascade = CascadeType.ALL)
     private List<UserTerm> userTerm;
-
 
 }

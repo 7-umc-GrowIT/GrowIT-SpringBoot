@@ -28,8 +28,10 @@ public class UserController {
 
     @GetMapping("/items")
     @Operation(summary = "보유중인 아이템 조회", description = "사용자가 보유한 아이템들을 조회합니다.")
+    @ApiResponses({
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "COMMON200", description = "OK, 성공", content = @Content(schema = @Schema(implementation = ApiResponse.class)))
+    })
     public ApiResponse<ItemResponseDTO.ItemListDTO> getUserItemList(
-
             @Parameter(description = "아이템 카테고리 (카테고리 명으로 전달)",
                     schema = @Schema(allowableValues = {"BACKGROUND", "OBJECT", "PLANT", "HEAD_ACCESSORY"}),
                     example = "BACKGROUND")

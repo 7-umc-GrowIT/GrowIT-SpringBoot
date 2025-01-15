@@ -1,14 +1,14 @@
 package umc.GrowIT.Server.domain;
 
-
 import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.ColumnDefault;
 import umc.GrowIT.Server.domain.common.BaseEntity;
-import umc.GrowIT.Server.domain.enums.UserStatus;
 import umc.GrowIT.Server.domain.enums.Provider;
-import java.util.List;
+import umc.GrowIT.Server.domain.enums.Role;
+import umc.GrowIT.Server.domain.enums.UserStatus;
 
+import java.util.List;
 
 @Entity
 @Getter
@@ -24,7 +24,7 @@ public class User extends BaseEntity {
     @Column(unique = true, length = 50)
     private String email;
 
-    @Column(nullable = false, length = 30)
+    @Column(nullable = false)
     private String password;
 
     @Column(nullable = false, length = 20)
@@ -45,7 +45,22 @@ public class User extends BaseEntity {
     @Enumerated(EnumType.STRING)
     private Provider provider;
 
+    @Enumerated(EnumType.STRING)
+    private Role role;
+
+    @Setter
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
-    private List<UserTerm> userTerm;
+    private List<UserTerm> userTerms;
+
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
+    private List<Diary> diaries;
+
+    @OneToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "refresh_token_id", nullable = true)
+    private RefreshToken refreshToken;
+
+    public void encodePassword(String password) {
+        this.password = password;
+    }
 
 }

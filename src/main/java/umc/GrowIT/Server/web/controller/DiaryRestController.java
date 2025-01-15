@@ -7,8 +7,8 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 import umc.GrowIT.Server.apiPayload.ApiResponse;
-import umc.GrowIT.Server.web.dto.DiaryRequestDTO;
-import umc.GrowIT.Server.web.dto.DiaryResponseDTO;
+import umc.GrowIT.Server.web.dto.DiaryDTO.DiaryRequestDTO;
+import umc.GrowIT.Server.web.dto.DiaryDTO.DiaryResponseDTO;
 
 @RestController
 @RequiredArgsConstructor
