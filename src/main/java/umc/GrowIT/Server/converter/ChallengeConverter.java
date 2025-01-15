@@ -54,7 +54,7 @@ public class ChallengeConverter {
                         .id(challenge.getId())
                         .title(challenge.getTitle())
                         .time(challenge.getTime())
-                        //.status(challenge.getStatus()) // 상태
+                        .status(challenge.getStatus()) // 상태
                         .completed(challenge.isCompleted()) // 완료 여부
                         .build())
                 .collect(Collectors.toList());
