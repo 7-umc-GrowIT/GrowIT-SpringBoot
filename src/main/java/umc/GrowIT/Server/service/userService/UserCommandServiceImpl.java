@@ -15,6 +15,7 @@ import umc.GrowIT.Server.apiPayload.exception.TermHandler;
 import umc.GrowIT.Server.apiPayload.exception.UserHandler;
 import umc.GrowIT.Server.converter.TermConverter;
 import umc.GrowIT.Server.converter.UserConverter;
+import umc.GrowIT.Server.domain.RefreshToken;
 import umc.GrowIT.Server.domain.Term;
 import umc.GrowIT.Server.domain.User;
 import umc.GrowIT.Server.domain.UserTerm;
@@ -86,10 +87,12 @@ public class UserCommandServiceImpl implements UserCommandService {
                 .collect(Collectors.toList());
 
         newUser.setUserTerms(userTerms);
-        userRepository.save(newUser);
 
         UserResponseDTO.TokenDTO tokenDTO = jwtTokenProvider.generateToken(getAuthentication(newUser)); //JWT 토큰 생성 메소드 호출
-        refreshTokenCommandService.createRefreshToken(tokenDTO.getRefreshToken()); //RefreshToken DB 저장
+        RefreshToken refreshToken = refreshTokenCommandService.createRefreshToken(tokenDTO.getRefreshToken(), newUser); //RefreshToken DB 저장
+
+        newUser.setRefreshToken(refreshToken);
+        userRepository.save(newUser);
 
         return tokenDTO;
     }

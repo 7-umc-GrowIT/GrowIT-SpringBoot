@@ -1,11 +1,13 @@
-package umc.GrowIT.Server.service.refreshToken;
+package umc.GrowIT.Server.service.refreshTokenService;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import umc.GrowIT.Server.converter.TokenConverter;
 import umc.GrowIT.Server.domain.RefreshToken;
+import umc.GrowIT.Server.domain.User;
 import umc.GrowIT.Server.jwt.JwtTokenProvider;
 import umc.GrowIT.Server.repository.RefreshTokenRepository;
+import umc.GrowIT.Server.service.refreshToken.RefreshTokenCommandService;
 
 import java.time.LocalDateTime;
 import java.time.ZoneId;
@@ -19,13 +21,13 @@ public class RefreshTokenCommandServiceImpl implements RefreshTokenCommandServic
     private final JwtTokenProvider jwtTokenProvider;
 
     @Override
-    public void createRefreshToken(String refreshToken) {
+    public RefreshToken createRefreshToken(String refreshToken, User user) {
         Date expiryDate = jwtTokenProvider.parseClaims(refreshToken).getExpiration();
         LocalDateTime localDateTime = LocalDateTime.ofInstant(expiryDate.toInstant(), ZoneId.systemDefault());
 
-        RefreshToken refreshTokenEntity = TokenConverter.toRefreshToken(refreshToken, localDateTime);
+        RefreshToken refreshTokenEntity = TokenConverter.toRefreshToken(refreshToken, localDateTime, user);
 
-        refreshTokenRepository.save(refreshTokenEntity);
+        return refreshTokenRepository.save(refreshTokenEntity);
     }
 
 }
