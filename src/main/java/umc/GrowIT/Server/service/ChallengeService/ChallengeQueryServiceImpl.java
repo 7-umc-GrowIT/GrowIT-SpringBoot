@@ -5,6 +5,7 @@ import org.springframework.stereotype.Service;
 import umc.GrowIT.Server.converter.ChallengeConverter;
 import umc.GrowIT.Server.domain.Challenge;
 import umc.GrowIT.Server.domain.enums.ChallengeStatus;
+import umc.GrowIT.Server.domain.enums.ChallengeType;
 import umc.GrowIT.Server.repository.ChallengeRepository;
 import umc.GrowIT.Server.service.ChallengeService.ChallengeQueryService;
 import umc.GrowIT.Server.web.dto.ChallengeDTO.ChallengeResponseDTO;
@@ -56,9 +57,9 @@ public class ChallengeQueryServiceImpl implements ChallengeQueryService {
     }
 
     @Override
-    public ChallengeResponseDTO.ChallengeStatusListDTO getChallengeStatus(Long userId, Boolean completed) {
+    public ChallengeResponseDTO.ChallengeStatusListDTO getChallengeStatus(Long userId, ChallengeType status, Boolean completed) {
         // 유저 ID와 완료 여부를 기반으로 챌린지를 조회
-        List<Challenge> challenges = challengeRepository.findChallengesByStatusAndCompletion(userId, completed);
+        List<Challenge> challenges = challengeRepository.findChallengesByStatusAndCompletion(userId, status, completed);
 
         // 조회된 챌린지 리스트를 DTO로 변환하여 반환
         return ChallengeResponseDTO.ChallengeStatusListDTO.builder()

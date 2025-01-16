@@ -52,7 +52,7 @@ public class ChallengeResponseDTO {
     public static class ChallengeSummaryDTO {
         private Long id;
         private String title;
-        //private String status;
+        private String status;
         private boolean completed;
     }
 
@@ -72,7 +72,7 @@ public class ChallengeResponseDTO {
     public static class ChallengeStatusDTO {
         private Long id;
         private String title;
-        //private String status;
+        private String status;
         private Integer time;
         private boolean completed;
     }
@@ -86,7 +86,7 @@ public class ChallengeResponseDTO {
         private Long challengeId;
         private String certificationImage;
         private String thoughts;
-        private LocalDateTime createdAt;
+        private boolean completed;
     }
 
     // 챌린지 삭제 응답 DTO

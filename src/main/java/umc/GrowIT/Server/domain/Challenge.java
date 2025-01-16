@@ -31,7 +31,6 @@ public class Challenge extends BaseEntity {
     private Integer time;
 
     @Enumerated(EnumType.STRING)
-    @Column(nullable = false)
     private ChallengeType dtype;
 
     @Column(nullable = false)
@@ -64,6 +63,12 @@ public class Challenge extends BaseEntity {
     }
 
     public String getStatus() {
-        return "";
+        if (this.dtype != null) {
+            return this.dtype.name(); // dtype 값 반환 (RANDOM, DAILY)
+        }
+        if (this.completed) {
+            return "COMPLETED"; // completed가 true인 경우
+        }
+        return "TOTAL"; // completed가 false인 경우
     }
 }
