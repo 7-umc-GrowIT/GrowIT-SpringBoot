@@ -86,7 +86,7 @@ public class ChallengeResponseDTO {
         private Long challengeId;
         private String certificationImage;
         private String thoughts;
-        private LocalDateTime createdAt;
+        private boolean completed;
     }
 
     // 챌린지 삭제 응답 DTO

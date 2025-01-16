@@ -1,7 +1,7 @@
 package umc.GrowIT.Server.converter;
 
 import umc.GrowIT.Server.domain.Challenge;
-import umc.GrowIT.Server.domain.enums.ChallengeStatus;
+import umc.GrowIT.Server.domain.UserChallenge;
 import umc.GrowIT.Server.web.dto.ChallengeDTO.ChallengeResponseDTO;
 
 import java.util.List;
@@ -58,5 +58,15 @@ public class ChallengeConverter {
                         .completed(challenge.isCompleted()) // 완료 여부
                         .build())
                 .collect(Collectors.toList());
+    }
+
+    // 챌린지 인증 작성
+    public static ChallengeResponseDTO.ProofDetailsDTO toChallengeResponseDTO(UserChallenge userChallenge) {
+        return ChallengeResponseDTO.ProofDetailsDTO.builder()
+                .challengeId(userChallenge.getChallenge().getId())
+                .certificationImage(userChallenge.getCertificationImage())
+                .thoughts(userChallenge.getThoughts())
+                .completed(userChallenge.isCompleted())
+                .build();
     }
 }

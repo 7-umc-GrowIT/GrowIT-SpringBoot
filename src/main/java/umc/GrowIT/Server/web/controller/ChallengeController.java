@@ -10,6 +10,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 import umc.GrowIT.Server.apiPayload.ApiResponse;
 import umc.GrowIT.Server.domain.enums.ChallengeType;
+import umc.GrowIT.Server.service.ChallengeService.ChallengeCommandService;
 import umc.GrowIT.Server.service.ChallengeService.ChallengeQueryService;
 import umc.GrowIT.Server.web.dto.ChallengeDTO.ChallengeRequestDTO;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -24,6 +25,7 @@ import umc.GrowIT.Server.web.dto.ChallengeDTO.ChallengeResponseDTO;
 @RequestMapping("/challenges")
 public class ChallengeController {
     private final ChallengeQueryService challengeQueryService;
+    private final ChallengeCommandService challengeCommandService;
     @GetMapping("/summary")
     @Operation(summary = "챌린지 홈 조회 API", description = "사용자의 챌린지 홈 화면에 보여질 챌린지 요약 정보를 조회하는 API입니다.")
     @ApiResponses({
@@ -69,9 +71,13 @@ public class ChallengeController {
             @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "COMMON200", description = "OK, 챌린지 인증 성공"),
             @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "COMMON400", description = "BAD, 잘못된 요청"),
     })
-    public ApiResponse<ChallengeResponseDTO> createChallengeProof(@PathVariable Long challengeId,
-                                                                  @RequestBody ChallengeRequestDTO.ProofRequest proofRequest) {
-        return null;
+    public ApiResponse<ChallengeResponseDTO.ProofDetailsDTO> createChallengeProof(@PathVariable Long challengeId, @RequestParam Long userId, @RequestBody ChallengeRequestDTO.ProofRequestDTO proofRequest) {
+
+        // 서비스 호출
+        ChallengeResponseDTO.ProofDetailsDTO response = challengeCommandService.createChallengeProof(challengeId, userId, proofRequest);
+
+        // 성공 응답 반환
+        return ApiResponse.onSuccess(response);
     }
 
     @GetMapping("/{challengeId}")
@@ -91,7 +97,7 @@ public class ChallengeController {
             @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "COMMON400", description = "BAD, 잘못된 요청"),
     })
     public ApiResponse<ChallengeResponseDTO> updateChallengeProof(@PathVariable Long challengeId,
-                                                                  @RequestBody ChallengeRequestDTO.UpdateRequest updateRequest) {
+                                                                  @RequestBody ChallengeRequestDTO.UpdateRequestDTO updateRequest) {
         return null;
     }
 

@@ -11,7 +11,7 @@ public class ChallengeRequestDTO {
     @Builder
     @NoArgsConstructor
     @AllArgsConstructor
-    public static class ProofRequest {
+    public static class ProofRequestDTO {
         private String certificationImage;
         private String thoughts;
     }
@@ -20,7 +20,7 @@ public class ChallengeRequestDTO {
     @Builder
     @NoArgsConstructor
     @AllArgsConstructor
-    public static class UpdateRequest {
+    public static class UpdateRequestDTO {
         private String certificationImage;
         private String thoughts;
     }
