@@ -34,7 +34,7 @@ public class ChallengeCommandServiceImpl implements ChallengeCommandService {
 
     @Override
     @Transactional
-    public ChallengeResponseDTO.ProofDetailsDTO createChallengeProof(Long challengeId, Long userId, ChallengeRequestDTO.ProofRequestDTO proofRequest) {
+    public ChallengeResponseDTO.ProofDetailsDTO createChallengeProof(Long userId, Long challengeId, ChallengeRequestDTO.ProofRequestDTO proofRequest) {
         // 1. 유저 및 챌린지 조회
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new IllegalArgumentException("유저를 찾을 수 없습니다."));
