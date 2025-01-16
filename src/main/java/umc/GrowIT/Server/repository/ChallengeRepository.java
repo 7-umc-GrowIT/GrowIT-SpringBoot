@@ -47,5 +47,4 @@ public interface ChallengeRepository extends JpaRepository<Challenge, Long> {
 
 
 
-
 }

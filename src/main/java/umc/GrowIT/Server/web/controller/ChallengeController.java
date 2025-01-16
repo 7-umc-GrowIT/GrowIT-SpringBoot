@@ -71,10 +71,10 @@ public class ChallengeController {
             @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "COMMON200", description = "OK, 챌린지 인증 성공"),
             @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "COMMON400", description = "BAD, 잘못된 요청"),
     })
-    public ApiResponse<ChallengeResponseDTO.ProofDetailsDTO> createChallengeProof(@RequestParam Long userId, @PathVariable Long challengeId, @RequestBody ChallengeRequestDTO.ProofRequestDTO proofRequest) {
+    public ApiResponse<ChallengeResponseDTO.AddProofDTO> createChallengeProof(@RequestParam Long userId, @PathVariable Long challengeId, @RequestBody ChallengeRequestDTO.ProofRequestDTO proofRequest) {
 
         // 서비스 호출
-        ChallengeResponseDTO.ProofDetailsDTO response = challengeCommandService.createChallengeProof(userId, challengeId, proofRequest);
+        ChallengeResponseDTO.AddProofDTO response = challengeCommandService.createChallengeProof(userId, challengeId, proofRequest);
 
         // 성공 응답 반환
         return ApiResponse.onSuccess(response);
@@ -87,7 +87,8 @@ public class ChallengeController {
             @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "COMMON400", description = "BAD, 잘못된 요청"),
     })
     public ApiResponse<ChallengeResponseDTO.ProofDetailsDTO> getChallengeProofDetails(@PathVariable Long challengeId) {
-        return null;
+        ChallengeResponseDTO.ProofDetailsDTO response = challengeCommandService.getChallengeProofDetails(challengeId);
+        return ApiResponse.onSuccess(response);
     }
 
     @PatchMapping("/{challengeId}")

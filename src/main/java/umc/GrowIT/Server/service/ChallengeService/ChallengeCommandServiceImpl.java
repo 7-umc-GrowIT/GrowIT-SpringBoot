@@ -3,6 +3,7 @@ package umc.GrowIT.Server.service.ChallengeService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import umc.GrowIT.Server.converter.ChallengeConverter;
 import umc.GrowIT.Server.domain.Challenge;
 import umc.GrowIT.Server.domain.User;
 import umc.GrowIT.Server.domain.UserChallenge;
@@ -32,9 +33,10 @@ public class ChallengeCommandServiceImpl implements ChallengeCommandService {
         challengeRepository.save(challenge);
     }
 
+    // 팰린지 인증 작성
     @Override
     @Transactional
-    public ChallengeResponseDTO.ProofDetailsDTO createChallengeProof(Long userId, Long challengeId, ChallengeRequestDTO.ProofRequestDTO proofRequest) {
+    public ChallengeResponseDTO.AddProofDTO createChallengeProof(Long userId, Long challengeId, ChallengeRequestDTO.ProofRequestDTO proofRequest) {
         // 1. 유저 및 챌린지 조회
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new IllegalArgumentException("유저를 찾을 수 없습니다."));
@@ -58,13 +60,29 @@ public class ChallengeCommandServiceImpl implements ChallengeCommandService {
             challengeRepository.save(challenge); // 변경사항 저장
         }
 
-        // 4. 응답 DTO 반환
-        return ChallengeResponseDTO.ProofDetailsDTO.builder()
-                .challengeId(challenge.getId())
-                .certificationImage(userChallenge.getCertificationImage())
-                .thoughts(userChallenge.getThoughts())
-                .completed(userChallenge.isCompleted())
-                .build();
+        // 4. 응답 DTO 생성
+        return ChallengeConverter.toChallengeResponseDTO(userChallenge);
+    }
+
+    // 챌린지 인증 내역 조회
+    @Override
+    @Transactional(readOnly = true)
+    public ChallengeResponseDTO.ProofDetailsDTO getChallengeProofDetails(Long challengeId) {
+        // 1. 챌린지 조회
+        Challenge challenge = challengeRepository.findById(challengeId)
+                .orElseThrow(() -> new IllegalArgumentException("챌린지를 찾을 수 없습니다."));
+
+        // 2. 챌린지가 미완료 상태라면 예외 처리
+        if (!challenge.isCompleted()) {
+            throw new IllegalStateException("미완료 상태의 챌린지는 인증 내역을 볼 수 없습니다.");
+        }
+
+        // 3. 인증 내역(UserChallenge) 조회
+        UserChallenge userChallenge = userChallengeRepository.findByChallengeId(challengeId)
+                .orElseThrow(() -> new IllegalArgumentException("챌린지 인증 내역이 없습니다."));
+
+        // 4. ProofDetailsDTO로 변환하여 반환
+        return ChallengeConverter.toChallengeProofDetailsDTO(challenge, userChallenge);
     }
 }
 
