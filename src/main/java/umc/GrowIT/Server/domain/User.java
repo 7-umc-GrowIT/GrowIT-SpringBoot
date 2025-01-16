@@ -55,6 +55,7 @@ public class User extends BaseEntity {
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
     private List<Diary> diaries;
 
+    @Setter
     @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "refresh_token_id", nullable = true)
     private RefreshToken refreshToken;
