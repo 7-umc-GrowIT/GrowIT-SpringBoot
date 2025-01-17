@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.*;
 import umc.GrowIT.Server.apiPayload.ApiResponse;
 import umc.GrowIT.Server.domain.enums.ItemCategory;
 import umc.GrowIT.Server.service.CreditService.CreditQueryServiceImpl;
+import umc.GrowIT.Server.web.controller.specification.UserSpecification;
 import umc.GrowIT.Server.web.dto.CreditDTO.CreditResponseDTO;
 import umc.GrowIT.Server.web.dto.ItemDTO.ItemResponseDTO;
 import umc.GrowIT.Server.web.dto.PaymentDTO.PaymentRequestDTO;
@@ -24,132 +25,49 @@ import umc.GrowIT.Server.web.dto.UserDTO.UserResponseDTO;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/users")
-public class UserController {
+public class UserController implements UserSpecification {
 
     private final CreditQueryServiceImpl creditQueryService;
 
-    @GetMapping("/items")
-    @Operation(summary = "보유중인 아이템 조회", description = "사용자가 보유한 아이템들을 조회합니다.")
-    @ApiResponses({
-            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "COMMON200", description = "OK, 성공", content = @Content(schema = @Schema(implementation = ApiResponse.class)))
-    })
-    public ApiResponse<ItemResponseDTO.ItemListDTO> getUserItemList(
-            @Parameter(description = "아이템 카테고리 (카테고리 명으로 전달)",
-                    schema = @Schema(allowableValues = {"BACKGROUND", "OBJECT", "PLANT", "HEAD_ACCESSORY"}),
-                    example = "BACKGROUND")
-            @RequestParam ItemCategory category)
-    {
+    @Override
+    public ApiResponse<ItemResponseDTO.ItemListDTO> getUserItemList(ItemCategory category) {
         return ApiResponse.onSuccess(null);
     }
 
-
-
-    @GetMapping("/credits")
-    @Operation(summary = "현재 보유중인 크레딧 조회", description = "사용자가 현재 보유한 크레딧 조회")
-    @ApiResponses({
-            @io.swagger.v3.oas.annotations.responses.ApiResponse(
-                    responseCode = "COMMON200",
-                    description = "성공"
-            ),
-            @io.swagger.v3.oas.annotations.responses.ApiResponse(
-                    responseCode = "MEMBER4001",
-                    description = "사용자가 없습니다.",
-                    content = @Content(schema = @Schema(implementation = ApiResponse.class))
-            )
-    })
+    @Override
     public ApiResponse<CreditResponseDTO.CurrentCreditDTO> getUserCredit() {
-        // TODO: Security Context에서 현재 로그인한 사용자의 ID를 가져오는 로직 필요
         Long userId = 1L; // 임시로 1L 사용
         return ApiResponse.onSuccess(creditQueryService.getCurrentCredit(userId));
     }
 
-
-
-    @GetMapping("/credits/total")
-    @Operation(summary = "누적 크레딧 조회", description = "사용자의 누적 크레딧을 조회합니다.")
-    @ApiResponses({
-            @io.swagger.v3.oas.annotations.responses.ApiResponse(
-                    responseCode = "COMMON200",
-                    description = "성공"
-            ),
-            @io.swagger.v3.oas.annotations.responses.ApiResponse(
-                    responseCode = "CREDIT4001",
-                    description = "크레딧 정보를 찾을 수 없습니다.",
-                    content = @Content(schema = @Schema(implementation = ApiResponse.class))
-            )
-    })
+    @Override
     public ApiResponse<CreditResponseDTO.TotalCreditDTO> getUserTotalCredit() {
         Long userId = 1L; // 임시로 1L 사용
         return ApiResponse.onSuccess(creditQueryService.getTotalCredit(userId));
     }
 
-
-
-
-    @PostMapping("/credits/payment")
-    @Operation(
-            summary = "크레딧 구매",
-            description = "결제를 통해 크레딧을 구매합니다."
-    )
-    public ApiResponse<PaymentResponseDTO> purchaseCredits(
-            @Valid @RequestBody @io.swagger.v3.oas.annotations.parameters.RequestBody(
-                    description = "결제 정보",
-                    required = true,
-                    content = @Content(
-                            schema = @Schema(implementation = PaymentRequestDTO.class)
-                    )
-            ) PaymentRequestDTO request
-    ) {
-        return ApiResponse.onSuccess(null);  // 실제 구현은 service에서 처리
-    }
-
-    // 사용자 계정 관련
-    @PostMapping("/password")
-    @Operation(
-            summary = "비밀번호 재설정 API",
-            description = "사용자가 비밀번호를 재설정하는 API입니다."
-    )
-    @ApiResponses({
-            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "COMMON200", description = "OK, 성공", content = @Content(schema = @Schema(implementation = ApiResponse.class)))
-    })
-    public ApiResponse<UserRequestDTO.ResetPasswordRequestDTO> resetPassword(@RequestBody UserRequestDTO.ResetPasswordRequestDTO request) {
+    @Override
+    public ApiResponse<PaymentResponseDTO> purchaseCredits(PaymentRequestDTO request) {
         return ApiResponse.onSuccess(null);
     }
 
-    @PatchMapping("")
-    @Operation(
-            summary = "회원 탈퇴 API",
-            description = "사용자가 자신의 계정을 삭제하는 API입니다."
-    )
-    @ApiResponses({
-            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "COMMON200", description = "OK, 성공", content = @Content(schema = @Schema(implementation = ApiResponse.class)))
-    })
-    public ApiResponse<UserResponseDTO.DeleteUserResponseDTO> deleteUser(@RequestBody UserRequestDTO.DeleteUserRequestDTO request) {
+    @Override
+    public ApiResponse<UserRequestDTO.ResetPasswordRequestDTO> resetPassword(UserRequestDTO.ResetPasswordRequestDTO request) {
         return ApiResponse.onSuccess(null);
     }
 
-    // 사용자 인증 관련
-    @PostMapping("/email")
-    @Operation(
-            summary = "인증 메일 전송 API",
-            description = "사용자에게 인증 메일을 전송하는 API입니다."
-    )
-    @ApiResponses({
-            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "COMMON200", description = "OK, 성공", content = @Content(schema = @Schema(implementation = ApiResponse.class)))
-    })
-    public ApiResponse<UserResponseDTO.SendAuthEmailResponseDTO> sendAuthEmail(@RequestBody UserRequestDTO.SendAuthEmailRequestDTO request) {
+    @Override
+    public ApiResponse<UserResponseDTO.DeleteUserResponseDTO> deleteUser(UserRequestDTO.DeleteUserRequestDTO request) {
         return ApiResponse.onSuccess(null);
     }
 
-    @PostMapping("/verification")
-    @Operation(
-            summary = "인증 번호 확인 API",
-            description = "사용자가 입력한 인증 번호를 확인하는 API입니다."
-    )
-    @ApiResponses({
-            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "COMMON200", description = "OK, 성공", content = @Content(schema = @Schema(implementation = ApiResponse.class)))
-    })
-    public ApiResponse<UserResponseDTO.VerifyAuthCodeResponseDTO> verifyAuthCode(@RequestBody UserRequestDTO.VerifyAuthCodeRequestDTO request) {
+    @Override
+    public ApiResponse<UserResponseDTO.SendAuthEmailResponseDTO> sendAuthEmail(UserRequestDTO.SendAuthEmailRequestDTO request) {
+        return ApiResponse.onSuccess(null);
+    }
+
+    @Override
+    public ApiResponse<UserResponseDTO.VerifyAuthCodeResponseDTO> verifyAuthCode(UserRequestDTO.VerifyAuthCodeRequestDTO request) {
         return ApiResponse.onSuccess(null);
     }
 }
