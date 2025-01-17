@@ -4,6 +4,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import umc.GrowIT.Server.domain.Challenge;
+import umc.GrowIT.Server.domain.enums.ChallengeType;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -39,8 +40,9 @@ public interface ChallengeRepository extends JpaRepository<Challenge, Long> {
 
     // 챌린지 상태 및 완료 여부에 따라 챌린지 목록 조회
     @Query("SELECT uc.challenge FROM UserChallenge uc WHERE uc.user.id = :userId " +
-            "AND (:completed IS NULL OR uc.completed = :completed)")
-    List<Challenge> findChallengesByStatusAndCompletion(@Param("userId") Long userId, @Param("completed") Boolean completed);
+            "AND (:completed IS NULL OR uc.completed = :completed)" +
+            "AND (:status IS NULL OR uc.challenge.dtype = :status)")
+    List<Challenge> findChallengesByStatusAndCompletion(@Param("userId") Long userId, @Param("status") ChallengeType challengeType, @Param("completed") Boolean completed);
 
 
 

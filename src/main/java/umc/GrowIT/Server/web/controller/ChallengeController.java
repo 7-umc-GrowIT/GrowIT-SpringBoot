@@ -9,6 +9,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 import umc.GrowIT.Server.apiPayload.ApiResponse;
+import umc.GrowIT.Server.domain.enums.ChallengeType;
 import umc.GrowIT.Server.service.ChallengeService.ChallengeQueryService;
 import umc.GrowIT.Server.web.dto.ChallengeDTO.ChallengeRequestDTO;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -41,9 +42,10 @@ public class ChallengeController {
     })
     public ApiResponse<ChallengeResponseDTO.ChallengeStatusListDTO> getChallengeStatus(
             @RequestParam Long userId,
+            @RequestParam(required = false) ChallengeType status,
             @RequestParam(required = false) Boolean completed) {
         // 서비스 호출
-        ChallengeResponseDTO.ChallengeStatusListDTO challengeStatusList = challengeQueryService.getChallengeStatus(userId, completed);
+        ChallengeResponseDTO.ChallengeStatusListDTO challengeStatusList = challengeQueryService.getChallengeStatus(userId, status, completed);
 
         // 성공 응답 반환
         return ApiResponse.onSuccess(challengeStatusList);
