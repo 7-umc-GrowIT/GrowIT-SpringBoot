@@ -52,11 +52,6 @@ public class UserController implements UserSpecification {
     }
 
     @Override
-    public ApiResponse<UserRequestDTO.ResetPasswordRequestDTO> resetPassword(UserRequestDTO.ResetPasswordRequestDTO request) {
-        return ApiResponse.onSuccess(null);
-    }
-
-    @Override
     public ApiResponse<UserResponseDTO.DeleteUserResponseDTO> deleteUser(UserRequestDTO.DeleteUserRequestDTO request) {
         return ApiResponse.onSuccess(null);
     }
