@@ -55,12 +55,6 @@ public interface UserSpecification {
     })
     ApiResponse<PaymentResponseDTO> purchaseCredits(@RequestBody PaymentRequestDTO request);
 
-    @PostMapping("/password")
-    @Operation(summary = "비밀번호 재설정 API", description = "사용자가 비밀번호를 재설정하는 API입니다.")
-    @ApiResponses({
-            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "COMMON200", description = "⭕ SUCCESS")
-    })
-    ApiResponse<UserRequestDTO.ResetPasswordRequestDTO> resetPassword(@RequestBody UserRequestDTO.ResetPasswordRequestDTO request);
 
     @PatchMapping("")
     @Operation(summary = "회원 탈퇴 API", description = "사용자가 자신의 계정을 삭제하는 API입니다.")
