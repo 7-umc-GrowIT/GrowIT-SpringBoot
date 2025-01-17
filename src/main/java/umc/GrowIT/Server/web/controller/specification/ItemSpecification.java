@@ -48,7 +48,7 @@ public interface ItemSpecification {
     @PostMapping("/items/{itemId}/order")
     @Operation(summary = "아이템 구매 API", description = "특정 아이템을 구매하는 API입니다. 아이템 ID를 path variable로 전달받아 해당 아이템을 주문합니다.")
     @ApiResponses({
-            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "COMMON200", description = "OK, 성공", content = @Content(schema = @Schema(implementation = ApiResponse.class)))
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "COMMON200", description = "⭕ SUCCESS", content = @Content(schema = @Schema(implementation = ApiResponse.class)))
     })
     @Parameter(name = "itemId", description = "주문할 아이템의 ID", required = true)
     ApiResponse<ItemResponseDTO.OrderItemResponseDTO> orderItem(@PathVariable("itemId") Long itemId);

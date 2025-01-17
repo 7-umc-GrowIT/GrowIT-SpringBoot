@@ -36,13 +36,13 @@ public class UserController implements UserSpecification {
 
     @Override
     public ApiResponse<CreditResponseDTO.CurrentCreditDTO> getUserCredit() {
-        Long userId = 1L; // 임시로 1L 사용
+        Long userId = 13L; // 임시로 13L 송진우 사용
         return ApiResponse.onSuccess(creditQueryService.getCurrentCredit(userId));
     }
 
     @Override
     public ApiResponse<CreditResponseDTO.TotalCreditDTO> getUserTotalCredit() {
-        Long userId = 1L; // 임시로 1L 사용
+        Long userId = 13L; // 임시로 13L 송진우 사용
         return ApiResponse.onSuccess(creditQueryService.getTotalCredit(userId));
     }
 
