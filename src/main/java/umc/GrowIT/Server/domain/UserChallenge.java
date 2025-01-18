@@ -47,4 +47,14 @@ public class UserChallenge extends BaseEntity {
         this.challengeStatus = newStatus;
     }
 
+    // 인증 이미지 수정 메서드
+    public void setCertificationImage(String certificationImage) {
+        this.certificationImage = certificationImage;
+    }
+
+    // 인증 소감 수정 메서드
+    public void setThoughts(String thoughts) {
+        this.thoughts = thoughts;
+    }
+
 }

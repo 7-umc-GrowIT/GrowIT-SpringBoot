@@ -102,6 +102,17 @@ public class ChallengeResponseDTO {
         private LocalDateTime certificationDate;
     }
 
+    // 챌린지 수정
+    @Getter
+    @Builder
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class ModifyProofDTO {
+        private Long challengeId;
+        private String certificationImage;
+        private String thoughts;
+        private boolean completed;
+    }
 
     // 챌린지 삭제 응답 DTO
     @Getter

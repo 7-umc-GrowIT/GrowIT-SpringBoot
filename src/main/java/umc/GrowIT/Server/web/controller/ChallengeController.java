@@ -97,9 +97,10 @@ public class ChallengeController {
             @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "COMMON200", description = "OK, 챌린지 인증 수정 성공"),
             @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "COMMON400", description = "BAD, 잘못된 요청"),
     })
-    public ApiResponse<ChallengeResponseDTO> updateChallengeProof(@PathVariable Long challengeId,
+    public ApiResponse<ChallengeResponseDTO.ModifyProofDTO> updateChallengeProof(@PathVariable Long challengeId,
                                                                   @RequestBody ChallengeRequestDTO.UpdateRequestDTO updateRequest) {
-        return null;
+        ChallengeResponseDTO.ModifyProofDTO response = challengeCommandService.updateChallengeProof(challengeId, updateRequest);
+        return ApiResponse.onSuccess(response);
     }
 
     @DeleteMapping("{challengeId}")

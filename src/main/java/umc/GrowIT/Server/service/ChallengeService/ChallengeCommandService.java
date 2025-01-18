@@ -8,5 +8,6 @@ public interface ChallengeCommandService {
     void markChallengeAsCompleted(Long userId, Long challengeId);
     ChallengeResponseDTO.AddProofDTO createChallengeProof(Long userId, Long challengeId, ChallengeRequestDTO.ProofRequestDTO proofRequest);
     ChallengeResponseDTO.ProofDetailsDTO getChallengeProofDetails(Long challengeId);
+    ChallengeResponseDTO.ModifyProofDTO updateChallengeProof(Long challengeId, ChallengeRequestDTO.UpdateRequestDTO updateRequest);
 
 }

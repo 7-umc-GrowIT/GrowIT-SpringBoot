@@ -46,5 +46,8 @@ public interface ChallengeRepository extends JpaRepository<Challenge, Long> {
     List<Challenge> findChallengesByStatusAndCompletion(@Param("userId") Long userId, @Param("status") ChallengeType challengeType, @Param("completed") Boolean completed);
 
 
+    // 챌린지 수정
+    @Query("SELECT uc FROM UserChallenge uc WHERE uc.challenge.id = :challengeId")
+    Optional<UserChallenge> findByChallengeId(@Param("challengeId") Long challengeId);
 
 }
