@@ -46,7 +46,14 @@ public enum ErrorStatus implements BaseErrorCode {
 
     // 크레딧 관련 에러
     CREDIT_NOT_FOUND(HttpStatus.BAD_REQUEST, "CREDIT4001", "크레딧 정보를 찾을 수 없습니다."),
-    INSUFFICIENT_CREDIT(HttpStatus.BAD_REQUEST, "CREDIT4002", "보유 크레딧이 부족합니다.");
+    INSUFFICIENT_CREDIT(HttpStatus.BAD_REQUEST, "CREDIT4002", "보유 크레딧이 부족합니다."),
+
+    // 날짜 관련 에러
+    DATE_NOT_FOUND(HttpStatus.BAD_REQUEST, "DATE4001", "유효하지 않은 날짜입니다."),
+
+    //일기 관련 에러
+    DIARY_NOT_FOUND(HttpStatus.BAD_REQUEST, "DIARY4001", "존재하지 않는 일기입니다."),
+    DIARY_CHARACTER_LIMIT(HttpStatus.BAD_REQUEST, "DIARY4002", "100자 이내로 작성된 일기입니다.");
 
 
     private final HttpStatus httpStatus;
