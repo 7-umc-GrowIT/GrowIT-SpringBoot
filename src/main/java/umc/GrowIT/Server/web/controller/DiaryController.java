@@ -8,6 +8,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 import umc.GrowIT.Server.apiPayload.ApiResponse;
+import umc.GrowIT.Server.service.diaryService.DiaryQueryService;
 import umc.GrowIT.Server.web.controller.specification.DiarySpecification;
 import umc.GrowIT.Server.web.dto.DiaryDTO.DiaryRequestDTO;
 import umc.GrowIT.Server.web.dto.DiaryDTO.DiaryResponseDTO;
@@ -17,10 +18,13 @@ import umc.GrowIT.Server.web.dto.DiaryDTO.DiaryResponseDTO;
 @RequiredArgsConstructor
 @RequestMapping("/diaries")
 public class DiaryController implements DiarySpecification {
+    private final DiaryQueryService diaryQueryService;
     @GetMapping("/dates")
     public ApiResponse<DiaryResponseDTO.DiaryDateListDTO> getDiaryDate(@RequestParam Integer year, @RequestParam Integer month){
+        //userId는 임시로 1
+        Long userId = 1L;
 
-        return null;
+        return ApiResponse.onSuccess(diaryQueryService.getDiaryDate(year,month,userId));
     }
     @GetMapping("/")
     public ApiResponse<DiaryResponseDTO.DiaryListDTO> getDiaryList(@RequestParam Integer year, @RequestParam Integer month){
