@@ -85,16 +85,6 @@ public class UserRequestDTO {
         private String authCode; // 인증 번호
     }
 
-    // 비밀번호 재설정 요청 DTO
-    @Getter
-    @Builder
-    @NoArgsConstructor
-    @AllArgsConstructor
-    public static class ResetPasswordRequestDTO {
-        private String newPassword; // 새로운 비밀번호
-        private String confirmPassword; // 비밀번호 확인
-    }
-
     // 회원 탈퇴 요청 DTO
     @Getter
     @Builder
