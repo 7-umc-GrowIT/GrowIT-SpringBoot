@@ -48,6 +48,9 @@ public class User extends BaseEntity {
     @Enumerated(EnumType.STRING)
     private Role role;
 
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<UserChallenge> userChallenges;
+
     @Setter
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
     private List<UserTerm> userTerms;
