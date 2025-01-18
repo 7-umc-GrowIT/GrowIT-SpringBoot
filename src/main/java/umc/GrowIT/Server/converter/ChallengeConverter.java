@@ -62,16 +62,6 @@ public class ChallengeConverter {
                 .collect(Collectors.toList());
     }
 
-    // 챌린지 인증 작성
-    public static ChallengeResponseDTO.ProofDetailsDTO toChallengeResponseDTO(UserChallenge userChallenge) {
-        return ChallengeResponseDTO.ProofDetailsDTO.builder()
-                .challengeId(userChallenge.getChallenge().getId())
-                .certificationImage(userChallenge.getCertificationImage())
-                .thoughts(userChallenge.getThoughts())
-                .completed(userChallenge.isCompleted())
-                .build();
-    }
-
     // UserChallenge 생성
     public static UserChallenge createUserChallenge(User user, Challenge challenge, ChallengeRequestDTO.ProofRequestDTO proofRequest) {
         return UserChallenge.builder()
