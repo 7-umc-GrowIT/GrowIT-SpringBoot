@@ -48,15 +48,7 @@ public class ChallengeCommandServiceImpl implements ChallengeCommandService {
             throw new RuntimeException("이미 완료한 챌린지입니다.");
         }
 
-        // UserChallenge 생성
-        UserChallenge userChallenge = UserChallenge.builder()
-                .user(user)
-                .challenge(challenge)
-                .certificationImage(proofRequest.getCertificationImage())
-                .thoughts(proofRequest.getThoughts())
-                .completed(true)
-                .build();
-
+        UserChallenge userChallenge = ChallengeConverter.createUserChallenge(user, challenge, proofRequest);
         userChallengeRepository.save(userChallenge);
 
         // Challenge의 completed 상태를 true로 변경

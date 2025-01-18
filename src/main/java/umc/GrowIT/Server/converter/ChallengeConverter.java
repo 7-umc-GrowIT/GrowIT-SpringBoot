@@ -1,7 +1,9 @@
 package umc.GrowIT.Server.converter;
 
 import umc.GrowIT.Server.domain.Challenge;
+import umc.GrowIT.Server.domain.User;
 import umc.GrowIT.Server.domain.UserChallenge;
+import umc.GrowIT.Server.web.dto.ChallengeDTO.ChallengeRequestDTO;
 import umc.GrowIT.Server.web.dto.ChallengeDTO.ChallengeResponseDTO;
 
 import java.util.List;
@@ -70,7 +72,18 @@ public class ChallengeConverter {
                 .build();
     }
 
-    // UserChallenge를 ChallengeResponseDTO.ProofDetailsDTO로 변환
+    // UserChallenge 생성
+    public static UserChallenge createUserChallenge(User user, Challenge challenge, ChallengeRequestDTO.ProofRequestDTO proofRequest) {
+        return UserChallenge.builder()
+                .user(user)
+                .challenge(challenge)
+                .certificationImage(proofRequest.getCertificationImage())
+                .thoughts(proofRequest.getThoughts())
+                .completed(true)
+                .build();
+    }
+
+    // 챌린지 인증 작성 결과 반환
     public static ChallengeResponseDTO.ProofDetailsDTO toProofDetailsDTO(UserChallenge userChallenge) {
         return ChallengeResponseDTO.ProofDetailsDTO.builder()
                 .challengeId(userChallenge.getChallenge().getId())
