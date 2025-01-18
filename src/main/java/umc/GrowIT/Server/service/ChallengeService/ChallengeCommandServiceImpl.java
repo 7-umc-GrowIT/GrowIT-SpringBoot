@@ -24,6 +24,7 @@ public class ChallengeCommandServiceImpl implements ChallengeCommandService {
     private final UserRepository userRepository;
     private final UserChallengeRepository userChallengeRepository;
 
+
     @Override
     public void markChallengeAsCompleted(Long userId, Long challengeId) {
         Challenge challenge = challengeRepository.findByIdAndUserId(challengeId, userId).orElse(null);
@@ -43,19 +44,16 @@ public class ChallengeCommandServiceImpl implements ChallengeCommandService {
         User user = userRepository.findById(userId).orElseThrow(() -> new UserHandler(ErrorStatus.USER_NOT_FOUND));
         Challenge challenge = challengeRepository.findById(challengeId).orElseThrow(() -> new ChallengeHandler(ErrorStatus.CHALLENGE_NOT_FOUND));
 
-        // 이미 완료된 챌린지인지 확인
-        if (challenge.isCompleted()) {
-            throw new RuntimeException("이미 완료한 챌린지입니다.");
-        }
-
         UserChallenge userChallenge = ChallengeConverter.createUserChallenge(user, challenge, proofRequest);
         userChallengeRepository.save(userChallenge);
 
-        // Challenge의 completed 상태를 true로 변경
-        if (!challenge.isCompleted()) {
-            challenge.markAsCompleted();
-            challengeRepository.save(challenge);
+        // 이미 완료된 챌린지인지 확인
+        if (challenge.isCompleted()) {
+            throw new IllegalStateException("이미 완료된 챌린지입니다.");
         }
+
+        challenge.markAsCompleted();
+        challengeRepository.save(challenge);
 
         return ChallengeConverter.toProofDetailsDTO(userChallenge);
     }

@@ -56,9 +56,6 @@ public class Challenge extends BaseEntity {
 
     // 챌린지 완료 상태로 변경
     public void markAsCompleted() {
-        if (this.completed) {
-            throw new IllegalStateException("이미 완료된 챌린지입니다.");
-        }
         this.completed = true;
     }
 
