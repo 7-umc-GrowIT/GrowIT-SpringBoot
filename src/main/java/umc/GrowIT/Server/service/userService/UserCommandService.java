@@ -11,4 +11,6 @@ public interface UserCommandService {
     UserResponseDTO.TokenDTO emailLogin(UserRequestDTO.EmailLoginDTO emailLoginDTO);
 
     void updatePassword(UserRequestDTO.PasswordDTO passwordDTO);
+
+    UserResponseDTO.DeleteUserResponseDTO delete(Long userId);
 }

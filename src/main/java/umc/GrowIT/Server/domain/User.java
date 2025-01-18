@@ -64,4 +64,10 @@ public class User extends BaseEntity {
         this.password = password;
     }
 
+    public void deleteAccount() {
+        if (this.status == UserStatus.ACTIVE) {
+            this.status = UserStatus.INACTIVE;
+        }
+    }
+
 }

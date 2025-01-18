@@ -85,14 +85,4 @@ public class UserRequestDTO {
     public static class VerifyAuthCodeRequestDTO {
         private String authCode; // 인증 번호
     }
-
-    // 회원 탈퇴 요청 DTO
-    @Getter
-    @Builder
-    @NoArgsConstructor
-    @AllArgsConstructor
-    public static class DeleteUserRequestDTO {
-        private String reason; // 탈퇴 사유
-    }
-
 }
