@@ -48,6 +48,10 @@ public class UserCommandServiceImpl implements UserCommandService {
     @Override
     @Transactional
     public UserResponseDTO.TokenDTO createUser(UserRequestDTO.UserInfoDTO userInfoDTO) {
+        //인증 받지 않았을 때 예외 처리
+        if (userInfoDTO.getIsVerified() == null || !userInfoDTO.getIsVerified())
+            throw new UserHandler(ErrorStatus.EMAIL_NOT_VERIFIED);
+
         String email = userInfoDTO.getEmail();
         Optional<User> user = userRepository.findByEmail(email);
 
