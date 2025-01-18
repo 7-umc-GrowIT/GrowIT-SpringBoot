@@ -33,7 +33,13 @@ public class ItemCommandServiceImpl implements ItemCommandService {
         Item item = itemRepository.findById(itemId)
                 .orElseThrow(() -> new ItemHandler(ErrorStatus.ITEM_NOT_FOUND));
 
-        // 3. 사용자의 현재 보유 중인 크레딧과 아이템의 가격을 비교
+        // 3. 사용자가 이미 보유 중인 아이템인지 체크
+        userItemRepository.findByUserAndItem(user, item)
+                .ifPresent(ownedItem -> {
+                    throw new ItemHandler(ErrorStatus.ITEM_OWNED);
+                });
+
+        // 4. 사용자의 현재 보유 중인 크레딧과 아이템의 가격을 비교
         // 보유 크레딧 < 아이템 가격 = 오류 발생
         if(user.getCurrentCredit() < item.getPrice()) {
             throw new ItemHandler(ErrorStatus.INSUFFICIENT_CREDIT);
