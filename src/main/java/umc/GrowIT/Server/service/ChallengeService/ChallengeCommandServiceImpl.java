@@ -3,6 +3,10 @@ package umc.GrowIT.Server.service.ChallengeService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import umc.GrowIT.Server.apiPayload.code.status.ErrorStatus;
+import umc.GrowIT.Server.apiPayload.exception.ChallengeHandler;
+import umc.GrowIT.Server.apiPayload.exception.UserHandler;
+import umc.GrowIT.Server.converter.ChallengeConverter;
 import umc.GrowIT.Server.domain.Challenge;
 import umc.GrowIT.Server.domain.User;
 import umc.GrowIT.Server.domain.UserChallenge;
@@ -22,26 +26,29 @@ public class ChallengeCommandServiceImpl implements ChallengeCommandService {
 
     @Override
     public void markChallengeAsCompleted(Long userId, Long challengeId) {
-        Challenge challenge = challengeRepository.findByIdAndUserId(challengeId, userId)
-                .orElseThrow(() -> new IllegalArgumentException("챌린지를 찾을 수 없습니다."));
+        Challenge challenge = challengeRepository.findByIdAndUserId(challengeId, userId).orElse(null);
 
-        // 챌린지를 완료 상태로 변경
+        if(challenge == null) {
+            throw new ChallengeHandler(ErrorStatus.CHALLENGE_NOT_FOUND);
+        }
+
         challenge.markAsCompleted();
-
-        // 변경된 챌린지 저장
         challengeRepository.save(challenge);
     }
 
     @Override
     @Transactional
     public ChallengeResponseDTO.ProofDetailsDTO createChallengeProof(Long userId, Long challengeId, ChallengeRequestDTO.ProofRequestDTO proofRequest) {
-        // 1. 유저 및 챌린지 조회
-        User user = userRepository.findById(userId)
-                .orElseThrow(() -> new IllegalArgumentException("유저를 찾을 수 없습니다."));
-        Challenge challenge = challengeRepository.findById(challengeId)
-                .orElseThrow(() -> new IllegalArgumentException("챌린지를 찾을 수 없습니다."));
+        // 유저 및 챌린지 조회
+        User user = userRepository.findById(userId).orElseThrow(() -> new UserHandler(ErrorStatus.USER_NOT_FOUND));
+        Challenge challenge = challengeRepository.findById(challengeId).orElseThrow(() -> new ChallengeHandler(ErrorStatus.CHALLENGE_NOT_FOUND));
 
-        // 2. UserChallenge 생성
+        // 이미 완료된 챌린지인지 확인
+        if (challenge.isCompleted()) {
+            throw new RuntimeException("이미 완료한 챌린지입니다.");
+        }
+
+        // UserChallenge 생성
         UserChallenge userChallenge = UserChallenge.builder()
                 .user(user)
                 .challenge(challenge)
@@ -52,19 +59,13 @@ public class ChallengeCommandServiceImpl implements ChallengeCommandService {
 
         userChallengeRepository.save(userChallenge);
 
-        // 3. Challenge의 completed 상태를 true로 변경
+        // Challenge의 completed 상태를 true로 변경
         if (!challenge.isCompleted()) {
-            challenge.markAsCompleted(); // Challenge 엔티티의 markAsCompleted 메서드 호출
-            challengeRepository.save(challenge); // 변경사항 저장
+            challenge.markAsCompleted();
+            challengeRepository.save(challenge);
         }
 
-        // 4. 응답 DTO 반환
-        return ChallengeResponseDTO.ProofDetailsDTO.builder()
-                .challengeId(challenge.getId())
-                .certificationImage(userChallenge.getCertificationImage())
-                .thoughts(userChallenge.getThoughts())
-                .completed(userChallenge.isCompleted())
-                .build();
+        return ChallengeConverter.toProofDetailsDTO(userChallenge);
     }
-}
 
+}

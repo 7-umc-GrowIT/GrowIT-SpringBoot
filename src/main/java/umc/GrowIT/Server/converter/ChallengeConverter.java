@@ -69,4 +69,14 @@ public class ChallengeConverter {
                 .completed(userChallenge.isCompleted())
                 .build();
     }
+
+    // UserChallenge를 ChallengeResponseDTO.ProofDetailsDTO로 변환
+    public static ChallengeResponseDTO.ProofDetailsDTO toProofDetailsDTO(UserChallenge userChallenge) {
+        return ChallengeResponseDTO.ProofDetailsDTO.builder()
+                .challengeId(userChallenge.getChallenge().getId())
+                .certificationImage(userChallenge.getCertificationImage())
+                .thoughts(userChallenge.getThoughts())
+                .completed(userChallenge.isCompleted())
+                .build();
+    }
 }

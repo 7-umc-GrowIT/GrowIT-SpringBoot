@@ -34,6 +34,9 @@ public enum ErrorStatus implements BaseErrorCode {
     EMPTY_CLAIMS(HttpStatus.NOT_FOUND, "AUTH4004", "JWT 토큰의 클레임 문자열이 비어 있습니다."),
     EMAIL_NOT_VERIFIED(HttpStatus.BAD_REQUEST, "AUTH4005", "이메일 인증을 완료해주세요."),
 
+    // 챌린지 관련 에러
+    CHALLENGE_NOT_FOUND(HttpStatus.NOT_FOUND, "CHALLENGE4001", "챌린지를 찾을 수 없습니다."),
+
     //기타 에러
     PASSWORD_NOT_MATCH(HttpStatus.BAD_REQUEST, "PWD4001", "비밀번호 확인이 일치하지 않습니다."),
 
