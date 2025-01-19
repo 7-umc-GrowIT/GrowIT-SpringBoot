@@ -44,6 +44,7 @@ public enum ErrorStatus implements BaseErrorCode {
     // 아이템 관련 에러
     ITEM_NOT_FOUND(HttpStatus.BAD_REQUEST, "ITEM4001", "아이템을 찾을 수 없습니다."),
     ITEM_NOT_OWNED(HttpStatus.BAD_REQUEST, "ITEM4002", "보유하지 않은 아이템입니다."),
+    ITEM_OWNED(HttpStatus.BAD_REQUEST, "ITEM4003", "이미 보유 중인 아이템입니다."),
 
     //결제관련에러
     PAYMENT_ERROR(HttpStatus.BAD_REQUEST, "PAYMENT4001", "결제정보가 정확하지 않습니다."),

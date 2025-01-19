@@ -70,4 +70,7 @@ public class User extends BaseEntity {
         }
     }
 
+    public void updateCurrentCredit(Integer currentCredit) {
+        this.currentCredit = currentCredit;
+    }
 }
