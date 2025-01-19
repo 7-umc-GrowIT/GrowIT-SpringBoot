@@ -1,0 +1,52 @@
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>인증 페이지</title>
+    <style>
+        /* 모바일 반응형 디자인 */
+        @media only screen and (max-width: 600px) {
+            body, table, td {
+                width: 100% !important;
+                padding: 0;
+            }
+
+            .email-container {
+                max-width: 100% !important;
+            }
+
+            h1 {
+                font-size: 20px !important;
+            }
+
+            .auth-code {
+                font-size: 18px !important;
+            }
+        }
+    </style>
+</head>
+<body style="font-family: 'Arial', sans-serif; background-color: #2ECC71; color: white; text-align: center; margin: 0; padding: 0; height: 100%; width: 100%;">
+
+<table align="center" role="presentation" cellspacing="0" cellpadding="0" border="0" class="email-container" style="margin: auto; max-width: 700px; background-color: #A9DFBF; border-radius: 5px;">
+    <tr>
+        <td style="padding: 40px; text-align: center;">
+
+            <div style="margin-bottom: 30px;">
+                <!-- 여기에 로고 이미지를 삽입하거나 로고 텍스트를 사용하세요 -->
+                <strong style="font-size: 24px; color: #1D8348;">GrowIT</strong>
+            </div>
+
+            <h1 style="color: white; font-size: 24px; margin: 0 0 10px 0;">안녕하세요!</h1>
+            <p style="margin: 0 0 20px 0; color: white; line-height: 1.5; font-size: 16px; ">인증 코드 보내드립니다.</p>
+
+            <!-- 인증 코드 -->
+            <div class="auth-code" style="background-color: #F4F6F7; color: black; padding: 10px 20px; display: inline-block; border-radius: 4px; font-size: 20px; font-weight: bold;" th:text="${authenticationCode}">
+                [인증 코드]
+            </div>
+
+        </td>
+    </tr>
+</table>
+
+</body>
+</html>
