@@ -117,9 +117,9 @@ public class AuthServiceImpl implements AuthService {
     private AuthenticationCode saveAuthenticationCode(String email, String authenticationCode) {
         // 1. 이전 유효한 인증 코드가 있는지 확인 & 있다면 무효화
         authenticationCodeRepository
-                .findByEmailAndExpirationDateAfterAndCodeStatus(email, LocalDateTime.now(), CodeStatus.ACTIVE)
+                .findByEmailAndExpirationDateAfterAndStatus(email, LocalDateTime.now(), CodeStatus.ACTIVE)
                         .ifPresent(authCode -> {
-                            authCode.updateCodeStatus(CodeStatus.EXPIRED);
+                            authCode.updateStatus(CodeStatus.EXPIRED);
                             authenticationCodeRepository.save(authCode);
                         });
 

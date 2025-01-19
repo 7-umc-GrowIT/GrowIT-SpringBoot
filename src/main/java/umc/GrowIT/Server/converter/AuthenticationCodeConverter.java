@@ -12,7 +12,7 @@ public class AuthenticationCodeConverter {
                 .email(email)
                 .code(authCode)
                 .isVerified(false)
-                .codeStatus(CodeStatus.ACTIVE)
+                .status(CodeStatus.ACTIVE)
                 .expirationDate(LocalDateTime.now().plusMinutes(5)) // 유효기간 5분
                 .build()
                 ;

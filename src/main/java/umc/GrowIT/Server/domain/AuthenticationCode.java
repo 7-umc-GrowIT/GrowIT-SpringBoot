@@ -32,13 +32,13 @@ public class AuthenticationCode extends BaseEntity {
 
     // 사용 가능 여부
     @Enumerated(EnumType.STRING)
-    private CodeStatus codeStatus;
+    private CodeStatus status;
 
     // 인증 유효기간
     @Column(nullable = false)
     private LocalDateTime expirationDate;
 
-    public void updateCodeStatus(CodeStatus codeStatus) {
-        this.codeStatus = codeStatus;
+    public void updateStatus(CodeStatus status) {
+        this.status = status;
     }
 }
