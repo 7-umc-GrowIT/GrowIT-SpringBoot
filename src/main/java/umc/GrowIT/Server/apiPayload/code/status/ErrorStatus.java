@@ -22,6 +22,10 @@ public enum ErrorStatus implements BaseErrorCode {
     EMAIL_ALREADY_EXISTS(HttpStatus.CONFLICT, "USER4003", "이미 존재하는 이메일입니다."),
     USER_STATUS_INACTIVE(HttpStatus.UNAUTHORIZED, "USER4004", "탈퇴한 회원입니다."),
 
+    //사용자 챌린지 관련 에러
+    USER_CHALLENGE_NOT_FOUND(HttpStatus.NOT_FOUND, "UC4001", "사용자 챌린지가 존재하지 않습니다"),
+    USER_CHALLENGE_COMPLETE(HttpStatus.BAD_REQUEST, "UC4002", "완료된 챌린지는 삭제가 불가합니다"),
+
     //약관 관련 에러
     TERM_NOT_FOUND(HttpStatus.NOT_FOUND, "TERM4001", "존재하지 않는 약관을 요청했습니다."),
     MANDATORY_TERMS_REQUIRED(HttpStatus.BAD_REQUEST, "TERM4002", "필수 약관에 반드시 동의해야 합니다."),
