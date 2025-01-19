@@ -23,7 +23,7 @@ public class DiaryQueryServiceImpl implements DiaryQueryService{
         // Diary 리스트를 year와 month를 기준으로 필터링
         List<Diary> diaryList = diaryRepository.findByUserIdAndYearAndMonth(userId, year, month);
 
-
+        //DiaryDateListDTO로 변환
         return DiaryConverter.toDiaryDateListDTO(diaryList);
     }
 
@@ -32,6 +32,7 @@ public class DiaryQueryServiceImpl implements DiaryQueryService{
         // Diary 리스트를 year와 month를 기준으로 필터링
         List<Diary> diaryList = diaryRepository.findByUserIdAndYearAndMonth(userId, year, month);
 
+        //DiaryListDTO로 변환
         return DiaryConverter.toDiaryListDTO(diaryList);
     }
 }
