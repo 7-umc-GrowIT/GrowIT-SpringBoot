@@ -82,12 +82,26 @@ public class ChallengeResponseDTO {
     @Builder
     @NoArgsConstructor
     @AllArgsConstructor
-    public static class ProofDetailsDTO {
+    public static class AddProofDTO {
         private Long challengeId;
         private String certificationImage;
         private String thoughts;
-        private LocalDateTime createdAt;
+        private boolean completed;
     }
+
+    // 첼린지 인증 내역
+    @Getter
+    @Builder
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class ProofDetailsDTO {
+        private String title;
+        private Integer time;
+        private String certificationImage;
+        private String thoughts;
+        private LocalDateTime certificationDate;
+    }
+
 
     // 챌린지 삭제 응답 DTO
     @Getter
