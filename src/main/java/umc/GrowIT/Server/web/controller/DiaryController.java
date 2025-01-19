@@ -22,14 +22,16 @@ public class DiaryController implements DiarySpecification {
     @GetMapping("/dates")
     public ApiResponse<DiaryResponseDTO.DiaryDateListDTO> getDiaryDate(@RequestParam Integer year, @RequestParam Integer month){
         //userId는 임시로 1
-        Long userId = 1L;
+        Long userId = 2L;
 
         return ApiResponse.onSuccess(diaryQueryService.getDiaryDate(year,month,userId));
     }
     @GetMapping("/")
     public ApiResponse<DiaryResponseDTO.DiaryListDTO> getDiaryList(@RequestParam Integer year, @RequestParam Integer month){
+        //userId는 임시로 1
+        Long userId = 2L;
 
-        return null;
+        return ApiResponse.onSuccess(diaryQueryService.getDiaryList(year,month,userId));
     }
     @GetMapping("/{diaryId}")
     public ApiResponse<DiaryResponseDTO.DiaryDTO> getDiary(@PathVariable("diaryId") Long diaryId){
