@@ -24,4 +24,24 @@ public class DiaryConverter {
                 .listSize(diaryDateDTOList.size())
                 .build();
     }
+
+    public static DiaryResponseDTO.DiaryDTO toDiaryDTO(Diary diary){
+        //일기의 id, 내용, 생성일
+        return DiaryResponseDTO.DiaryDTO.builder()
+                .diaryId(diary.getId())
+                .content(diary.getContent())
+                .date(diary.getCreatedAt())
+                .build();
+    }
+
+    public static DiaryResponseDTO.DiaryListDTO toDiaryListDTO(List<Diary> diaryList){
+
+        List<DiaryResponseDTO.DiaryDTO> diaryDTOList = diaryList.stream()
+                .map(DiaryConverter::toDiaryDTO).collect(Collectors.toList());
+
+        return DiaryResponseDTO.DiaryListDTO.builder()
+                .diaryList(diaryDTOList)
+                .listSize(diaryDTOList.size())
+                .build();
+    }
 }
