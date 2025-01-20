@@ -21,8 +21,9 @@ public class TestController {
     public String accessToken;
 
     @GetMapping("/test")
-    public String test(@RequestHeader(value = "Authorization", required = false) String authorizationHeader) {
+    public Long test(@RequestHeader(value = "Authorization", required = false) String authorizationHeader) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        return authentication.getName();
+        Long id = (Long) authentication.getPrincipal();
+        return id;
     }
 }

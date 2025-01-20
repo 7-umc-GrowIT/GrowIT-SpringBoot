@@ -18,7 +18,7 @@ public enum ErrorStatus implements BaseErrorCode {
 
     //멤버 관련 에러
     NICKNAME_NOT_EXIST(HttpStatus.BAD_REQUEST, "USER4001", "비밀번호 확인이 일치하지 않습니다."),
-    USER_NOT_FOUND(HttpStatus.NOT_FOUND, "USER4002", "이메일 또는 패스워드가 일치하지 않습니다."),
+    USER_NOT_FOUND(HttpStatus.UNAUTHORIZED, "USER4002", "이메일 또는 패스워드가 일치하지 않습니다."),
     EMAIL_ALREADY_EXISTS(HttpStatus.CONFLICT, "USER4003", "이미 존재하는 이메일입니다."),
     USER_STATUS_INACTIVE(HttpStatus.UNAUTHORIZED, "USER4004", "탈퇴한 회원입니다."),
 

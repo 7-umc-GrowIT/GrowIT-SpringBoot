@@ -1,9 +1,7 @@
-package umc.GrowIT.Server.jwt;
+package umc.GrowIT.Server.filter;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import io.jsonwebtoken.ExpiredJwtException;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
 import lombok.RequiredArgsConstructor;
@@ -12,9 +10,9 @@ import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import umc.GrowIT.Server.jwt.JwtTokenUtil;
 
 import java.io.IOException;
-import java.util.LinkedHashMap;
 
 @Component
 @RequiredArgsConstructor

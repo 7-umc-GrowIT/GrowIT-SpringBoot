@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
 
 import java.security.Key;
@@ -14,6 +15,7 @@ import java.util.Collections;
 import java.util.Date;
 import java.util.stream.Collectors;
 import org.springframework.security.core.GrantedAuthority;
+import umc.GrowIT.Server.domain.CustomUserDetails;
 import umc.GrowIT.Server.web.dto.UserDTO.UserResponseDTO;
 
 //JWT 토큰을 생성하고 검증하는 유틸리티 클래스
@@ -31,9 +33,9 @@ public class JwtTokenUtil {
     }
 
     // User 정보를 가지고 AccessToken, RefreshToken 생성
-    public UserResponseDTO.TokenDTO generateToken(Authentication authentication) {
+    public UserResponseDTO.TokenDTO generateToken(CustomUserDetails customUserDetails) {
 
-        String authorities = authentication.getAuthorities().stream()
+        String authorities = customUserDetails.getAuthorities().stream()
                 .map(GrantedAuthority::getAuthority)
                 .collect(Collectors.joining(","));
 
@@ -42,8 +44,9 @@ public class JwtTokenUtil {
         // Access Token 생성
         Date accessTokenExpiresIn = new Date(now + ACCESS_TOKEN_EXPIRATION_MS);
         String accessToken = Jwts.builder()
-                .setSubject(authentication.getName())
+                .setSubject(customUserDetails.getUsername())
                 .claim("roles", authorities)
+                .claim("id", customUserDetails.getId())
                 .setExpiration(accessTokenExpiresIn)
                 .signWith(key, SignatureAlgorithm.HS256)
                 .compact();
@@ -86,13 +89,13 @@ public class JwtTokenUtil {
 
     public Authentication getAuthentication(String token) {
         Claims claims = parseClaims(token);
-        String role = claims.get("roles", String.class);
-        SimpleGrantedAuthority authority = new SimpleGrantedAuthority(role);
+        Long id = claims.get("id", Long.class);
+        String roles = claims.get("roles", String.class);
 
         return new UsernamePasswordAuthenticationToken(
-                claims.getSubject(),
+                id,
                 null,
-                Collections.singletonList(authority)
+                Collections.singletonList(new SimpleGrantedAuthority(roles))
         );
     }
 }

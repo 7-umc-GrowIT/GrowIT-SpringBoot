@@ -16,10 +16,7 @@ import umc.GrowIT.Server.apiPayload.exception.TermHandler;
 import umc.GrowIT.Server.apiPayload.exception.UserHandler;
 import umc.GrowIT.Server.converter.TermConverter;
 import umc.GrowIT.Server.converter.UserConverter;
-import umc.GrowIT.Server.domain.RefreshToken;
-import umc.GrowIT.Server.domain.Term;
-import umc.GrowIT.Server.domain.User;
-import umc.GrowIT.Server.domain.UserTerm;
+import umc.GrowIT.Server.domain.*;
 import umc.GrowIT.Server.domain.enums.TermType;
 import umc.GrowIT.Server.domain.enums.UserStatus;
 import umc.GrowIT.Server.service.refreshTokenService.RefreshTokenCommandService;
@@ -29,6 +26,7 @@ import umc.GrowIT.Server.repository.TermRepository;
 import umc.GrowIT.Server.repository.UserRepository;
 import umc.GrowIT.Server.jwt.JwtTokenUtil;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -93,7 +91,7 @@ public class UserCommandServiceImpl implements UserCommandService {
 
         newUser.setUserTerms(userTerms);
 
-        UserResponseDTO.TokenDTO tokenDTO = jwtTokenUtil.generateToken(getAuthentication(newUser)); //JWT 토큰 생성 메소드 호출
+        UserResponseDTO.TokenDTO tokenDTO = jwtTokenUtil.generateToken(createUserDetails(newUser)); //JWT 토큰 생성 메소드 호출
         RefreshToken refreshToken = refreshTokenCommandService.createRefreshToken(tokenDTO.getRefreshToken(), newUser); //RefreshToken DB 저장
 
         newUser.setRefreshToken(refreshToken);
@@ -117,7 +115,7 @@ public class UserCommandServiceImpl implements UserCommandService {
 
             Authentication authentication = authenticationManager.authenticate(authenticationToken); //인증 성공 시 인증된 상태의 Authentication 객체 반환, 인증 실패 시 예외 던짐
 
-            return jwtTokenUtil.generateToken(authentication); //인증 성공 시 JWT 토큰 생성
+            return jwtTokenUtil.generateToken((CustomUserDetails) authentication.getPrincipal()); //인증 성공 시 JWT 토큰 생성
         } catch (UsernameNotFoundException | BadCredentialsException e) {
             throw new UserHandler(ErrorStatus.USER_NOT_FOUND); //사용자가 입력한 email 또는 password 데이터가 데이터베이스에 없을 때 예외 처리
         } catch (DisabledException e) {
@@ -153,13 +151,13 @@ public class UserCommandServiceImpl implements UserCommandService {
         }
     }
 
-    private Authentication getAuthentication(User user) {
-        //User 정보를 담은 Authentication 객체 생성
-        Authentication authentication = new UsernamePasswordAuthenticationToken(
-                user.getEmail(), //principal
-                null, //credentials
-                List.of(new SimpleGrantedAuthority(user.getRole().name())) //authorities
+    protected CustomUserDetails createUserDetails(User user){
+        return new CustomUserDetails(
+                user.getEmail(),
+                user.getPassword(),
+                Collections.singletonList(new SimpleGrantedAuthority(String.valueOf(user.getRole()))),
+                user.getId(),
+                user.getStatus()
         );
-        return authentication;
     }
 }
