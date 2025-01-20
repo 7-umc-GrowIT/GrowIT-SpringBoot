@@ -18,12 +18,19 @@ public class AuthenticationCodeConverter {
                 ;
     }
 
-    public static AuthResponseDTO.SendAuthEmailResponseDTO toAuthCodeResponse(AuthenticationCode authCode) {
+    public static AuthResponseDTO.SendAuthEmailResponseDTO toSendAuthCodeResponse(AuthenticationCode authCode) {
         return AuthResponseDTO.SendAuthEmailResponseDTO.builder()
                 .email(authCode.getEmail())
                 .message("이메일로 인증번호가 전송되었습니다.")
                 .code(authCode.getCode())
                 .expiration(authCode.getExpirationDate())
+                .build()
+                ;
+    }
+
+    public static AuthResponseDTO.VerifyAuthCodeResponseDTO toVerifiedAuthCodeResponse(AuthenticationCode authCode) {
+        return AuthResponseDTO.VerifyAuthCodeResponseDTO.builder()
+                .message("인증이 완료되었습니다.")
                 .build()
                 ;
     }
