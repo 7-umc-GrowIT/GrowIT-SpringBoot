@@ -3,7 +3,6 @@ package umc.GrowIT.Server.web.controller;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import umc.GrowIT.Server.apiPayload.ApiResponse;
 import umc.GrowIT.Server.apiPayload.code.status.ErrorStatus;
@@ -14,7 +13,7 @@ import umc.GrowIT.Server.web.dto.AuthDTO.AuthRequestDTO;
 import umc.GrowIT.Server.web.dto.AuthDTO.AuthResponseDTO;
 import umc.GrowIT.Server.web.dto.UserDTO.UserRequestDTO;
 import umc.GrowIT.Server.web.dto.UserDTO.UserResponseDTO;
-import umc.GrowIT.Server.service.userService.UserCommandService;
+import umc.GrowIT.Server.service.authService.UserCommandService;
 
 @Tag(name = "Auth", description = "인증 관련 API")
 @RestController
