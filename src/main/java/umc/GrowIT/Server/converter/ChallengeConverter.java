@@ -1,6 +1,7 @@
 package umc.GrowIT.Server.converter;
 
 import umc.GrowIT.Server.domain.Challenge;
+import umc.GrowIT.Server.domain.UserChallenge;
 import umc.GrowIT.Server.domain.enums.ChallengeStatus;
 import umc.GrowIT.Server.web.dto.ChallengeDTO.ChallengeResponseDTO;
 
@@ -58,5 +59,13 @@ public class ChallengeConverter {
                         .completed(challenge.isCompleted()) // 완료 여부
                         .build())
                 .collect(Collectors.toList());
+    }
+
+
+    public static ChallengeResponseDTO.DeleteChallengeResponseDTO toDeletedUserChallenge(UserChallenge userChallenge) {
+        return ChallengeResponseDTO.DeleteChallengeResponseDTO.builder()
+                .id(userChallenge.getId())
+                .message("챌린지를 삭제했어요")
+                .build();
     }
 }

@@ -96,6 +96,7 @@ public class ChallengeResponseDTO {
     @AllArgsConstructor
     public static class DeleteChallengeResponseDTO {
         // TODO 디테일하게 결정 필요
+        private Long id;
         private String message; // ex) 챌린지 삭제가 완료되었습니다
     }
 }
