@@ -5,7 +5,6 @@ import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
-import jakarta.validation.Valid;
 import org.springframework.web.bind.annotation.*;
 import umc.GrowIT.Server.apiPayload.ApiResponse;
 import umc.GrowIT.Server.domain.enums.ItemCategory;
@@ -13,8 +12,6 @@ import umc.GrowIT.Server.web.dto.CreditDTO.CreditResponseDTO;
 import umc.GrowIT.Server.web.dto.ItemDTO.ItemResponseDTO;
 import umc.GrowIT.Server.web.dto.PaymentDTO.PaymentRequestDTO;
 import umc.GrowIT.Server.web.dto.PaymentDTO.PaymentResponseDTO;
-import umc.GrowIT.Server.web.dto.UserDTO.UserRequestDTO;
-import umc.GrowIT.Server.web.dto.UserDTO.UserResponseDTO;
 
 public interface UserSpecification {
 
@@ -54,29 +51,4 @@ public interface UserSpecification {
             @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "PAYMENT4001", description = "❌ 결제정보다 정확하지않습니다.", content = @Content(schema = @Schema(implementation = ApiResponse.class)))
     })
     ApiResponse<PaymentResponseDTO> purchaseCredits(@RequestBody PaymentRequestDTO request);
-
-
-    @PatchMapping("")
-    @Operation(summary = "회원 탈퇴 API", description = "사용자가 자신의 계정을 삭제하는 API입니다.")
-    @ApiResponses({
-            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "COMMON200", description = "⭕ SUCCESS"),
-            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "USER4002", description = "❌ 이메일 또는 패스워드가 일치하지 않습니다.", content = @Content(schema = @Schema(implementation = ApiResponse.class))),
-            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "USER4004", description = "❌ 탈퇴한 회원입니다", content = @Content(schema = @Schema(implementation = ApiResponse.class))),
-            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "COMMON400", description = "❌ BAD, 잘못된 요청", content = @Content(schema = @Schema(implementation = ApiResponse.class)))
-    })
-    ApiResponse<UserResponseDTO.DeleteUserResponseDTO> deleteUser();
-
-    @PostMapping("/email")
-    @Operation(summary = "인증 메일 전송 API", description = "사용자에게 인증 메일을 전송하는 API입니다.")
-    @ApiResponses({
-            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "COMMON200", description = "⭕ SUCCESS")
-    })
-    ApiResponse<UserResponseDTO.SendAuthEmailResponseDTO> sendAuthEmail(@RequestBody UserRequestDTO.SendAuthEmailRequestDTO request);
-
-    @PostMapping("/verification")
-    @Operation(summary = "인증 번호 확인 API", description = "사용자가 입력한 인증 번호를 확인하는 API입니다.")
-    @ApiResponses({
-            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "COMMON200", description = "⭕ SUCCESS")
-    })
-    ApiResponse<UserResponseDTO.VerifyAuthCodeResponseDTO> verifyAuthCode(@RequestBody UserRequestDTO.VerifyAuthCodeRequestDTO request);
 }

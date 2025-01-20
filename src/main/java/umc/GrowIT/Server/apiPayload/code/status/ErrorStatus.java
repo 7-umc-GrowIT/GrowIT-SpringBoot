@@ -37,6 +37,9 @@ public enum ErrorStatus implements BaseErrorCode {
     UNSUPPORTED_TOKEN(HttpStatus.BAD_REQUEST, "AUTH4003", "지원하지 않는 JWT 토큰입니다."),
     EMPTY_CLAIMS(HttpStatus.BAD_REQUEST, "AUTH4004", "JWT 토큰의 클레임 문자열이 비어 있습니다."),
     EMAIL_NOT_VERIFIED(HttpStatus.BAD_REQUEST, "AUTH4005", "이메일 인증을 완료해주세요."),
+    INVALID_AUTH_TYPE(HttpStatus.BAD_REQUEST, "AUTH4006", "이메일 인증 타입이 잘못되었습니다."),
+    EMAIL_SEND_FAIL(HttpStatus.INTERNAL_SERVER_ERROR, "AUTH5001", "이메일 전송에 실패했습니다."),
+    EMAIL_ENCODING_FAIL(HttpStatus.INTERNAL_SERVER_ERROR, "AUTH5002", "이메일 내용 인코딩에 실패했습니다."),
 
 
     //기타 에러
