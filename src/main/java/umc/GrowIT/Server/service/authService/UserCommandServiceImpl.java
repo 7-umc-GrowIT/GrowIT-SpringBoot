@@ -160,4 +160,21 @@ public class UserCommandServiceImpl implements UserCommandService {
                 user.getStatus()
         );
     }
+
+    @Override
+    public UserResponseDTO.DeleteUserResponseDTO delete(Long userId) {
+        // 1. userId를 통해 조회하고 없으면 오류
+        User deleteUser = userRepository.findById(userId)
+                .orElseThrow(() -> new UserHandler(ErrorStatus.USER_NOT_FOUND));
+
+        // 2. soft delete로 진행하기 때문에 status를 inactive로 변경
+        if(deleteUser.getStatus()==UserStatus.INACTIVE) {
+            throw new UserHandler(ErrorStatus.USER_STATUS_INACTIVE);
+        }
+        deleteUser.deleteAccount();
+        userRepository.save(deleteUser);
+
+        // 3. converter 작업
+        return UserConverter.toDeletedUser(deleteUser);
+    }
 }
