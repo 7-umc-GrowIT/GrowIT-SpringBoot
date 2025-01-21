@@ -1,5 +1,7 @@
 package umc.GrowIT.Server.web.controller;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
@@ -33,7 +35,7 @@ public class ChallengeController implements ChallengeSpecification {
     public ApiResponse<ChallengeResponseDTO.ChallengeStatusListDTO> getChallengeStatus(
             @RequestParam Long userId,
             @RequestParam(required = false) ChallengeType status,
-            @RequestParam(required = false) Boolean completed) {
+            @RequestParam Boolean completed) {
         // 서비스 호출
         ChallengeResponseDTO.ChallengeStatusListDTO challengeStatusList = challengeQueryService.getChallengeStatus(userId, status, completed);
 
@@ -47,9 +49,13 @@ public class ChallengeController implements ChallengeSpecification {
     }
 
     @PostMapping("/{challengeId}/prove")
-    public ApiResponse<ChallengeResponseDTO> createChallengeProof(@PathVariable Long challengeId,
-                                                                  @RequestBody ChallengeRequestDTO.ProofRequest proofRequest) {
-        return null;
+    public ApiResponse<ChallengeResponseDTO.ProofDetailsDTO> createChallengeProof(@RequestParam Long userId, @PathVariable Long challengeId, @RequestBody ChallengeRequestDTO.ProofRequestDTO proofRequest) {
+
+        // 서비스 호출
+        ChallengeResponseDTO.ProofDetailsDTO response = challengeCommandService.createChallengeProof(userId, challengeId, proofRequest);
+
+        // 성공 응답 반환
+        return ApiResponse.onSuccess(response);
     }
 
     @GetMapping("/{challengeId}")
@@ -59,7 +65,7 @@ public class ChallengeController implements ChallengeSpecification {
 
     @PatchMapping("/{challengeId}")
     public ApiResponse<ChallengeResponseDTO> updateChallengeProof(@PathVariable Long challengeId,
-                                                                  @RequestBody ChallengeRequestDTO.UpdateRequest updateRequest) {
+                                                                  @RequestBody ChallengeRequestDTO.UpdateRequestDTO updateRequest) {
         return null;
     }
 
