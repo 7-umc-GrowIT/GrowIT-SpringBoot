@@ -56,7 +56,7 @@ public class User extends BaseEntity {
     private List<Diary> diaries;
 
     @Setter
-    @OneToOne(fetch = FetchType.LAZY)
+    @OneToOne(fetch = FetchType.LAZY, orphanRemoval = true)
     @JoinColumn(name = "refresh_token_id")
     private RefreshToken refreshToken;
 
@@ -73,4 +73,9 @@ public class User extends BaseEntity {
     public void updateCurrentCredit(Integer currentCredit) {
         this.currentCredit = currentCredit;
     }
+
+    public void deleteRefreshToken() {
+        this.refreshToken = null;
+    }
+
 }
