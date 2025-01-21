@@ -58,10 +58,10 @@ public class ChallengeCommandServiceImpl implements ChallengeCommandService {
         return ChallengeConverter.toProofDetailsDTO(userChallenge);
     }
 
-    public ChallengeResponseDTO.DeleteChallengeResponseDTO delete(Long userChallengeId, Long userId) {
+    public ChallengeResponseDTO.DeleteChallengeResponseDTO delete(Long challengeId, Long userId) {
 
-        // 1. userId와 userChallengeId를 통해 조회하고 없으면 오류
-        UserChallenge userChallenge = userChallengeRepository.findByIdAndUserId(userChallengeId, userId)
+        // 1. userId와 challengeId를 통해 조회하고 없으면 오류
+        UserChallenge userChallenge = userChallengeRepository.findByChallengeIdAndUserId(challengeId, userId)
                 .orElseThrow(() -> new ChallengeHandler(ErrorStatus.USER_CHALLENGE_NOT_FOUND));
 
         // 2. 진행 중(false)인 챌린지인지 체크, 완료(true)한 챌린지면 오류
@@ -70,7 +70,7 @@ public class ChallengeCommandServiceImpl implements ChallengeCommandService {
         }
 
         // 3. 삭제
-        userChallengeRepository.deleteById(userChallengeId);
+        userChallengeRepository.delete(userChallenge);
 
         // 4. converter 작업
         return ChallengeConverter.toDeletedUserChallenge(userChallenge);

@@ -70,11 +70,11 @@ public class ChallengeController implements ChallengeSpecification {
     }
 
     @DeleteMapping("{challengeId}")
-    public ApiResponse<ChallengeResponseDTO.DeleteChallengeResponseDTO> deleteChallenge(@PathVariable("challengeId") Long userChallengeId) {
+    public ApiResponse<ChallengeResponseDTO.DeleteChallengeResponseDTO> deleteChallenge(@PathVariable("challengeId") Long challengeId) {
         // 임시로 사용자 ID 지정
         Long userId = 1L;
 
-        ChallengeResponseDTO.DeleteChallengeResponseDTO deleteChallenge = challengeCommandService.delete(userChallengeId, userId);
+        ChallengeResponseDTO.DeleteChallengeResponseDTO deleteChallenge = challengeCommandService.delete(challengeId, userId);
         return ApiResponse.onSuccess(deleteChallenge);
     }
 }
