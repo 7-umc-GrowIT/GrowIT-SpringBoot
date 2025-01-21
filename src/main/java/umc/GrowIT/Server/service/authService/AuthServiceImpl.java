@@ -40,21 +40,38 @@ public class AuthServiceImpl implements AuthService {
     @Value("${spring.mail.username}")
     private String fromEmail;
 
-        @Override
-        public AuthResponseDTO.SendAuthEmailResponseDTO sendAuthEmail(AuthType type, AuthRequestDTO.SendAuthEmailRequestDTO request) {
-            // 1. type 구분해서 email 체크
-            checkEmail(type, request.getEmail());
+    @Override
+    public AuthResponseDTO.SendAuthEmailResponseDTO sendAuthEmail(AuthType type, AuthRequestDTO.SendAuthEmailRequestDTO request) {
+        // 1. type 구분해서 email 체크
+        checkEmail(type, request.getEmail());
 
-            // 2. 랜덤 번호 생성
-            String authenticationCode = createAuthenticationCode();
+        // 2. 랜덤 번호 생성
+        String authenticationCode = createAuthenticationCode();
 
-            // 3. 이메일 전송
-            sendEmail(request.getEmail(), authenticationCode);
+        // 3. 이메일 전송
+        sendEmail(request.getEmail(), authenticationCode);
 
-            // 4. 인증코드 유효성 체크 & 저장
-            AuthenticationCode authCode = saveAuthenticationCode(request.getEmail(), authenticationCode);
-            return AuthenticationCodeConverter.toAuthCodeResponse(authCode);
+        // 4. 인증코드 유효성 체크 & 저장
+        AuthenticationCode authCode = saveAuthenticationCode(request.getEmail(), authenticationCode);
+        return AuthenticationCodeConverter.toSendAuthCodeResponse(authCode);
+    }
+
+    @Override
+    public AuthResponseDTO.VerifyAuthCodeResponseDTO verifyAuthCode(AuthRequestDTO.VerifyAuthCodeRequestDTO request) {
+        // 1. 이메일 & 유효기간 & status로 entity 조회
+        AuthenticationCode authenticationCode = authenticationCodeRepository.findByEmailAndExpirationDateAfterAndStatus(request.getEmail(), LocalDateTime.now(), CodeStatus.ACTIVE)
+                .orElseThrow(() -> new AuthHandler(ErrorStatus.AUTH_CODE_NOT_FOUND));
+
+        // 2. request와 인증번호 비교
+        if(!authenticationCode.getCode().equals(request.getAuthCode())) {
+            throw new AuthHandler(ErrorStatus.AUTH_CODE_MISMATCH);
         }
+        else {
+            authenticationCode.update();
+            authenticationCodeRepository.save(authenticationCode);
+            return AuthenticationCodeConverter.toVerifiedAuthCodeResponse(authenticationCode);
+        }
+    }
 
     // 이메일 체크
     public void checkEmail(AuthType type, String email) {

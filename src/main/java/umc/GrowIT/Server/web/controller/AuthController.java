@@ -67,7 +67,10 @@ public class AuthController implements AuthSpecification {
 
     @Override
     @PostMapping("/verification")
-    public ApiResponse<AuthResponseDTO.VerifyAuthCodeResponseDTO> verifyAuthCode(AuthRequestDTO.VerifyAuthCodeRequestDTO request) {
-        return ApiResponse.onSuccess(null);
+    public ApiResponse<AuthResponseDTO.VerifyAuthCodeResponseDTO> verifyAuthCode(
+            @RequestBody @Valid AuthRequestDTO.VerifyAuthCodeRequestDTO request) {
+        AuthResponseDTO.VerifyAuthCodeResponseDTO result = authService.verifyAuthCode(request);
+
+        return ApiResponse.onSuccess(result);
     }
 }
