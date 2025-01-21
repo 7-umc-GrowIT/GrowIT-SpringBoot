@@ -46,13 +46,15 @@ public class ChallengeCommandServiceImpl implements ChallengeCommandService {
         User user = userRepository.findById(userId).orElseThrow(() -> new UserHandler(ErrorStatus.USER_NOT_FOUND));
         Challenge challenge = challengeRepository.findById(challengeId).orElseThrow(() -> new ChallengeHandler(ErrorStatus.CHALLENGE_NOT_FOUND));
 
-        // 2. UserChallenge 조회 (이미 인증된 챌린지인지 확인)
-        Optional<UserChallenge> existingUserChallenge = userChallengeRepository.findByIdAndUserId(userId, challengeId);
-        if (existingUserChallenge.isPresent() && existingUserChallenge.get().isCompleted()) {
-            throw new ChallengeHandler(ErrorStatus.CHALLENGE_VERIFY_ALREADY_EXISTS);
-        }
+        // 기존 UserChallenge 조회 및 인증 상태 확인
+        userChallengeRepository.findByIdAndUserId(userId, challengeId)
+                .ifPresent(existingChallenge -> {
+                    if (existingChallenge.isCompleted()) {
+                        throw new ChallengeHandler(ErrorStatus.CHALLENGE_VERIFY_ALREADY_EXISTS);
+                    }
+                });
 
-        // 3. UserChallenge 생성 및 저장
+        // UserChallenge 생성 및 저장
         UserChallenge userChallenge = ChallengeConverter.createUserChallenge(user, challenge, proofRequest);
         userChallenge.setCompleted(true); // 인증 완료로 설정
         userChallengeRepository.save(userChallenge);
@@ -71,11 +73,6 @@ public class ChallengeCommandServiceImpl implements ChallengeCommandService {
         // 인증 내역(UserChallenge) 조회
         UserChallenge userChallenge = userChallengeRepository.findByChallengeId(challengeId)
                 .orElseThrow(() -> new ChallengeHandler(ErrorStatus.CHALLENGE_VERIFY_NOT_EXISTS));
-
-        // 챌린지가 미완료 상태라면 예외 처리
-        if (!userChallenge.isCompleted()) {
-            throw new ChallengeHandler(ErrorStatus.CHALLENGE_VERIFY_NOT_EXISTS);
-        }
 
         return ChallengeConverter.toChallengeProofDetailsDTO(challenge, userChallenge);
     }
