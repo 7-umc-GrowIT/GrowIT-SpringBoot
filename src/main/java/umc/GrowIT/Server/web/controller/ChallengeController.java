@@ -4,6 +4,8 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 import umc.GrowIT.Server.apiPayload.ApiResponse;
 import umc.GrowIT.Server.domain.enums.ChallengeType;
@@ -27,7 +29,9 @@ public class ChallengeController implements ChallengeSpecification {
     private final ChallengeCommandService challengeCommandService;
 
     @GetMapping("/summary")
-    public ApiResponse<ChallengeResponseDTO.ChallengeHomeDTO> getChallengeHome(@RequestParam Long userId) {
+    public ApiResponse<ChallengeResponseDTO.ChallengeHomeDTO> getChallengeHome() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        Long userId = (Long) authentication.getPrincipal();
         return ApiResponse.onSuccess(challengeQueryService.getChallengeHome(userId));
     }
 
@@ -49,8 +53,10 @@ public class ChallengeController implements ChallengeSpecification {
     }
 
     @PostMapping("/{challengeId}/prove")
-    public ApiResponse<ChallengeResponseDTO.ProofDetailsDTO> createChallengeProof(@RequestParam Long userId, @PathVariable Long challengeId, @RequestBody ChallengeRequestDTO.ProofRequestDTO proofRequest) {
+    public ApiResponse<ChallengeResponseDTO.ProofDetailsDTO> createChallengeProof(@PathVariable Long challengeId, @RequestBody ChallengeRequestDTO.ProofRequestDTO proofRequest) {
 
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        Long userId = (Long) authentication.getPrincipal();
         // 서비스 호출
         ChallengeResponseDTO.ProofDetailsDTO response = challengeCommandService.createChallengeProof(userId, challengeId, proofRequest);
 
@@ -60,9 +66,8 @@ public class ChallengeController implements ChallengeSpecification {
 
     @GetMapping("/{challengeId}")
     public ApiResponse<ChallengeResponseDTO.ProofDetailsDTO> getChallengeProofDetails(@PathVariable Long challengeId) {
-        // 임시로 사용자 ID 지정
-        Long userId = 1L;
-
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        Long userId = (Long) authentication.getPrincipal();
         ChallengeResponseDTO.ProofDetailsDTO response = challengeCommandService.getChallengeProofDetails(userId, challengeId);
         return ApiResponse.onSuccess(response);
     }
