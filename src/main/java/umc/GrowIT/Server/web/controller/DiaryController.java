@@ -6,8 +6,11 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 import umc.GrowIT.Server.apiPayload.ApiResponse;
+import umc.GrowIT.Server.service.diaryService.DiaryCommandService;
 import umc.GrowIT.Server.service.diaryService.DiaryQueryService;
 import umc.GrowIT.Server.web.controller.specification.DiarySpecification;
 import umc.GrowIT.Server.web.dto.DiaryDTO.DiaryRequestDTO;
@@ -19,6 +22,7 @@ import umc.GrowIT.Server.web.dto.DiaryDTO.DiaryResponseDTO;
 @RequestMapping("/diaries")
 public class DiaryController implements DiarySpecification {
     private final DiaryQueryService diaryQueryService;
+    private final DiaryCommandService diaryCommandService;
     @GetMapping("/dates")
     public ApiResponse<DiaryResponseDTO.DiaryDateListDTO> getDiaryDate(@RequestParam Integer year, @RequestParam Integer month){
         //userId는 임시로 2
@@ -42,9 +46,13 @@ public class DiaryController implements DiarySpecification {
     }
 
     @PutMapping("/{diaryId}")
-    public ApiResponse<DiaryResponseDTO.ModifyResultDTO> modifyDiary(@PathVariable("diaryId") Long diaryId, @RequestBody DiaryRequestDTO.DiaryDTO request){
+    public ApiResponse<DiaryResponseDTO.ModifyResultDTO> modifyDiary(@RequestHeader(value = "Authorization", required = false) String authorizationHeader,
+                                                                     @PathVariable("diaryId") Long diaryId, @RequestBody DiaryRequestDTO.DiaryDTO request){
+        //accessToken에서 userId 추출
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        Long userId = (Long) authentication.getPrincipal();
 
-        return null;
+        return ApiResponse.onSuccess(diaryCommandService.modifyDiary(request, diaryId, userId));
     }
 
     @DeleteMapping("/{diaryId}")
