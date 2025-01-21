@@ -6,7 +6,7 @@ import umc.GrowIT.Server.web.dto.ChallengeDTO.ChallengeResponseDTO;
 public interface ChallengeCommandService {
     void markChallengeAsCompleted(Long userId, Long challengeId);
 
-    ChallengeResponseDTO.ProofDetailsDTO getChallengeProofDetails(Long challengeId);
+    ChallengeResponseDTO.ProofDetailsDTO getChallengeProofDetails(Long userId, Long challengeId);
     ChallengeResponseDTO.ProofDetailsDTO createChallengeProof(Long userId, Long challengeId, ChallengeRequestDTO.ProofRequestDTO proofRequest);
     ChallengeResponseDTO.DeleteChallengeResponseDTO delete(Long userChallengeId, Long userId);
 }

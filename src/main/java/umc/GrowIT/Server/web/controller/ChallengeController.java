@@ -63,7 +63,7 @@ public class ChallengeController implements ChallengeSpecification {
         // 임시로 사용자 ID 지정
         Long userId = 1L;
 
-        ChallengeResponseDTO.ProofDetailsDTO response = challengeCommandService.getChallengeProofDetails(challengeId);
+        ChallengeResponseDTO.ProofDetailsDTO response = challengeCommandService.getChallengeProofDetails(userId, challengeId);
         return ApiResponse.onSuccess(response);
     }
 

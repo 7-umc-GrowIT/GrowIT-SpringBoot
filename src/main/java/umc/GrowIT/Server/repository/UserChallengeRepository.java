@@ -17,4 +17,7 @@ public interface UserChallengeRepository extends JpaRepository<UserChallenge, Lo
     @Query("SELECT uc FROM UserChallenge uc WHERE uc.challenge.id = :challengeId")
     Optional<UserChallenge> findByChallengeId(@Param("challengeId") Long challengeId);
     Optional<UserChallenge> findByIdAndUserId (Long challengeId, Long userId);
+    @Query("SELECT uc FROM UserChallenge uc WHERE uc.challenge.id = :challengeId AND uc.user.id = :userId")
+    Optional<UserChallenge> findByChallengeIdAndUserId(@Param("challengeId") Long challengeId, @Param("userId") Long userId);
+
 }

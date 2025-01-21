@@ -65,13 +65,13 @@ public class ChallengeCommandServiceImpl implements ChallengeCommandService {
     // 챌린지 인증 내역 조회
     @Override
     @Transactional(readOnly = true)
-    public ChallengeResponseDTO.ProofDetailsDTO getChallengeProofDetails(Long challengeId) {
+    public ChallengeResponseDTO.ProofDetailsDTO getChallengeProofDetails(Long userId, Long challengeId) {
         // 챌린지 조회
         Challenge challenge = challengeRepository.findById(challengeId)
                 .orElseThrow(() -> new ChallengeHandler(ErrorStatus.CHALLENGE_NOT_FOUND));
 
-        // 인증 내역(UserChallenge) 조회
-        UserChallenge userChallenge = userChallengeRepository.findByChallengeId(challengeId)
+        // 인증 내역 조회
+        UserChallenge userChallenge = userChallengeRepository.findByChallengeIdAndUserId(challengeId, userId)
                 .orElseThrow(() -> new ChallengeHandler(ErrorStatus.CHALLENGE_VERIFY_NOT_EXISTS));
 
         return ChallengeConverter.toChallengeProofDetailsDTO(challenge, userChallenge);
