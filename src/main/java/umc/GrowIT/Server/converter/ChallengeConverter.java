@@ -50,14 +50,26 @@ public class ChallengeConverter {
     }
 
     // 챌린지 현황
-    public static List<ChallengeResponseDTO.ChallengeStatusDTO> toChallengeStatusListDTO(List<Challenge> challenges) {
+    public static List<ChallengeResponseDTO.ChallengeStatusDTO> toChallengeStatusListDTO(List<UserChallenge> userChallenges) {
+        return userChallenges.stream()
+                .map(userChallenge -> ChallengeResponseDTO.ChallengeStatusDTO.builder()
+                        .id(userChallenge.getChallenge().getId())
+                        .title(userChallenge.getChallenge().getTitle())
+                        //.status(userChallenge.getChallenge().getDtype() != null ? userChallenge.getChallenge().getDtype().name() : null) // Challenge 타입 가져오기
+                        .time(userChallenge.getChallenge().getTime())
+                        .completed(userChallenge.isCompleted())
+                        .build())
+                .collect(Collectors.toList());
+    }
+
+    // Challenge 데이터를 ChallengeStatusDTO로 변환
+    public static List<ChallengeResponseDTO.ChallengeStatusDTO> toChallengeStatusListDTOFromChallenge(List<Challenge> challenges) {
         return challenges.stream()
                 .map(challenge -> ChallengeResponseDTO.ChallengeStatusDTO.builder()
                         .id(challenge.getId())
                         .title(challenge.getTitle())
                         .time(challenge.getTime())
-                        .status(challenge.getStatus()) // 상태
-                        .completed(challenge.isCompleted()) // 완료 여부
+                        .completed(false) // 인증되지 않은 상태
                         .build())
                 .collect(Collectors.toList());
     }

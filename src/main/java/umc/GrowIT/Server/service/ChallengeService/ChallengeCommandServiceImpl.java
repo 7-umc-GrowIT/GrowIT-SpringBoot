@@ -27,15 +27,17 @@ public class ChallengeCommandServiceImpl implements ChallengeCommandService {
     private final UserChallengeRepository userChallengeRepository;
 
     @Override
+    @Transactional
     public void markChallengeAsCompleted(Long userId, Long challengeId) {
-        Challenge challenge = challengeRepository.findByIdAndUserId(challengeId, userId).orElse(null);
+        UserChallenge userChallenge = userChallengeRepository.findByChallengeIdAndUserId(challengeId, userId)
+                .orElseThrow(() -> new ChallengeHandler(ErrorStatus.USER_CHALLENGE_NOT_FOUND));
 
-        if(challenge == null) {
-            throw new ChallengeHandler(ErrorStatus.CHALLENGE_NOT_FOUND);
+        if (userChallenge.isCompleted()) {
+            throw new ChallengeHandler(ErrorStatus.CHALLENGE_VERIFY_ALREADY_EXISTS); // 이미 완료된 경우 예외 처리
         }
 
-        challenge.markAsCompleted();
-        challengeRepository.save(challenge);
+        userChallenge.setCompleted(true);
+        userChallengeRepository.save(userChallenge);
     }
 
     // 팰린지 인증 작성
@@ -47,7 +49,7 @@ public class ChallengeCommandServiceImpl implements ChallengeCommandService {
         Challenge challenge = challengeRepository.findById(challengeId).orElseThrow(() -> new ChallengeHandler(ErrorStatus.CHALLENGE_NOT_FOUND));
 
         // 기존 UserChallenge 조회 및 인증 상태 확인
-        userChallengeRepository.findByIdAndUserId(userId, challengeId)
+        userChallengeRepository.findByChallengeIdAndUserId(challengeId, userId)
                 .ifPresent(existingChallenge -> {
                     if (existingChallenge.isCompleted()) {
                         throw new ChallengeHandler(ErrorStatus.CHALLENGE_VERIFY_ALREADY_EXISTS);
@@ -61,6 +63,8 @@ public class ChallengeCommandServiceImpl implements ChallengeCommandService {
 
         return ChallengeConverter.toProofDetailsDTO(challenge, userChallenge);
     }
+
+
 
     // 챌린지 인증 내역 조회
     @Override
@@ -80,7 +84,7 @@ public class ChallengeCommandServiceImpl implements ChallengeCommandService {
     public ChallengeResponseDTO.DeleteChallengeResponseDTO delete(Long userChallengeId, Long userId) {
 
         // 1. userId와 userChallengeId를 통해 조회하고 없으면 오류
-        UserChallenge userChallenge = userChallengeRepository.findByIdAndUserId(userChallengeId, userId)
+        UserChallenge userChallenge = userChallengeRepository.findByChallengeIdAndUserId(userChallengeId, userId)
                 .orElseThrow(() -> new ChallengeHandler(ErrorStatus.USER_CHALLENGE_NOT_FOUND));
 
         // 2. 진행 중(false)인 챌린지인지 체크, 완료(true)한 챌린지면 오류

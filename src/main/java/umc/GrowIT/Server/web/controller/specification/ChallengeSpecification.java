@@ -32,7 +32,6 @@ public interface ChallengeSpecification {
             @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "COMMON400", description = "❌ BAD, 잘못된 요청", content = @Content(schema = @Schema(implementation = ApiResponse.class)))
     })
     ApiResponse<ChallengeResponseDTO.ChallengeStatusListDTO> getChallengeStatus(
-            @RequestParam Long userId,
             @RequestParam(required = false) ChallengeType status,
             @RequestParam(required = false) Boolean completed);
 

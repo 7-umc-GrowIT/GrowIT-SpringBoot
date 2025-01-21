@@ -37,9 +37,10 @@ public class ChallengeController implements ChallengeSpecification {
 
     @GetMapping
     public ApiResponse<ChallengeResponseDTO.ChallengeStatusListDTO> getChallengeStatus(
-            @RequestParam Long userId,
             @RequestParam(required = false) ChallengeType status,
             @RequestParam Boolean completed) {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        Long userId = (Long) authentication.getPrincipal();
         // 서비스 호출
         ChallengeResponseDTO.ChallengeStatusListDTO challengeStatusList = challengeQueryService.getChallengeStatus(userId, status, completed);
 

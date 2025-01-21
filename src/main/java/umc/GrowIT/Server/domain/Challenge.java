@@ -33,8 +33,6 @@ public class Challenge extends BaseEntity {
     @Enumerated(EnumType.STRING)
     private ChallengeType dtype;
 
-    @Column(nullable = false)
-    private boolean completed;
 
     @OneToMany(mappedBy = "challenge", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<UserChallenge> userChallenges;
@@ -52,18 +50,6 @@ public class Challenge extends BaseEntity {
     public void addChallengeKeyword(ChallengeKeyword challengeKeyword) {
         this.challengeKeywords.add(challengeKeyword);
         challengeKeyword.setChallenge(this);
-    }
-
-    // 챌린지 완료 상태로 변경
-    public void markAsCompleted() {
-        this.completed = true;
-    }
-
-    public String getStatus() {
-        if (this.dtype != null) {
-            return this.completed ? this.dtype.name() + "_COMPLETED" : this.dtype.name(); // 완료하였으면 뒤에 _COMPLETED 추가하여 반환
-        }
-        return this.completed ? "COMPLETED" : "TOTAL";
     }
 
 }

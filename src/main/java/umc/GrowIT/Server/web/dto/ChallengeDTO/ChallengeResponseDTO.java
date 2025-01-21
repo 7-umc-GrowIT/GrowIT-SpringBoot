@@ -72,7 +72,7 @@ public class ChallengeResponseDTO {
     public static class ChallengeStatusDTO {
         private Long id;
         private String title;
-        private String status;
+        //private String status;
         private Integer time;
         private boolean completed;
     }

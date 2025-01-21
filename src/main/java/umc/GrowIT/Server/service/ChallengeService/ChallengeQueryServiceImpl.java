@@ -4,8 +4,10 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import umc.GrowIT.Server.converter.ChallengeConverter;
 import umc.GrowIT.Server.domain.Challenge;
+import umc.GrowIT.Server.domain.UserChallenge;
 import umc.GrowIT.Server.domain.enums.ChallengeType;
 import umc.GrowIT.Server.repository.ChallengeRepository;
+import umc.GrowIT.Server.repository.UserChallengeRepository;
 import umc.GrowIT.Server.web.dto.ChallengeDTO.ChallengeResponseDTO;
 
 import java.time.LocalDate;
@@ -17,6 +19,7 @@ import java.util.List;
 public class ChallengeQueryServiceImpl implements ChallengeQueryService {
 
     private final ChallengeRepository challengeRepository;
+    private final UserChallengeRepository userChallengeRepository;
 
     @Override
     public int getTotalCredits(Long userId) {
@@ -56,13 +59,23 @@ public class ChallengeQueryServiceImpl implements ChallengeQueryService {
 
     @Override
     public ChallengeResponseDTO.ChallengeStatusListDTO getChallengeStatus(Long userId, ChallengeType status, Boolean completed) {
-        // 유저 ID와 완료 여부를 기반으로 챌린지를 조회
-        List<Challenge> challenges = challengeRepository.findChallengesByStatusAndCompletion(userId, status, completed);
+        List<ChallengeResponseDTO.ChallengeStatusDTO> challenges;
 
-        // 조회된 챌린지 리스트를 DTO로 변환하여 반환
+        if (completed != null && completed) {
+            // 특정 유저의 인증 완료된 챌린지 조회
+            List<UserChallenge> userChallenges = userChallengeRepository.findUserChallengesByStatusAndCompletion(userId, status, true);
+            challenges = ChallengeConverter.toChallengeStatusListDTO(userChallenges);
+        } else {
+            // 특정 유저가 완료하지 않은 챌린지 조회
+            List<Challenge> availableChallenges = userChallengeRepository.findAvailableChallengesForUser(userId, status);
+            challenges = ChallengeConverter.toChallengeStatusListDTOFromChallenge(availableChallenges);
+        }
+
         return ChallengeResponseDTO.ChallengeStatusListDTO.builder()
-                .challenges(ChallengeConverter.toChallengeStatusListDTO(challenges))
+                .challenges(challenges)
                 .build();
     }
+
+
 
 }
