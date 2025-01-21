@@ -64,8 +64,8 @@ public class ChallengeConverter {
 
 
     // 챌린지 인증 작성
-    public static ChallengeResponseDTO.AddProofDTO toChallengeResponseDTO(UserChallenge userChallenge) {
-        return ChallengeResponseDTO.AddProofDTO.builder()
+    public static ChallengeResponseDTO.AddProofResultDTO toChallengeResponseDTO(UserChallenge userChallenge) {
+        return ChallengeResponseDTO.AddProofResultDTO.builder()
                 .challengeId(userChallenge.getChallenge().getId())
                 .certificationImage(userChallenge.getCertificationImage())
                 .thoughts(userChallenge.getThoughts())
@@ -85,8 +85,10 @@ public class ChallengeConverter {
     }
 
     // 챌린지 인증 작성 결과 반환
-    public static ChallengeResponseDTO.ProofDetailsDTO toProofDetailsDTO(UserChallenge userChallenge) {
+    public static ChallengeResponseDTO.ProofDetailsDTO toProofDetailsDTO(Challenge challenge, UserChallenge userChallenge) {
         return ChallengeResponseDTO.ProofDetailsDTO.builder()
+                .title(challenge.getTitle())
+                .time(challenge.getTime())
                 .certificationImage(userChallenge.getCertificationImage())
                 .thoughts(userChallenge.getThoughts())
                 .certificationDate(userChallenge.getCreatedAt())
@@ -96,10 +98,8 @@ public class ChallengeConverter {
     // 챌린지 인증 내역 조회
     public static ChallengeResponseDTO.ProofDetailsDTO toChallengeProofDetailsDTO(Challenge challenge, UserChallenge userChallenge) {
         return ChallengeResponseDTO.ProofDetailsDTO.builder()
-                .title(challenge.getTitle())
                 .certificationImage(userChallenge.getCertificationImage())
                 .thoughts(userChallenge.getThoughts())
-                .time(challenge.getTime())
                 .certificationDate(userChallenge.getCreatedAt())
                 .build();
     }

@@ -37,5 +37,8 @@ public class UserChallenge extends BaseEntity {
         this.challenge = challenge;
     }
 
-
+    // 인증 완료 상태 설정 메서드
+    public void setCompleted(boolean completed) {
+        this.completed = completed;
+    }
 }

@@ -78,15 +78,20 @@ public class ChallengeResponseDTO {
     }
 
     // 챌린지 인증 응답 DTO
+
     @Getter
     @Builder
     @NoArgsConstructor
     @AllArgsConstructor
-    public static class AddProofDTO {
+    public static class AddProofResultDTO {
         private Long challengeId;
+        private String title;
+        private Integer time;
         private String certificationImage;
         private String thoughts;
         private boolean completed;
+        @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm")
+        private LocalDateTime certificationDate;
     }
 
     // 첼린지 인증 내역

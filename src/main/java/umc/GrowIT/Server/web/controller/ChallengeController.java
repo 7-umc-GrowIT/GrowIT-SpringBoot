@@ -60,6 +60,9 @@ public class ChallengeController implements ChallengeSpecification {
 
     @GetMapping("/{challengeId}")
     public ApiResponse<ChallengeResponseDTO.ProofDetailsDTO> getChallengeProofDetails(@PathVariable Long challengeId) {
+        // 임시로 사용자 ID 지정
+        Long userId = 1L;
+
         ChallengeResponseDTO.ProofDetailsDTO response = challengeCommandService.getChallengeProofDetails(challengeId);
         return ApiResponse.onSuccess(response);
     }
