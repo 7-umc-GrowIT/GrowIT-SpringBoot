@@ -49,7 +49,7 @@ public class ChallengeCommandServiceImpl implements ChallengeCommandService {
 
         // 이미 완료된 챌린지인지 확인
         if (challenge.isCompleted()) {
-            throw new IllegalStateException("이미 완료된 챌린지입니다.");
+            throw new ChallengeHandler(ErrorStatus.CHALLENGE_VERIFY_ALREADY_EXISTS);
         }
 
         challenge.markAsCompleted();
@@ -64,20 +64,20 @@ public class ChallengeCommandServiceImpl implements ChallengeCommandService {
     public ChallengeResponseDTO.ProofDetailsDTO getChallengeProofDetails(Long userId, Long challengeId) {
         // 챌린지 조회
         Challenge challenge = challengeRepository.findById(challengeId)
-                .orElseThrow(() -> new IllegalArgumentException("챌린지를 찾을 수 없습니다."));
+                .orElseThrow(() -> new ChallengeHandler(ErrorStatus.CHALLENGE_NOT_FOUND));
 
         // 챌린지가 미완료 상태라면 예외 처리
         if (!challenge.isCompleted()) {
-            throw new IllegalStateException("미완료 상태의 챌린지는 인증 내역을 볼 수 없습니다.");
+            throw new ChallengeHandler(ErrorStatus.CHALLENGE_VERIFY_NOT_EXISTS);
         }
 
         // 인증 내역(UserChallenge) 조회
         UserChallenge userChallenge = userChallengeRepository.findByChallengeId(challengeId)
-                .orElseThrow(() -> new IllegalArgumentException("챌린지 인증 내역이 없습니다."));
+                .orElseThrow(() -> new ChallengeHandler(ErrorStatus.CHALLENGE_VERIFY_NOT_FOUND));
 
         // 유저 아이디 검증
         if (!userChallenge.getUser().getId().equals(userId)) {
-            throw new IllegalArgumentException("유저 아이디가 챌린지 인증과 일치하지 않습니다.");
+            throw new ChallengeHandler(ErrorStatus.CHALLENGE_USER_NOT_MATCH);
         }
 
         return ChallengeConverter.toChallengeProofDetailsDTO(challenge, userChallenge);
