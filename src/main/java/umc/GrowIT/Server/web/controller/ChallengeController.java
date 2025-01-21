@@ -45,7 +45,7 @@ public class ChallengeController {
     public ApiResponse<ChallengeResponseDTO.ChallengeStatusListDTO> getChallengeStatus(
             @RequestParam Long userId,
             @RequestParam(required = false) ChallengeType status,
-            @RequestParam(required = false) Boolean completed) {
+            @RequestParam Boolean completed) {
         // 서비스 호출
         ChallengeResponseDTO.ChallengeStatusListDTO challengeStatusList = challengeQueryService.getChallengeStatus(userId, status, completed);
 
