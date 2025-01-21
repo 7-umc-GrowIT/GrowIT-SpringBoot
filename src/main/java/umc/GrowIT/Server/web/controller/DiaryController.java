@@ -35,8 +35,10 @@ public class DiaryController implements DiarySpecification {
     }
     @GetMapping("/{diaryId}")
     public ApiResponse<DiaryResponseDTO.DiaryDTO> getDiary(@PathVariable("diaryId") Long diaryId){
+        //userId는 임시로 2
+        Long userId = 2L;
 
-        return null;
+        return ApiResponse.onSuccess(diaryQueryService.getDiary(diaryId, userId));
     }
 
     @PutMapping("/{diaryId}")
