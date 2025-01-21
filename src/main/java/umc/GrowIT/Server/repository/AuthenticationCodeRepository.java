@@ -1,5 +1,7 @@
 package umc.GrowIT.Server.repository;
 
+import jakarta.validation.constraints.Email;
+import jakarta.validation.constraints.NotBlank;
 import org.springframework.data.jpa.repository.JpaRepository;
 import umc.GrowIT.Server.domain.AuthenticationCode;
 import umc.GrowIT.Server.domain.enums.CodeStatus;
