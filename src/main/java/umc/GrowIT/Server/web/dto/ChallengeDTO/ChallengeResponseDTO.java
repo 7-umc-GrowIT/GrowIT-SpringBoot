@@ -90,7 +90,6 @@ public class ChallengeResponseDTO {
         private String certificationImage;
         private String thoughts;
         private boolean completed;
-        @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm")
         private LocalDateTime certificationDate;
     }
 
@@ -104,7 +103,6 @@ public class ChallengeResponseDTO {
         private String certificationImage;
         private String thoughts;
         private Integer time;
-        @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm")
         private LocalDateTime certificationDate;
     }
 
