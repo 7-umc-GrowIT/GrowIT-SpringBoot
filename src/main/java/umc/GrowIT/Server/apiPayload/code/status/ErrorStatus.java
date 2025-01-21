@@ -32,15 +32,15 @@ public enum ErrorStatus implements BaseErrorCode {
     ALL_TERMS_REQUIRED(HttpStatus.BAD_REQUEST, "TERM4003", "전체 약관 정보를 주세요."),
 
     //인증 관련 에러
-    INVALID_TOKEN(HttpStatus.UNAUTHORIZED, "AUTH4001", "유효하지 않은 JWT 토큰입니다."),
-    EXPIRED_TOKEN(HttpStatus.UNAUTHORIZED, "AUTH4002", "만료된 JWT 토큰입니다."),
-    UNSUPPORTED_TOKEN(HttpStatus.BAD_REQUEST, "AUTH4003", "지원하지 않는 JWT 토큰입니다."),
+    INVALID_TOKEN(HttpStatus.UNAUTHORIZED, "AUTH4001", "유효하지 않은 토큰입니다."),
+    EXPIRED_TOKEN(HttpStatus.UNAUTHORIZED, "AUTH4002", "만료된 토큰입니다."),
+    UNSUPPORTED_TOKEN(HttpStatus.BAD_REQUEST, "AUTH4003", "지원하지 않는 토큰입니다."),
     EMPTY_CLAIMS(HttpStatus.BAD_REQUEST, "AUTH4004", "JWT 토큰의 클레임 문자열이 비어 있습니다."),
     EMAIL_NOT_VERIFIED(HttpStatus.BAD_REQUEST, "AUTH4005", "이메일 인증을 완료해주세요."),
     INVALID_AUTH_TYPE(HttpStatus.BAD_REQUEST, "AUTH4006", "이메일 인증 타입이 잘못되었습니다."),
     EMAIL_SEND_FAIL(HttpStatus.INTERNAL_SERVER_ERROR, "AUTH5001", "이메일 전송에 실패했습니다."),
     EMAIL_ENCODING_FAIL(HttpStatus.INTERNAL_SERVER_ERROR, "AUTH5002", "이메일 내용 인코딩에 실패했습니다."),
-
+    REFRESH_TOKEN_NOT_FOUND(HttpStatus.NOT_FOUND, "AUTH4007", "데이터베이스에서 refreshToken을 찾을 수 없습니다."),
 
     //기타 에러
     PASSWORD_NOT_MATCH(HttpStatus.BAD_REQUEST, "PWD4001", "비밀번호 확인이 일치하지 않습니다."),

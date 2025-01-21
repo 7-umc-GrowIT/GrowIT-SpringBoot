@@ -23,6 +23,8 @@ public class TestController {
     @GetMapping("/test")
     public Long test(@RequestHeader(value = "Authorization", required = false) String authorizationHeader) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        log.info("authentication : {}", authentication);
+        log.info("principal : {}", authentication.getPrincipal());
         Long id = (Long) authentication.getPrincipal();
         return id;
     }

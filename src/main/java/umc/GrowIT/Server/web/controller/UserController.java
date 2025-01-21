@@ -1,16 +1,19 @@
 package umc.GrowIT.Server.web.controller;
 
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 import umc.GrowIT.Server.apiPayload.ApiResponse;
 import umc.GrowIT.Server.domain.enums.ItemCategory;
 import umc.GrowIT.Server.service.CreditService.CreditQueryServiceImpl;
+import umc.GrowIT.Server.service.authService.UserCommandService;
 import umc.GrowIT.Server.web.controller.specification.UserSpecification;
 import umc.GrowIT.Server.web.dto.CreditDTO.CreditResponseDTO;
 import umc.GrowIT.Server.web.dto.ItemDTO.ItemResponseDTO;
 import umc.GrowIT.Server.web.dto.PaymentDTO.PaymentRequestDTO;
 import umc.GrowIT.Server.web.dto.PaymentDTO.PaymentResponseDTO;
+import umc.GrowIT.Server.web.dto.UserDTO.UserRequestDTO;
 
 @Tag(name = "User", description = "사용자 관련 API")
 @RestController
@@ -19,6 +22,7 @@ import umc.GrowIT.Server.web.dto.PaymentDTO.PaymentResponseDTO;
 public class UserController implements UserSpecification {
 
     private final CreditQueryServiceImpl creditQueryService;
+    private final UserCommandService userCommandService;
 
     @Override
     public ApiResponse<ItemResponseDTO.ItemListDTO> getUserItemList(ItemCategory category) {
@@ -40,5 +44,11 @@ public class UserController implements UserSpecification {
     @Override
     public ApiResponse<PaymentResponseDTO> purchaseCredits(PaymentRequestDTO request) {
         return ApiResponse.onSuccess(null);
+    }
+
+    @PatchMapping("/password/find")
+    public ApiResponse<Void> findPassword(@RequestBody @Valid UserRequestDTO.PasswordDTO passwordDTO) {
+        userCommandService.updatePassword(passwordDTO);
+        return ApiResponse.onSuccess();
     }
 }
