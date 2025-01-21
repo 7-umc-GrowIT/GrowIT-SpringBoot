@@ -57,7 +57,7 @@ public class User extends BaseEntity {
 
     @Setter
     @OneToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "refresh_token_id", nullable = true)
+    @JoinColumn(name = "refresh_token_id")
     private RefreshToken refreshToken;
 
     public void encodePassword(String password) {

@@ -1,4 +1,4 @@
-package umc.GrowIT.Server.service.userService;
+package umc.GrowIT.Server.service.authService;
 
 import umc.GrowIT.Server.web.dto.UserDTO.KakaoResponseDTO;
 

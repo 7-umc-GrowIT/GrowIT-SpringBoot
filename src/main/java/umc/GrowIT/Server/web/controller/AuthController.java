@@ -3,18 +3,18 @@ package umc.GrowIT.Server.web.controller;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import org.springframework.validation.annotation.Validated;
+import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.web.bind.annotation.*;
 import umc.GrowIT.Server.apiPayload.ApiResponse;
-import umc.GrowIT.Server.apiPayload.code.status.ErrorStatus;
+import umc.GrowIT.Server.jwt.JwtTokenUtil;
 import umc.GrowIT.Server.domain.enums.AuthType;
 import umc.GrowIT.Server.service.authService.AuthService;
 import umc.GrowIT.Server.web.controller.specification.AuthSpecification;
-import umc.GrowIT.Server.web.dto.AuthDTO.AuthRequestDTO;
-import umc.GrowIT.Server.web.dto.AuthDTO.AuthResponseDTO;
 import umc.GrowIT.Server.web.dto.UserDTO.UserRequestDTO;
 import umc.GrowIT.Server.web.dto.UserDTO.UserResponseDTO;
-import umc.GrowIT.Server.service.userService.UserCommandService;
+import umc.GrowIT.Server.web.dto.AuthDTO.AuthRequestDTO;
+import umc.GrowIT.Server.web.dto.AuthDTO.AuthResponseDTO;
+import umc.GrowIT.Server.service.authService.UserCommandService;
 
 @Tag(name = "Auth", description = "인증 관련 API")
 @RestController
@@ -22,6 +22,8 @@ import umc.GrowIT.Server.service.userService.UserCommandService;
 public class AuthController implements AuthSpecification {
 
     private final UserCommandService userCommandService;
+    private final AuthenticationManager authenticationManager;
+    private final JwtTokenUtil JwtTokenUtil;
     private final AuthService authService;
 
     @PostMapping("/login/email")
@@ -33,9 +35,6 @@ public class AuthController implements AuthSpecification {
     @PostMapping("/users")
     public ApiResponse<UserResponseDTO.TokenDTO> createUser(@RequestBody @Valid UserRequestDTO.UserInfoDTO userInfoDTO) {
         UserResponseDTO.TokenDTO tokenDTO = userCommandService.createUser(userInfoDTO);
-        if (tokenDTO == null) {
-            return ApiResponse.onFailure(ErrorStatus.EMAIL_ALREADY_EXISTS.getCode(), ErrorStatus.EMAIL_ALREADY_EXISTS.getMessage(), null);
-        }
         return ApiResponse.onSuccess(tokenDTO);
     }
 

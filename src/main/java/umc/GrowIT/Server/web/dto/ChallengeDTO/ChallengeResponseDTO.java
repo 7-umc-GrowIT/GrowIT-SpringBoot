@@ -5,9 +5,7 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import umc.GrowIT.Server.domain.ChallengeKeyword;
-import umc.GrowIT.Server.domain.enums.ChallengeStatus;
 
-import java.time.LocalDateTime;
 import java.util.List;
 
 public class ChallengeResponseDTO {
@@ -86,7 +84,7 @@ public class ChallengeResponseDTO {
         private Long challengeId;
         private String certificationImage;
         private String thoughts;
-        private LocalDateTime createdAt;
+        private boolean completed;
     }
 
     // 챌린지 삭제 응답 DTO

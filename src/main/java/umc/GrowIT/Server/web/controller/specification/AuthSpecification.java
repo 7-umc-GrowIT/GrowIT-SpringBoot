@@ -21,7 +21,7 @@ public interface AuthSpecification {
 
     @PostMapping("/users")
     @SecurityRequirement(name = "")
-    @Operation(summary = "이메일 회원가입", description = "", security = @SecurityRequirement(name = ""))
+    @Operation(summary = "이메일 회원가입", description = "약관 목록 입력할 때 termId 1~6 입력해 주세요. termId 1~4는 필수 동의 항목입니다. (임시 테스트할 때 termRepositoryTest 에서 DB에 약관 목록 추가해주세요.)", security = @SecurityRequirement(name = ""))
     @ApiResponses({
             @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "COMMON200", description = "⭕ SUCCESS"),
             @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "USER4003", description = "❌ 이미 존재하는 이메일입니다.", content = @Content(schema = @Schema(implementation = ApiResponse.class))),
