@@ -1,9 +1,6 @@
 package umc.GrowIT.Server.web.dto.UserDTO;
 
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import java.util.List;
 
@@ -16,6 +13,15 @@ public class UserResponseDTO {
     public static class TokenDTO {
         private String accessToken;
         private String refreshToken;
+    }
+
+    @Builder
+    @Getter
+    @NoArgsConstructor
+    @AllArgsConstructor
+    @Setter
+    public static class AccessTokenDTO {
+        private String accessToken;
     }
 
     // 회원 탈퇴 응답 DTO

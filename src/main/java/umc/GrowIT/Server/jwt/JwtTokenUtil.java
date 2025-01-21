@@ -3,6 +3,7 @@ package umc.GrowIT.Server.jwt;
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -16,20 +17,25 @@ import java.util.Date;
 import java.util.stream.Collectors;
 import org.springframework.security.core.GrantedAuthority;
 import umc.GrowIT.Server.domain.CustomUserDetails;
+import umc.GrowIT.Server.service.authService.CustomUserDetailsService;
 import umc.GrowIT.Server.web.dto.UserDTO.UserResponseDTO;
 
 //JWT 토큰을 생성하고 검증하는 유틸리티 클래스
 @Component
 public class JwtTokenUtil {
 
+    private final CustomUserDetailsService customUserDetailsService;
+
     private final Key key;
 
     public static final long ACCESS_TOKEN_EXPIRATION_MS = 12L * 60 * 60 * 1000; //Access token 만료 시간 12시간
     public static final long REFRESH_TOKEN_EXPIRATION_MS = 30L * 24 * 60 * 60 * 1000; //Refresh token 만료 시간 30일
 
-    public JwtTokenUtil(@Value("${spring.jwt.secretKey}") String secretKey) {
+
+    public JwtTokenUtil(@Value("${spring.jwt.secretKey}") String secretKey, CustomUserDetailsService customUserDetailsService) {
         byte[] keyBytes = Decoders.BASE64.decode(secretKey);
         this.key = Keys.hmacShaKeyFor(keyBytes);
+        this.customUserDetailsService = customUserDetailsService;
     }
 
     // User 정보를 가지고 AccessToken, RefreshToken 생성
@@ -61,6 +67,26 @@ public class JwtTokenUtil {
                 .accessToken(accessToken)
                 .refreshToken(refreshToken)
                 .build();
+    }
+
+    public String generateAccessToken(CustomUserDetails customUserDetails) {
+        String authorities = customUserDetails.getAuthorities().stream()
+                .map(GrantedAuthority::getAuthority)
+                .collect(Collectors.joining(","));
+
+        long now = (new Date()).getTime();
+
+        // Access Token 생성
+        Date accessTokenExpiresIn = new Date(now + ACCESS_TOKEN_EXPIRATION_MS);
+        String accessToken = Jwts.builder()
+                .setSubject(customUserDetails.getUsername())
+                .claim("roles", authorities)
+                .claim("id", customUserDetails.getId())
+                .setExpiration(accessTokenExpiresIn)
+                .signWith(key, SignatureAlgorithm.HS256)
+                .compact();
+
+        return accessToken;
     }
 
     //JWT 토큰에서 Claim 추출

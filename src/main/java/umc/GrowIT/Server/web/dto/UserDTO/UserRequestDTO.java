@@ -22,6 +22,7 @@ public class UserRequestDTO {
     public static class UserInfoDTO {
         private Boolean isVerified;
 
+
         @NotBlank(message = "필수 입력 항목입니다.")
         @Email(message = "이메일 형식에 맞춰주세요.")
         private String email;
@@ -66,5 +67,13 @@ public class UserRequestDTO {
 
         @Size(min = 8, max = 30, message = "크기는 8에서 30 사이입니다.")
         private String passwordCheck;
+    }
+
+    @Builder
+    @Getter
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class ReissueDTO {
+        private String refreshToken;
     }
 }
