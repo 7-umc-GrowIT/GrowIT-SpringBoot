@@ -73,7 +73,7 @@ public class ChallengeCommandServiceImpl implements ChallengeCommandService {
 
         // 인증 내역(UserChallenge) 조회
         UserChallenge userChallenge = userChallengeRepository.findByChallengeId(challengeId)
-                .orElseThrow(() -> new ChallengeHandler(ErrorStatus.CHALLENGE_VERIFY_NOT_FOUND));
+                .orElseThrow(() -> new ChallengeHandler(ErrorStatus.CHALLENGE_VERIFY_NOT_EXISTS));
 
         // 유저 아이디 검증
         if (!userChallenge.getUser().getId().equals(userId)) {
