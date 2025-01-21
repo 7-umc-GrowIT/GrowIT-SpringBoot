@@ -6,6 +6,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import umc.GrowIT.Server.apiPayload.code.status.ErrorStatus;
 import umc.GrowIT.Server.apiPayload.exception.ChallengeHandler;
+import umc.GrowIT.Server.apiPayload.exception.UserChallengeHandler;
 import umc.GrowIT.Server.apiPayload.exception.UserHandler;
 import umc.GrowIT.Server.converter.ChallengeConverter;
 import umc.GrowIT.Server.domain.Challenge;
@@ -59,20 +60,27 @@ public class ChallengeCommandServiceImpl implements ChallengeCommandService {
     }
 
     public ChallengeResponseDTO.DeleteChallengeResponseDTO delete(Long challengeId, Long userId) {
+        // 1. 사용자 조회하고 없으면 오류
+        userRepository.findById(userId)
+                .orElseThrow(() -> new UserHandler(ErrorStatus.USER_NOT_FOUND));
 
-        // 1. userId와 challengeId를 통해 조회하고 없으면 오류
+        // 2. 챌린지 조회하고 없으면 오류
+        challengeRepository.findById(challengeId)
+                .orElseThrow(() -> new ChallengeHandler(ErrorStatus.CHALLENGE_NOT_FOUND));
+
+        // 3. userId와 challengeId를 통해 조회하고 없으면 오류
         UserChallenge userChallenge = userChallengeRepository.findByChallengeIdAndUserId(challengeId, userId)
-                .orElseThrow(() -> new ChallengeHandler(ErrorStatus.USER_CHALLENGE_NOT_FOUND));
+                .orElseThrow(() -> new UserChallengeHandler(ErrorStatus.USER_CHALLENGE_NOT_FOUND));
 
-        // 2. 진행 중(false)인 챌린지인지 체크, 완료(true)한 챌린지면 오류
+        // 4. 진행 중(false)인 챌린지인지 체크, 완료(true)한 챌린지면 오류
         if(userChallenge.isCompleted()) {
-            throw new ChallengeHandler(ErrorStatus.USER_CHALLENGE_COMPLETE);
+            throw new UserChallengeHandler(ErrorStatus.USER_CHALLENGE_COMPLETE);
         }
 
-        // 3. 삭제
+        // 5. 삭제
         userChallengeRepository.delete(userChallenge);
 
-        // 4. converter 작업
+        // 6. converter 작업
         return ChallengeConverter.toDeletedUserChallenge(userChallenge);
     }
 }
