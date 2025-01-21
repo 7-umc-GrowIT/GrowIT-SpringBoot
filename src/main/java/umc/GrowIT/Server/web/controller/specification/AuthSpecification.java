@@ -9,7 +9,11 @@ import jakarta.validation.Valid;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestParam;
 import umc.GrowIT.Server.apiPayload.ApiResponse;
+import umc.GrowIT.Server.domain.enums.AuthType;
+import umc.GrowIT.Server.web.dto.AuthDTO.AuthRequestDTO;
+import umc.GrowIT.Server.web.dto.AuthDTO.AuthResponseDTO;
 import umc.GrowIT.Server.web.dto.UserDTO.UserRequestDTO;
 import umc.GrowIT.Server.web.dto.UserDTO.UserResponseDTO;
 
@@ -17,7 +21,7 @@ public interface AuthSpecification {
 
     @PostMapping("/users")
     @SecurityRequirement(name = "")
-    @Operation(summary = "이메일 회원가입", description = "", security = @SecurityRequirement(name = ""))
+    @Operation(summary = "이메일 회원가입", description = "약관 목록 입력할 때 termId 1~6 입력해 주세요. termId 1~4는 필수 동의 항목입니다. (임시 테스트할 때 termRepositoryTest 에서 DB에 약관 목록 추가해주세요.)", security = @SecurityRequirement(name = ""))
     @ApiResponses({
             @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "COMMON200", description = "⭕ SUCCESS"),
             @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "USER4003", description = "❌ 이미 존재하는 이메일입니다.", content = @Content(schema = @Schema(implementation = ApiResponse.class))),
@@ -50,4 +54,40 @@ public interface AuthSpecification {
             @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "PWD4001", description = "❌ 비밀번호 확인이 일치하지 않습니다.", content = @Content(schema = @Schema(implementation = ApiResponse.class)))
     })
     ApiResponse<Void> findPassword(@RequestBody @Valid UserRequestDTO.PasswordDTO passwordDTO);
+
+    @PatchMapping("")
+    @Operation(summary = "회원 탈퇴 API", description = "사용자가 자신의 계정을 삭제하는 API입니다.")
+    @ApiResponses({
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "COMMON200", description = "⭕ SUCCESS"),
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "USER4002", description = "❌ 이메일 또는 패스워드가 일치하지 않습니다.", content = @Content(schema = @Schema(implementation = ApiResponse.class))),
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "USER4004", description = "❌ 탈퇴한 회원입니다", content = @Content(schema = @Schema(implementation = ApiResponse.class))),
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "COMMON400", description = "❌ BAD, 잘못된 요청", content = @Content(schema = @Schema(implementation = ApiResponse.class)))
+    })
+    ApiResponse<UserResponseDTO.DeleteUserResponseDTO> deleteUser();
+
+    @PostMapping("/email")
+    @Operation(summary = "인증 메일 전송 API", description = "사용자에게 인증 메일을 전송하는 API입니다.")
+    @ApiResponses({
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "COMMON200", description = "⭕ SUCCESS"),
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "USER4002", description = "❌ 이메일 또는 패스워드가 일치하지 않습니다.", content = @Content(schema = @Schema(implementation = ApiResponse.class))),
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "USER4003", description = "❌ 이미 존재하는 이메일입니다.", content = @Content(schema = @Schema(implementation = ApiResponse.class))),
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "AUTH4006", description = "❌ 이메일 인증 타입이 잘못되었습니다.", content = @Content(schema = @Schema(implementation = ApiResponse.class))),
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "AUTH5001", description = "❌ 이메일 전송에 실패했습니다.", content = @Content(schema = @Schema(implementation = ApiResponse.class))),
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "AUTH5002", description = "❌ 이메일 내용 인코딩에 실패했습니다.", content = @Content(schema = @Schema(implementation = ApiResponse.class))),
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "COMMON400", description = "❌ BAD, 잘못된 요청", content = @Content(schema = @Schema(implementation = ApiResponse.class)))
+    })
+    ApiResponse<AuthResponseDTO.SendAuthEmailResponseDTO> sendAuthEmail(
+            @RequestParam AuthType type,
+            @RequestBody @Valid AuthRequestDTO.SendAuthEmailRequestDTO request
+    );
+
+    @PostMapping("/verification")
+    @Operation(summary = "인증 번호 확인 API", description = "사용자가 입력한 인증 번호를 확인하는 API입니다.")
+    @ApiResponses({
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "COMMON200", description = "⭕ SUCCESS"),
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "USER4002", description = "❌ 이메일 또는 패스워드가 일치하지 않습니다.", content = @Content(schema = @Schema(implementation = ApiResponse.class))),
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "USER4004", description = "❌ 탈퇴한 회원입니다", content = @Content(schema = @Schema(implementation = ApiResponse.class))),
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "COMMON400", description = "❌ BAD, 잘못된 요청", content = @Content(schema = @Schema(implementation = ApiResponse.class)))
+    })
+    ApiResponse<AuthResponseDTO.VerifyAuthCodeResponseDTO> verifyAuthCode(@RequestBody AuthRequestDTO.VerifyAuthCodeRequestDTO request);
 }

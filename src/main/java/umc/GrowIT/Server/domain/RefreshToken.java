@@ -23,4 +23,7 @@ public class RefreshToken extends BaseEntity {
 
     @Column(nullable = false)
     private LocalDateTime expiryDate;
+
+    @OneToOne(mappedBy = "refreshToken")
+    private User user;
 }

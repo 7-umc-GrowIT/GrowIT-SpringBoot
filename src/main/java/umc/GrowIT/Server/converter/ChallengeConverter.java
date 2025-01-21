@@ -82,4 +82,11 @@ public class ChallengeConverter {
                 .completed(userChallenge.isCompleted())
                 .build();
     }
+
+    public static ChallengeResponseDTO.DeleteChallengeResponseDTO toDeletedUserChallenge(UserChallenge userChallenge) {
+        return ChallengeResponseDTO.DeleteChallengeResponseDTO.builder()
+                .id(userChallenge.getId())
+                .message("챌린지를 삭제했어요")
+                .build();
+    }
 }

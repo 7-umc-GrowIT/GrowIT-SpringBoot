@@ -1,6 +1,7 @@
 package umc.GrowIT.Server.service.ChallengeService;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import umc.GrowIT.Server.apiPayload.code.status.ErrorStatus;
@@ -23,7 +24,6 @@ public class ChallengeCommandServiceImpl implements ChallengeCommandService {
     private final ChallengeRepository challengeRepository;
     private final UserRepository userRepository;
     private final UserChallengeRepository userChallengeRepository;
-
 
     @Override
     public void markChallengeAsCompleted(Long userId, Long challengeId) {
@@ -58,4 +58,21 @@ public class ChallengeCommandServiceImpl implements ChallengeCommandService {
         return ChallengeConverter.toProofDetailsDTO(userChallenge);
     }
 
+    public ChallengeResponseDTO.DeleteChallengeResponseDTO delete(Long userChallengeId, Long userId) {
+
+        // 1. userId와 userChallengeId를 통해 조회하고 없으면 오류
+        UserChallenge userChallenge = userChallengeRepository.findByIdAndUserId(userChallengeId, userId)
+                .orElseThrow(() -> new ChallengeHandler(ErrorStatus.USER_CHALLENGE_NOT_FOUND));
+
+        // 2. 진행 중(false)인 챌린지인지 체크, 완료(true)한 챌린지면 오류
+        if(userChallenge.isCompleted()) {
+            throw new ChallengeHandler(ErrorStatus.USER_CHALLENGE_COMPLETE);
+        }
+
+        // 3. 삭제
+        userChallengeRepository.deleteById(userChallengeId);
+
+        // 4. converter 작업
+        return ChallengeConverter.toDeletedUserChallenge(userChallenge);
+    }
 }
