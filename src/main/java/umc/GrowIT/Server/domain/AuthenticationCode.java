@@ -41,4 +41,9 @@ public class AuthenticationCode extends BaseEntity {
     public void updateStatus(CodeStatus status) {
         this.status = status;
     }
+
+    public void update() {
+        this.isVerified = true;
+        this.status = CodeStatus.EXPIRED;
+    }
 }

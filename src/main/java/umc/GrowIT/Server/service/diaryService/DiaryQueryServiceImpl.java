@@ -3,6 +3,9 @@ package umc.GrowIT.Server.service.diaryService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import umc.GrowIT.Server.apiPayload.code.status.ErrorStatus;
+import umc.GrowIT.Server.apiPayload.exception.DiaryHandler;
+import umc.GrowIT.Server.apiPayload.exception.GeneralException;
 import umc.GrowIT.Server.converter.DiaryConverter;
 import umc.GrowIT.Server.domain.Diary;
 import umc.GrowIT.Server.repository.ItemRepository.ItemRepository;
@@ -10,6 +13,7 @@ import umc.GrowIT.Server.repository.diaryRepository.DiaryRepository;
 import umc.GrowIT.Server.web.dto.DiaryDTO.DiaryResponseDTO;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -34,5 +38,14 @@ public class DiaryQueryServiceImpl implements DiaryQueryService{
 
         //DiaryListDTO로 변환
         return DiaryConverter.toDiaryListDTO(diaryList);
+    }
+
+    @Override
+    public DiaryResponseDTO.DiaryDTO getDiary(Long diaryId, Long userId){
+        Optional<Diary> diary = diaryRepository.findByUserIdAndId(userId, diaryId);
+
+
+        return diary.map(DiaryConverter::toDiaryDTO)
+                .orElseThrow(() -> new DiaryHandler(ErrorStatus.DIARY_NOT_FOUND));
     }
 }
