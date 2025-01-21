@@ -59,8 +59,8 @@ public class ChallengeController implements ChallengeSpecification {
     }
 
     @GetMapping("/{challengeId}")
-    public ApiResponse<ChallengeResponseDTO.ProofDetailsDTO> getChallengeProofDetails(@PathVariable Long challengeId) {
-        ChallengeResponseDTO.ProofDetailsDTO response = challengeCommandService.getChallengeProofDetails(challengeId);
+    public ApiResponse<ChallengeResponseDTO.ProofDetailsDTO> getChallengeProofDetails(@RequestParam Long userId, @PathVariable Long challengeId) {
+        ChallengeResponseDTO.ProofDetailsDTO response = challengeCommandService.getChallengeProofDetails(userId, challengeId);
         return ApiResponse.onSuccess(response);
     }
 

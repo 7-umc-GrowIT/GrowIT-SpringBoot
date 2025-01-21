@@ -61,21 +61,25 @@ public class ChallengeCommandServiceImpl implements ChallengeCommandService {
     // 챌린지 인증 내역 조회
     @Override
     @Transactional(readOnly = true)
-    public ChallengeResponseDTO.ProofDetailsDTO getChallengeProofDetails(Long challengeId) {
-        // 1. 챌린지 조회
+    public ChallengeResponseDTO.ProofDetailsDTO getChallengeProofDetails(Long userId, Long challengeId) {
+        // 챌린지 조회
         Challenge challenge = challengeRepository.findById(challengeId)
                 .orElseThrow(() -> new IllegalArgumentException("챌린지를 찾을 수 없습니다."));
 
-        // 2. 챌린지가 미완료 상태라면 예외 처리
+        // 챌린지가 미완료 상태라면 예외 처리
         if (!challenge.isCompleted()) {
             throw new IllegalStateException("미완료 상태의 챌린지는 인증 내역을 볼 수 없습니다.");
         }
 
-        // 3. 인증 내역(UserChallenge) 조회
+        // 인증 내역(UserChallenge) 조회
         UserChallenge userChallenge = userChallengeRepository.findByChallengeId(challengeId)
                 .orElseThrow(() -> new IllegalArgumentException("챌린지 인증 내역이 없습니다."));
 
-        // 4. ProofDetailsDTO로 변환하여 반환
+        // 유저 아이디 검증
+        if (!userChallenge.getUser().getId().equals(userId)) {
+            throw new IllegalArgumentException("유저 아이디가 챌린지 인증과 일치하지 않습니다.");
+        }
+
         return ChallengeConverter.toChallengeProofDetailsDTO(challenge, userChallenge);
     }
 
