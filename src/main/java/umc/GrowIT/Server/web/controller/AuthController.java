@@ -3,6 +3,9 @@ package umc.GrowIT.Server.web.controller;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 import umc.GrowIT.Server.apiPayload.ApiResponse;
 import umc.GrowIT.Server.domain.enums.AuthType;
@@ -15,6 +18,7 @@ import umc.GrowIT.Server.web.dto.AuthDTO.AuthRequestDTO;
 import umc.GrowIT.Server.web.dto.AuthDTO.AuthResponseDTO;
 import umc.GrowIT.Server.service.authService.UserCommandService;
 
+@Slf4j
 @Tag(name = "Auth", description = "인증 관련 API")
 @RestController
 @RequiredArgsConstructor
@@ -48,7 +52,8 @@ public class AuthController implements AuthSpecification {
     @PatchMapping("")
     public ApiResponse<UserResponseDTO.DeleteUserResponseDTO> deleteUser() {
         // 임시로 사용자 ID 지정
-        Long userId = 16L;
+        Long id = 16L;
+        Long userId = id;
 
         UserResponseDTO.DeleteUserResponseDTO deleteUser = userCommandService.delete(userId);
 

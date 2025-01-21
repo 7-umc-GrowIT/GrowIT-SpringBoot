@@ -69,7 +69,7 @@ public class UserCommandServiceImpl implements UserCommandService {
         User newUser = UserConverter.toUser(userInfoDTO);
         newUser.encodePassword(passwordEncoder.encode(newUser.getPassword()));
 
-        /*
+        /**
           사용자 약관 처리 과정
           1. UserInfoDTO 내부 userTerms(term_id, agreed) Stream 형태로 처리
           2. 약관 존재 여부 및 동의 상태 검증
