@@ -30,6 +30,7 @@ public class DiaryResponseDTO {
     @NoArgsConstructor
     @AllArgsConstructor
     public static class DiaryDTO{
+        Long diaryId;
         String content;
         LocalDateTime date;    //일기 최종 수정 날짜
     }
@@ -40,10 +41,6 @@ public class DiaryResponseDTO {
     public static class DiaryListDTO{
         List<DiaryResponseDTO.DiaryDTO> diaryList;
         Integer listSize;
-        Integer totalPage;
-        Long totalElements;
-        Boolean isFirst;
-        Boolean isLast;
     }
     @Builder
     @Getter

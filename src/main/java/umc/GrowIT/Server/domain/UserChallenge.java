@@ -1,7 +1,6 @@
 package umc.GrowIT.Server.domain;
 
 import umc.GrowIT.Server.domain.common.BaseEntity;
-import umc.GrowIT.Server.domain.enums.ChallengeStatus;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -24,10 +23,6 @@ public class UserChallenge extends BaseEntity {
     @JoinColumn(name = "challenge_id", nullable = false)
     private Challenge challenge;
 
-    @Enumerated(EnumType.STRING)
-    @Column(name = "status")
-    private ChallengeStatus challengeStatus;
-
     @Column(name = "thoughts", length = 100)
     private String thoughts;
 
@@ -42,9 +37,5 @@ public class UserChallenge extends BaseEntity {
         this.challenge = challenge;
     }
 
-    // 상태 업데이트
-    public void updateStatus(ChallengeStatus newStatus) {
-        this.challengeStatus = newStatus;
-    }
 
 }

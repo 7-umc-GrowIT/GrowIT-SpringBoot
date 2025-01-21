@@ -37,4 +37,4 @@ out/
 .vscode/
 
 ### 추가
-/src/main/resources/*
+/src/main/resources/*.yml

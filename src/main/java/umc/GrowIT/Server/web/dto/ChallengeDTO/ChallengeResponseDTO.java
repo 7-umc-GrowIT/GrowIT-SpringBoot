@@ -5,7 +5,6 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import umc.GrowIT.Server.domain.ChallengeKeyword;
-import umc.GrowIT.Server.domain.enums.ChallengeStatus;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -95,8 +94,7 @@ public class ChallengeResponseDTO {
     @NoArgsConstructor
     @AllArgsConstructor
     public static class ProofDetailsDTO {
-        private String title;
-        private Integer time;
+        private Long challengeId;
         private String certificationImage;
         private String thoughts;
         private LocalDateTime certificationDate;
@@ -110,6 +108,7 @@ public class ChallengeResponseDTO {
     @AllArgsConstructor
     public static class DeleteChallengeResponseDTO {
         // TODO 디테일하게 결정 필요
+        private Long id;
         private String message; // ex) 챌린지 삭제가 완료되었습니다
     }
 }
