@@ -52,7 +52,9 @@ dependencies {
 	implementation 'org.apache.commons:commons-lang3:3.12.0'
 
 	// S3 세팅
-	implementation 'com.amazonaws:aws-java-sdk-s3control:1.12.364'
+	implementation 'com.amazonaws:aws-java-sdk-s3:1.12.549'
+	//implementation 'com.amazonaws:aws-java-sdk-s3control:1.12.364'
+	//implementation 'org.springframework.cloud:spring-cloud-starter-aws:2.2.6.RELEASE'
 }
 
 tasks.named('test') {
