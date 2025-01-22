@@ -5,6 +5,7 @@ import lombok.Getter;
 import lombok.Setter;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 public class DiaryRequestDTO {
     @Getter
@@ -13,6 +14,6 @@ public class DiaryRequestDTO {
         @NotNull
         String content;
         @NotNull
-        LocalDate date;
+        LocalDateTime date;
     }
 }
