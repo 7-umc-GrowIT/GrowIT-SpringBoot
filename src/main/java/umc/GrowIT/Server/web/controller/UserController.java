@@ -2,6 +2,8 @@ package umc.GrowIT.Server.web.controller;
 
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 import umc.GrowIT.Server.apiPayload.ApiResponse;
 import umc.GrowIT.Server.domain.enums.ItemCategory;
@@ -27,13 +29,15 @@ public class UserController implements UserSpecification {
 
     @Override
     public ApiResponse<CreditResponseDTO.CurrentCreditDTO> getUserCredit() {
-        Long userId = 13L; // 임시로 13L 송진우 사용
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        Long userId = (Long) authentication.getPrincipal(); //사용자 식별 id
         return ApiResponse.onSuccess(creditQueryService.getCurrentCredit(userId));
     }
 
     @Override
     public ApiResponse<CreditResponseDTO.TotalCreditDTO> getUserTotalCredit() {
-        Long userId = 13L; // 임시로 13L 송진우 사용
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        Long userId = (Long) authentication.getPrincipal(); //사용자 식별 id
         return ApiResponse.onSuccess(creditQueryService.getTotalCredit(userId));
     }
 
