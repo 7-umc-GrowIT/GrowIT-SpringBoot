@@ -63,7 +63,8 @@ public interface DiarySpecification {
             @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "COMMON200", description = "OK, 성공"),
             @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "DIARY4002",description = "100자 이내로 작성된 일기입니다.",content = @Content(schema = @Schema(implementation = ApiResponse.class)))
     })
-    ApiResponse<DiaryResponseDTO.CreateResultDTO> createDiaryByText(@RequestBody DiaryRequestDTO.DiaryDTO request);
+    ApiResponse<DiaryResponseDTO.CreateResultDTO> createDiaryByText(@RequestHeader(value = "Authorization", required = false) String authorizationHeader,
+                                                                    @RequestBody DiaryRequestDTO.DiaryDTO request);
 
     @PostMapping("/voice")
     @Operation(summary = "음성으로 일기 작성하기 API",description = "특정 사용자가 일기를 음성으로 말하며 작성하는 API입니다. 음성내용과 작성일자를 보내주세요")

@@ -14,6 +14,6 @@ public class DiaryRequestDTO {
         @NotNull
         String content;
         @NotNull
-        LocalDateTime date;
+        LocalDate date;
     }
 }
