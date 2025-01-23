@@ -10,7 +10,7 @@ public class DiaryConverter {
     public static DiaryResponseDTO.DiaryDateDTO toDiaryDateDTO(Diary diary){
         return DiaryResponseDTO.DiaryDateDTO.builder()
                 .diaryId(diary.getId())
-                .date(diary.getCreatedAt())
+                .date(diary.getDate())
                 .build();
     }
 
@@ -30,7 +30,7 @@ public class DiaryConverter {
         return DiaryResponseDTO.DiaryDTO.builder()
                 .diaryId(diary.getId())
                 .content(diary.getContent())
-                .date(diary.getCreatedAt())
+                .date(diary.getDate())
                 .build();
     }
 
