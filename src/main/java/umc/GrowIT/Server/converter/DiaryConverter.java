@@ -51,7 +51,6 @@ public class DiaryConverter {
         return DiaryResponseDTO.ModifyResultDTO.builder()
                 .diaryId(diary.getId())
                 .content(diary.getContent())
-                .updatedAt(diary.getUpdatedAt())
                 .build();
     }
 }

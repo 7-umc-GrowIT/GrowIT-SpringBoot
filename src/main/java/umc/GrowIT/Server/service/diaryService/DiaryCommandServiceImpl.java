@@ -20,14 +20,13 @@ import java.util.Optional;
 public class DiaryCommandServiceImpl implements DiaryCommandService{
     private final DiaryRepository diaryRepository;
     @Override
-    public DiaryResponseDTO.ModifyResultDTO modifyDiary(DiaryRequestDTO.DiaryDTO request, Long diaryId, Long userId) {
+    public DiaryResponseDTO.ModifyResultDTO modifyDiary(DiaryRequestDTO.ModifyDTO request, Long diaryId, Long userId) {
 
         Optional<Diary> optionalDiary = diaryRepository.findByUserIdAndId(userId, diaryId);
         Diary diary = optionalDiary.orElseThrow(()->new DiaryHandler(ErrorStatus.DIARY_NOT_FOUND));
 
         //Todo: 수정한 일기의 내용이 100자 이내인지 검사하는 로직 추가 필요(원활한 테스트를 위해 나중에 추가)
         diary.setContent(request.getContent());
-        diary.setUpdatedAt(request.getDate());
 
         diaryRepository.save(diary);
         return DiaryConverter.toModifyResultDTO(diary);

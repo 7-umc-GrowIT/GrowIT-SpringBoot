@@ -15,4 +15,11 @@ public class DiaryRequestDTO {
         @NotNull
         LocalDate date; //작성 날짜
     }
+
+    @Getter
+    @Setter
+    public static class ModifyDTO{
+        @NotNull
+        String content; //수정 내용
+    }
 }
