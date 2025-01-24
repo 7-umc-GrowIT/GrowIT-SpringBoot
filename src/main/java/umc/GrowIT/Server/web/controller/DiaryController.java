@@ -70,7 +70,7 @@ public class DiaryController implements DiarySpecification {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         Long userId = (Long) authentication.getPrincipal();
 
-        return null;
+        return ApiResponse.onSuccess(diaryCommandService.deleteDiary(diaryId, userId));
     }
     @PostMapping("/text")
     public ApiResponse<DiaryResponseDTO.CreateResultDTO> createDiaryByText(@RequestBody DiaryRequestDTO.DiaryDTO request){
