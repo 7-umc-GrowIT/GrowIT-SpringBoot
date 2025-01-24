@@ -70,10 +70,10 @@ public interface ChallengeSpecification {
     })
     ApiResponse<ChallengeResponseDTO> updateChallengeProof(@PathVariable Long challengeId, @RequestBody ChallengeRequestDTO.UpdateRequestDTO updateRequest);
 
-    @DeleteMapping("{challengeId}")
+    @DeleteMapping("{userChallengeId}")
     @Operation(
             summary = "챌린지 삭제 API",
-            description = "특정 챌린지를 삭제하는 API입니다. 챌린지 ID를 path variable로 전달받아 해당 챌린지를 삭제합니다."
+            description = "사용자의 특정 챌린지를 삭제하는 API입니다. 사용자 챌린지 ID를 path variable로 전달받아 해당 챌린지를 삭제합니다."
     )
     @ApiResponses({
             @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "COMMON200", description = "⭕ SUCCESS"),
@@ -82,6 +82,6 @@ public interface ChallengeSpecification {
             @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "COMMON400", description = "❌ BAD, 잘못된 요청", content = @Content(schema = @Schema(implementation = ApiResponse.class)))
 
     })
-    @Parameter(name = "challengeId", description = "삭제할 챌린지의 ID", required = true)
-    ApiResponse<ChallengeResponseDTO.DeleteChallengeResponseDTO> deleteChallenge(@PathVariable("challengeId") Long challengeId);
+    @Parameter(name = "userChallengeId", description = "삭제할 사용자 챌린지의 ID", required = true)
+    ApiResponse<ChallengeResponseDTO.DeleteChallengeResponseDTO> deleteChallenge(@PathVariable("userChallengeId") Long userChallengeId);
 }
