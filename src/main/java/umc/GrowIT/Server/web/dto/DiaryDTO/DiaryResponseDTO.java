@@ -61,4 +61,12 @@ public class DiaryResponseDTO {
         Long diaryId;
         String content;
     }
+
+    @Builder
+    @Getter
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class DeleteResultDTO{
+        Long diaryId;
+    }
 }
