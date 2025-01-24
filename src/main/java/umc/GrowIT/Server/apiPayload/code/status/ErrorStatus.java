@@ -32,9 +32,9 @@ public enum ErrorStatus implements BaseErrorCode {
     ALL_TERMS_REQUIRED(HttpStatus.BAD_REQUEST, "TERM4003", "전체 약관 정보를 주세요."),
 
     //인증 관련 에러
-    INVALID_TOKEN(HttpStatus.UNAUTHORIZED, "AUTH4001", "유효하지 않은 JWT 토큰입니다."),
-    EXPIRED_TOKEN(HttpStatus.UNAUTHORIZED, "AUTH4002", "만료된 JWT 토큰입니다."),
-    UNSUPPORTED_TOKEN(HttpStatus.BAD_REQUEST, "AUTH4003", "지원하지 않는 JWT 토큰입니다."),
+    INVALID_TOKEN(HttpStatus.UNAUTHORIZED, "AUTH4001", "유효하지 않은 토큰입니다."),
+    EXPIRED_TOKEN(HttpStatus.UNAUTHORIZED, "AUTH4002", "만료된 토큰입니다."),
+    UNSUPPORTED_TOKEN(HttpStatus.BAD_REQUEST, "AUTH4003", "지원하지 않는 토큰입니다."),
     EMPTY_CLAIMS(HttpStatus.BAD_REQUEST, "AUTH4004", "JWT 토큰의 클레임 문자열이 비어 있습니다."),
     EMAIL_NOT_VERIFIED(HttpStatus.BAD_REQUEST, "AUTH4005", "이메일 인증을 완료해주세요."),
     INVALID_AUTH_TYPE(HttpStatus.BAD_REQUEST, "AUTH4006", "이메일 인증 타입이 잘못되었습니다."),
@@ -42,6 +42,7 @@ public enum ErrorStatus implements BaseErrorCode {
     AUTH_CODE_MISMATCH(HttpStatus.BAD_REQUEST, "AUTH4008", "인증번호가 올바르지 않습니다."),
     EMAIL_SEND_FAIL(HttpStatus.INTERNAL_SERVER_ERROR, "AUTH5001", "이메일 전송에 실패했습니다."),
     EMAIL_ENCODING_FAIL(HttpStatus.INTERNAL_SERVER_ERROR, "AUTH5002", "이메일 내용 인코딩에 실패했습니다."),
+    REFRESH_TOKEN_NOT_FOUND(HttpStatus.NOT_FOUND, "AUTH4007", "데이터베이스에서 refreshToken을 찾을 수 없습니다."),
 
     // 챌린지 관련 에러
     CHALLENGE_NOT_FOUND(HttpStatus.NOT_FOUND, "CHALLENGE4001", "챌린지를 찾을 수 없습니다."),
@@ -66,7 +67,14 @@ public enum ErrorStatus implements BaseErrorCode {
 
     //일기 관련 에러
     DIARY_NOT_FOUND(HttpStatus.BAD_REQUEST, "DIARY4001", "존재하지 않는 일기입니다."),
-    DIARY_CHARACTER_LIMIT(HttpStatus.BAD_REQUEST, "DIARY4002", "100자 이내로 작성된 일기입니다.");
+    DIARY_CHARACTER_LIMIT(HttpStatus.BAD_REQUEST, "DIARY4002", "100자 이내로 작성된 일기입니다."),
+
+    // s3 관련 에러
+    S3_BAD_FILE_EXTENSION(HttpStatus.BAD_REQUEST, "S3_4001", "파일 확장자가 잘못되었습니다."),
+    S3_FILE_EMPTY(HttpStatus.BAD_REQUEST, "S3_4002", "파일이 비어 있습니다."),
+    S3_FILE_UPLOAD_FAIL(HttpStatus.INTERNAL_SERVER_ERROR, "S3_5001", "파일 업로드에 실패했습니다."),
+    S3_FILE_OVER_SIZE(HttpStatus.BAD_REQUEST, "S3_4003", "파일 크기가 10MB를 초과했습니다.");
+
 
 
     private final HttpStatus httpStatus;

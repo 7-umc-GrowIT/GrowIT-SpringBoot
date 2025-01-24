@@ -3,13 +3,14 @@ package umc.GrowIT.Server.web.controller;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import org.springframework.security.authentication.AuthenticationManager;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 import umc.GrowIT.Server.apiPayload.ApiResponse;
-import umc.GrowIT.Server.jwt.JwtTokenUtil;
 import umc.GrowIT.Server.domain.enums.AuthType;
 import umc.GrowIT.Server.service.authService.AuthService;
-import umc.GrowIT.Server.service.authService.KakaoService;
+import umc.GrowIT.Server.service.refreshTokenService.RefreshTokenCommandService;
 import umc.GrowIT.Server.web.controller.specification.AuthSpecification;
 import umc.GrowIT.Server.web.dto.UserDTO.KakaoResponseDTO;
 import umc.GrowIT.Server.web.dto.UserDTO.UserRequestDTO;
@@ -18,6 +19,7 @@ import umc.GrowIT.Server.web.dto.AuthDTO.AuthRequestDTO;
 import umc.GrowIT.Server.web.dto.AuthDTO.AuthResponseDTO;
 import umc.GrowIT.Server.service.authService.UserCommandService;
 
+@Slf4j
 @Tag(name = "Auth", description = "인증 관련 API")
 @RestController
 @RequiredArgsConstructor
@@ -25,10 +27,8 @@ import umc.GrowIT.Server.service.authService.UserCommandService;
 public class AuthController implements AuthSpecification {
 
     private final UserCommandService userCommandService;
-    private final AuthenticationManager authenticationManager;
-    private final JwtTokenUtil JwtTokenUtil;
     private final AuthService authService;
-    private final KakaoService kakaoService;
+    private final RefreshTokenCommandService refreshTokenCommandService;
 
     @PostMapping("/login/email")
     public ApiResponse<UserResponseDTO.TokenDTO> loginEmail(@RequestBody @Valid UserRequestDTO.EmailLoginDTO emailLoginDTO) {
@@ -42,17 +42,19 @@ public class AuthController implements AuthSpecification {
         return ApiResponse.onSuccess(tokenDTO);
     }
 
-    @PatchMapping("/users/password")
-    public ApiResponse<Void> findPassword(@RequestBody @Valid UserRequestDTO.PasswordDTO passwordDTO) {
-        userCommandService.updatePassword(passwordDTO);
-        return ApiResponse.onSuccess();
+
+    @PostMapping("/reissue")
+    public ApiResponse<UserResponseDTO.AccessTokenDTO> reissueToken(@RequestBody @Valid UserRequestDTO.ReissueDTO reissueDTO) {
+        UserResponseDTO.AccessTokenDTO accessTokenDTO = refreshTokenCommandService.reissueToken(reissueDTO);
+        return ApiResponse.onSuccess(accessTokenDTO);
     }
 
     @Override
     @PatchMapping("")
     public ApiResponse<UserResponseDTO.DeleteUserResponseDTO> deleteUser() {
         // 임시로 사용자 ID 지정
-        Long userId = 16L;
+        Long id = 16L;
+        Long userId = id;
 
         UserResponseDTO.DeleteUserResponseDTO deleteUser = userCommandService.delete(userId);
 
@@ -78,9 +80,8 @@ public class AuthController implements AuthSpecification {
         return ApiResponse.onSuccess(result);
     }
 
-    @GetMapping("/login/kakao")
-    public ApiResponse<KakaoResponseDTO.KakaoTokenDTO> kakaoLogin(@RequestParam(value = "code", required = false) String code) {
-        KakaoResponseDTO.KakaoTokenDTO token = kakaoService.getToken(code);
-        return ApiResponse.onSuccess(token);
+    @PostMapping("/login/kakao")
+    public ApiResponse<KakaoResponseDTO.KakaoTokenDTO> kakaoLogin(@RequestParam(value = "code", required = false) String code){
+        return null;
     }
 }

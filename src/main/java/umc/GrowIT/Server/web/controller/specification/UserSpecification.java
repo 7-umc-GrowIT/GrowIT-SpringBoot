@@ -5,6 +5,8 @@ import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
+import jakarta.validation.Valid;
 import org.springframework.web.bind.annotation.*;
 import umc.GrowIT.Server.apiPayload.ApiResponse;
 import umc.GrowIT.Server.domain.enums.ItemCategory;
@@ -12,6 +14,7 @@ import umc.GrowIT.Server.web.dto.CreditDTO.CreditResponseDTO;
 import umc.GrowIT.Server.web.dto.ItemDTO.ItemResponseDTO;
 import umc.GrowIT.Server.web.dto.PaymentDTO.PaymentRequestDTO;
 import umc.GrowIT.Server.web.dto.PaymentDTO.PaymentResponseDTO;
+import umc.GrowIT.Server.web.dto.UserDTO.UserRequestDTO;
 
 public interface UserSpecification {
 
@@ -51,4 +54,15 @@ public interface UserSpecification {
             @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "PAYMENT4001", description = "❌ 결제정보다 정확하지않습니다.", content = @Content(schema = @Schema(implementation = ApiResponse.class)))
     })
     ApiResponse<PaymentResponseDTO> purchaseCredits(@RequestBody PaymentRequestDTO request);
+
+    @PatchMapping("/password")
+    @Operation(summary = "비밀번호 변경", description = "", security = @SecurityRequirement(name = "tempToken"))
+    @ApiResponses({
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "COMMON200", description = "⭕ SUCCESS"),
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "AUTH4002", description = "❌ 이메일 인증을 완료해주세요.", content = @Content(schema = @Schema(implementation = ApiResponse.class))),
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "USER4002", description = "❌ 이메일 또는 패스워드가 일치하지 않습니다.", content = @Content(schema = @Schema(implementation = ApiResponse.class))),
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "USER4004", description = "❌ 탈퇴한 회원입니다.", content = @Content(schema = @Schema(implementation = ApiResponse.class))),
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "PWD4001", description = "❌ 비밀번호 확인이 일치하지 않습니다.", content = @Content(schema = @Schema(implementation = ApiResponse.class)))
+    })
+    ApiResponse<Void> findPassword(@RequestBody @Valid UserRequestDTO.PasswordDTO passwordDTO);
 }
