@@ -78,6 +78,13 @@ jobs:
           # 빌드된 JAR 파일 찾기 (*plain.jar 제외)
           jar_file=$(find build/libs -name '*.jar' ! -name '*plain.jar' | head -n 1)
           
+          # 기존 JAR 파일 삭제
+          ssh -i private_key.pem -o StrictHostKeyChecking=no $EC2_USERNAME@$EC2_HOST "
+            if [ -f /home/$EC2_USERNAME/GrowItServer.jar ]; then
+              rm -f /home/$EC2_USERNAME/GrowItServer.jar
+            fi
+          "
+          
           # JAR 파일을 EC2로 전송 (StrictHostKeyChecking 무시)
           scp -i private_key.pem -o StrictHostKeyChecking=no "$jar_file" $EC2_USERNAME@$EC2_HOST:/home/$EC2_USERNAME/GrowItServer.jar
           
