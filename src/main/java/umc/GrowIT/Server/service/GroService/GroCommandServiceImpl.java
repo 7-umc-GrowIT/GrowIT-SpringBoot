@@ -6,6 +6,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import umc.GrowIT.Server.apiPayload.code.status.ErrorStatus;
 import umc.GrowIT.Server.apiPayload.exception.GroHandler;
+import umc.GrowIT.Server.apiPayload.exception.ItemHandler;
 import umc.GrowIT.Server.apiPayload.exception.UserHandler;
 import umc.GrowIT.Server.converter.GroConverter;
 import umc.GrowIT.Server.converter.UserItemConverter;
@@ -43,7 +44,7 @@ public class GroCommandServiceImpl implements GroCommandService{
 
         // 배경 아이템 조회
         Item item = itemRepository.findByName(backgroundItem)
-                .orElseThrow(() -> new GroHandler(ErrorStatus.ITEM_NOT_FOUND));
+                .orElseThrow(() -> new ItemHandler(ErrorStatus.ITEM_NOT_FOUND));
 
         // Gro 생성 및 저장
         Gro gro = GroConverter.toGro(user, nickname);
@@ -61,13 +62,13 @@ public class GroCommandServiceImpl implements GroCommandService{
 
         if (nickname.length() < 2 || nickname.length() > 10) {
 
-            throw new GroHandler(ErrorStatus.GroNICKNAME_LENGTH_INVALID);
+            throw new GroHandler(ErrorStatus.GRO_NICKNAME_LENGTH_INVALID);
         }
 
         Optional<Gro> gro = groRepository.findByName(nickname);
 
         if (gro.isPresent()){
-            throw new GroHandler(ErrorStatus.GroNICKNAME_ALREADY_EXISTS);
+            throw new GroHandler(ErrorStatus.GRO_NICKNAME_ALREADY_EXISTS);
         }
 
     }
