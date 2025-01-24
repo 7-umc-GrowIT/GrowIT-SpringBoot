@@ -39,7 +39,8 @@ jobs:
         uses: gradle/gradle-build-action@v2
         with:
           arguments: build  # gradle build 명령 실행
-      
+
+
       # 6. 빌드된 JAR 파일을 아티팩트로 업로드
       - name: Upload build artifact
         uses: actions/upload-artifact@v3
