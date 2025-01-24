@@ -30,4 +30,15 @@ public class DiaryCommandServiceImpl implements DiaryCommandService{
 
         return DiaryConverter.toModifyResultDTO(diary);
     }
+
+    @Override
+    public DiaryResponseDTO.DeleteResultDTO deleteDiary(Long diaryId, Long userId) {
+
+        Optional<Diary> optionalDiary = diaryRepository.findByUserIdAndId(userId, diaryId);
+        Diary diary = optionalDiary.orElseThrow(()->new DiaryHandler(ErrorStatus.DIARY_NOT_FOUND));
+
+        diaryRepository.delete(diary);
+
+        return DiaryConverter.toDeleteResultDTO(diary);
+    }
 }

@@ -53,4 +53,11 @@ public class DiaryConverter {
                 .content(diary.getContent())
                 .build();
     }
+
+    public static DiaryResponseDTO.DeleteResultDTO toDeleteResultDTO(Diary diary){
+
+        return DiaryResponseDTO.DeleteResultDTO.builder()
+                .diaryId(diary.getId())
+                .build();
+    }
 }
