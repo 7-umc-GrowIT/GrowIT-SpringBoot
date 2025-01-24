@@ -60,10 +60,10 @@ public class GroCommandServiceImpl implements GroCommandService{
     @Transactional(readOnly = true)
     public void checkNickname(String nickname){
 
-        if (nickname.length() < 2 || nickname.length() > 10) {
-
-            throw new GroHandler(ErrorStatus.GRO_NICKNAME_LENGTH_INVALID);
-        }
+//        if (nickname.length() < 2 || nickname.length() > 10) {
+//
+//            throw new GroHandler(ErrorStatus.GRO_NICKNAME_LENGTH_INVALID);
+//        }
 
         Optional<Gro> gro = groRepository.findByName(nickname);
 
