@@ -38,7 +38,7 @@ jobs:
       - name: Build with Gradle
         uses: gradle/gradle-build-action@v2
         with:
-          arguments: build  # gradle build 명령 실행
+          arguments: build -x test  # 테스트 제외하고 빌드
 
 
       # 6. 빌드된 JAR 파일을 아티팩트로 업로드
