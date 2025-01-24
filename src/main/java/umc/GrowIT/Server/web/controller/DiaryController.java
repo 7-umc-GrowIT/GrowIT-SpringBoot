@@ -55,7 +55,7 @@ public class DiaryController implements DiarySpecification {
 
     @PatchMapping("/{diaryId}")
     public ApiResponse<DiaryResponseDTO.ModifyResultDTO> modifyDiary(@RequestHeader(value = "Authorization", required = false) String authorizationHeader,
-                                                                     @PathVariable("diaryId") Long diaryId, @RequestBody DiaryRequestDTO.DiaryDTO request){
+                                                                     @PathVariable("diaryId") Long diaryId, @RequestBody DiaryRequestDTO.ModifyDTO request){
         //accessToken에서 userId 추출
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         Long userId = (Long) authentication.getPrincipal();

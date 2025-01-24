@@ -24,7 +24,7 @@ public class DiaryCommandServiceImpl implements DiaryCommandService{
     private final DiaryRepository diaryRepository;
     private final UserRepository userRepository;
     @Override
-    public DiaryResponseDTO.ModifyResultDTO modifyDiary(DiaryRequestDTO.DiaryDTO request, Long diaryId, Long userId) {
+    public DiaryResponseDTO.ModifyResultDTO modifyDiary(DiaryRequestDTO.ModifyDTO request, Long diaryId, Long userId) {
 
         Optional<Diary> optionalDiary = diaryRepository.findByUserIdAndId(userId, diaryId);
         Diary diary = optionalDiary.orElseThrow(()->new DiaryHandler(ErrorStatus.DIARY_NOT_FOUND));

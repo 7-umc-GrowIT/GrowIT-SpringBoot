@@ -16,7 +16,7 @@ public class DiaryResponseDTO {
     @AllArgsConstructor
     public static class DiaryDateDTO{
         Long diaryId;
-        LocalDateTime date;    //일기 최종 수정 날짜
+        LocalDate date;    //일기 최종 수정 날짜
     }
     @Builder
     @Getter
@@ -33,7 +33,7 @@ public class DiaryResponseDTO {
     public static class DiaryDTO{
         Long diaryId;
         String content;
-        LocalDateTime date;    //일기 최종 수정 날짜
+        LocalDate date;    //일기 최종 수정 날짜
     }
     @Builder
     @Getter
@@ -60,6 +60,5 @@ public class DiaryResponseDTO {
     public static class ModifyResultDTO{
         Long diaryId;
         String content;
-        LocalDateTime updatedAt;
     }
 }
