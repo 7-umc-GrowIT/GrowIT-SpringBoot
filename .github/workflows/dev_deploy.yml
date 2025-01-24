@@ -4,7 +4,7 @@ name: GrowIt CI/CD Pipeline
 # 워크플로우 트리거 조건 설정
 on:
   push:
-    branches: [ bug/#100 ]  # develop 브랜치에 push가 발생할 때만 실행
+    branches: [ develop ]  # develop 브랜치에 push가 발생할 때만 실행
 
 # 실행할 작업들을 정의
 jobs:
