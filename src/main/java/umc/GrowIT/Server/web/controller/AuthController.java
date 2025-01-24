@@ -9,7 +9,9 @@ import umc.GrowIT.Server.apiPayload.ApiResponse;
 import umc.GrowIT.Server.jwt.JwtTokenUtil;
 import umc.GrowIT.Server.domain.enums.AuthType;
 import umc.GrowIT.Server.service.authService.AuthService;
+import umc.GrowIT.Server.service.authService.KakaoService;
 import umc.GrowIT.Server.web.controller.specification.AuthSpecification;
+import umc.GrowIT.Server.web.dto.UserDTO.KakaoResponseDTO;
 import umc.GrowIT.Server.web.dto.UserDTO.UserRequestDTO;
 import umc.GrowIT.Server.web.dto.UserDTO.UserResponseDTO;
 import umc.GrowIT.Server.web.dto.AuthDTO.AuthRequestDTO;
@@ -19,12 +21,14 @@ import umc.GrowIT.Server.service.authService.UserCommandService;
 @Tag(name = "Auth", description = "인증 관련 API")
 @RestController
 @RequiredArgsConstructor
+@RequestMapping("/auth")
 public class AuthController implements AuthSpecification {
 
     private final UserCommandService userCommandService;
     private final AuthenticationManager authenticationManager;
     private final JwtTokenUtil JwtTokenUtil;
     private final AuthService authService;
+    private final KakaoService kakaoService;
 
     @PostMapping("/login/email")
     public ApiResponse<UserResponseDTO.TokenDTO> loginEmail(@RequestBody @Valid UserRequestDTO.EmailLoginDTO emailLoginDTO) {
@@ -38,7 +42,7 @@ public class AuthController implements AuthSpecification {
         return ApiResponse.onSuccess(tokenDTO);
     }
 
-    @PatchMapping("/users/password/find")
+    @PatchMapping("/users/password")
     public ApiResponse<Void> findPassword(@RequestBody @Valid UserRequestDTO.PasswordDTO passwordDTO) {
         userCommandService.updatePassword(passwordDTO);
         return ApiResponse.onSuccess();
@@ -72,5 +76,11 @@ public class AuthController implements AuthSpecification {
         AuthResponseDTO.VerifyAuthCodeResponseDTO result = authService.verifyAuthCode(request);
 
         return ApiResponse.onSuccess(result);
+    }
+
+    @GetMapping("/login/kakao")
+    public ApiResponse<KakaoResponseDTO.KakaoTokenDTO> kakaoLogin(@RequestParam(value = "code", required = false) String code) {
+        KakaoResponseDTO.KakaoTokenDTO token = kakaoService.getToken(code);
+        return ApiResponse.onSuccess(token);
     }
 }
