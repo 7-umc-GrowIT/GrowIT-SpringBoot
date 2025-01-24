@@ -5,15 +5,21 @@ import lombok.Getter;
 import lombok.Setter;
 
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 
 public class DiaryRequestDTO {
     @Getter
     @Setter
     public static class DiaryDTO {
         @NotNull
-        String content;
+        String content; //작성 내용
         @NotNull
-        LocalDateTime date;
+        LocalDate date; //작성 날짜
+    }
+
+    @Getter
+    @Setter
+    public static class ModifyDTO{
+        @NotNull
+        String content; //수정 내용
     }
 }
