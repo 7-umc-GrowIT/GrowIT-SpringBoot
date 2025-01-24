@@ -67,7 +67,14 @@ public enum ErrorStatus implements BaseErrorCode {
 
     //일기 관련 에러
     DIARY_NOT_FOUND(HttpStatus.BAD_REQUEST, "DIARY4001", "존재하지 않는 일기입니다."),
-    DIARY_CHARACTER_LIMIT(HttpStatus.BAD_REQUEST, "DIARY4002", "100자 이내로 작성된 일기입니다.");
+    DIARY_CHARACTER_LIMIT(HttpStatus.BAD_REQUEST, "DIARY4002", "100자 이내로 작성된 일기입니다."),
+
+    // s3 관련 에러
+    S3_BAD_FILE_EXTENSION(HttpStatus.BAD_REQUEST, "S3_4001", "파일 확장자가 잘못되었습니다."),
+    S3_FILE_EMPTY(HttpStatus.BAD_REQUEST, "S3_4002", "파일이 비어 있습니다."),
+    S3_FILE_UPLOAD_FAIL(HttpStatus.INTERNAL_SERVER_ERROR, "S3_5001", "파일 업로드에 실패했습니다."),
+    S3_FILE_OVER_SIZE(HttpStatus.BAD_REQUEST, "S3_4003", "파일 크기가 10MB를 초과했습니다.");
+
 
 
     private final HttpStatus httpStatus;
