@@ -68,9 +68,13 @@ public class DiaryController implements DiarySpecification {
 
     }
     @PostMapping("/text")
-    public ApiResponse<DiaryResponseDTO.CreateResultDTO> createDiaryByText(@RequestBody DiaryRequestDTO.DiaryDTO request){
+    public ApiResponse<DiaryResponseDTO.CreateResultDTO> createDiaryByText(@RequestHeader(value = "Authorization", required = false) String authorizationHeader,
+                                                                           @RequestBody DiaryRequestDTO.DiaryDTO request){
+        //accessToken에서 userId 추출
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        Long userId = (Long) authentication.getPrincipal();
 
-        return null;
+        return ApiResponse.onSuccess(diaryCommandService.createDiary(request, userId));
     }
     @PostMapping("/voice")
     public ApiResponse<DiaryResponseDTO.CreateResultDTO> createDiaryByVoice(@RequestBody DiaryRequestDTO.DiaryDTO request){
