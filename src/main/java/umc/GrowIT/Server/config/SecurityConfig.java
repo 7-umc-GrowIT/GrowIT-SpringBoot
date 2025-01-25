@@ -57,12 +57,9 @@ public class SecurityConfig {
         //인증 없이 접근 가능한 URL 설정
         http
                 .authorizeHttpRequests(auth -> auth
-                                .requestMatchers("/swagger-ui/**", "/v3/api-docs/**").permitAll() //인증 없이 접근 가능
-                                .requestMatchers("/", "/login/email", "/login/kakao", "/users/password/find", "/users", "/terms").permitAll() //인증 없이 접근 가능
-                                .requestMatchers("/test").authenticated()
-                                .anyRequest().permitAll() //나머지 요청은 인증 없이 접근 가능
-                                //.anyRequest().authenticated() //나머지 요청은 인증 필요
-
+                        .requestMatchers("/swagger-ui/**", "/v3/api-docs/**").permitAll() //인증 없이 접근 가능
+                        .requestMatchers("/auth/login/email", "/auth/login/kakao", "/auth/email", "/users/password", "/auth/users", "/terms", "/auth/verification", "/auth/reissue").permitAll() //인증 없이 접근 가능
+                        .anyRequest().authenticated() //나머지 요청은 인증 필요
                 );
 
         //필터에서 예외 발생 시 처리
