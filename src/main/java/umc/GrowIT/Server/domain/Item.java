@@ -32,6 +32,9 @@ public class Item extends BaseEntity {
     @Column(nullable = false, columnDefinition = "TEXT")
     private String imageUrl;
 
+    @Column(nullable = false, columnDefinition = "TEXT")
+    private String imageKey;
+
     @OneToMany(mappedBy = "item")
     private List<UserItem> userItems;
 }

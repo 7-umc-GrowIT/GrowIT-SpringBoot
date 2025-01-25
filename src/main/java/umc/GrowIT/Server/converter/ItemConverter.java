@@ -18,7 +18,7 @@ public class ItemConverter {
                 .id(item.getId())
                 .name(item.getName())
                 .price(item.getPrice())
-                .imageUrl(item.getImageUrl())
+                .imageUrl(item.getImageKey())
                 .category(item.getCategory().toString())
                 .purchased(itemRepository.existsByUserItemsUserIdAndId(userId, item.getId()))
                 .build();

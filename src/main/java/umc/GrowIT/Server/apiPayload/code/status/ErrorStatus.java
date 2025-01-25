@@ -55,6 +55,10 @@ public enum ErrorStatus implements BaseErrorCode {
     ITEM_NOT_OWNED(HttpStatus.BAD_REQUEST, "ITEM4002", "보유하지 않은 아이템입니다."),
     ITEM_OWNED(HttpStatus.BAD_REQUEST, "ITEM4003", "이미 보유 중인 아이템입니다."),
 
+    // 사용자 아이템 관련 에러
+    USER_ITEM_NOT_FOUND(HttpStatus.NOT_FOUND, "UI4001", "사용자 아이템이 존재하지 않습니다."),
+    EQUIPPED_USER_ITEM_NOT_FOUND(HttpStatus.NOT_FOUND, "UI4002", "착용 중인 사용자 아이템이 존재하지 않습니다."),
+
     //결제관련에러
     PAYMENT_ERROR(HttpStatus.BAD_REQUEST, "PAYMENT4001", "결제정보가 정확하지 않습니다."),
 
@@ -68,6 +72,8 @@ public enum ErrorStatus implements BaseErrorCode {
     //그로관련
     GRO_NICKNAME_ALREADY_EXISTS(HttpStatus.CONFLICT, "GRO4001", "이미 사용 중인 닉네임입니다."),
     GRO_NICKNAME_LENGTH_INVALID(HttpStatus.BAD_REQUEST, "Gro4002", "닉네임은 2글자에서 20글자 사이여야 합니다."),
+    GRO_NOT_FOUND(HttpStatus.NOT_FOUND, "GRO4003", "그로에 대한 정보가 존재하지 않습니다."),
+    GRO_LEVEL_INVALID(HttpStatus.INTERNAL_SERVER_ERROR, "GRO5001", "그로 레벨이 유효하지 않습니다."),
 
     //일기 관련 에러
     DIARY_NOT_FOUND(HttpStatus.BAD_REQUEST, "DIARY4001", "존재하지 않는 일기입니다."),
