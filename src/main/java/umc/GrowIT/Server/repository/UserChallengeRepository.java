@@ -10,8 +10,6 @@ import umc.GrowIT.Server.domain.enums.ChallengeType;
 import java.util.List;
 import java.util.Optional;
 
-import java.util.Optional;
-
 public interface UserChallengeRepository extends JpaRepository<UserChallenge, Long> {
 
     // 특정 챌린지 ID와 매핑된 인증 내역 조회
@@ -25,21 +23,28 @@ public interface UserChallengeRepository extends JpaRepository<UserChallenge, Lo
             "WHERE uc.user.id = :userId AND uc.completed = true")
     List<UserChallenge> findCompletedUserChallengesByUserId(@Param("userId") Long userId);
 
+    // 특정 유저의 모든 UserChallenge 조회
+    @Query("SELECT uc FROM UserChallenge uc WHERE uc.user.id = :userId")
+    List<UserChallenge> findUserChallengesByUserId(@Param("userId") Long userId);
+
     // 특정 유저의 인증 완료된 챌린지 조회
     @Query("SELECT uc FROM UserChallenge uc " +
+            "JOIN uc.challenge c " +
             "WHERE uc.user.id = :userId " +
-            "AND (:status IS NULL OR uc.challenge.dtype = :status) " +
+            "AND (:dtype IS NULL OR c.dtype = :dtype) " +
             "AND uc.completed = true")
     List<UserChallenge> findUserChallengesByStatusAndCompletion(
             @Param("userId") Long userId,
-            @Param("status") ChallengeType challengeType,
-            @Param("completed") Boolean completed);
+            @Param("dtype") ChallengeType dtype);
+
 
     // 특정 유저가 완료하지 않은 챌린지 조회
     @Query("SELECT c FROM Challenge c " +
             "WHERE c.id NOT IN (" +
-            "  SELECT uc.challenge.id FROM UserChallenge uc WHERE uc.user.id = :userId AND uc.completed = true" +
-            ") " +
-            "AND (:status IS NULL OR c.dtype = :status)")
-    List<Challenge> findAvailableChallengesForUser(@Param("userId") Long userId, @Param("status") ChallengeType challengeType);
+            "  SELECT uc.challenge.id FROM UserChallenge uc " +
+            "  WHERE uc.user.id = :userId AND uc.completed = true" +
+            "  AND (:dtype IS NULL OR c.dtype = :dtype)" +
+            ")")
+    List<Challenge> findAvailableChallengesForUser(@Param("userId") Long userId, @Param("dtype") ChallengeType dtype);
 }
+

@@ -1,7 +1,5 @@
 package umc.GrowIT.Server.web.controller;
 
-import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.Authentication;
@@ -37,12 +35,12 @@ public class ChallengeController implements ChallengeSpecification {
 
     @GetMapping
     public ApiResponse<ChallengeResponseDTO.ChallengeStatusListDTO> getChallengeStatus(
-            @RequestParam(required = false) ChallengeType status,
+            @RequestParam(required = false) ChallengeType dtype,
             @RequestParam Boolean completed) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         Long userId = (Long) authentication.getPrincipal();
         // 서비스 호출
-        ChallengeResponseDTO.ChallengeStatusListDTO challengeStatusList = challengeQueryService.getChallengeStatus(userId, status, completed);
+        ChallengeResponseDTO.ChallengeStatusListDTO challengeStatusList = challengeQueryService.getChallengeStatus(userId, dtype, completed);
 
         // 성공 응답 반환
         return ApiResponse.onSuccess(challengeStatusList);

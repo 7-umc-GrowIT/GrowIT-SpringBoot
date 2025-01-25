@@ -1,11 +1,11 @@
 package umc.GrowIT.Server.web.dto.ChallengeDTO;
 
-import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import umc.GrowIT.Server.domain.ChallengeKeyword;
+import umc.GrowIT.Server.domain.enums.ChallengeType;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -72,7 +72,7 @@ public class ChallengeResponseDTO {
     public static class ChallengeStatusDTO {
         private Long id;
         private String title;
-        //private String status;
+        private ChallengeType dtype;
         private Integer time;
         private boolean completed;
     }
@@ -88,6 +88,7 @@ public class ChallengeResponseDTO {
         private String title;
         private Integer time;
         private String certificationImage;
+        private ChallengeType dtype;
         private String thoughts;
         private boolean completed;
         private LocalDateTime certificationDate;

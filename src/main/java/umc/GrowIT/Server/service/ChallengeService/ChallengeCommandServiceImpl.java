@@ -36,7 +36,7 @@ public class ChallengeCommandServiceImpl implements ChallengeCommandService {
             throw new ChallengeHandler(ErrorStatus.CHALLENGE_VERIFY_ALREADY_EXISTS); // 이미 완료된 경우 예외 처리
         }
 
-        userChallenge.setCompleted(true);
+        userChallenge.updateCompletedStatus(true);
         userChallengeRepository.save(userChallenge);
     }
 
@@ -48,17 +48,11 @@ public class ChallengeCommandServiceImpl implements ChallengeCommandService {
         User user = userRepository.findById(userId).orElseThrow(() -> new UserHandler(ErrorStatus.USER_NOT_FOUND));
         Challenge challenge = challengeRepository.findById(challengeId).orElseThrow(() -> new ChallengeHandler(ErrorStatus.CHALLENGE_NOT_FOUND));
 
-        // 기존 UserChallenge 조회 및 인증 상태 확인
-        userChallengeRepository.findByChallengeIdAndUserId(challengeId, userId)
-                .ifPresent(existingChallenge -> {
-                    if (existingChallenge.isCompleted()) {
-                        throw new ChallengeHandler(ErrorStatus.CHALLENGE_VERIFY_ALREADY_EXISTS);
-                    }
-                });
+
 
         // UserChallenge 생성 및 저장
         UserChallenge userChallenge = ChallengeConverter.createUserChallenge(user, challenge, proofRequest);
-        userChallenge.setCompleted(true); // 인증 완료로 설정
+        userChallenge.updateCompletedStatus(true); // 인증 완료로 설정
         userChallengeRepository.save(userChallenge);
 
         return ChallengeConverter.toProofDetailsDTO(challenge, userChallenge);

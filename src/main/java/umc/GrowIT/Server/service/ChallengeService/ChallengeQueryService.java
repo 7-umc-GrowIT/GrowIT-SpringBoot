@@ -8,5 +8,5 @@ public interface ChallengeQueryService {
     int getTotalDiaries(Long userId);
     String getUserDate(Long userId);
     ChallengeResponseDTO.ChallengeHomeDTO getChallengeHome(Long userId);
-    ChallengeResponseDTO.ChallengeStatusListDTO getChallengeStatus(Long userId, ChallengeType status, Boolean completed);
+    ChallengeResponseDTO.ChallengeStatusListDTO getChallengeStatus(Long userId, ChallengeType dtype, Boolean completed);
 }

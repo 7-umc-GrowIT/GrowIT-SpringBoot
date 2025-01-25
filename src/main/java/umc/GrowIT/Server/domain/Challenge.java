@@ -1,11 +1,10 @@
 package umc.GrowIT.Server.domain;
 
 import umc.GrowIT.Server.domain.common.BaseEntity;
-import umc.GrowIT.Server.domain.enums.ChallengeType;
 import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.ColumnDefault;
-import umc.GrowIT.Server.domain.enums.ItemCategory;
+import umc.GrowIT.Server.domain.enums.ChallengeType;
 
 import java.util.List;
 
@@ -31,14 +30,20 @@ public class Challenge extends BaseEntity {
     private Integer time;
 
     @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
     private ChallengeType dtype;
 
-
-    @OneToMany(mappedBy = "challenge", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "challenge", cascade = CascadeType.ALL)
     private List<UserChallenge> userChallenges;
 
-    @OneToMany(mappedBy = "challenge", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "challenge", cascade = CascadeType.ALL)
     private List<ChallengeKeyword> challengeKeywords;
+
+    public boolean isCompletedByUser(Long userId) {
+        // 연관된 UserChallenge 중에서 특정 유저가 완료한 상태를 확인
+        return userChallenges.stream()
+                .anyMatch(userChallenge -> userChallenge.getUser().getId().equals(userId) && userChallenge.isCompleted());
+    }
 
     // 유저-챌린지 추가
     public void addUserChallenge(UserChallenge userChallenge) {

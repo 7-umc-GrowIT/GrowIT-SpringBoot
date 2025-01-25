@@ -33,28 +33,17 @@ public class UserChallenge extends BaseEntity {
     @Column(name = "completed", nullable = false)
     private boolean completed;
 
-    @Enumerated(EnumType.STRING)
-    private ChallengeType dtype;
-
     // Challenge 설정 메서드
     public void setChallenge(Challenge challenge) {
         this.challenge = challenge;
     }
 
-    // 인증 완료 상태 설정 메서드
-    public void setCompleted(boolean completed) {
+    // 인증 완료 상태 설정 메서드 (통합된 메서드)
+    public void updateCompletedStatus(boolean completed) {
         this.completed = completed;
     }
 
-    // 챌린지 완료 상태로 변경
-    public void markAsCompleted() {
-        this.completed = true;
-    }
-
     public String getStatus() {
-        if (this.dtype != null) {
-            return this.completed ? this.dtype.name() + "_COMPLETED" : this.dtype.name(); // 완료하였으면 뒤에 _COMPLETED 추가하여 반환
-        }
         return this.completed ? "COMPLETED" : "TOTAL";
     }
 

@@ -2,11 +2,7 @@ package umc.GrowIT.Server.repository;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
-import org.springframework.data.repository.query.Param;
 import umc.GrowIT.Server.domain.Challenge;
-import umc.GrowIT.Server.domain.User;
-import umc.GrowIT.Server.domain.UserChallenge;
-import umc.GrowIT.Server.domain.enums.ChallengeType;
 
 import java.time.LocalDate;
 import java.util.List;
