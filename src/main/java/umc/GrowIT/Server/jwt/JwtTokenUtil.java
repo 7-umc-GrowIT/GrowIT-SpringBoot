@@ -20,51 +20,29 @@ import umc.GrowIT.Server.domain.CustomUserDetails;
 import umc.GrowIT.Server.service.authService.CustomUserDetailsService;
 import umc.GrowIT.Server.web.dto.UserDTO.UserResponseDTO;
 
+import static umc.GrowIT.Server.converter.TokenConverter.toTokenDTO;
+
+
 //JWT 토큰을 생성하고 검증하는 유틸리티 클래스
 @Component
 public class JwtTokenUtil {
 
-    private final CustomUserDetailsService customUserDetailsService;
 
     private final Key key;
     public static final long ACCESS_TOKEN_EXPIRATION_MS = 60000; //12L * 60 * 60 * 1000; //Access token 만료 시간 12시간
     public static final long REFRESH_TOKEN_EXPIRATION_MS = 120000; //30L * 24 * 60 * 60 * 1000; //Refresh token 만료 시간 30일
 
-    public JwtTokenUtil(@Value("${spring.jwt.secretKey}") String secretKey, CustomUserDetailsService customUserDetailsService) {
+    public JwtTokenUtil(@Value("${spring.jwt.secretKey}") String secretKey) {
         byte[] keyBytes = Decoders.BASE64.decode(secretKey);
         this.key = Keys.hmacShaKeyFor(keyBytes);
-        this.customUserDetailsService = customUserDetailsService;
     }
 
-    // User 정보를 가지고 AccessToken, RefreshToken 생성
+    // AccessToken, RefreshToken 생성 메소드 호출
     public UserResponseDTO.TokenDTO generateToken(CustomUserDetails customUserDetails) {
+        String accessToken = generateAccessToken(customUserDetails);
+        String refreshToken = generateRefreshToken(customUserDetails);
 
-        String authorities = customUserDetails.getAuthorities().stream()
-                .map(GrantedAuthority::getAuthority)
-                .collect(Collectors.joining(","));
-
-        long now = (new Date()).getTime();
-
-        // Access Token 생성
-        Date accessTokenExpiresIn = new Date(now + ACCESS_TOKEN_EXPIRATION_MS);
-        String accessToken = Jwts.builder()
-                .setSubject(customUserDetails.getUsername())
-                .claim("roles", authorities)
-                .claim("id", customUserDetails.getId())
-                .setExpiration(accessTokenExpiresIn)
-                .signWith(key, SignatureAlgorithm.HS256)
-                .compact();
-
-        // Refresh Token 생성
-        String refreshToken = Jwts.builder()
-                .setExpiration(new Date(now + REFRESH_TOKEN_EXPIRATION_MS))
-                .signWith(key, SignatureAlgorithm.HS256)
-                .compact();
-
-        return UserResponseDTO.TokenDTO.builder()
-                .accessToken(accessToken)
-                .refreshToken(refreshToken)
-                .build();
+        return toTokenDTO(accessToken, refreshToken);
     }
 
     public String generateAccessToken(CustomUserDetails customUserDetails) {
@@ -85,6 +63,18 @@ public class JwtTokenUtil {
                 .compact();
 
         return accessToken;
+    }
+
+    public String generateRefreshToken(CustomUserDetails customUserDetails) {
+        long now = (new Date()).getTime();
+
+        // Refresh Token 생성
+        String refreshToken = Jwts.builder()
+                .setExpiration(new Date(now + REFRESH_TOKEN_EXPIRATION_MS))
+                .signWith(key, SignatureAlgorithm.HS256)
+                .compact();
+
+        return refreshToken;
     }
 
     //JWT 토큰에서 Claim 추출
