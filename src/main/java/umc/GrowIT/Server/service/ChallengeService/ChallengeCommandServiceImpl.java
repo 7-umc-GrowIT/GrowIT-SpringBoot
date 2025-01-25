@@ -26,36 +26,26 @@ public class ChallengeCommandServiceImpl implements ChallengeCommandService {
 
     @Override
     @Transactional
-    public void markChallengeAsCompleted(Long userId, Long challengeId) {
-        UserChallenge userChallenge = userChallengeRepository.findByChallengeIdAndUserId(challengeId, userId)
+    public ChallengeResponseDTO.ProofDetailsDTO updateChallengeProof(Long userId, Long challengeId, ChallengeRequestDTO.ProofRequestDTO proofRequest) {
+        // UserChallenge 조회
+        UserChallenge userChallenge = userChallengeRepository.findByIdAndUserId(challengeId, userId)
                 .orElseThrow(() -> new ChallengeHandler(ErrorStatus.USER_CHALLENGE_NOT_FOUND));
 
+        // 이미 완료된 챌린지인 경우 예외 처리
         if (userChallenge.isCompleted()) {
-            throw new ChallengeHandler(ErrorStatus.CHALLENGE_VERIFY_ALREADY_EXISTS); // 이미 완료된 경우 예외 처리
+            throw new ChallengeHandler(ErrorStatus.CHALLENGE_VERIFY_ALREADY_EXISTS);
+        }
+
+        // 인증 관련 데이터 업데이트
+        if (proofRequest != null) {
+            userChallenge.setThoughts(proofRequest.getThoughts());
+            userChallenge.setCertificationImage(proofRequest.getCertificationImage());
         }
 
         userChallenge.updateCompletedStatus(true);
         userChallengeRepository.save(userChallenge);
+        return ChallengeConverter.toProofDetailsDTO(userChallenge.getChallenge(), userChallenge);
     }
-
-    // 팰린지 인증 작성
-    @Override
-    @Transactional
-    public ChallengeResponseDTO.ProofDetailsDTO createChallengeProof(Long userId, Long challengeId, ChallengeRequestDTO.ProofRequestDTO proofRequest) {
-        // 유저 및 챌린지 조회
-        User user = userRepository.findById(userId).orElseThrow(() -> new UserHandler(ErrorStatus.USER_NOT_FOUND));
-        Challenge challenge = challengeRepository.findById(challengeId).orElseThrow(() -> new ChallengeHandler(ErrorStatus.CHALLENGE_NOT_FOUND));
-
-
-
-        // UserChallenge 생성 및 저장
-        UserChallenge userChallenge = ChallengeConverter.createUserChallenge(user, challenge, proofRequest);
-        userChallenge.updateCompletedStatus(true); // 인증 완료로 설정
-        userChallengeRepository.save(userChallenge);
-
-        return ChallengeConverter.toProofDetailsDTO(challenge, userChallenge);
-    }
-
 
 
     // 챌린지 인증 내역 조회

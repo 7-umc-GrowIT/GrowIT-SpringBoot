@@ -33,12 +33,19 @@ public class UserChallenge extends BaseEntity {
     @Column(name = "completed", nullable = false)
     private boolean completed;
 
-    // Challenge 설정 메서드
     public void setChallenge(Challenge challenge) {
         this.challenge = challenge;
     }
 
-    // 인증 완료 상태 설정 메서드 (통합된 메서드)
+    public void setThoughts(String thoughts) {
+        this.thoughts = thoughts;
+    }
+
+    public void setCertificationImage(String certificationImage) {
+        this.certificationImage = certificationImage;
+    }
+
+    // 인증 완료 상태 설정 메서드
     public void updateCompletedStatus(boolean completed) {
         this.completed = completed;
     }
