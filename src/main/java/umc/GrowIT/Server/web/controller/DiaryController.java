@@ -6,8 +6,11 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 import umc.GrowIT.Server.apiPayload.ApiResponse;
+import umc.GrowIT.Server.service.diaryService.DiaryCommandService;
 import umc.GrowIT.Server.service.diaryService.DiaryQueryService;
 import umc.GrowIT.Server.web.controller.specification.DiarySpecification;
 import umc.GrowIT.Server.web.dto.DiaryDTO.DiaryRequestDTO;
@@ -19,32 +22,45 @@ import umc.GrowIT.Server.web.dto.DiaryDTO.DiaryResponseDTO;
 @RequestMapping("/diaries")
 public class DiaryController implements DiarySpecification {
     private final DiaryQueryService diaryQueryService;
+    private final DiaryCommandService diaryCommandService;
     @GetMapping("/dates")
-    public ApiResponse<DiaryResponseDTO.DiaryDateListDTO> getDiaryDate(@RequestParam Integer year, @RequestParam Integer month){
-        //userId는 임시로 2
-        Long userId = 2L;
+    public ApiResponse<DiaryResponseDTO.DiaryDateListDTO> getDiaryDate(@RequestHeader(value = "Authorization", required = false) String authorizationHeader,
+                                                                       @RequestParam Integer year,
+                                                                       @RequestParam Integer month){
+        //accessToken에서 userId 추출
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        Long userId = (Long) authentication.getPrincipal();
 
         return ApiResponse.onSuccess(diaryQueryService.getDiaryDate(year,month,userId));
     }
     @GetMapping("/")
-    public ApiResponse<DiaryResponseDTO.DiaryListDTO> getDiaryList(@RequestParam Integer year, @RequestParam Integer month){
-        //userId는 임시로 2
-        Long userId = 2L;
+    public ApiResponse<DiaryResponseDTO.DiaryListDTO> getDiaryList(@RequestHeader(value = "Authorization", required = false) String authorizationHeader,
+                                                                   @RequestParam Integer year,
+                                                                   @RequestParam Integer month){
+        //accessToken에서 userId 추출
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        Long userId = (Long) authentication.getPrincipal();
 
         return ApiResponse.onSuccess(diaryQueryService.getDiaryList(year,month,userId));
     }
     @GetMapping("/{diaryId}")
-    public ApiResponse<DiaryResponseDTO.DiaryDTO> getDiary(@PathVariable("diaryId") Long diaryId){
-        //userId는 임시로 2
-        Long userId = 2L;
+    public ApiResponse<DiaryResponseDTO.DiaryDTO> getDiary(@RequestHeader(value = "Authorization", required = false) String authorizationHeader,
+                                                           @PathVariable("diaryId") Long diaryId){
+        //accessToken에서 userId 추출
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        Long userId = (Long) authentication.getPrincipal();
 
         return ApiResponse.onSuccess(diaryQueryService.getDiary(diaryId, userId));
     }
 
-    @PutMapping("/{diaryId}")
-    public ApiResponse<DiaryResponseDTO.ModifyResultDTO> modifyDiary(@PathVariable("diaryId") Long diaryId, @RequestBody DiaryRequestDTO.DiaryDTO request){
+    @PatchMapping("/{diaryId}")
+    public ApiResponse<DiaryResponseDTO.ModifyResultDTO> modifyDiary(@RequestHeader(value = "Authorization", required = false) String authorizationHeader,
+                                                                     @PathVariable("diaryId") Long diaryId, @RequestBody DiaryRequestDTO.ModifyDTO request){
+        //accessToken에서 userId 추출
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        Long userId = (Long) authentication.getPrincipal();
 
-        return null;
+        return ApiResponse.onSuccess(diaryCommandService.modifyDiary(request, diaryId, userId));
     }
 
     @DeleteMapping("/{diaryId}")
@@ -52,9 +68,13 @@ public class DiaryController implements DiarySpecification {
 
     }
     @PostMapping("/text")
-    public ApiResponse<DiaryResponseDTO.CreateResultDTO> createDiaryByText(@RequestBody DiaryRequestDTO.DiaryDTO request){
+    public ApiResponse<DiaryResponseDTO.CreateResultDTO> createDiaryByText(@RequestHeader(value = "Authorization", required = false) String authorizationHeader,
+                                                                           @RequestBody DiaryRequestDTO.DiaryDTO request){
+        //accessToken에서 userId 추출
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        Long userId = (Long) authentication.getPrincipal();
 
-        return null;
+        return ApiResponse.onSuccess(diaryCommandService.createDiary(request, userId));
     }
     @PostMapping("/voice")
     public ApiResponse<DiaryResponseDTO.CreateResultDTO> createDiaryByVoice(@RequestBody DiaryRequestDTO.DiaryDTO request){
