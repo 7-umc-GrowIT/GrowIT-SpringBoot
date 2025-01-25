@@ -15,8 +15,7 @@ public interface UserChallengeRepository extends JpaRepository<UserChallenge, Lo
     // 특정 챌린지 ID와 매핑된 인증 내역 조회
     @Query("SELECT uc FROM UserChallenge uc WHERE uc.challenge.id = :challengeId")
     Optional<UserChallenge> findByChallengeId(@Param("challengeId") Long challengeId);
-    @Query("SELECT uc FROM UserChallenge uc WHERE uc.challenge.id = :challengeId AND uc.user.id = :userId")
-    Optional<UserChallenge> findByChallengeIdAndUserId(@Param("challengeId") Long challengeId, @Param("userId") Long userId);
+    Optional<UserChallenge> findByIdAndUserId(@Param("challengeId") Long challengeId, @Param("userId") Long userId);
 
     // 유저별 완료한 챌린지 내역 조회
     @Query("SELECT uc FROM UserChallenge uc " +

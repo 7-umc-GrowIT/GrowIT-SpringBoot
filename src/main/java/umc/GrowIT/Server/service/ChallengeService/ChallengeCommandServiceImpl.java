@@ -16,8 +16,6 @@ import umc.GrowIT.Server.repository.UserRepository;
 import umc.GrowIT.Server.web.dto.ChallengeDTO.ChallengeRequestDTO;
 import umc.GrowIT.Server.web.dto.ChallengeDTO.ChallengeResponseDTO;
 
-import java.util.Optional;
-
 @Service
 @RequiredArgsConstructor
 public class ChallengeCommandServiceImpl implements ChallengeCommandService {
@@ -69,27 +67,30 @@ public class ChallengeCommandServiceImpl implements ChallengeCommandService {
                 .orElseThrow(() -> new ChallengeHandler(ErrorStatus.CHALLENGE_NOT_FOUND));
 
         // 인증 내역 조회
-        UserChallenge userChallenge = userChallengeRepository.findByChallengeIdAndUserId(challengeId, userId)
+        UserChallenge userChallenge = userChallengeRepository.findByIdAndUserId(challengeId, userId)
                 .orElseThrow(() -> new ChallengeHandler(ErrorStatus.CHALLENGE_VERIFY_NOT_EXISTS));
 
         return ChallengeConverter.toChallengeProofDetailsDTO(challenge, userChallenge);
     }
 
     public ChallengeResponseDTO.DeleteChallengeResponseDTO delete(Long userChallengeId, Long userId) {
+        // 1. userId를 조회하고 없으면 오류
+        userRepository.findById(userId)
+                .orElseThrow(() -> new UserHandler(ErrorStatus.USER_NOT_FOUND));
 
-        // 1. userId와 userChallengeId를 통해 조회하고 없으면 오류
-        UserChallenge userChallenge = userChallengeRepository.findByChallengeIdAndUserId(userChallengeId, userId)
+        // 2. userChallengeId와 userId를 통해 조회하고 없으면 오류
+        UserChallenge userChallenge = userChallengeRepository.findByIdAndUserId(userChallengeId, userId)
                 .orElseThrow(() -> new ChallengeHandler(ErrorStatus.USER_CHALLENGE_NOT_FOUND));
 
-        // 2. 진행 중(false)인 챌린지인지 체크, 완료(true)한 챌린지면 오류
+        // 3. 진행 중(false)인 챌린지인지 체크, 완료(true)한 챌린지면 오류
         if(userChallenge.isCompleted()) {
             throw new ChallengeHandler(ErrorStatus.USER_CHALLENGE_COMPLETE);
         }
 
-        // 3. 삭제
+        // 4. 삭제
         userChallengeRepository.deleteById(userChallengeId);
 
-        // 4. converter 작업
+        // 5. converter 작업
         return ChallengeConverter.toDeletedUserChallenge(userChallenge);
     }
 }
