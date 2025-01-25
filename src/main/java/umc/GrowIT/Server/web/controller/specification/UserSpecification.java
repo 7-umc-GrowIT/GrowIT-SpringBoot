@@ -55,7 +55,7 @@ public interface UserSpecification {
     })
     ApiResponse<PaymentResponseDTO> purchaseCredits(@RequestBody PaymentRequestDTO request);
 
-    @PatchMapping("/password/find")
+    @PatchMapping("/password")
     @Operation(summary = "비밀번호 변경", description = "", security = @SecurityRequirement(name = "tempToken"))
     @ApiResponses({
             @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "COMMON200", description = "⭕ SUCCESS"),

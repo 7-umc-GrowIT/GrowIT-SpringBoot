@@ -12,6 +12,7 @@ import umc.GrowIT.Server.domain.enums.AuthType;
 import umc.GrowIT.Server.service.authService.AuthService;
 import umc.GrowIT.Server.service.refreshTokenService.RefreshTokenCommandService;
 import umc.GrowIT.Server.web.controller.specification.AuthSpecification;
+import umc.GrowIT.Server.web.dto.UserDTO.KakaoResponseDTO;
 import umc.GrowIT.Server.web.dto.UserDTO.UserRequestDTO;
 import umc.GrowIT.Server.web.dto.UserDTO.UserResponseDTO;
 import umc.GrowIT.Server.web.dto.AuthDTO.AuthRequestDTO;
@@ -77,5 +78,10 @@ public class AuthController implements AuthSpecification {
         AuthResponseDTO.VerifyAuthCodeResponseDTO result = authService.verifyAuthCode(request);
 
         return ApiResponse.onSuccess(result);
+    }
+
+    @PostMapping("/login/kakao")
+    public ApiResponse<KakaoResponseDTO.KakaoTokenDTO> kakaoLogin(@RequestParam(value = "code", required = false) String code){
+        return null;
     }
 }

@@ -50,7 +50,7 @@ public class UserController implements UserSpecification {
         return ApiResponse.onSuccess(null);
     }
 
-    @PatchMapping("/password/find")
+    @PatchMapping("/password")
     public ApiResponse<Void> findPassword(@RequestBody @Valid UserRequestDTO.PasswordDTO passwordDTO) {
         userCommandService.updatePassword(passwordDTO);
         return ApiResponse.onSuccess();
