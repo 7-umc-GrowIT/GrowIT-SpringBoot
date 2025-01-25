@@ -50,7 +50,6 @@ public class DiaryResponseDTO {
     public static class CreateResultDTO{
         Long diaryId;
         String content;
-        LocalDate date;
     }
 
     @Builder
