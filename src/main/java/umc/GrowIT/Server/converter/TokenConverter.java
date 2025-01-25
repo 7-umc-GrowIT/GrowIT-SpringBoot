@@ -22,4 +22,11 @@ public class TokenConverter {
                 .build();
     }
 
+    public static UserResponseDTO.TokenDTO toTokenDTO(String accessToken, String refreshToken){
+        return UserResponseDTO.TokenDTO.builder()
+                .accessToken(accessToken)
+                .refreshToken(refreshToken)
+                .build();
+    }
+
 }
