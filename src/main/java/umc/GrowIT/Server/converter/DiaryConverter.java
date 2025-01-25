@@ -62,4 +62,11 @@ public class DiaryConverter {
                 .date(diary.getDate())
                 .build();
     }
+
+    public static DiaryResponseDTO.DeleteResultDTO toDeleteResultDTO(Diary diary){
+
+        return DiaryResponseDTO.DeleteResultDTO.builder()
+                .message("일기를 삭제했어요.")
+                .build();
+    }
 }

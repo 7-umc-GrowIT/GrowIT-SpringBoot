@@ -67,6 +67,6 @@ public class DiaryResponseDTO {
     @NoArgsConstructor
     @AllArgsConstructor
     public static class DeleteResultDTO{
-        Long diaryId;
+        String message;
     }
 }
