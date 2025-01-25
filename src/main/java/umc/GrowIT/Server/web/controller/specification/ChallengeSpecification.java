@@ -2,6 +2,7 @@ package umc.GrowIT.Server.web.controller.specification;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.enums.ParameterIn;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
@@ -70,18 +71,21 @@ public interface ChallengeSpecification {
     })
     ApiResponse<ChallengeResponseDTO> updateChallengeProof(@PathVariable Long challengeId, @RequestBody ChallengeRequestDTO.UpdateRequestDTO updateRequest);
 
-    @DeleteMapping("{challengeId}")
+    @DeleteMapping("{userChallengeId}")
     @Operation(
-            summary = "챌린지 삭제 API",
-            description = "특정 챌린지를 삭제하는 API입니다. 챌린지 ID를 path variable로 전달받아 해당 챌린지를 삭제합니다."
+            summary = "사용자 챌린지 삭제 API",
+            description = "사용자의 특정 챌린지를 삭제하는 API입니다.<br>" +
+                    "사용자 챌린지 ID를 path variable로 전달받아 해당 사용자 챌린지를 삭제합니다.<br>" +
+                    "❗Request Header에 JWT Access Token 값을 넣어야 합니다.❗"
     )
     @ApiResponses({
             @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "COMMON200", description = "⭕ SUCCESS"),
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "USER4002", description = "❌ 이메일 또는 패스워드가 일치하지 않습니다.", content = @Content(schema = @Schema(implementation = ApiResponse.class))),
             @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "UC4001", description = "❌ 사용자 챌린지가 존재하지 않습니다.", content = @Content(schema = @Schema(implementation = ApiResponse.class))),
             @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "UC4002", description = "❌ 완료된 챌린지는 삭제가 불가합니다.", content = @Content(schema = @Schema(implementation = ApiResponse.class))),
             @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "COMMON400", description = "❌ BAD, 잘못된 요청", content = @Content(schema = @Schema(implementation = ApiResponse.class)))
 
     })
-    @Parameter(name = "challengeId", description = "삭제할 챌린지의 ID", required = true)
-    ApiResponse<ChallengeResponseDTO.DeleteChallengeResponseDTO> deleteChallenge(@PathVariable("challengeId") Long challengeId);
+    @Parameter(name = "userChallengeId", description = "삭제할 사용자 챌린지의 ID", required = true)
+    ApiResponse<ChallengeResponseDTO.DeleteChallengeResponseDTO> deleteChallenge(@PathVariable("userChallengeId") Long userChallengeId);
 }
