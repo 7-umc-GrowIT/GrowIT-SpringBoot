@@ -62,41 +62,6 @@ public class ChallengeConverter {
                 .collect(Collectors.toList());
     }
 
-    // Challenge 데이터를 ChallengeStatusDTO로 변환
-    public static List<ChallengeResponseDTO.ChallengeStatusDTO> toChallengeStatusListDTOFromChallenge(List<UserChallenge> userChallenges) {
-
-        return userChallenges.stream()
-                .map(userChallenge -> ChallengeResponseDTO.ChallengeStatusDTO.builder()
-                            .id(userChallenge.getChallenge().getId())
-                            .title(userChallenge.getChallenge().getTitle())
-                            .dtype(userChallenge.getDtype()) // userChallenge가 null일 경우 처리
-                            .time(userChallenge.getChallenge().getTime())
-                            .completed(userChallenge.isCompleted()) // 완료 여부 확인
-                            .build())
-                .collect(Collectors.toList());
-    }
-
-    public static ChallengeResponseDTO.ChallengeStatusDTO toChallengeStatusDTO(UserChallenge userChallenge) {
-        Challenge challenge = userChallenge.getChallenge();
-        return ChallengeResponseDTO.ChallengeStatusDTO.builder()
-                .id(challenge.getId())
-                .title(userChallenge.getChallenge().getTitle())
-                .dtype(userChallenge.getDtype())
-                .completed(userChallenge.isCompleted())
-                .build();
-    }
-
-
-    // 챌린지 인증 작성
-    public static ChallengeResponseDTO.AddProofResultDTO toChallengeResponseDTO(UserChallenge userChallenge) {
-        return ChallengeResponseDTO.AddProofResultDTO.builder()
-                .challengeId(userChallenge.getChallenge().getId())
-                .certificationImage(userChallenge.getCertificationImage())
-                .thoughts(userChallenge.getThoughts())
-                .completed(userChallenge.isCompleted())
-                .build();
-    }
-
     // 챌린지 인증 작성 결과 반환
     public static ChallengeResponseDTO.ProofDetailsDTO toProofDetailsDTO(Challenge challenge, UserChallenge userChallenge) {
         return ChallengeResponseDTO.ProofDetailsDTO.builder()

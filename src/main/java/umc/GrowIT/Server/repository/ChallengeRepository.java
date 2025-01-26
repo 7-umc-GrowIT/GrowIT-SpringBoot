@@ -26,11 +26,6 @@ public interface ChallengeRepository extends JpaRepository<Challenge, Long> {
     @Query("SELECT COUNT(d) FROM Diary d WHERE d.user.id = :userId")
     int getTotalDiariesByUserId(Long userId);
 
-    // 사용자 ID와 챌린지 ID로 특정 챌린지 조회
-    @Query("SELECT c FROM Challenge c JOIN UserChallenge uc ON c.id = uc.challenge.id " +
-            "WHERE uc.user.id = :userId AND c.id = :challengeId")
-    Optional<Challenge> findByIdAndUserId(Long challengeId, Long userId);
-
     // 사용자 가입날짜 조회
     @Query("SELECT u.createdAt FROM User u WHERE u.id = :userId")
     Optional<LocalDate> findJoinDateByUserId(Long userId);
