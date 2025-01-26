@@ -55,7 +55,8 @@ public interface DiarySpecification {
             @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "COMMON200", description = "OK, 성공"),
             @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "DIARY4001", description = "존재하지 않는 일기입니다.",content = @Content(schema = @Schema(implementation = ApiResponse.class)))
     })
-    void deleteDiary(@PathVariable("diaryId") Long diaryId);
+    ApiResponse<DiaryResponseDTO.DeleteResultDTO> deleteDiary(@RequestHeader(value = "Authorization", required = false) String authorizationHeader,
+                                                              @PathVariable("diaryId") Long diaryId);
 
     @PostMapping("/text")
     @Operation(summary = "직접 일기 작성하기 API",description = "특정 사용자가 일기를 텍스트로 직접 작성하는 API입니다. 작성내용과 작성일자를 보내주세요")

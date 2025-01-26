@@ -9,4 +9,6 @@ public interface DiaryCommandService {
     public DiaryResponseDTO.ModifyResultDTO modifyDiary(DiaryRequestDTO.ModifyDTO request, Long diaryId, Long userId);
 
     public DiaryResponseDTO.CreateResultDTO createDiary(DiaryRequestDTO.DiaryDTO request, Long userId);
+
+    public DiaryResponseDTO.DeleteResultDTO deleteDiary(Long diaryId, Long userId);
 }
