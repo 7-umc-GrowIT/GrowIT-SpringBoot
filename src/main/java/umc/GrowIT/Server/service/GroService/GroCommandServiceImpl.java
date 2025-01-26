@@ -43,7 +43,7 @@ public class GroCommandServiceImpl implements GroCommandService{
     private final ItemRepository itemRepository;
     private final UserItemRepository userItemRepository;
 
-    @Value("${s3.bucket}")
+    @Value("${aws.s3.bucket}")
     private String bucketName;
 
     @Override
@@ -144,7 +144,7 @@ public class GroCommandServiceImpl implements GroCommandService{
         };
 
         // 프리사인드 URL 생성 (15분 유효 기간)
-        Date expiration = new Date(System.currentTimeMillis() + TimeUnit.DAYS.toMillis(1));
+        Date expiration = new Date(System.currentTimeMillis() + TimeUnit.MINUTES.toMillis(15));
 
         GeneratePresignedUrlRequest generatePresignedUrlRequest =
                 new GeneratePresignedUrlRequest(bucketName, imageKey)
@@ -161,7 +161,7 @@ public class GroCommandServiceImpl implements GroCommandService{
                         item -> item, // key
                         item -> { // value
                             // 프리사인드 URL 생성 (15분 유효 기간)
-                            Date expiration = new Date(System.currentTimeMillis() + TimeUnit.DAYS.toMillis(1));
+                            Date expiration = new Date(System.currentTimeMillis() + TimeUnit.MINUTES.toMillis(15));
 
                             GeneratePresignedUrlRequest generatePresignedUrlRequest = new GeneratePresignedUrlRequest(bucketName, item.getImageKey())
                                     .withMethod(HttpMethod.GET)
