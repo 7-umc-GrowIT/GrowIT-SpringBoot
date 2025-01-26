@@ -26,23 +26,17 @@ public class ChallengeCommandServiceImpl implements ChallengeCommandService {
 
     @Override
     @Transactional
-    public ChallengeResponseDTO.ProofDetailsDTO updateChallengeProof(Long userId, Long challengeId, ChallengeRequestDTO.ProofRequestDTO proofRequest) {
+    public ChallengeResponseDTO.ProofDetailsDTO createChallengeProof(Long userId, Long challengeId, ChallengeRequestDTO.ProofRequestDTO proofRequest) {
+
         // UserChallenge 조회
         UserChallenge userChallenge = userChallengeRepository.findByIdAndUserId(challengeId, userId)
                 .orElseThrow(() -> new ChallengeHandler(ErrorStatus.USER_CHALLENGE_NOT_FOUND));
 
-        // 이미 완료된 챌린지인 경우 예외 처리
-        if (userChallenge.isCompleted()) {
-            throw new ChallengeHandler(ErrorStatus.CHALLENGE_VERIFY_ALREADY_EXISTS);
-        }
-
         // 인증 관련 데이터 업데이트
         if (proofRequest != null) {
-            userChallenge.setThoughts(proofRequest.getThoughts());
-            userChallenge.setCertificationImage(proofRequest.getCertificationImage());
+            userChallenge.verifyUserChallenge(proofRequest);
         }
 
-        userChallenge.updateCompletedStatus(true);
         userChallengeRepository.save(userChallenge);
         return ChallengeConverter.toProofDetailsDTO(userChallenge.getChallenge(), userChallenge);
     }

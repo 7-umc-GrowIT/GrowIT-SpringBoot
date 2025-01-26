@@ -62,7 +62,7 @@ public class ChallengeResponseDTO {
     @NoArgsConstructor
     @AllArgsConstructor
     public static class ChallengeStatusListDTO {
-        private List<ChallengeResponseDTO.ChallengeStatusDTO> challenges;
+        private List<ChallengeResponseDTO.ChallengeStatusDTO> userChallenges;
     }
 
     @Getter

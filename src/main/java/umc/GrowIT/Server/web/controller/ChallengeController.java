@@ -57,7 +57,7 @@ public class ChallengeController implements ChallengeSpecification {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         Long userId = (Long) authentication.getPrincipal();
         // 서비스 호출
-        ChallengeResponseDTO.ProofDetailsDTO response = challengeCommandService.updateChallengeProof(userId, challengeId, proofRequest);
+        ChallengeResponseDTO.ProofDetailsDTO response = challengeCommandService.createChallengeProof(userId, challengeId, proofRequest);
 
         // 성공 응답 반환
         return ApiResponse.onSuccess(response);

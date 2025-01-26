@@ -19,24 +19,28 @@ public interface UserChallengeRepository extends JpaRepository<UserChallenge, Lo
     @Query("SELECT uc FROM UserChallenge uc WHERE uc.user.id = :userId")
     List<UserChallenge> findUserChallengesByUserId(@Param("userId") Long userId);
 
+    // 유저별 완료한 챌린지 내역 조회
+    @Query("SELECT uc FROM UserChallenge uc " +
+            "WHERE uc.user.id = :userId AND uc.completed = true")
+    List<UserChallenge> findCompletedUserChallengesByUserId(@Param("userId") Long userId);
+
     // 특정 유저의 인증 완료된 챌린지 조회
     @Query("SELECT uc FROM UserChallenge uc " +
-            "JOIN uc.challenge c " +
             "WHERE uc.user.id = :userId " +
-            "AND (:dtype IS NULL OR c.dtype = :dtype) " +
+            "AND (:status IS NULL OR uc.dtype = :status) " +
             "AND uc.completed = true")
     List<UserChallenge> findUserChallengesByStatusAndCompletion(
             @Param("userId") Long userId,
-            @Param("dtype") ChallengeType dtype);
-
+            @Param("status") ChallengeType challengeType);
 
     // 특정 유저가 완료하지 않은 챌린지 조회
-    @Query("SELECT c FROM Challenge c " +
-            "WHERE c.id NOT IN (" +
-            "  SELECT uc.challenge.id FROM UserChallenge uc " +
-            "  WHERE uc.user.id = :userId AND uc.completed = true" +
-            "  AND (:dtype IS NULL OR c.dtype = :dtype)" +
-            ")")
-    List<Challenge> findAvailableChallengesForUser(@Param("userId") Long userId, @Param("dtype") ChallengeType dtype);
+    @Query("SELECT uc FROM UserChallenge uc " +
+            "WHERE uc.user.id = :userId " +
+            "AND (:dtype IS NULL OR uc.dtype = :dtype) " +
+            "AND uc.completed = false")
+    List<UserChallenge> findAvailableChallengesForUser(@Param("userId") Long userId, @Param("dtype") ChallengeType dtype);
 }
+
+
+
 

@@ -55,7 +55,7 @@ public class ChallengeConverter {
                 .map(userChallenge -> ChallengeResponseDTO.ChallengeStatusDTO.builder()
                         .id(userChallenge.getChallenge().getId())
                         .title(userChallenge.getChallenge().getTitle())
-                        .dtype(userChallenge.getChallenge().getDtype())
+                        .dtype(userChallenge.getDtype())
                         .time(userChallenge.getChallenge().getTime())
                         .completed(userChallenge.isCompleted())
                         .build())
@@ -63,28 +63,28 @@ public class ChallengeConverter {
     }
 
     // Challenge 데이터를 ChallengeStatusDTO로 변환
-    public static List<ChallengeResponseDTO.ChallengeStatusDTO> toChallengeStatusListDTOFromChallenge(List<Challenge> challenges, List<UserChallenge> userChallenges) {
+    public static List<ChallengeResponseDTO.ChallengeStatusDTO> toChallengeStatusListDTOFromChallenge(List<UserChallenge> userChallenges) {
 
-        return challenges.stream()
-                .map(challenge -> {
-                    // 현재 Challenge와 연결된 UserChallenge를 찾음
-                    UserChallenge matchingUserChallenge = userChallenges.stream()
-                            .filter(userChallenge -> userChallenge.getChallenge().getId().equals(challenge.getId()))
-                            .findFirst()
-                            .orElse(null);
-
-                    return ChallengeResponseDTO.ChallengeStatusDTO.builder()
-                            .id(challenge.getId())
-                            .title(challenge.getTitle())
-                            .dtype(challenge.getDtype())
-                            .time(challenge.getTime())
-                            .completed(matchingUserChallenge != null && matchingUserChallenge.isCompleted()) // 완료 여부 확인
-                            .build();
-                })
+        return userChallenges.stream()
+                .map(userChallenge -> ChallengeResponseDTO.ChallengeStatusDTO.builder()
+                            .id(userChallenge.getChallenge().getId())
+                            .title(userChallenge.getChallenge().getTitle())
+                            .dtype(userChallenge.getDtype()) // userChallenge가 null일 경우 처리
+                            .time(userChallenge.getChallenge().getTime())
+                            .completed(userChallenge.isCompleted()) // 완료 여부 확인
+                            .build())
                 .collect(Collectors.toList());
     }
 
-
+    public static ChallengeResponseDTO.ChallengeStatusDTO toChallengeStatusDTO(UserChallenge userChallenge) {
+        Challenge challenge = userChallenge.getChallenge();
+        return ChallengeResponseDTO.ChallengeStatusDTO.builder()
+                .id(challenge.getId())
+                .title(userChallenge.getChallenge().getTitle())
+                .dtype(userChallenge.getDtype())
+                .completed(userChallenge.isCompleted())
+                .build();
+    }
 
 
     // 챌린지 인증 작성

@@ -60,21 +60,23 @@ public class ChallengeQueryServiceImpl implements ChallengeQueryService {
     @Override
     public ChallengeResponseDTO.ChallengeStatusListDTO getChallengeStatus(Long userId, ChallengeType dtype, Boolean completed) {
         List<ChallengeResponseDTO.ChallengeStatusDTO> challenges;
+
         if (completed) {
-            // 특정 유저의 인증 완료된 챌린지 조회
+            // 완료된 챌린지 조회
             List<UserChallenge> userChallenges = userChallengeRepository.findUserChallengesByStatusAndCompletion(userId, dtype);
             challenges = ChallengeConverter.toChallengeStatusListDTO(userChallenges);
         } else {
-            // 특정 유저가 완료하지 않은 챌린지 조회
-            List<Challenge> availableChallenges = userChallengeRepository.findAvailableChallengesForUser(userId, dtype);
-            List<UserChallenge> userChallenges = userChallengeRepository.findUserChallengesByUserId(userId);
-            challenges = ChallengeConverter.toChallengeStatusListDTOFromChallenge(availableChallenges, userChallenges);
+            // 완료되지 않은 챌린지 조회
+            List<UserChallenge> availableChallenges = userChallengeRepository.findAvailableChallengesForUser(userId, dtype);
+            challenges = ChallengeConverter.toChallengeStatusListDTOFromChallenge(availableChallenges);
         }
 
         return ChallengeResponseDTO.ChallengeStatusListDTO.builder()
-                .challenges(challenges)
+                .userChallenges(challenges)
                 .build();
     }
+
+
 
 
 
