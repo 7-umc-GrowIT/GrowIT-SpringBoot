@@ -10,4 +10,6 @@ public interface GroRepository extends JpaRepository<Gro, Long> {
     Optional<Gro> findByName(String name);
 
     boolean existsByName(@Param("name")String nickname);
+
+    Optional<Gro> findByUserId(Long userId);
 }
