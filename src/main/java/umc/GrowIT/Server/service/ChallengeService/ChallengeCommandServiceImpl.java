@@ -20,7 +20,6 @@ import umc.GrowIT.Server.web.dto.ChallengeDTO.ChallengeResponseDTO;
 @RequiredArgsConstructor
 public class ChallengeCommandServiceImpl implements ChallengeCommandService {
 
-    private final ChallengeRepository challengeRepository;
     private final UserRepository userRepository;
     private final UserChallengeRepository userChallengeRepository;
 
@@ -28,11 +27,12 @@ public class ChallengeCommandServiceImpl implements ChallengeCommandService {
     @Transactional
     public ChallengeResponseDTO.ProofDetailsDTO createChallengeProof(Long userId, Long challengeId, ChallengeRequestDTO.ProofRequestDTO proofRequest) {
 
-        // UserChallenge 조회
         UserChallenge userChallenge = userChallengeRepository.findByIdAndUserId(challengeId, userId)
                 .orElseThrow(() -> new ChallengeHandler(ErrorStatus.USER_CHALLENGE_NOT_FOUND));
 
-        // 인증 관련 데이터 업데이트
+        if (userChallenge.isCompleted()) {
+            throw new ChallengeHandler(ErrorStatus.CHALLENGE_VERIFY_ALREADY_EXISTS);
+        }
         if (proofRequest != null) {
             userChallenge.verifyUserChallenge(proofRequest);
         }
@@ -46,14 +46,10 @@ public class ChallengeCommandServiceImpl implements ChallengeCommandService {
     @Override
     @Transactional(readOnly = true)
     public ChallengeResponseDTO.ProofDetailsDTO getChallengeProofDetails(Long userId, Long challengeId) {
-        // 챌린지 조회
-        Challenge challenge = challengeRepository.findById(challengeId)
-                .orElseThrow(() -> new ChallengeHandler(ErrorStatus.CHALLENGE_NOT_FOUND));
 
-        // 인증 내역 조회
         UserChallenge userChallenge = userChallengeRepository.findByIdAndUserId(challengeId, userId)
                 .orElseThrow(() -> new ChallengeHandler(ErrorStatus.CHALLENGE_VERIFY_NOT_EXISTS));
-
+        Challenge challenge = userChallenge.getChallenge();
         return ChallengeConverter.toChallengeProofDetailsDTO(challenge, userChallenge);
     }
 

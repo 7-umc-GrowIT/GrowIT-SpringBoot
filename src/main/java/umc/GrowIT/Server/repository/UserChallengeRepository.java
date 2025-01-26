@@ -29,7 +29,7 @@ public interface UserChallengeRepository extends JpaRepository<UserChallenge, Lo
             "WHERE uc.user.id = :userId " +
             "AND (:status IS NULL OR uc.dtype = :status) " +
             "AND uc.completed = true")
-    List<UserChallenge> findUserChallengesByStatusAndCompletion(
+    List<UserChallenge> findCompleteChallenges(
             @Param("userId") Long userId,
             @Param("status") ChallengeType challengeType);
 
@@ -38,7 +38,7 @@ public interface UserChallengeRepository extends JpaRepository<UserChallenge, Lo
             "WHERE uc.user.id = :userId " +
             "AND (:dtype IS NULL OR uc.dtype = :dtype) " +
             "AND uc.completed = false")
-    List<UserChallenge> findAvailableChallengesForUser(@Param("userId") Long userId, @Param("dtype") ChallengeType dtype);
+    List<UserChallenge> findIncompleteChallenges(@Param("userId") Long userId, @Param("dtype") ChallengeType dtype);
 }
 
 

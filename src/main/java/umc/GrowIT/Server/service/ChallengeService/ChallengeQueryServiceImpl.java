@@ -63,11 +63,11 @@ public class ChallengeQueryServiceImpl implements ChallengeQueryService {
 
         if (completed) {
             // 완료된 챌린지 조회
-            List<UserChallenge> userChallenges = userChallengeRepository.findUserChallengesByStatusAndCompletion(userId, dtype);
+            List<UserChallenge> userChallenges = userChallengeRepository.findCompleteChallenges(userId, dtype);
             challenges = ChallengeConverter.toChallengeStatusListDTO(userChallenges);
         } else {
             // 완료되지 않은 챌린지 조회
-            List<UserChallenge> availableChallenges = userChallengeRepository.findAvailableChallengesForUser(userId, dtype);
+            List<UserChallenge> availableChallenges = userChallengeRepository.findIncompleteChallenges(userId, dtype);
             challenges = ChallengeConverter.toChallengeStatusListDTOFromChallenge(availableChallenges);
         }
 

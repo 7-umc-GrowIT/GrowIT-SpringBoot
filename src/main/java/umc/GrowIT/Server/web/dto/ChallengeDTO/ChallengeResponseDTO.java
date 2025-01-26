@@ -100,6 +100,7 @@ public class ChallengeResponseDTO {
     @NoArgsConstructor
     @AllArgsConstructor
     public static class ProofDetailsDTO {
+        private Long challengeId;
         private String title;
         private String certificationImage;
         private String thoughts;
