@@ -56,25 +56,18 @@ public class ChallengeCommandServiceImpl implements ChallengeCommandService {
 
     @Override
     @Transactional
-    public ChallengeResponseDTO.ModifyProofDTO updateChallengeProof(Long challengeId, ChallengeRequestDTO.UpdateRequestDTO updateRequest) {
-        // 1. 해당 챌린지 조회
-        UserChallenge userChallenge = challengeRepository.findByChallengeId(challengeId)
-                .orElseThrow(() -> new IllegalArgumentException("챌린지 인증 내역을 찾을 수 없습니다."));
+    public ChallengeResponseDTO.ModifyProofDTO updateChallengeProof(Long userId, Long challengeId, ChallengeRequestDTO.ProofRequestDTO updateRequest) {
+        UserChallenge userChallenge = userChallengeRepository.findByIdAndUserId(challengeId, userId)
+                .orElseThrow(() -> new ChallengeHandler(ErrorStatus.CHALLENGE_VERIFY_NOT_EXISTS));
 
-        // 2. 인증 내용 수정
-        if (updateRequest.getCertificationImage() != null) {
-            userChallenge.setCertificationImage(updateRequest.getCertificationImage());
-        }
-        if (updateRequest.getThoughts() != null) {
-            userChallenge.setThoughts(updateRequest.getThoughts());
+        if (updateRequest != null) {
+            userChallenge.verifyUserChallenge(updateRequest);
         }
 
-        // 3. 변경 내용 저장
         userChallengeRepository.save(userChallenge);
-
-        // 4. ChallengeResponseDTO 반환
         return ChallengeConverter.toChallengeModifyProofDTO(userChallenge);
     }
+
 
 
     public ChallengeResponseDTO.DeleteChallengeResponseDTO delete(Long userChallengeId, Long userId) {
