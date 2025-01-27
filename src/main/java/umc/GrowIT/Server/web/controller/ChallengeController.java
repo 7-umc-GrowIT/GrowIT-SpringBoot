@@ -47,7 +47,7 @@ public class ChallengeController implements ChallengeSpecification {
     }
 
     @PostMapping("{userChallengeId}/select")
-    public ApiResponse<ChallengeResponseDTO> selectChallenge(@PathVariable Long challengeId) {
+    public ApiResponse<ChallengeResponseDTO> selectChallenge(@PathVariable Long userChallengeId) {
         return null;
     }
 
@@ -64,10 +64,10 @@ public class ChallengeController implements ChallengeSpecification {
     }
 
     @GetMapping("{userChallengeId}")
-    public ApiResponse<ChallengeResponseDTO.ProofDetailsDTO> getChallengeProofDetails(@PathVariable Long challengeId) {
+    public ApiResponse<ChallengeResponseDTO.ProofDetailsDTO> getChallengeProofDetails(@PathVariable Long userChallengeId) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         Long userId = (Long) authentication.getPrincipal();
-        ChallengeResponseDTO.ProofDetailsDTO response = challengeCommandService.getChallengeProofDetails(userId, challengeId);
+        ChallengeResponseDTO.ProofDetailsDTO response = challengeQueryService.getChallengeProofDetails(userId, userChallengeId);
         return ApiResponse.onSuccess(response);
     }
 
