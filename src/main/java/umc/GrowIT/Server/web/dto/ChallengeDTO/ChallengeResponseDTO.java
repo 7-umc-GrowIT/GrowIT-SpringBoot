@@ -5,6 +5,7 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import umc.GrowIT.Server.domain.ChallengeKeyword;
+import umc.GrowIT.Server.domain.enums.ChallengeType;
 
 import java.util.List;
 
@@ -60,7 +61,7 @@ public class ChallengeResponseDTO {
     @NoArgsConstructor
     @AllArgsConstructor
     public static class ChallengeStatusListDTO {
-        private List<ChallengeResponseDTO.ChallengeStatusDTO> challenges;
+        private List<ChallengeResponseDTO.ChallengeStatusDTO> userChallenges;
     }
 
     @Getter
@@ -70,7 +71,7 @@ public class ChallengeResponseDTO {
     public static class ChallengeStatusDTO {
         private Long id;
         private String title;
-        private String status;
+        private ChallengeType dtype;
         private Integer time;
         private boolean completed;
     }
@@ -99,6 +100,18 @@ public class ChallengeResponseDTO {
         private boolean completed;
     }
 
+    // 선택한 챌린지 저장
+    @Getter
+    @Builder
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class SelectChallengeDTO {
+        private Long id;
+        private ChallengeType dtype;
+        private String title;
+        private String content;
+        private Integer time;
+    }
 
     // 챌린지 삭제 응답 DTO
     @Getter

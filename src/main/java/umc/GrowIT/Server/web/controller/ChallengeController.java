@@ -44,8 +44,12 @@ public class ChallengeController implements ChallengeSpecification {
     }
 
     @PostMapping("/{challengeId}/select")
-    public ApiResponse<ChallengeResponseDTO> selectChallenge(@PathVariable Long challengeId) {
-        return null;
+    public ApiResponse<ChallengeResponseDTO.SelectChallengeDTO> selectChallenge(@PathVariable Long challengeId) {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        Long userId = (Long) authentication.getPrincipal();
+
+        ChallengeResponseDTO.SelectChallengeDTO response = challengeCommandService.selectChallenge(userId, challengeId);
+        return ApiResponse.onSuccess(response);
     }
 
     @PostMapping("/{challengeId}/prove")

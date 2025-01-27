@@ -40,12 +40,5 @@ public interface ChallengeRepository extends JpaRepository<Challenge, Long> {
     Optional<LocalDate> findJoinDateByUserId(Long userId);
 
 
-    // 챌린지 상태 및 완료 여부에 따라 챌린지 목록 조회
-    @Query("SELECT c FROM Challenge c " +
-            "WHERE (:completed IS NULL OR c.completed = :completed) " +
-            "AND (:status IS NULL OR c.dtype = :status)")
-    List<Challenge> findChallengesByStatusAndCompletion(@Param("userId") Long userId, @Param("status") ChallengeType challengeType, @Param("completed") Boolean completed);
-
-
 
 }

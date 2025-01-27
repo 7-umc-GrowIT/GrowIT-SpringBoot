@@ -3,6 +3,7 @@ package umc.GrowIT.Server.domain;
 import umc.GrowIT.Server.domain.common.BaseEntity;
 import jakarta.persistence.*;
 import lombok.*;
+import umc.GrowIT.Server.domain.enums.ChallengeType;
 
 @Entity
 @Getter
@@ -28,6 +29,9 @@ public class UserChallenge extends BaseEntity {
 
     @Column(name = "certification_image", length = 255)
     private String certificationImage;
+
+    @Enumerated(EnumType.STRING)
+    private ChallengeType dtype;
 
     @Column(name = "completed", nullable = false)
     private boolean completed;

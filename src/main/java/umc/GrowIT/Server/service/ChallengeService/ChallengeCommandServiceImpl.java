@@ -58,6 +58,22 @@ public class ChallengeCommandServiceImpl implements ChallengeCommandService {
         return ChallengeConverter.toProofDetailsDTO(userChallenge);
     }
 
+    @Override
+    public ChallengeResponseDTO.SelectChallengeDTO selectChallenge(Long userId, Long challengeId) {
+        Challenge challenge = challengeRepository.findById(challengeId).orElseThrow(() -> new ChallengeHandler(ErrorStatus.CHALLENGE_NOT_FOUND));
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new ChallengeHandler(ErrorStatus.USER_NOT_FOUND));
+
+        UserChallenge userChallenge = UserChallenge.builder()
+                .user(user)
+                .challenge(challenge)
+                .completed(false)
+                .build();
+        userChallengeRepository.save(userChallenge);
+
+        return ChallengeConverter.toSelectChallengeDTO(userChallenge);
+    }
+
     public ChallengeResponseDTO.DeleteChallengeResponseDTO delete(Long userChallengeId, Long userId) {
         // 1. userId를 조회하고 없으면 오류
         userRepository.findById(userId)

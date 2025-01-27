@@ -50,14 +50,14 @@ public class ChallengeConverter {
     }
 
     // 챌린지 현황
-    public static List<ChallengeResponseDTO.ChallengeStatusDTO> toChallengeStatusListDTO(List<Challenge> challenges) {
-        return challenges.stream()
-                .map(challenge -> ChallengeResponseDTO.ChallengeStatusDTO.builder()
-                        .id(challenge.getId())
-                        .title(challenge.getTitle())
-                        .time(challenge.getTime())
-                        .status(challenge.getStatus()) // 상태
-                        .completed(challenge.isCompleted()) // 완료 여부
+    public static List<ChallengeResponseDTO.ChallengeStatusDTO> toChallengeStatusListDTO(List<UserChallenge> userChallenges) {
+        return userChallenges.stream()
+                .map(userChallenge -> ChallengeResponseDTO.ChallengeStatusDTO.builder()
+                        .id(userChallenge.getChallenge().getId())
+                        .title(userChallenge.getChallenge().getTitle())
+                        .dtype(userChallenge.getDtype())
+                        .time(userChallenge.getChallenge().getTime())
+                        .completed(userChallenge.isCompleted())
                         .build())
                 .collect(Collectors.toList());
     }
@@ -80,6 +80,17 @@ public class ChallengeConverter {
                 .certificationImage(userChallenge.getCertificationImage())
                 .thoughts(userChallenge.getThoughts())
                 .completed(userChallenge.isCompleted())
+                .build();
+    }
+
+    // 선택한 챌린지 저장
+    public static ChallengeResponseDTO.SelectChallengeDTO toSelectChallengeDTO(UserChallenge userChallenge) {
+        return ChallengeResponseDTO.SelectChallengeDTO.builder()
+                .id(userChallenge.getChallenge().getId())
+                .dtype(userChallenge.getDtype())
+                .title(userChallenge.getChallenge().getTitle())
+                .content(userChallenge.getChallenge().getContent())
+                .time(userChallenge.getChallenge().getTime())
                 .build();
     }
 
