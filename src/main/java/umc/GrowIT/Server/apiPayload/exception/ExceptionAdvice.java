@@ -17,6 +17,8 @@ import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExcep
 import umc.GrowIT.Server.apiPayload.ApiResponse;
 import umc.GrowIT.Server.apiPayload.code.ErrorReasonDTO;
 import umc.GrowIT.Server.apiPayload.code.status.ErrorStatus;
+
+import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Optional;
@@ -115,4 +117,5 @@ public class ExceptionAdvice extends ResponseEntityExceptionHandler {
                 request
         );
     }
+
 }

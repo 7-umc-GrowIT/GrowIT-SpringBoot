@@ -1,7 +1,9 @@
 package umc.GrowIT.Server.converter;
 
 import umc.GrowIT.Server.domain.Challenge;
+import umc.GrowIT.Server.domain.User;
 import umc.GrowIT.Server.domain.UserChallenge;
+import umc.GrowIT.Server.web.dto.ChallengeDTO.ChallengeRequestDTO;
 import umc.GrowIT.Server.web.dto.ChallengeDTO.ChallengeResponseDTO;
 
 import java.util.List;
@@ -60,9 +62,20 @@ public class ChallengeConverter {
                 .collect(Collectors.toList());
     }
 
-    // 챌린지 인증 작성
-    public static ChallengeResponseDTO.AddProofDTO toChallengeResponseDTO(UserChallenge userChallenge) {
-        return ChallengeResponseDTO.AddProofDTO.builder()
+    // UserChallenge 생성
+    public static UserChallenge createUserChallenge(User user, Challenge challenge, ChallengeRequestDTO.ProofRequestDTO proofRequest) {
+        return UserChallenge.builder()
+                .user(user)
+                .challenge(challenge)
+                .certificationImage(proofRequest.getCertificationImage())
+                .thoughts(proofRequest.getThoughts())
+                .completed(true)
+                .build();
+    }
+
+    // 챌린지 인증 작성 결과 반환
+    public static ChallengeResponseDTO.ProofDetailsDTO toProofDetailsDTO(UserChallenge userChallenge) {
+        return ChallengeResponseDTO.ProofDetailsDTO.builder()
                 .challengeId(userChallenge.getChallenge().getId())
                 .certificationImage(userChallenge.getCertificationImage())
                 .thoughts(userChallenge.getThoughts())
@@ -70,14 +83,10 @@ public class ChallengeConverter {
                 .build();
     }
 
-    // 챌린지 인증 내역 조회
-    public static ChallengeResponseDTO.ProofDetailsDTO toChallengeProofDetailsDTO(Challenge challenge, UserChallenge userChallenge) {
-        return ChallengeResponseDTO.ProofDetailsDTO.builder()
-                .title(challenge.getTitle())
-                .time(challenge.getTime())
-                .certificationImage(userChallenge.getCertificationImage())
-                .thoughts(userChallenge.getThoughts())
-                .certificationDate(userChallenge.getCreatedAt())
+    public static ChallengeResponseDTO.DeleteChallengeResponseDTO toDeletedUserChallenge(UserChallenge userChallenge) {
+        return ChallengeResponseDTO.DeleteChallengeResponseDTO.builder()
+                .id(userChallenge.getId())
+                .message("챌린지를 삭제했어요")
                 .build();
     }
 }

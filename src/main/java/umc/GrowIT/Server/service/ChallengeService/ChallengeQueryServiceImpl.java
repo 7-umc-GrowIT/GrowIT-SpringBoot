@@ -4,10 +4,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import umc.GrowIT.Server.converter.ChallengeConverter;
 import umc.GrowIT.Server.domain.Challenge;
-import umc.GrowIT.Server.domain.enums.ChallengeStatus;
 import umc.GrowIT.Server.domain.enums.ChallengeType;
 import umc.GrowIT.Server.repository.ChallengeRepository;
-import umc.GrowIT.Server.service.ChallengeService.ChallengeQueryService;
 import umc.GrowIT.Server.web.dto.ChallengeDTO.ChallengeResponseDTO;
 
 import java.time.LocalDate;

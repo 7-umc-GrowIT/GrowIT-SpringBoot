@@ -1,17 +1,12 @@
 package umc.GrowIT.Server.web.controller;
 
 
-import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.Parameter;
-import io.swagger.v3.oas.annotations.media.Content;
-import io.swagger.v3.oas.annotations.media.Schema;
-import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 import umc.GrowIT.Server.apiPayload.ApiResponse;
 import umc.GrowIT.Server.domain.enums.ItemCategory;
+import umc.GrowIT.Server.service.ItemService.ItemCommandService;
 import umc.GrowIT.Server.service.ItemService.ItemQueryServiceImpl;
 import umc.GrowIT.Server.web.controller.specification.ItemSpecification;
 import umc.GrowIT.Server.web.dto.ItemDTO.ItemResponseDTO;
@@ -24,6 +19,7 @@ import umc.GrowIT.Server.web.dto.ItemEquipDTO.ItemEquipResponseDTO;
 public class ItemController implements ItemSpecification {
 
     private final ItemQueryServiceImpl itemQueryServiceImpl;
+    private final ItemCommandService itemCommandService;
 
     @Override
     public ApiResponse<ItemResponseDTO.ItemListDTO> getItemList(ItemCategory category) {
@@ -37,7 +33,12 @@ public class ItemController implements ItemSpecification {
     }
 
     @Override
-    public ApiResponse<ItemResponseDTO.OrderItemResponseDTO> orderItem(Long itemId) {
-        return ApiResponse.onSuccess(null);
+    public ApiResponse<ItemResponseDTO.PurchaseItemResponseDTO> purchaseItem(Long itemId) {
+        // 임시로 사용자 ID 지정
+        Long userId = 17L;
+
+        ItemResponseDTO.PurchaseItemResponseDTO purchasedItem = itemCommandService.purchase(itemId, userId);
+
+        return ApiResponse.onSuccess(purchasedItem);
     }
 }

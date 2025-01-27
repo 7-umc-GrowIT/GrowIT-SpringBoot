@@ -11,8 +11,15 @@ public class DiaryRequestDTO {
     @Setter
     public static class DiaryDTO {
         @NotNull
-        String content;
+        String content; //작성 내용
         @NotNull
-        LocalDate date;
+        LocalDate date; //작성 날짜
+    }
+
+    @Getter
+    @Setter
+    public static class ModifyDTO{
+        @NotNull
+        String content; //수정 내용
     }
 }

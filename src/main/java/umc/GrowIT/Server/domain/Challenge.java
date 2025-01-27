@@ -56,19 +56,14 @@ public class Challenge extends BaseEntity {
 
     // 챌린지 완료 상태로 변경
     public void markAsCompleted() {
-        if (this.completed) {
-            throw new IllegalStateException("이미 완료된 챌린지입니다.");
-        }
         this.completed = true;
     }
 
     public String getStatus() {
         if (this.dtype != null) {
-            return this.dtype.name(); // dtype 값 반환 (RANDOM, DAILY)
+            return this.completed ? this.dtype.name() + "_COMPLETED" : this.dtype.name(); // 완료하였으면 뒤에 _COMPLETED 추가하여 반환
         }
-        if (this.completed) {
-            return "COMPLETED"; // completed가 true인 경우
-        }
-        return "TOTAL"; // completed가 false인 경우
+        return this.completed ? "COMPLETED" : "TOTAL";
     }
+
 }

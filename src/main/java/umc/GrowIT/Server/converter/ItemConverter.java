@@ -1,6 +1,9 @@
 package umc.GrowIT.Server.converter;
 
 import umc.GrowIT.Server.domain.Item;
+import umc.GrowIT.Server.domain.User;
+import umc.GrowIT.Server.domain.UserItem;
+import umc.GrowIT.Server.domain.enums.ItemStatus;
 import umc.GrowIT.Server.repository.ItemRepository.ItemRepository;
 import umc.GrowIT.Server.web.dto.ItemDTO.ItemResponseDTO;
 
@@ -15,7 +18,7 @@ public class ItemConverter {
                 .id(item.getId())
                 .name(item.getName())
                 .price(item.getPrice())
-                .imageUrl(item.getImageUrl())
+                .imageUrl(item.getImageKey())
                 .category(item.getCategory().toString())
                 .purchased(itemRepository.existsByUserItemsUserIdAndId(userId, item.getId()))
                 .build();
@@ -28,5 +31,20 @@ public class ItemConverter {
                         .map(item -> toItemDTO(item, userId, itemRepository))
                         .collect(Collectors.toList()))
                 .build();
+    }
+
+    public static UserItem toUserItem() {
+        return UserItem.builder()
+                .status(ItemStatus.UNEQUIPPED)
+                .build()
+                ;
+    }
+
+    public static ItemResponseDTO.PurchaseItemResponseDTO toPurchaseItemResponseDTO(UserItem userItem) {
+        return ItemResponseDTO.PurchaseItemResponseDTO.builder()
+                .itemId(userItem.getItem().getId())
+                .itemName(userItem.getItem().getName())
+                .build()
+                ;
     }
 }

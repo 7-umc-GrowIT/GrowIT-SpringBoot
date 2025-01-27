@@ -1,9 +1,6 @@
 package umc.GrowIT.Server.web.dto.UserDTO;
 
-import jakarta.validation.constraints.Email;
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotEmpty;
-import jakarta.validation.constraints.Size;
+import jakarta.validation.constraints.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -21,6 +18,7 @@ public class UserRequestDTO {
     @AllArgsConstructor
     public static class UserInfoDTO {
         private Boolean isVerified;
+
 
         @NotBlank(message = "필수 입력 항목입니다.")
         @Email(message = "이메일 형식에 맞춰주세요.")
@@ -68,21 +66,11 @@ public class UserRequestDTO {
         private String passwordCheck;
     }
 
-    // 이메일 인증 전송 요청 DTO
-    @Getter
     @Builder
+    @Getter
     @NoArgsConstructor
     @AllArgsConstructor
-    public static class SendAuthEmailRequestDTO {
-        private String email; // 인증번호 받을 이메일
-    }
-
-    // 인증 코드 확인 요청 DTO
-    @Getter
-    @Builder
-    @NoArgsConstructor
-    @AllArgsConstructor
-    public static class VerifyAuthCodeRequestDTO {
-        private String authCode; // 인증 번호
+    public static class ReissueDTO {
+        private String refreshToken;
     }
 }

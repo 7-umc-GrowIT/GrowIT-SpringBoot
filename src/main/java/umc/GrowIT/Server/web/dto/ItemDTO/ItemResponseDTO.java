@@ -5,7 +5,6 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import umc.GrowIT.Server.domain.enums.ItemStatus;
 
 import java.util.List;
 
@@ -52,7 +51,7 @@ public class ItemResponseDTO {
     @Builder
     @NoArgsConstructor
     @AllArgsConstructor
-    public static class OrderItemResponseDTO {
+    public static class PurchaseItemResponseDTO {
         private Long itemId;    // 구매한 아이템 ID
         private String itemName; // 구매한 아이템 이름
     }

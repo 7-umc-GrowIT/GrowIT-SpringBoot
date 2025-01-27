@@ -1,11 +1,13 @@
-package umc.GrowIT.Server.service.userService;
+package umc.GrowIT.Server.service.authService;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
+import org.springframework.security.authentication.DisabledException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -15,19 +17,17 @@ import umc.GrowIT.Server.apiPayload.exception.TermHandler;
 import umc.GrowIT.Server.apiPayload.exception.UserHandler;
 import umc.GrowIT.Server.converter.TermConverter;
 import umc.GrowIT.Server.converter.UserConverter;
-import umc.GrowIT.Server.domain.RefreshToken;
-import umc.GrowIT.Server.domain.Term;
-import umc.GrowIT.Server.domain.User;
-import umc.GrowIT.Server.domain.UserTerm;
+import umc.GrowIT.Server.domain.*;
 import umc.GrowIT.Server.domain.enums.TermType;
 import umc.GrowIT.Server.domain.enums.UserStatus;
-import umc.GrowIT.Server.service.refreshToken.RefreshTokenCommandService;
+import umc.GrowIT.Server.service.refreshTokenService.RefreshTokenCommandService;
 import umc.GrowIT.Server.web.dto.UserDTO.UserRequestDTO;
 import umc.GrowIT.Server.web.dto.UserDTO.UserResponseDTO;
 import umc.GrowIT.Server.repository.TermRepository;
 import umc.GrowIT.Server.repository.UserRepository;
-import umc.GrowIT.Server.jwt.JwtTokenProvider;
+import umc.GrowIT.Server.jwt.JwtTokenUtil;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -41,7 +41,7 @@ public class UserCommandServiceImpl implements UserCommandService {
     private final UserRepository userRepository;
     private final TermRepository termRepository;
     private final PasswordEncoder passwordEncoder;
-    private final JwtTokenProvider jwtTokenProvider;
+    private final JwtTokenUtil jwtTokenUtil;
     private final RefreshTokenCommandService refreshTokenCommandService;
     private final AuthenticationManager authenticationManager;
 
@@ -69,7 +69,7 @@ public class UserCommandServiceImpl implements UserCommandService {
         User newUser = UserConverter.toUser(userInfoDTO);
         newUser.encodePassword(passwordEncoder.encode(newUser.getPassword()));
 
-        /*
+        /**
           사용자 약관 처리 과정
           1. UserInfoDTO 내부 userTerms(term_id, agreed) Stream 형태로 처리
           2. 약관 존재 여부 및 동의 상태 검증
@@ -91,42 +91,33 @@ public class UserCommandServiceImpl implements UserCommandService {
                 .collect(Collectors.toList());
 
         newUser.setUserTerms(userTerms);
-
-        UserResponseDTO.TokenDTO tokenDTO = jwtTokenProvider.generateToken(getAuthentication(newUser)); //JWT 토큰 생성 메소드 호출
-        RefreshToken refreshToken = refreshTokenCommandService.createRefreshToken(tokenDTO.getRefreshToken(), newUser); //RefreshToken DB 저장
-
-        newUser.setRefreshToken(refreshToken);
         userRepository.save(newUser);
+
+        UserResponseDTO.TokenDTO tokenDTO = performAuthentication(userInfoDTO.getEmail(), userInfoDTO.getPassword()); //자동 로그인 처리
+        setRefreshToken(tokenDTO.getRefreshToken(), newUser); //refresh token 엔티티 변환 및 user 엔티티에 refresh token 저장
 
         return tokenDTO;
     }
 
 
+    @Transactional
     @Override
     public UserResponseDTO.TokenDTO emailLogin(UserRequestDTO.EmailLoginDTO emailLoginDTO) {
-        String email = emailLoginDTO.getEmail();
-        String rawPassword = emailLoginDTO.getPassword();
-
-        //사용자 정보 조회
-        Optional<User> optionalUser = userRepository.findByEmail(email);
-        User user = optionalUser.orElseThrow(() -> new UserHandler(ErrorStatus.USER_NOT_FOUND));
-
-        //사용자 상태 확인
-        if (user.getStatus() == UserStatus.INACTIVE) {
-            throw new UserHandler(ErrorStatus.USER_STATUS_INACTIVE); // 탈퇴한 사용자 처리
-        }
+        String email = emailLoginDTO.getEmail(); //사용자가 입력한 email
+        String password = emailLoginDTO.getPassword(); //사용자가 입력한 password
 
         //인증 수행 및 토큰 생성
         try {
-            UsernamePasswordAuthenticationToken authenticationToken =
-                    new UsernamePasswordAuthenticationToken(email, rawPassword); //인증되지 않은 상태의 Authentication 객체 생성
+            User user = userRepository.findByEmail(email)
+                    .orElseThrow(() -> new UserHandler(ErrorStatus.USER_NOT_FOUND));
+            UserResponseDTO.TokenDTO tokenDTO = performAuthentication(email, password);
+            setRefreshToken(tokenDTO.getRefreshToken(), user);
 
-            Authentication authentication = authenticationManager.authenticate(authenticationToken); //인증 성공 시 인증된 상태의 Authentication 객체 반환, 인증 실패 시 예외 던짐
-            return jwtTokenProvider.generateToken(authentication); //인증 성공 시 JWT 토큰 생성
-        } catch (UsernameNotFoundException e) {
-            throw new UserHandler(ErrorStatus.USER_NOT_FOUND); //사용자가 입력한 email 데이터가 데이터베이스에 없을 때 예외 처리
-        } catch (BadCredentialsException e) {
-            throw new UserHandler(ErrorStatus.USER_NOT_FOUND); //사용자가 입력한 password 데이터가 데이터베이스에 없을 때 예외 처리
+            return tokenDTO;
+        } catch (UsernameNotFoundException | BadCredentialsException e) {
+            throw new UserHandler(ErrorStatus.USER_NOT_FOUND); //사용자가 입력한 email 또는 password 데이터가 데이터베이스에 없을 때 예외 처리
+        } catch (DisabledException e) {
+            throw new UserHandler(ErrorStatus.USER_STATUS_INACTIVE); //탈퇴한 회원일 때 예외 처리
         }
     }
 
@@ -136,7 +127,7 @@ public class UserCommandServiceImpl implements UserCommandService {
         //인증 받지 않았을 때 예외 처리
         if (passwordDTO.getIsVerified() == null || !passwordDTO.getIsVerified())
             throw new UserHandler(ErrorStatus.EMAIL_NOT_VERIFIED);
-        //인증 확인 받았을 때 비밀번호 일치 확인 후 비밀번호 변경
+            //인증 확인 받았을 때 비밀번호 일치 확인 후 비밀번호 변경
         else {
             if (!passwordDTO.getPassword().equals(passwordDTO.getPasswordCheck()))
                 throw new UserHandler(ErrorStatus.PASSWORD_NOT_MATCH);
@@ -158,14 +149,14 @@ public class UserCommandServiceImpl implements UserCommandService {
         }
     }
 
-    private Authentication getAuthentication(User user) {
-        //User 정보를 담은 Authentication 객체 생성
-        Authentication authentication = new UsernamePasswordAuthenticationToken(
-                user.getEmail(), //principal
-                null, //credentials
-                List.of(new SimpleGrantedAuthority(user.getRole().name())) //authorities
+    protected CustomUserDetails createUserDetails(User user) {
+        return new CustomUserDetails(
+                user.getEmail(),
+                user.getPassword(),
+                Collections.singletonList(new SimpleGrantedAuthority(String.valueOf(user.getRole()))),
+                user.getId(),
+                user.getStatus()
         );
-        return authentication;
     }
 
     @Override
@@ -175,7 +166,7 @@ public class UserCommandServiceImpl implements UserCommandService {
                 .orElseThrow(() -> new UserHandler(ErrorStatus.USER_NOT_FOUND));
 
         // 2. soft delete로 진행하기 때문에 status를 inactive로 변경
-        if(deleteUser.getStatus()==UserStatus.INACTIVE) {
+        if (deleteUser.getStatus() == UserStatus.INACTIVE) {
             throw new UserHandler(ErrorStatus.USER_STATUS_INACTIVE);
         }
         deleteUser.deleteAccount();
@@ -184,4 +175,20 @@ public class UserCommandServiceImpl implements UserCommandService {
         // 3. converter 작업
         return UserConverter.toDeletedUser(deleteUser);
     }
+
+    public void setRefreshToken(String refreshToken, User user) {
+        RefreshToken refreshTokenEntity = refreshTokenCommandService.createRefreshToken(refreshToken, user);
+        user.setRefreshToken(refreshTokenEntity);
+    }
+
+    protected UserResponseDTO.TokenDTO performAuthentication(String email, String password) {
+        UsernamePasswordAuthenticationToken authenticationToken =
+                new UsernamePasswordAuthenticationToken(email, password); //인증되지 않은 상태의 Authentication 객체 생성
+
+        Authentication authentication = authenticationManager.authenticate(authenticationToken); //인증 성공 시 인증된 상태의 Authentication 객체 반환, 인증 실패 시 예외 던짐
+        UserResponseDTO.TokenDTO tokenDTO = jwtTokenUtil.generateToken((CustomUserDetails) authentication.getPrincipal()); //인증 성공 시 JWT 토큰 생성
+
+        return tokenDTO;
+    }
 }
+
