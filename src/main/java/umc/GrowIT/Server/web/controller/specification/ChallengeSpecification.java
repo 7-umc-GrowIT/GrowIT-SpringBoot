@@ -35,7 +35,7 @@ public interface ChallengeSpecification {
 
 
 
-    @PostMapping("/{challengeId}/select")
+    @PostMapping("{userChallengeId}/select")
     @Operation(summary = "선택된 챌린지 저장 API", description = "사용자가 선택한 챌린지를 저장합니다.")
     @ApiResponses({
             @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "COMMON200", description = "⭕ SUCCESS"),
@@ -43,7 +43,7 @@ public interface ChallengeSpecification {
     })
     ApiResponse<ChallengeResponseDTO> selectChallenge(@PathVariable Long challengeId);
 
-    @PostMapping("/{challengeId}/prove")
+    @PostMapping("{userChallengeId}/prove")
     @Operation(summary = "챌린지 인증 작성 API", description = "챌린지 인증을 작성하는 API입니다.")
     @ApiResponses({
             @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "COMMON200", description = "⭕ SUCCESS"),
@@ -51,7 +51,7 @@ public interface ChallengeSpecification {
     })
     ApiResponse<ChallengeResponseDTO.ProofDetailsDTO> createChallengeProof(@PathVariable Long challengeId, @RequestBody ChallengeRequestDTO.ProofRequestDTO proofRequest);
 
-    @GetMapping("/{challengeId}")
+    @GetMapping("{userChallengeId}")
     @Operation(summary = "챌린지 인증 내용 조회 API", description = "특정 챌린지의 인증 내용을 조회합니다.")
     @ApiResponses({
             @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "COMMON200", description = "⭕ SUCCESS"),
@@ -59,7 +59,7 @@ public interface ChallengeSpecification {
     })
     ApiResponse<ChallengeResponseDTO.ProofDetailsDTO> getChallengeProofDetails(@PathVariable Long challengeId);
 
-    @PatchMapping("/{challengeId}")
+    @PatchMapping("{userChallengeId}")
     @Operation(summary = "챌린지 인증 수정 API", description = "챌린지 인증을 수정하는 API입니다.")
     @ApiResponses({
             @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "COMMON200", description = "⭕ SUCCESS"),
