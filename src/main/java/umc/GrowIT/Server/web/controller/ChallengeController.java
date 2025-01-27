@@ -52,12 +52,12 @@ public class ChallengeController implements ChallengeSpecification {
     }
 
     @PostMapping("{userChallengeId}/prove")
-    public ApiResponse<ChallengeResponseDTO.ProofDetailsDTO> createChallengeProof(@PathVariable Long challengeId, @RequestBody ChallengeRequestDTO.ProofRequestDTO proofRequest) {
+    public ApiResponse<ChallengeResponseDTO.ProofDetailsDTO> createChallengeProof(@PathVariable Long userChallengeId, @RequestBody ChallengeRequestDTO.ProofRequestDTO proofRequest) {
 
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         Long userId = (Long) authentication.getPrincipal();
         // 서비스 호출
-        ChallengeResponseDTO.ProofDetailsDTO response = challengeCommandService.createChallengeProof(userId, challengeId, proofRequest);
+        ChallengeResponseDTO.ProofDetailsDTO response = challengeCommandService.createChallengeProof(userId, userChallengeId, proofRequest);
 
         // 성공 응답 반환
         return ApiResponse.onSuccess(response);
@@ -72,7 +72,7 @@ public class ChallengeController implements ChallengeSpecification {
     }
 
     @PatchMapping("{userChallengeId}")
-    public ApiResponse<ChallengeResponseDTO> updateChallengeProof(@PathVariable Long challengeId,
+    public ApiResponse<ChallengeResponseDTO> updateChallengeProof(@PathVariable Long userChallengeId,
                                                                   @RequestBody ChallengeRequestDTO.UpdateRequestDTO updateRequest) {
         return null;
     }
