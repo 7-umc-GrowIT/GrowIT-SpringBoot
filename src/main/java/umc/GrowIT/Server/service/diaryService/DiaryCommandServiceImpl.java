@@ -29,7 +29,11 @@ public class DiaryCommandServiceImpl implements DiaryCommandService{
         Optional<Diary> optionalDiary = diaryRepository.findByUserIdAndId(userId, diaryId);
         Diary diary = optionalDiary.orElseThrow(()->new DiaryHandler(ErrorStatus.DIARY_NOT_FOUND));
 
-        //Todo: 수정한 일기의 내용이 100자 이내인지 검사하는 로직 추가 필요(원활한 테스트를 위해 나중에 추가)
+        //일기 내용이 100자 이상인지 검사
+        if(request.getContent().length()<100){
+            throw new UserHandler(ErrorStatus.DIARY_CHARACTER_LIMIT);
+        }
+
         diary.setContent(request.getContent());
 
         diaryRepository.save(diary);
@@ -42,7 +46,15 @@ public class DiaryCommandServiceImpl implements DiaryCommandService{
         //유저 조회
         User user = userRepository.findById(userId).orElseThrow(() -> new UserHandler(ErrorStatus.USER_NOT_FOUND));
 
-        //Todo: request의 content가 100자 이내인지 검사하는 로직 추가
+        //일기 내용이 100자 이상인지 검사
+        if(request.getContent().length()<100){
+            throw new DiaryHandler(ErrorStatus.DIARY_CHARACTER_LIMIT);
+        }
+
+        //날짜 검사(오늘 이후의 날짜 x)
+        if (request.getDate().isAfter(LocalDate.now())) {
+            throw new DiaryHandler(ErrorStatus.DATE_IS_AFTER);
+        }
 
         //일기 생성
         Diary diary = Diary.builder()

@@ -68,6 +68,7 @@ public enum ErrorStatus implements BaseErrorCode {
 
     // 날짜 관련 에러
     DATE_NOT_FOUND(HttpStatus.BAD_REQUEST, "DATE4001", "유효하지 않은 날짜입니다."),
+    DATE_IS_AFTER(HttpStatus.BAD_REQUEST, "DATE4002", "날짜는 오늘 이후로 설정할 수 없습니다."),
 
     //그로관련
     GRO_NICKNAME_ALREADY_EXISTS(HttpStatus.CONFLICT, "GRO4001", "이미 사용 중인 닉네임입니다."),
