@@ -1,6 +1,7 @@
 package umc.GrowIT.Server.domain;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.Size;
 import lombok.*;
 import umc.GrowIT.Server.domain.common.BaseEntity;
 
@@ -23,7 +24,7 @@ public class Diary extends BaseEntity {
     private LocalDate date;
 
     @Lob // 필드를 TEXT로 매핑
-    @Column(nullable = false)
+    @Column(nullable = false, columnDefinition = "TEXT")
     private String content;
 
     @ManyToOne(fetch = FetchType.LAZY)

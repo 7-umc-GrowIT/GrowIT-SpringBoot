@@ -68,6 +68,7 @@ public enum ErrorStatus implements BaseErrorCode {
 
     // 날짜 관련 에러
     DATE_NOT_FOUND(HttpStatus.BAD_REQUEST, "DATE4001", "유효하지 않은 날짜입니다."),
+    DATE_IS_AFTER(HttpStatus.BAD_REQUEST, "DATE4002", "날짜는 오늘 이후로 설정할 수 없습니다."),
 
     //그로관련
     GRO_NICKNAME_ALREADY_EXISTS(HttpStatus.CONFLICT, "GRO4001", "이미 사용 중인 닉네임입니다."),
@@ -78,6 +79,7 @@ public enum ErrorStatus implements BaseErrorCode {
     //일기 관련 에러
     DIARY_NOT_FOUND(HttpStatus.BAD_REQUEST, "DIARY4001", "존재하지 않는 일기입니다."),
     DIARY_CHARACTER_LIMIT(HttpStatus.BAD_REQUEST, "DIARY4002", "100자 이내로 작성된 일기입니다."),
+    DIARY_ALREADY_EXISTS(HttpStatus.BAD_REQUEST, "DIARY4003", "해당날짜에 이미 일기가 존재합니다."),
 
     // s3 관련 에러
     S3_BAD_FILE_EXTENSION(HttpStatus.BAD_REQUEST, "S3_4001", "파일 확장자가 잘못되었습니다."),
