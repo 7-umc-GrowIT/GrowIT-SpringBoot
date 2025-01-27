@@ -7,6 +7,7 @@ import umc.GrowIT.Server.domain.Diary;
 import umc.GrowIT.Server.domain.Item;
 import umc.GrowIT.Server.domain.enums.ItemCategory;
 
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 
@@ -17,4 +18,6 @@ public interface DiaryRepository extends JpaRepository<Diary, Long> {
                                             @Param("month") Integer month);
 
     Optional<Diary> findByUserIdAndId(Long userId, Long diaryId);
+
+    boolean existsByUserIdAndDate(Long userId, LocalDate date);
 }

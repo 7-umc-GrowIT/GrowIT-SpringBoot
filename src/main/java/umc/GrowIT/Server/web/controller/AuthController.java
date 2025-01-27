@@ -10,14 +10,14 @@ import org.springframework.web.bind.annotation.*;
 import umc.GrowIT.Server.apiPayload.ApiResponse;
 import umc.GrowIT.Server.domain.enums.AuthType;
 import umc.GrowIT.Server.service.authService.AuthService;
+import umc.GrowIT.Server.service.authService.UserCommandService;
 import umc.GrowIT.Server.service.refreshTokenService.RefreshTokenCommandService;
 import umc.GrowIT.Server.web.controller.specification.AuthSpecification;
+import umc.GrowIT.Server.web.dto.AuthDTO.AuthRequestDTO;
+import umc.GrowIT.Server.web.dto.AuthDTO.AuthResponseDTO;
 import umc.GrowIT.Server.web.dto.UserDTO.KakaoResponseDTO;
 import umc.GrowIT.Server.web.dto.UserDTO.UserRequestDTO;
 import umc.GrowIT.Server.web.dto.UserDTO.UserResponseDTO;
-import umc.GrowIT.Server.web.dto.AuthDTO.AuthRequestDTO;
-import umc.GrowIT.Server.web.dto.AuthDTO.AuthResponseDTO;
-import umc.GrowIT.Server.service.authService.UserCommandService;
 
 @Slf4j
 @Tag(name = "Auth", description = "인증 관련 API")
@@ -52,9 +52,8 @@ public class AuthController implements AuthSpecification {
     @Override
     @PatchMapping("")
     public ApiResponse<UserResponseDTO.DeleteUserResponseDTO> deleteUser() {
-        // 임시로 사용자 ID 지정
-        Long id = 16L;
-        Long userId = id;
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        Long userId = (Long) authentication.getPrincipal();
 
         UserResponseDTO.DeleteUserResponseDTO deleteUser = userCommandService.delete(userId);
 
