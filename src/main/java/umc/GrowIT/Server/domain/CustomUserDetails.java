@@ -1,47 +1,23 @@
 package umc.GrowIT.Server.domain;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
-import lombok.Setter;
+import lombok.experimental.SuperBuilder;
 import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
-import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.User;
 import umc.GrowIT.Server.domain.enums.UserStatus;
 
 import java.util.Collection;
-import java.util.Collections;
-import java.util.List;
 
-@Entity
-public class CustomUserDetails implements UserDetails {
+@Getter
+public class CustomUserDetails extends User{
+    private final Long id;
+    private final UserStatus status;
 
-    @Setter
-    @Getter
-    @Id
-    private Long id;
-    private String emil;
-    private String password;
-    private UserStatus status;
-
-    @Override
-    public Collection<? extends GrantedAuthority> getAuthorities() {
-        return Collections.emptyList();
+    public CustomUserDetails(String username, String password, Collection<? extends GrantedAuthority> authorities, Long id, UserStatus status) {
+        super(username, password, authorities);
+        this.id = id;
+        this.status = status;
     }
-
-    @Override
-    public String getPassword() {
-        return "";
-    }
-
-    @Override
-    public String getUsername() {
-        return "";
-    }
-
-    @Override
-    public boolean isEnabled() {
-        return UserDetails.super.isEnabled();
-    }
-
 }

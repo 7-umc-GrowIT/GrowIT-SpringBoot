@@ -4,9 +4,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import umc.GrowIT.Server.domain.Challenge;
-import umc.GrowIT.Server.domain.User;
 import umc.GrowIT.Server.domain.UserChallenge;
-import umc.GrowIT.Server.domain.enums.ChallengeType;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -30,20 +28,9 @@ public interface ChallengeRepository extends JpaRepository<Challenge, Long> {
     @Query("SELECT COUNT(d) FROM Diary d WHERE d.user.id = :userId")
     int getTotalDiariesByUserId(Long userId);
 
-    // 사용자 ID와 챌린지 ID로 특정 챌린지 조회
-    @Query("SELECT c FROM Challenge c JOIN UserChallenge uc ON c.id = uc.challenge.id " +
-            "WHERE uc.user.id = :userId AND c.id = :challengeId")
-    Optional<Challenge> findByIdAndUserId(Long challengeId, Long userId);
-
     // 사용자 가입날짜 조회
     @Query("SELECT u.createdAt FROM User u WHERE u.id = :userId")
     Optional<LocalDate> findJoinDateByUserId(Long userId);
-
-    // 챌린지 상태 및 완료 여부에 따라 챌린지 목록 조회
-    @Query("SELECT uc.challenge FROM UserChallenge uc WHERE uc.user.id = :userId " +
-            "AND (:completed IS NULL OR uc.completed = :completed)" +
-            "AND (:status IS NULL OR uc.challenge.dtype = :status)")
-    List<Challenge> findChallengesByStatusAndCompletion(@Param("userId") Long userId, @Param("status") ChallengeType challengeType, @Param("completed") Boolean completed);
 
 
     // 챌린지 수정

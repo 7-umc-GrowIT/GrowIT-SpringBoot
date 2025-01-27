@@ -8,6 +8,8 @@ import lombok.Getter;
 @Builder
 public class GroResponseDTO {
 
+
+
     @Schema(description = "그로 id")
     private Long id;
 
@@ -20,9 +22,4 @@ public class GroResponseDTO {
     @Schema(description = "초기 레벨")
     private Integer level;
 
-    @Schema(description = "생성 시간")
-    private String created_at;
-
-    @Schema(description = "수정 시간")
-    private String updated_at;
 }

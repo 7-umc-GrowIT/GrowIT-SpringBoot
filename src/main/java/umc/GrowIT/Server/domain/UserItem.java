@@ -27,4 +27,12 @@ public class UserItem extends BaseEntity {
 
     @Enumerated(EnumType.STRING)
     private ItemStatus status;
+
+    public void setUser(User user) {
+        this.user = user;
+    }
+
+    public void setItem(Item item) {
+        this.item = item;
+    }
 }

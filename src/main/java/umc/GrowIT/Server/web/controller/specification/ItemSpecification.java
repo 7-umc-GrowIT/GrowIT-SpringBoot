@@ -45,11 +45,16 @@ public interface ItemSpecification {
 
 
 
-    @PostMapping("/items/{itemId}/order")
+    @PostMapping("/items/{itemId}/purchase")
     @Operation(summary = "아이템 구매 API", description = "특정 아이템을 구매하는 API입니다. 아이템 ID를 path variable로 전달받아 해당 아이템을 주문합니다.")
     @ApiResponses({
-            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "COMMON200", description = "⭕ SUCCESS", content = @Content(schema = @Schema(implementation = ApiResponse.class)))
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "COMMON200", description = "⭕ SUCCESS"),
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "USER4002", description = "❌ 이메일 또는 패스워드가 일치하지 않습니다.", content = @Content(schema = @Schema(implementation = ApiResponse.class))),
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "ITEM4001", description = "❌ 아이템을 찾을 수 없습니다.", content = @Content(schema = @Schema(implementation = ApiResponse.class))),
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "ITEM4003", description = "❌ 이미 보유 중인 아이템입니다.", content = @Content(schema = @Schema(implementation = ApiResponse.class))),
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "CREDIT4002", description = "❌ 보유 크레딧이 부족합니다.", content = @Content(schema = @Schema(implementation = ApiResponse.class))),
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "COMMON400", description = "❌ BAD, 잘못된 요청", content = @Content(schema = @Schema(implementation = ApiResponse.class)))
     })
     @Parameter(name = "itemId", description = "주문할 아이템의 ID", required = true)
-    ApiResponse<ItemResponseDTO.OrderItemResponseDTO> orderItem(@PathVariable("itemId") Long itemId);
+    ApiResponse<ItemResponseDTO.PurchaseItemResponseDTO> purchaseItem(@PathVariable("itemId") Long itemId);
 }

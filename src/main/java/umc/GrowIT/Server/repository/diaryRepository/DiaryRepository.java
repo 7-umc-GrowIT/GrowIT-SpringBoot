@@ -8,10 +8,13 @@ import umc.GrowIT.Server.domain.Item;
 import umc.GrowIT.Server.domain.enums.ItemCategory;
 
 import java.util.List;
+import java.util.Optional;
 
 public interface DiaryRepository extends JpaRepository<Diary, Long> {
-    @Query("SELECT d FROM Diary d WHERE d.user.id = :userId AND YEAR(d.createdAt) = :year AND MONTH(d.createdAt) = :month")
+    @Query("SELECT d FROM Diary d WHERE d.user.id = :userId AND YEAR(d.date) = :year AND MONTH(d.date) = :month")
     List<Diary> findByUserIdAndYearAndMonth(@Param("userId") Long userId,
                                             @Param("year") Integer year,
                                             @Param("month") Integer month);
+
+    Optional<Diary> findByUserIdAndId(Long userId, Long diaryId);
 }

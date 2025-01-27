@@ -5,7 +5,7 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import umc.GrowIT.Server.domain.ChallengeKeyword;
-import umc.GrowIT.Server.domain.enums.ChallengeStatus;
+import umc.GrowIT.Server.domain.enums.ChallengeType;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -62,7 +62,7 @@ public class ChallengeResponseDTO {
     @NoArgsConstructor
     @AllArgsConstructor
     public static class ChallengeStatusListDTO {
-        private List<ChallengeResponseDTO.ChallengeStatusDTO> challenges;
+        private List<ChallengeResponseDTO.ChallengeStatusDTO> userChallenges;
     }
 
     @Getter
@@ -72,21 +72,26 @@ public class ChallengeResponseDTO {
     public static class ChallengeStatusDTO {
         private Long id;
         private String title;
-        private String status;
+        private ChallengeType dtype;
         private Integer time;
         private boolean completed;
     }
 
     // 챌린지 인증 응답 DTO
+
     @Getter
     @Builder
     @NoArgsConstructor
     @AllArgsConstructor
-    public static class AddProofDTO {
+    public static class AddProofResultDTO {
         private Long challengeId;
+        private String title;
+        private Integer time;
         private String certificationImage;
+        private ChallengeType dtype;
         private String thoughts;
         private boolean completed;
+        private LocalDateTime certificationDate;
     }
 
     // 첼린지 인증 내역
@@ -95,10 +100,11 @@ public class ChallengeResponseDTO {
     @NoArgsConstructor
     @AllArgsConstructor
     public static class ProofDetailsDTO {
+        private Long challengeId;
         private String title;
-        private Integer time;
         private String certificationImage;
         private String thoughts;
+        private Integer time;
         private LocalDateTime certificationDate;
     }
 
@@ -121,6 +127,7 @@ public class ChallengeResponseDTO {
     @AllArgsConstructor
     public static class DeleteChallengeResponseDTO {
         // TODO 디테일하게 결정 필요
+        private Long id;
         private String message; // ex) 챌린지 삭제가 완료되었습니다
     }
 }

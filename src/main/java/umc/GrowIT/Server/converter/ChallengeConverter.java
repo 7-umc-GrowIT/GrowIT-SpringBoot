@@ -1,7 +1,9 @@
 package umc.GrowIT.Server.converter;
 
 import umc.GrowIT.Server.domain.Challenge;
+import umc.GrowIT.Server.domain.User;
 import umc.GrowIT.Server.domain.UserChallenge;
+import umc.GrowIT.Server.web.dto.ChallengeDTO.ChallengeRequestDTO;
 import umc.GrowIT.Server.web.dto.ChallengeDTO.ChallengeResponseDTO;
 
 import java.util.List;
@@ -48,30 +50,20 @@ public class ChallengeConverter {
     }
 
     // 챌린지 현황
-    public static List<ChallengeResponseDTO.ChallengeStatusDTO> toChallengeStatusListDTO(List<Challenge> challenges) {
-        return challenges.stream()
-                .map(challenge -> ChallengeResponseDTO.ChallengeStatusDTO.builder()
-                        .id(challenge.getId())
-                        .title(challenge.getTitle())
-                        .time(challenge.getTime())
-                        .status(challenge.getStatus()) // 상태
-                        .completed(challenge.isCompleted()) // 완료 여부
+    public static List<ChallengeResponseDTO.ChallengeStatusDTO> toChallengeStatusListDTO(List<UserChallenge> userChallenges) {
+        return userChallenges.stream()
+                .map(userChallenge -> ChallengeResponseDTO.ChallengeStatusDTO.builder()
+                        .id(userChallenge.getChallenge().getId())
+                        .title(userChallenge.getChallenge().getTitle())
+                        .dtype(userChallenge.getDtype())
+                        .time(userChallenge.getChallenge().getTime())
+                        .completed(userChallenge.isCompleted())
                         .build())
                 .collect(Collectors.toList());
     }
 
-    // 챌린지 인증 작성
-    public static ChallengeResponseDTO.AddProofDTO toChallengeResponseDTO(UserChallenge userChallenge) {
-        return ChallengeResponseDTO.AddProofDTO.builder()
-                .challengeId(userChallenge.getChallenge().getId())
-                .certificationImage(userChallenge.getCertificationImage())
-                .thoughts(userChallenge.getThoughts())
-                .completed(userChallenge.isCompleted())
-                .build();
-    }
-
-    // 챌린지 인증 내역 조회
-    public static ChallengeResponseDTO.ProofDetailsDTO toChallengeProofDetailsDTO(Challenge challenge, UserChallenge userChallenge) {
+    // 챌린지 인증 작성 결과 반환
+    public static ChallengeResponseDTO.ProofDetailsDTO toProofDetailsDTO(Challenge challenge, UserChallenge userChallenge) {
         return ChallengeResponseDTO.ProofDetailsDTO.builder()
                 .title(challenge.getTitle())
                 .time(challenge.getTime())
@@ -88,6 +80,25 @@ public class ChallengeConverter {
                 .certificationImage(userChallenge.getCertificationImage())
                 .thoughts(userChallenge.getThoughts())
                 .completed(userChallenge.isCompleted())
+                .build();
+    }
+
+    // 챌린지 인증 내역 조회
+    public static ChallengeResponseDTO.ProofDetailsDTO toChallengeProofDetailsDTO(Challenge challenge, UserChallenge userChallenge) {
+        return ChallengeResponseDTO.ProofDetailsDTO.builder()
+                .challengeId(challenge.getId())
+                .title(challenge.getTitle())
+                .time(challenge.getTime())
+                .certificationImage(userChallenge.getCertificationImage())
+                .thoughts(userChallenge.getThoughts())
+                .certificationDate(userChallenge.getCreatedAt())
+                .build();
+    }
+
+    public static ChallengeResponseDTO.DeleteChallengeResponseDTO toDeletedUserChallenge(UserChallenge userChallenge) {
+        return ChallengeResponseDTO.DeleteChallengeResponseDTO.builder()
+                .id(userChallenge.getId())
+                .message("챌린지를 삭제했어요")
                 .build();
     }
 }

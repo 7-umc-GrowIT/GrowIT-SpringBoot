@@ -1,9 +1,11 @@
 package umc.GrowIT.Server.domain;
 
 import umc.GrowIT.Server.domain.common.BaseEntity;
-import umc.GrowIT.Server.domain.enums.ChallengeStatus;
 import jakarta.persistence.*;
 import lombok.*;
+import umc.GrowIT.Server.domain.enums.ChallengeType;
+import umc.GrowIT.Server.web.dto.ChallengeDTO.ChallengeRequestDTO;
+import umc.GrowIT.Server.web.dto.ChallengeDTO.ChallengeResponseDTO;
 
 @Entity
 @Getter
@@ -24,27 +26,27 @@ public class UserChallenge extends BaseEntity {
     @JoinColumn(name = "challenge_id", nullable = false)
     private Challenge challenge;
 
-    @Enumerated(EnumType.STRING)
-    @Column(name = "status")
-    private ChallengeStatus challengeStatus;
-
     @Column(name = "thoughts", length = 100)
     private String thoughts;
 
     @Column(name = "certification_image", length = 255)
     private String certificationImage;
 
-    @Column(name = "completed", nullable = false)
-    private boolean completed;
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
+    private ChallengeType dtype;
 
-    // Challenge 설정 메서드
+    @Column(name = "completed", nullable = false)
+    private boolean completed = false;
+
     public void setChallenge(Challenge challenge) {
         this.challenge = challenge;
     }
 
-    // 상태 업데이트
-    public void updateStatus(ChallengeStatus newStatus) {
-        this.challengeStatus = newStatus;
+    public void verifyUserChallenge(ChallengeRequestDTO.ProofRequestDTO proofRequest){
+        thoughts = proofRequest.getThoughts();
+        certificationImage = proofRequest.getCertificationImage();
+        completed = true;
     }
 
     // 인증 이미지 수정 메서드

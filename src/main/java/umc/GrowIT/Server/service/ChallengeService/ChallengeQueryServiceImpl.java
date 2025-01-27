@@ -4,10 +4,10 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import umc.GrowIT.Server.converter.ChallengeConverter;
 import umc.GrowIT.Server.domain.Challenge;
-import umc.GrowIT.Server.domain.enums.ChallengeStatus;
+import umc.GrowIT.Server.domain.UserChallenge;
 import umc.GrowIT.Server.domain.enums.ChallengeType;
 import umc.GrowIT.Server.repository.ChallengeRepository;
-import umc.GrowIT.Server.service.ChallengeService.ChallengeQueryService;
+import umc.GrowIT.Server.repository.UserChallengeRepository;
 import umc.GrowIT.Server.web.dto.ChallengeDTO.ChallengeResponseDTO;
 
 import java.time.LocalDate;
@@ -19,6 +19,7 @@ import java.util.List;
 public class ChallengeQueryServiceImpl implements ChallengeQueryService {
 
     private final ChallengeRepository challengeRepository;
+    private final UserChallengeRepository userChallengeRepository;
 
     @Override
     public int getTotalCredits(Long userId) {
@@ -57,14 +58,19 @@ public class ChallengeQueryServiceImpl implements ChallengeQueryService {
     }
 
     @Override
-    public ChallengeResponseDTO.ChallengeStatusListDTO getChallengeStatus(Long userId, ChallengeType status, Boolean completed) {
-        // 유저 ID와 완료 여부를 기반으로 챌린지를 조회
-        List<Challenge> challenges = challengeRepository.findChallengesByStatusAndCompletion(userId, status, completed);
+    public ChallengeResponseDTO.ChallengeStatusListDTO getChallengeStatus(Long userId, ChallengeType dtype, Boolean completed) {
+        // 완료된 챌린지 또는 미완료된 챌린지 조회
+        List<UserChallenge> userChallenges = userChallengeRepository.findChallengesByCompletionStatus(userId, dtype, completed);
+        List<ChallengeResponseDTO.ChallengeStatusDTO> challenges = ChallengeConverter.toChallengeStatusListDTO(userChallenges);
 
-        // 조회된 챌린지 리스트를 DTO로 변환하여 반환
         return ChallengeResponseDTO.ChallengeStatusListDTO.builder()
-                .challenges(ChallengeConverter.toChallengeStatusListDTO(challenges))
+                .userChallenges(challenges)
                 .build();
     }
+
+
+
+
+
 
 }

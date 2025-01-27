@@ -3,6 +3,9 @@ package umc.GrowIT.Server.service.ChallengeService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import umc.GrowIT.Server.apiPayload.code.status.ErrorStatus;
+import umc.GrowIT.Server.apiPayload.exception.ChallengeHandler;
+import umc.GrowIT.Server.apiPayload.exception.UserHandler;
 import umc.GrowIT.Server.converter.ChallengeConverter;
 import umc.GrowIT.Server.domain.Challenge;
 import umc.GrowIT.Server.domain.User;
@@ -17,71 +20,37 @@ import umc.GrowIT.Server.web.dto.ChallengeDTO.ChallengeResponseDTO;
 @RequiredArgsConstructor
 public class ChallengeCommandServiceImpl implements ChallengeCommandService {
 
-    private final ChallengeRepository challengeRepository;
     private final UserRepository userRepository;
     private final UserChallengeRepository userChallengeRepository;
+    private final ChallengeRepository challengeRepository;
 
-    @Override
-    public void markChallengeAsCompleted(Long userId, Long challengeId) {
-        Challenge challenge = challengeRepository.findByIdAndUserId(challengeId, userId)
-                .orElseThrow(() -> new IllegalArgumentException("챌린지를 찾을 수 없습니다."));
-
-        // 챌린지를 완료 상태로 변경
-        challenge.markAsCompleted();
-
-        // 변경된 챌린지 저장
-        challengeRepository.save(challenge);
-    }
-
-    // 팰린지 인증 작성
     @Override
     @Transactional
-    public ChallengeResponseDTO.AddProofDTO createChallengeProof(Long userId, Long challengeId, ChallengeRequestDTO.ProofRequestDTO proofRequest) {
-        // 1. 유저 및 챌린지 조회
-        User user = userRepository.findById(userId)
-                .orElseThrow(() -> new IllegalArgumentException("유저를 찾을 수 없습니다."));
-        Challenge challenge = challengeRepository.findById(challengeId)
-                .orElseThrow(() -> new IllegalArgumentException("챌린지를 찾을 수 없습니다."));
+    public ChallengeResponseDTO.ProofDetailsDTO createChallengeProof(Long userId, Long challengeId, ChallengeRequestDTO.ProofRequestDTO proofRequest) {
 
-        // 2. UserChallenge 생성
-        UserChallenge userChallenge = UserChallenge.builder()
-                .user(user)
-                .challenge(challenge)
-                .certificationImage(proofRequest.getCertificationImage())
-                .thoughts(proofRequest.getThoughts())
-                .completed(true)
-                .build();
+        UserChallenge userChallenge = userChallengeRepository.findByIdAndUserId(challengeId, userId)
+                .orElseThrow(() -> new ChallengeHandler(ErrorStatus.USER_CHALLENGE_NOT_FOUND));
 
-        userChallengeRepository.save(userChallenge);
-
-        // 3. Challenge의 completed 상태를 true로 변경
-        if (!challenge.isCompleted()) {
-            challenge.markAsCompleted(); // Challenge 엔티티의 markAsCompleted 메서드 호출
-            challengeRepository.save(challenge); // 변경사항 저장
+        if (userChallenge.isCompleted()) {
+            throw new ChallengeHandler(ErrorStatus.CHALLENGE_VERIFY_ALREADY_EXISTS);
+        }
+        if (proofRequest != null) {
+            userChallenge.verifyUserChallenge(proofRequest);
         }
 
-        // 4. 응답 DTO 생성
-        return ChallengeConverter.toChallengeResponseDTO(userChallenge);
+        userChallengeRepository.save(userChallenge);
+        return ChallengeConverter.toProofDetailsDTO(userChallenge.getChallenge(), userChallenge);
     }
+
 
     // 챌린지 인증 내역 조회
     @Override
     @Transactional(readOnly = true)
-    public ChallengeResponseDTO.ProofDetailsDTO getChallengeProofDetails(Long challengeId) {
-        // 1. 챌린지 조회
-        Challenge challenge = challengeRepository.findById(challengeId)
-                .orElseThrow(() -> new IllegalArgumentException("챌린지를 찾을 수 없습니다."));
+    public ChallengeResponseDTO.ProofDetailsDTO getChallengeProofDetails(Long userId, Long challengeId) {
 
-        // 2. 챌린지가 미완료 상태라면 예외 처리
-        if (!challenge.isCompleted()) {
-            throw new IllegalStateException("미완료 상태의 챌린지는 인증 내역을 볼 수 없습니다.");
-        }
-
-        // 3. 인증 내역(UserChallenge) 조회
-        UserChallenge userChallenge = userChallengeRepository.findByChallengeId(challengeId)
-                .orElseThrow(() -> new IllegalArgumentException("챌린지 인증 내역이 없습니다."));
-
-        // 4. ProofDetailsDTO로 변환하여 반환
+        UserChallenge userChallenge = userChallengeRepository.findByIdAndUserId(challengeId, userId)
+                .orElseThrow(() -> new ChallengeHandler(ErrorStatus.CHALLENGE_VERIFY_NOT_EXISTS));
+        Challenge challenge = userChallenge.getChallenge();
         return ChallengeConverter.toChallengeProofDetailsDTO(challenge, userChallenge);
     }
 
@@ -89,7 +58,7 @@ public class ChallengeCommandServiceImpl implements ChallengeCommandService {
     @Transactional
     public ChallengeResponseDTO.ModifyProofDTO updateChallengeProof(Long challengeId, ChallengeRequestDTO.UpdateRequestDTO updateRequest) {
         // 1. 해당 챌린지 조회
-        UserChallenge userChallenge = userChallengeRepository.findByChallengeId(challengeId)
+        UserChallenge userChallenge = challengeRepository.findByChallengeId(challengeId)
                 .orElseThrow(() -> new IllegalArgumentException("챌린지 인증 내역을 찾을 수 없습니다."));
 
         // 2. 인증 내용 수정
@@ -107,5 +76,25 @@ public class ChallengeCommandServiceImpl implements ChallengeCommandService {
         return ChallengeConverter.toChallengeModifyProofDTO(userChallenge);
     }
 
-}
 
+    public ChallengeResponseDTO.DeleteChallengeResponseDTO delete(Long userChallengeId, Long userId) {
+        // 1. userId를 조회하고 없으면 오류
+        userRepository.findById(userId)
+                .orElseThrow(() -> new UserHandler(ErrorStatus.USER_NOT_FOUND));
+
+        // 2. userChallengeId와 userId를 통해 조회하고 없으면 오류
+        UserChallenge userChallenge = userChallengeRepository.findByIdAndUserId(userChallengeId, userId)
+                .orElseThrow(() -> new ChallengeHandler(ErrorStatus.USER_CHALLENGE_NOT_FOUND));
+
+        // 3. 진행 중(false)인 챌린지인지 체크, 완료(true)한 챌린지면 오류
+        if(userChallenge.isCompleted()) {
+            throw new ChallengeHandler(ErrorStatus.USER_CHALLENGE_COMPLETE);
+        }
+
+        // 4. 삭제
+        userChallengeRepository.deleteById(userChallengeId);
+
+        // 5. converter 작업
+        return ChallengeConverter.toDeletedUserChallenge(userChallenge);
+    }
+}
