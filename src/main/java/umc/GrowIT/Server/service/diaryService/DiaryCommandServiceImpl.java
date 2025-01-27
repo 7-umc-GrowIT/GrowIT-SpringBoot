@@ -56,6 +56,11 @@ public class DiaryCommandServiceImpl implements DiaryCommandService{
             throw new DiaryHandler(ErrorStatus.DATE_IS_AFTER);
         }
 
+        //날짜 검사(이미 해당 날짜에 작성된 일기가 존재)
+        if(diaryRepository.existsByUserIdAndDate(userId, request.getDate())){
+            throw new DiaryHandler(ErrorStatus.DIARY_ALREADY_EXISTS);
+        }
+
         //일기 생성
         Diary diary = Diary.builder()
                 .content(request.getContent())
