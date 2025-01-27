@@ -49,7 +49,7 @@ public interface ChallengeSpecification {
             @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "COMMON200", description = "⭕ SUCCESS"),
             @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "COMMON400", description = "❌ BAD, 잘못된 요청", content = @Content(schema = @Schema(implementation = ApiResponse.class)))
     })
-    ApiResponse<ChallengeResponseDTO.ProofDetailsDTO> createChallengeProof(@PathVariable Long challengeId, @RequestBody ChallengeRequestDTO.ProofRequestDTO proofRequest);
+    ApiResponse<ChallengeResponseDTO.ProofDetailsDTO> createChallengeProof(@PathVariable Long userChallengeId, @RequestBody ChallengeRequestDTO.ProofRequestDTO proofRequest);
 
     @GetMapping("{userChallengeId}")
     @Operation(summary = "챌린지 인증 내용 조회 API", description = "특정 챌린지의 인증 내용을 조회합니다.")
@@ -65,7 +65,7 @@ public interface ChallengeSpecification {
             @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "COMMON200", description = "⭕ SUCCESS"),
             @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "COMMON400", description = "❌ BAD, 잘못된 요청", content = @Content(schema = @Schema(implementation = ApiResponse.class)))
     })
-    ApiResponse<ChallengeResponseDTO.ModifyProofDTO> updateChallengeProof(@PathVariable Long challengeId, @RequestBody ChallengeRequestDTO.UpdateRequestDTO updateRequest);
+    ApiResponse<ChallengeResponseDTO.ModifyProofDTO> updateChallengeProof(@PathVariable Long userChallengeId, @RequestBody ChallengeRequestDTO.UpdateRequestDTO updateRequest);
 
     @DeleteMapping("{userChallengeId}")
     @Operation(
