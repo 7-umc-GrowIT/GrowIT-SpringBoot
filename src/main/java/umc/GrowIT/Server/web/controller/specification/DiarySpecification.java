@@ -46,8 +46,8 @@ public interface DiarySpecification {
             @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "DIARY4001", description = "존재하지 않는 일기입니다.",content = @Content(schema = @Schema(implementation = ApiResponse.class))),
             @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "DIARY4002",description = "100자 이내로 작성된 일기입니다.",content = @Content(schema = @Schema(implementation = ApiResponse.class)))
     })
-    public ApiResponse<DiaryResponseDTO.ModifyResultDTO> modifyDiary(@RequestHeader(value = "Authorization", required = false) String authorizationHeader,
-                                                                     @PathVariable("diaryId") Long diaryId, @RequestBody DiaryRequestDTO.ModifyDTO request);
+    public ApiResponse<DiaryResponseDTO.ModifyDiaryResultDTO> modifyDiary(@RequestHeader(value = "Authorization", required = false) String authorizationHeader,
+                                                                          @PathVariable("diaryId") Long diaryId, @RequestBody DiaryRequestDTO.ModifyDiaryDTO request);
 
     @DeleteMapping("/{diaryId}")
     @Operation(summary = "일기 삭제하기 API",description = "특정 사용자가 작성한 일기를 삭제하는 API입니다. path variable로 일기의 id를 보내주세요")
@@ -55,8 +55,8 @@ public interface DiarySpecification {
             @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "COMMON200", description = "OK, 성공"),
             @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "DIARY4001", description = "존재하지 않는 일기입니다.",content = @Content(schema = @Schema(implementation = ApiResponse.class)))
     })
-    ApiResponse<DiaryResponseDTO.DeleteResultDTO> deleteDiary(@RequestHeader(value = "Authorization", required = false) String authorizationHeader,
-                                                              @PathVariable("diaryId") Long diaryId);
+    ApiResponse<DiaryResponseDTO.DeleteDiaryResultDTO> deleteDiary(@RequestHeader(value = "Authorization", required = false) String authorizationHeader,
+                                                                   @PathVariable("diaryId") Long diaryId);
 
     @PostMapping("/text")
     @Operation(summary = "직접 일기 작성하기 API",description = "특정 사용자가 일기를 텍스트로 직접 작성하는 API입니다. 작성내용과 작성일자를 보내주세요")
@@ -65,8 +65,8 @@ public interface DiarySpecification {
             @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "DIARY4002",description = "100자 이내로 작성된 일기입니다.",content = @Content(schema = @Schema(implementation = ApiResponse.class))),
             @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "DATE4002",description = "날짜는 오늘 이후로 설정할 수 없습니다.",content = @Content(schema = @Schema(implementation = ApiResponse.class)))
     })
-    ApiResponse<DiaryResponseDTO.CreateResultDTO> createDiaryByText(@RequestHeader(value = "Authorization", required = false) String authorizationHeader,
-                                                                    @RequestBody DiaryRequestDTO.DiaryDTO request);
+    ApiResponse<DiaryResponseDTO.CreateDiaryResultDTO> createDiaryByText(@RequestHeader(value = "Authorization", required = false) String authorizationHeader,
+                                                                         @RequestBody DiaryRequestDTO.CreateDiaryDTO request);
 
     @PostMapping("/voice")
     @Operation(summary = "음성으로 일기 작성하기 API",description = "특정 사용자가 일기를 음성으로 말하며 작성하는 API입니다. 음성내용과 작성일자를 보내주세요")
@@ -74,5 +74,5 @@ public interface DiarySpecification {
             @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "COMMON200", description = "OK, 성공"),
             @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "DIARY4002",description = "100자 이내로 작성된 일기입니다.",content = @Content(schema = @Schema(implementation = ApiResponse.class)))
     })
-    ApiResponse<DiaryResponseDTO.CreateResultDTO> createDiaryByVoice(@RequestBody DiaryRequestDTO.DiaryDTO request);
+    ApiResponse<DiaryResponseDTO.CreateDiaryResultDTO> createDiaryByVoice(@RequestBody DiaryRequestDTO.CreateDiaryDTO request);
 }

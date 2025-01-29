@@ -1,7 +1,6 @@
 package umc.GrowIT.Server.converter;
 
 import umc.GrowIT.Server.domain.Diary;
-import umc.GrowIT.Server.web.dto.DiaryDTO.DiaryRequestDTO;
 import umc.GrowIT.Server.web.dto.DiaryDTO.DiaryResponseDTO;
 
 import java.util.List;
@@ -46,26 +45,26 @@ public class DiaryConverter {
                 .build();
     }
 
-    public static DiaryResponseDTO.ModifyResultDTO toModifyResultDTO(Diary diary){
+    public static DiaryResponseDTO.ModifyDiaryResultDTO toModifyResultDTO(Diary diary){
 
-        return DiaryResponseDTO.ModifyResultDTO.builder()
+        return DiaryResponseDTO.ModifyDiaryResultDTO.builder()
                 .diaryId(diary.getId())
                 .content(diary.getContent())
                 .build();
     }
 
-    public static DiaryResponseDTO.CreateResultDTO toCreateResultDTO(Diary diary){
+    public static DiaryResponseDTO.CreateDiaryResultDTO toCreateResultDTO(Diary diary){
 
-        return DiaryResponseDTO.CreateResultDTO.builder()
+        return DiaryResponseDTO.CreateDiaryResultDTO.builder()
                 .diaryId(diary.getId())
                 .content(diary.getContent())
                 .date(diary.getDate())
                 .build();
     }
 
-    public static DiaryResponseDTO.DeleteResultDTO toDeleteResultDTO(Diary diary){
+    public static DiaryResponseDTO.DeleteDiaryResultDTO toDeleteResultDTO(Diary diary){
 
-        return DiaryResponseDTO.DeleteResultDTO.builder()
+        return DiaryResponseDTO.DeleteDiaryResultDTO.builder()
                 .message("일기를 삭제했어요.")
                 .build();
     }
