@@ -14,6 +14,8 @@ public class ItemConverter {
 
     //아이템 1개 반환
     public static ItemResponseDTO.ItemDTO toItemDTO(Item item, Long userId, ItemRepository itemRepository) {
+        ItemStatus status = itemRepository.findStatusByUserIdAndItemId(userId, item.getId());
+
         return ItemResponseDTO.ItemDTO.builder()
                 .id(item.getId())
                 .name(item.getName())
@@ -21,6 +23,7 @@ public class ItemConverter {
                 .imageUrl(item.getImageUrl())
                 .shopBackgroundColor(item.getShopBackgroundColor())
                 .category(item.getCategory().toString())
+                .status(status != null ? status.toString() : null) //status가 null일 경우(보유하지않은 경우) >> 기본값 null로 설정
                 .purchased(itemRepository.existsByUserItemsUserIdAndId(userId, item.getId()))
                 .build();
     }
