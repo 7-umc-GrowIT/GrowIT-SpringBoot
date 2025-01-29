@@ -12,19 +12,20 @@ import java.util.stream.Collectors;
 
 public class ItemConverter {
 
-    //미션 1개 반환
+    //아이템 1개 반환
     public static ItemResponseDTO.ItemDTO toItemDTO(Item item, Long userId, ItemRepository itemRepository) {
         return ItemResponseDTO.ItemDTO.builder()
                 .id(item.getId())
                 .name(item.getName())
                 .price(item.getPrice())
-                .imageUrl(item.getImageKey())
+                .imageUrl(item.getImageUrl())
+                .shopBackgroundColor(item.getShopBackgroundColor())
                 .category(item.getCategory().toString())
                 .purchased(itemRepository.existsByUserItemsUserIdAndId(userId, item.getId()))
                 .build();
     }
 
-    //미션리스트 반환
+    //아이템리스트 반환
     public static ItemResponseDTO.ItemListDTO toItemListDTO(List<Item> itemList, Long userId, ItemRepository itemRepository) {
         return ItemResponseDTO.ItemListDTO.builder()
                 .itemList(itemList.stream()
