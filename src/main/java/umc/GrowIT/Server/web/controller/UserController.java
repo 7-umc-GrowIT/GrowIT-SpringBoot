@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.*;
 import umc.GrowIT.Server.apiPayload.ApiResponse;
 import umc.GrowIT.Server.domain.enums.ItemCategory;
 import umc.GrowIT.Server.service.CreditService.CreditQueryServiceImpl;
+import umc.GrowIT.Server.service.ItemService.ItemQueryServiceImpl;
 import umc.GrowIT.Server.service.authService.UserCommandService;
 import umc.GrowIT.Server.web.controller.specification.UserSpecification;
 import umc.GrowIT.Server.web.dto.CreditDTO.CreditResponseDTO;
@@ -25,10 +26,15 @@ public class UserController implements UserSpecification {
 
     private final CreditQueryServiceImpl creditQueryService;
     private final UserCommandService userCommandService;
+    private final ItemQueryServiceImpl itemQueryServiceImpl;
 
     @Override
     public ApiResponse<ItemResponseDTO.ItemListDTO> getUserItemList(ItemCategory category) {
-        return ApiResponse.onSuccess(null);
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        Long userId = (Long) authentication.getPrincipal(); //사용자 식별 id
+
+
+        return ApiResponse.onSuccess(itemQueryServiceImpl.getUserOwnedItemList(category, userId));
     }
 
     @Override
