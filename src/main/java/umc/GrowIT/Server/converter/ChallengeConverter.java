@@ -50,36 +50,38 @@ public class ChallengeConverter {
     }
 
     // 챌린지 현황
-    public static List<ChallengeResponseDTO.ChallengeStatusDTO> toChallengeStatusListDTO(List<Challenge> challenges) {
-        return challenges.stream()
-                .map(challenge -> ChallengeResponseDTO.ChallengeStatusDTO.builder()
-                        .id(challenge.getId())
-                        .title(challenge.getTitle())
-                        .time(challenge.getTime())
-                        .status(challenge.getStatus()) // 상태
-                        .completed(challenge.isCompleted()) // 완료 여부
+    public static List<ChallengeResponseDTO.ChallengeStatusDTO> toChallengeStatusListDTO(List<UserChallenge> userChallenges) {
+        return userChallenges.stream()
+                .map(userChallenge -> ChallengeResponseDTO.ChallengeStatusDTO.builder()
+                        .id(userChallenge.getChallenge().getId())
+                        .title(userChallenge.getChallenge().getTitle())
+                        .dtype(userChallenge.getDtype())
+                        .time(userChallenge.getChallenge().getTime())
+                        .completed(userChallenge.isCompleted())
                         .build())
                 .collect(Collectors.toList());
     }
 
-    // UserChallenge 생성
-    public static UserChallenge createUserChallenge(User user, Challenge challenge, ChallengeRequestDTO.ProofRequestDTO proofRequest) {
-        return UserChallenge.builder()
-                .user(user)
-                .challenge(challenge)
-                .certificationImage(proofRequest.getCertificationImage())
-                .thoughts(proofRequest.getThoughts())
-                .completed(true)
+    // 챌린지 인증 작성 결과 반환
+    public static ChallengeResponseDTO.ProofDetailsDTO toProofDetailsDTO(Challenge challenge, UserChallenge userChallenge) {
+        return ChallengeResponseDTO.ProofDetailsDTO.builder()
+                .title(challenge.getTitle())
+                .time(challenge.getTime())
+                .certificationImage(userChallenge.getCertificationImage())
+                .thoughts(userChallenge.getThoughts())
+                .certificationDate(userChallenge.getCreatedAt())
                 .build();
     }
 
-    // 챌린지 인증 작성 결과 반환
-    public static ChallengeResponseDTO.ProofDetailsDTO toProofDetailsDTO(UserChallenge userChallenge) {
+    // 챌린지 인증 내역 조회
+    public static ChallengeResponseDTO.ProofDetailsDTO toChallengeProofDetailsDTO(Challenge challenge, UserChallenge userChallenge) {
         return ChallengeResponseDTO.ProofDetailsDTO.builder()
-                .challengeId(userChallenge.getChallenge().getId())
+                .challengeId(challenge.getId())
+                .title(challenge.getTitle())
+                .time(challenge.getTime())
                 .certificationImage(userChallenge.getCertificationImage())
                 .thoughts(userChallenge.getThoughts())
-                .completed(userChallenge.isCompleted())
+                .certificationDate(userChallenge.getCreatedAt())
                 .build();
     }
 

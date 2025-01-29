@@ -3,6 +3,9 @@ package umc.GrowIT.Server.domain;
 import umc.GrowIT.Server.domain.common.BaseEntity;
 import jakarta.persistence.*;
 import lombok.*;
+import umc.GrowIT.Server.domain.enums.ChallengeType;
+import umc.GrowIT.Server.web.dto.ChallengeDTO.ChallengeRequestDTO;
+import umc.GrowIT.Server.web.dto.ChallengeDTO.ChallengeResponseDTO;
 
 @Entity
 @Getter
@@ -29,13 +32,21 @@ public class UserChallenge extends BaseEntity {
     @Column(name = "certification_image", length = 255)
     private String certificationImage;
 
-    @Column(name = "completed", nullable = false)
-    private boolean completed;
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
+    private ChallengeType dtype;
 
-    // Challenge 설정 메서드
+    @Column(name = "completed", nullable = false)
+    private boolean completed = false;
+
     public void setChallenge(Challenge challenge) {
         this.challenge = challenge;
     }
 
+    public void verifyUserChallenge(ChallengeRequestDTO.ProofRequestDTO proofRequest){
+        thoughts = proofRequest.getThoughts();
+        certificationImage = proofRequest.getCertificationImage();
+        completed = true;
+    }
 
 }

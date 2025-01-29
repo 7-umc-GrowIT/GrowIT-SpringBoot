@@ -1,11 +1,10 @@
 package umc.GrowIT.Server.domain;
 
 import umc.GrowIT.Server.domain.common.BaseEntity;
-import umc.GrowIT.Server.domain.enums.ChallengeType;
 import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.ColumnDefault;
-import umc.GrowIT.Server.domain.enums.ItemCategory;
+import umc.GrowIT.Server.domain.enums.ChallengeType;
 
 import java.util.List;
 
@@ -30,17 +29,17 @@ public class Challenge extends BaseEntity {
     @ColumnDefault("0")
     private Integer time;
 
-    @Enumerated(EnumType.STRING)
-    private ChallengeType dtype;
-
-    @Column(nullable = false)
-    private boolean completed;
-
-    @OneToMany(mappedBy = "challenge", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "challenge", cascade = CascadeType.ALL)
     private List<UserChallenge> userChallenges;
 
-    @OneToMany(mappedBy = "challenge", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "challenge", cascade = CascadeType.ALL)
     private List<ChallengeKeyword> challengeKeywords;
+
+    public boolean isCompletedByUser(Long userId) {
+        // 연관된 UserChallenge 중에서 특정 유저가 완료한 상태를 확인
+        return userChallenges.stream()
+                .anyMatch(userChallenge -> userChallenge.getUser().getId().equals(userId) && userChallenge.isCompleted());
+    }
 
     // 유저-챌린지 추가
     public void addUserChallenge(UserChallenge userChallenge) {
@@ -52,18 +51,6 @@ public class Challenge extends BaseEntity {
     public void addChallengeKeyword(ChallengeKeyword challengeKeyword) {
         this.challengeKeywords.add(challengeKeyword);
         challengeKeyword.setChallenge(this);
-    }
-
-    // 챌린지 완료 상태로 변경
-    public void markAsCompleted() {
-        this.completed = true;
-    }
-
-    public String getStatus() {
-        if (this.dtype != null) {
-            return this.completed ? this.dtype.name() + "_COMPLETED" : this.dtype.name(); // 완료하였으면 뒤에 _COMPLETED 추가하여 반환
-        }
-        return this.completed ? "COMPLETED" : "TOTAL";
     }
 
 }
