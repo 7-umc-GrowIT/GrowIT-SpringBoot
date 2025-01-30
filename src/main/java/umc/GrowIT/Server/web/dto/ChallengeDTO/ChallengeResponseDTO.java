@@ -5,7 +5,7 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import umc.GrowIT.Server.domain.ChallengeKeyword;
-import umc.GrowIT.Server.domain.enums.ChallengeType;
+import umc.GrowIT.Server.domain.enums.UserChallengeType;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -72,7 +72,7 @@ public class ChallengeResponseDTO {
     public static class ChallengeStatusDTO {
         private Long id;
         private String title;
-        private ChallengeType dtype;
+        private UserChallengeType dtype;
         private Integer time;
         private boolean completed;
     }
@@ -88,7 +88,7 @@ public class ChallengeResponseDTO {
         private String title;
         private Integer time;
         private String certificationImage;
-        private ChallengeType dtype;
+        private UserChallengeType dtype;
         private String thoughts;
         private boolean completed;
         private LocalDateTime certificationDate;
@@ -114,7 +114,6 @@ public class ChallengeResponseDTO {
     @NoArgsConstructor
     @AllArgsConstructor
     public static class ModifyProofDTO {
-        private Long challengeId;
         private String certificationImage;
         private String thoughts;
         private boolean completed;

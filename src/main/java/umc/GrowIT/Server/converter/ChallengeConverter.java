@@ -76,7 +76,6 @@ public class ChallengeConverter {
     // 챌린지 수정
     public static ChallengeResponseDTO.ModifyProofDTO toChallengeModifyProofDTO(UserChallenge userChallenge) {
         return ChallengeResponseDTO.ModifyProofDTO.builder()
-                .challengeId(userChallenge.getChallenge().getId())
                 .certificationImage(userChallenge.getCertificationImage())
                 .thoughts(userChallenge.getThoughts())
                 .completed(userChallenge.isCompleted())

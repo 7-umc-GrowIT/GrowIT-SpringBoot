@@ -4,7 +4,6 @@ import umc.GrowIT.Server.domain.common.BaseEntity;
 import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.ColumnDefault;
-import umc.GrowIT.Server.domain.enums.ChallengeType;
 
 import java.util.List;
 

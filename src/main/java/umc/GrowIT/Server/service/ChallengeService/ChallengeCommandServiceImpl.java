@@ -22,7 +22,6 @@ public class ChallengeCommandServiceImpl implements ChallengeCommandService {
 
     private final UserRepository userRepository;
     private final UserChallengeRepository userChallengeRepository;
-    private final ChallengeRepository challengeRepository;
 
     @Override
     @Transactional
@@ -40,18 +39,6 @@ public class ChallengeCommandServiceImpl implements ChallengeCommandService {
 
         userChallengeRepository.save(userChallenge);
         return ChallengeConverter.toProofDetailsDTO(userChallenge.getChallenge(), userChallenge);
-    }
-
-
-    // 챌린지 인증 내역 조회
-    @Override
-    @Transactional(readOnly = true)
-    public ChallengeResponseDTO.ProofDetailsDTO getChallengeProofDetails(Long userId, Long challengeId) {
-
-        UserChallenge userChallenge = userChallengeRepository.findByIdAndUserId(challengeId, userId)
-                .orElseThrow(() -> new ChallengeHandler(ErrorStatus.CHALLENGE_VERIFY_NOT_EXISTS));
-        Challenge challenge = userChallenge.getChallenge();
-        return ChallengeConverter.toChallengeProofDetailsDTO(challenge, userChallenge);
     }
 
     @Override

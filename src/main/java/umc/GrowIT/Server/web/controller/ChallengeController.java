@@ -6,7 +6,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 import umc.GrowIT.Server.apiPayload.ApiResponse;
-import umc.GrowIT.Server.domain.enums.ChallengeType;
+import umc.GrowIT.Server.domain.enums.UserChallengeType;
 import umc.GrowIT.Server.service.ChallengeService.ChallengeCommandService;
 import umc.GrowIT.Server.service.ChallengeService.ChallengeQueryService;
 import umc.GrowIT.Server.web.controller.specification.ChallengeSpecification;
@@ -26,16 +26,16 @@ public class ChallengeController implements ChallengeSpecification {
     private final ChallengeQueryService challengeQueryService;
     private final ChallengeCommandService challengeCommandService;
 
-    @GetMapping("/summary")
+    @GetMapping("summary/{userChallengeId}")
     public ApiResponse<ChallengeResponseDTO.ChallengeHomeDTO> getChallengeHome() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         Long userId = (Long) authentication.getPrincipal();
         return ApiResponse.onSuccess(challengeQueryService.getChallengeHome(userId));
     }
 
-    @GetMapping
+    @GetMapping("{userChallengeId}")
     public ApiResponse<ChallengeResponseDTO.ChallengeStatusListDTO> getChallengeStatus(
-            @RequestParam(required = false) ChallengeType dtype,
+            @RequestParam(required = false) UserChallengeType dtype,
             @RequestParam Boolean completed) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         Long userId = (Long) authentication.getPrincipal();

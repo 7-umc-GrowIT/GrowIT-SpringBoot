@@ -8,7 +8,7 @@ import umc.GrowIT.Server.apiPayload.exception.ChallengeHandler;
 import umc.GrowIT.Server.converter.ChallengeConverter;
 import umc.GrowIT.Server.domain.Challenge;
 import umc.GrowIT.Server.domain.UserChallenge;
-import umc.GrowIT.Server.domain.enums.ChallengeType;
+import umc.GrowIT.Server.domain.enums.UserChallengeType;
 import umc.GrowIT.Server.repository.ChallengeRepository;
 import umc.GrowIT.Server.repository.UserChallengeRepository;
 import umc.GrowIT.Server.web.dto.ChallengeDTO.ChallengeResponseDTO;
@@ -61,7 +61,7 @@ public class ChallengeQueryServiceImpl implements ChallengeQueryService {
     }
 
     @Override
-    public ChallengeResponseDTO.ChallengeStatusListDTO getChallengeStatus(Long userId, ChallengeType dtype, Boolean completed) {
+    public ChallengeResponseDTO.ChallengeStatusListDTO getChallengeStatus(Long userId, UserChallengeType dtype, Boolean completed) {
         // 완료된 챌린지 또는 미완료된 챌린지 조회
         List<UserChallenge> userChallenges = userChallengeRepository.findChallengesByCompletionStatus(userId, dtype, completed);
         List<ChallengeResponseDTO.ChallengeStatusDTO> challenges = ChallengeConverter.toChallengeStatusListDTO(userChallenges);
@@ -78,11 +78,10 @@ public class ChallengeQueryServiceImpl implements ChallengeQueryService {
 
         UserChallenge userChallenge = userChallengeRepository.findByIdAndUserId(challengeId, userId)
                 .orElseThrow(() -> new ChallengeHandler(ErrorStatus.CHALLENGE_VERIFY_NOT_EXISTS));
+
         Challenge challenge = userChallenge.getChallenge();
         return ChallengeConverter.toChallengeProofDetailsDTO(challenge, userChallenge);
     }
-
-
 
 
 }

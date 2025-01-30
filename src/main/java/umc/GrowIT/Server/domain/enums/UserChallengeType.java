@@ -1,5 +1,5 @@
 package umc.GrowIT.Server.domain.enums;
 
-public enum ChallengeType {
+public enum UserChallengeType {
     RANDOM, DAILY
 }
