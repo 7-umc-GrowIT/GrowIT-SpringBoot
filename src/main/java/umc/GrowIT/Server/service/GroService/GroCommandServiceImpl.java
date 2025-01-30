@@ -138,7 +138,7 @@ public class GroCommandServiceImpl implements GroCommandService{
     private String createGroPreSignedUrl(Integer groLevel) {
         // 레벨에 따른 그로 이미지가 제작되지 않은 관계로 일단 레벨 1에 대해서만 설정
         String imageKey = switch (groLevel) {
-            case 1 -> "Gro/그로_1.png";
+            case 1 -> "gro/gro_head.png";
 //            case 2 -> "Gro/그로_2.png";
             default -> throw new GroHandler(ErrorStatus.GRO_LEVEL_INVALID);
         };
