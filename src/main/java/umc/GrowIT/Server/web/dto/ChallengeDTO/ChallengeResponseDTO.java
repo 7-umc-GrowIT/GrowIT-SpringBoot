@@ -116,7 +116,6 @@ public class ChallengeResponseDTO {
     public static class ModifyProofDTO {
         private String certificationImage;
         private String thoughts;
-        private boolean completed;
     }
 
     // 챌린지 삭제 응답 DTO
