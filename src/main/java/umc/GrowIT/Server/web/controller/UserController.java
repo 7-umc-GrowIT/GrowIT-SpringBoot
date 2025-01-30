@@ -10,7 +10,7 @@ import umc.GrowIT.Server.apiPayload.ApiResponse;
 import umc.GrowIT.Server.domain.enums.ItemCategory;
 import umc.GrowIT.Server.service.CreditService.CreditQueryServiceImpl;
 import umc.GrowIT.Server.service.ItemService.ItemQueryServiceImpl;
-import umc.GrowIT.Server.service.authService.UserCommandService;
+import umc.GrowIT.Server.service.userService.UserCommandService;
 import umc.GrowIT.Server.web.controller.specification.UserSpecification;
 import umc.GrowIT.Server.web.dto.CreditDTO.CreditResponseDTO;
 import umc.GrowIT.Server.web.dto.ItemDTO.ItemResponseDTO;

@@ -12,7 +12,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.stereotype.Component;
-import umc.GrowIT.Server.domain.CustomUserDetails;
+import umc.GrowIT.Server.service.userService.UserQueryService;
 import umc.GrowIT.Server.web.dto.UserDTO.UserResponseDTO;
 
 import java.security.Key;
@@ -27,15 +27,16 @@ import static umc.GrowIT.Server.converter.TokenConverter.toTokenDTO;
 @Component
 public class JwtTokenUtil {
 
+    private final UserQueryService userQueryService;
 
     private final Key key;
-
     public static final long ACCESS_TOKEN_EXPIRATION_MS = 30L * 24 * 60 * 60 * 1000; //테스트 용 Access token 만료 시간 30일
     public static final long REFRESH_TOKEN_EXPIRATION_MS = 60L * 24 * 60 * 60 * 1000; //테스트 용 Refresh token 만료 시간 60일
 
-    public JwtTokenUtil(@Value("${spring.jwt.secretKey}") String secretKey) {
+    public JwtTokenUtil(@Value("${spring.jwt.secretKey}") String secretKey, UserQueryService userQueryService) {
         byte[] keyBytes = Decoders.BASE64.decode(secretKey);
         this.key = Keys.hmacShaKeyFor(keyBytes);
+        this.userQueryService = userQueryService;
     }
 
     // AccessToken, RefreshToken 생성 메소드 호출
@@ -58,7 +59,7 @@ public class JwtTokenUtil {
         String accessToken = Jwts.builder()
                 .setSubject(customUserDetails.getUsername())
                 .claim("roles", authorities)
-                .claim("id", customUserDetails.getId())
+                .claim("userId", customUserDetails.getId())
                 .setExpiration(accessTokenExpiresIn)
                 .signWith(key, SignatureAlgorithm.HS256)
                 .compact();
@@ -96,21 +97,26 @@ public class JwtTokenUtil {
         Claims claims = Jwts.parserBuilder()
                 .setSigningKey(key)
                 .build()
-                .parseClaimsJws(token)
+                .parseClaimsJws(token) //예외 발생 시 예외 던짐
                 .getBody();
-
         return true;
     }
 
     public Authentication getAuthentication(String token) {
         Claims claims = parseClaims(token);
-        Long id = claims.get("id", Long.class);
+        Long userId = claims.get("userId", Long.class);
         String roles = claims.get("roles", String.class);
 
         return new UsernamePasswordAuthenticationToken(
-                id,
+                userId,
                 null,
                 Collections.singletonList(new SimpleGrantedAuthority(roles))
         );
+    }
+
+    public boolean isUserInactive(String token){
+        Claims claims = parseClaims(token);
+        Long userId = claims.get("userId", Long.class);
+        return userQueryService.isUserInactive(userId);
     }
 }
