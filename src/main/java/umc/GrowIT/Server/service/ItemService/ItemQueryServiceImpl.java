@@ -25,4 +25,9 @@ public class ItemQueryServiceImpl implements ItemQueryService {
     }
 
 
+    // 사용자가 보유한 아이템만 조회하는 메서드
+    public ItemResponseDTO.ItemListDTO getUserOwnedItemList(ItemCategory category, Long userId) {
+        List<Item> userItems = itemRepository.findItemsByUserIdAndCategory(userId, category);
+        return ItemConverter.toItemListDTO(userItems, userId, itemRepository);
+    }
 }

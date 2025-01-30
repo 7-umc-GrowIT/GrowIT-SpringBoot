@@ -2,6 +2,9 @@ package umc.GrowIT.Server.service.ChallengeService;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+import umc.GrowIT.Server.apiPayload.code.status.ErrorStatus;
+import umc.GrowIT.Server.apiPayload.exception.ChallengeHandler;
 import umc.GrowIT.Server.converter.ChallengeConverter;
 import umc.GrowIT.Server.domain.Challenge;
 import umc.GrowIT.Server.domain.UserChallenge;
@@ -68,7 +71,16 @@ public class ChallengeQueryServiceImpl implements ChallengeQueryService {
                 .build();
     }
 
+    // 챌린지 인증 내역 조회
+    @Override
+    @Transactional(readOnly = true)
+    public ChallengeResponseDTO.ProofDetailsDTO getChallengeProofDetails(Long userId, Long challengeId) {
 
+        UserChallenge userChallenge = userChallengeRepository.findByIdAndUserId(challengeId, userId)
+                .orElseThrow(() -> new ChallengeHandler(ErrorStatus.CHALLENGE_VERIFY_NOT_EXISTS));
+        Challenge challenge = userChallenge.getChallenge();
+        return ChallengeConverter.toChallengeProofDetailsDTO(challenge, userChallenge);
+    }
 
 
 

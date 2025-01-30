@@ -64,10 +64,10 @@ public class ChallengeController implements ChallengeSpecification {
     }
 
     @GetMapping("{userChallengeId}")
-    public ApiResponse<ChallengeResponseDTO.ProofDetailsDTO> getChallengeProofDetails(@PathVariable("userChallengeId") Long userChallengeId) {
+    public ApiResponse<ChallengeResponseDTO.ProofDetailsDTO> getChallengeProofDetails(@PathVariable Long userChallengeId) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         Long userId = (Long) authentication.getPrincipal();
-        ChallengeResponseDTO.ProofDetailsDTO response = challengeCommandService.getChallengeProofDetails(userId, userChallengeId);
+        ChallengeResponseDTO.ProofDetailsDTO response = challengeQueryService.getChallengeProofDetails(userId, userChallengeId);
         return ApiResponse.onSuccess(response);
     }
 

@@ -69,7 +69,6 @@ public class ChallengeCommandServiceImpl implements ChallengeCommandService {
     }
 
 
-
     public ChallengeResponseDTO.DeleteChallengeResponseDTO delete(Long userChallengeId, Long userId) {
         // 1. userId를 조회하고 없으면 오류
         userRepository.findById(userId)
