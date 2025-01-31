@@ -56,7 +56,7 @@ jobs:
     steps:
       # 1. 이전 빌드 작업에서 생성된 아티팩트 다운로드
       - name: Download build artifact
-        uses: actions/download-artifact@v3
+        uses: actions/download-artifact@v4
         with:
           name: GrowItServer    # 다운로드할 아티팩트 이름
           path: build/libs/     # 저장할 경로
