@@ -2,7 +2,9 @@ package umc.GrowIT.Server.repository;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 import umc.GrowIT.Server.domain.Challenge;
+import umc.GrowIT.Server.domain.UserChallenge;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -31,9 +33,8 @@ public interface ChallengeRepository extends JpaRepository<Challenge, Long> {
     Optional<LocalDate> findJoinDateByUserId(Long userId);
 
 
-
-
-
-
+    // 챌린지 수정
+    @Query("SELECT uc FROM UserChallenge uc WHERE uc.challenge.id = :challengeId")
+    Optional<UserChallenge> findByChallengeId(@Param("challengeId") Long challengeId);
 
 }

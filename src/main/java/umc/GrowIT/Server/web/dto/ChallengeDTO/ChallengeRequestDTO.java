@@ -16,12 +16,4 @@ public class ChallengeRequestDTO {
         private String thoughts;
     }
 
-    @Data
-    @Builder
-    @NoArgsConstructor
-    @AllArgsConstructor
-    public static class UpdateRequestDTO {
-        private String certificationImage;
-        private String thoughts;
-    }
 }

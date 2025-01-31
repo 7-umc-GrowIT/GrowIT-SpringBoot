@@ -3,9 +3,8 @@ package umc.GrowIT.Server.domain;
 import umc.GrowIT.Server.domain.common.BaseEntity;
 import jakarta.persistence.*;
 import lombok.*;
-import umc.GrowIT.Server.domain.enums.ChallengeType;
+import umc.GrowIT.Server.domain.enums.UserChallengeType;
 import umc.GrowIT.Server.web.dto.ChallengeDTO.ChallengeRequestDTO;
-import umc.GrowIT.Server.web.dto.ChallengeDTO.ChallengeResponseDTO;
 
 @Entity
 @Getter
@@ -34,7 +33,7 @@ public class UserChallenge extends BaseEntity {
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
-    private ChallengeType dtype;
+    private UserChallengeType dtype;
 
     @Column(name = "completed", nullable = false)
     private boolean completed = false;
