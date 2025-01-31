@@ -6,7 +6,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 import umc.GrowIT.Server.apiPayload.ApiResponse;
-import umc.GrowIT.Server.domain.enums.ChallengeType;
+import umc.GrowIT.Server.domain.enums.UserChallengeType;
 import umc.GrowIT.Server.service.ChallengeService.ChallengeCommandService;
 import umc.GrowIT.Server.service.ChallengeService.ChallengeQueryService;
 import umc.GrowIT.Server.web.controller.specification.ChallengeSpecification;
@@ -26,18 +26,21 @@ public class ChallengeController implements ChallengeSpecification {
     private final ChallengeQueryService challengeQueryService;
     private final ChallengeCommandService challengeCommandService;
 
-    @GetMapping("/summary")
-    public ApiResponse<ChallengeResponseDTO.ChallengeHomeDTO> getChallengeHome(@RequestParam Long userId) {
+    @GetMapping("summary")
+    public ApiResponse<ChallengeResponseDTO.ChallengeHomeDTO> getChallengeHome() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        Long userId = (Long) authentication.getPrincipal();
         return ApiResponse.onSuccess(challengeQueryService.getChallengeHome(userId));
     }
 
-    @GetMapping
+    @GetMapping("/")
     public ApiResponse<ChallengeResponseDTO.ChallengeStatusListDTO> getChallengeStatus(
-            @RequestParam Long userId,
-            @RequestParam(required = false) ChallengeType status,
+            @RequestParam(required = false) UserChallengeType dtype,
             @RequestParam Boolean completed) {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        Long userId = (Long) authentication.getPrincipal();
         // 서비스 호출
-        ChallengeResponseDTO.ChallengeStatusListDTO challengeStatusList = challengeQueryService.getChallengeStatus(userId, status, completed);
+        ChallengeResponseDTO.ChallengeStatusListDTO challengeStatusList = challengeQueryService.getChallengeStatus(userId, dtype, completed);
 
         // 성공 응답 반환
         return ApiResponse.onSuccess(challengeStatusList);
@@ -52,25 +55,34 @@ public class ChallengeController implements ChallengeSpecification {
         return ApiResponse.onSuccess(response);
     }
 
-    @PostMapping("/{challengeId}/prove")
-    public ApiResponse<ChallengeResponseDTO.ProofDetailsDTO> createChallengeProof(@RequestParam Long userId, @PathVariable Long challengeId, @RequestBody ChallengeRequestDTO.ProofRequestDTO proofRequest) {
 
+    @PostMapping("{userChallengeId}/prove")
+    public ApiResponse<ChallengeResponseDTO.ProofDetailsDTO> createChallengeProof(@PathVariable Long userChallengeId, @RequestBody ChallengeRequestDTO.ProofRequestDTO proofRequest) {
+
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        Long userId = (Long) authentication.getPrincipal();
         // 서비스 호출
-        ChallengeResponseDTO.ProofDetailsDTO response = challengeCommandService.createChallengeProof(userId, challengeId, proofRequest);
+        ChallengeResponseDTO.ProofDetailsDTO response = challengeCommandService.createChallengeProof(userId, userChallengeId, proofRequest);
 
         // 성공 응답 반환
         return ApiResponse.onSuccess(response);
     }
 
-    @GetMapping("/{challengeId}")
-    public ApiResponse<ChallengeResponseDTO.ProofDetailsDTO> getChallengeProofDetails(@PathVariable Long challengeId) {
-        return null;
+    @GetMapping("{userChallengeId}")
+    public ApiResponse<ChallengeResponseDTO.ProofDetailsDTO> getChallengeProofDetails(@PathVariable Long userChallengeId) {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        Long userId = (Long) authentication.getPrincipal();
+        ChallengeResponseDTO.ProofDetailsDTO response = challengeQueryService.getChallengeProofDetails(userId, userChallengeId);
+        return ApiResponse.onSuccess(response);
     }
 
-    @PatchMapping("/{challengeId}")
-    public ApiResponse<ChallengeResponseDTO> updateChallengeProof(@PathVariable Long challengeId,
-                                                                  @RequestBody ChallengeRequestDTO.UpdateRequestDTO updateRequest) {
-        return null;
+    @PatchMapping("{userChallengeId}")
+    public ApiResponse<ChallengeResponseDTO.ModifyProofDTO> updateChallengeProof(@PathVariable("userChallengeId") Long userChallengeId,
+                                                                  @RequestBody ChallengeRequestDTO.ProofRequestDTO updateRequest) {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        Long userId = (Long) authentication.getPrincipal();
+        ChallengeResponseDTO.ModifyProofDTO response = challengeCommandService.updateChallengeProof(userId, userChallengeId, updateRequest);
+        return ApiResponse.onSuccess(response);
     }
 
     @DeleteMapping("{userChallengeId}")

@@ -1,7 +1,6 @@
 package umc.GrowIT.Server.service.ChallengeService;
 
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import umc.GrowIT.Server.apiPayload.code.status.ErrorStatus;
@@ -21,42 +20,9 @@ import umc.GrowIT.Server.web.dto.ChallengeDTO.ChallengeResponseDTO;
 @RequiredArgsConstructor
 public class ChallengeCommandServiceImpl implements ChallengeCommandService {
 
-    private final ChallengeRepository challengeRepository;
     private final UserRepository userRepository;
     private final UserChallengeRepository userChallengeRepository;
-
-    @Override
-    public void markChallengeAsCompleted(Long userId, Long challengeId) {
-        Challenge challenge = challengeRepository.findByIdAndUserId(challengeId, userId).orElse(null);
-
-        if(challenge == null) {
-            throw new ChallengeHandler(ErrorStatus.CHALLENGE_NOT_FOUND);
-        }
-
-        challenge.markAsCompleted();
-        challengeRepository.save(challenge);
-    }
-
-    @Override
-    @Transactional
-    public ChallengeResponseDTO.ProofDetailsDTO createChallengeProof(Long userId, Long challengeId, ChallengeRequestDTO.ProofRequestDTO proofRequest) {
-        // 유저 및 챌린지 조회
-        User user = userRepository.findById(userId).orElseThrow(() -> new UserHandler(ErrorStatus.USER_NOT_FOUND));
-        Challenge challenge = challengeRepository.findById(challengeId).orElseThrow(() -> new ChallengeHandler(ErrorStatus.CHALLENGE_NOT_FOUND));
-
-        UserChallenge userChallenge = ChallengeConverter.createUserChallenge(user, challenge, proofRequest);
-        userChallengeRepository.save(userChallenge);
-
-        // 이미 완료된 챌린지인지 확인
-        if (challenge.isCompleted()) {
-            throw new IllegalStateException("이미 완료된 챌린지입니다.");
-        }
-
-        challenge.markAsCompleted();
-        challengeRepository.save(challenge);
-
-        return ChallengeConverter.toProofDetailsDTO(userChallenge);
-    }
+    private final ChallengeRepository challengeRepository;
 
     @Override
     public ChallengeResponseDTO.SelectChallengeDTO selectChallenge(Long userId, Long challengeId) {
@@ -72,6 +38,36 @@ public class ChallengeCommandServiceImpl implements ChallengeCommandService {
         userChallengeRepository.save(userChallenge);
 
         return ChallengeConverter.toSelectChallengeDTO(userChallenge);
+    }
+
+    @Override
+    @Transactional
+    public ChallengeResponseDTO.ProofDetailsDTO createChallengeProof(Long userId, Long challengeId, ChallengeRequestDTO.ProofRequestDTO proofRequest) {
+
+        UserChallenge userChallenge = userChallengeRepository.findByIdAndUserId(challengeId, userId)
+                .orElseThrow(() -> new ChallengeHandler(ErrorStatus.USER_CHALLENGE_NOT_FOUND));
+
+        if (userChallenge.isCompleted()) {
+            throw new ChallengeHandler(ErrorStatus.CHALLENGE_VERIFY_ALREADY_EXISTS);
+        }
+        if (proofRequest != null) {
+            userChallenge.verifyUserChallenge(proofRequest);
+        }
+
+        userChallengeRepository.save(userChallenge);
+        return ChallengeConverter.toProofDetailsDTO(userChallenge.getChallenge(), userChallenge);
+    }
+
+    public ChallengeResponseDTO.ModifyProofDTO updateChallengeProof(Long userId, Long challengeId, ChallengeRequestDTO.ProofRequestDTO updateRequest) {
+        UserChallenge userChallenge = userChallengeRepository.findByIdAndUserId(challengeId, userId)
+                .orElseThrow(() -> new ChallengeHandler(ErrorStatus.CHALLENGE_VERIFY_NOT_EXISTS));
+
+        if (updateRequest != null) {
+            userChallenge.verifyUserChallenge(updateRequest);
+        }
+
+        userChallengeRepository.save(userChallenge);
+        return ChallengeConverter.toChallengeModifyProofDTO(userChallenge);
     }
 
     public ChallengeResponseDTO.DeleteChallengeResponseDTO delete(Long userChallengeId, Long userId) {

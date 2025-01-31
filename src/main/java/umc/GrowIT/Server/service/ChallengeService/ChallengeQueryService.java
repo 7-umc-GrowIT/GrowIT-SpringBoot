@@ -1,6 +1,6 @@
 package umc.GrowIT.Server.service.ChallengeService;
 
-import umc.GrowIT.Server.domain.enums.ChallengeType;
+import umc.GrowIT.Server.domain.enums.UserChallengeType;
 import umc.GrowIT.Server.web.dto.ChallengeDTO.ChallengeResponseDTO;
 
 public interface ChallengeQueryService {
@@ -8,5 +8,6 @@ public interface ChallengeQueryService {
     int getTotalDiaries(Long userId);
     String getUserDate(Long userId);
     ChallengeResponseDTO.ChallengeHomeDTO getChallengeHome(Long userId);
-    ChallengeResponseDTO.ChallengeStatusListDTO getChallengeStatus(Long userId, ChallengeType status, Boolean completed);
+    ChallengeResponseDTO.ChallengeStatusListDTO getChallengeStatus(Long userId, UserChallengeType dtype, Boolean completed);
+    ChallengeResponseDTO.ProofDetailsDTO getChallengeProofDetails(Long userId, Long challengeId);
 }

@@ -1,9 +1,5 @@
 package umc.GrowIT.Server.web.controller;
 
-import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.media.Content;
-import io.swagger.v3.oas.annotations.media.Schema;
-import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.Authentication;
@@ -54,8 +50,8 @@ public class DiaryController implements DiarySpecification {
     }
 
     @PatchMapping("/{diaryId}")
-    public ApiResponse<DiaryResponseDTO.ModifyResultDTO> modifyDiary(@RequestHeader(value = "Authorization", required = false) String authorizationHeader,
-                                                                     @PathVariable("diaryId") Long diaryId, @RequestBody DiaryRequestDTO.ModifyDTO request){
+    public ApiResponse<DiaryResponseDTO.ModifyDiaryResultDTO> modifyDiary(@RequestHeader(value = "Authorization", required = false) String authorizationHeader,
+                                                                          @PathVariable("diaryId") Long diaryId, @RequestBody DiaryRequestDTO.ModifyDiaryDTO request){
         //accessToken에서 userId 추출
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         Long userId = (Long) authentication.getPrincipal();
@@ -64,8 +60,8 @@ public class DiaryController implements DiarySpecification {
     }
 
     @DeleteMapping("/{diaryId}")
-    public ApiResponse<DiaryResponseDTO.DeleteResultDTO> deleteDiary(@RequestHeader(value = "Authorization", required = false) String authorizationHeader,
-                                                                     @PathVariable("diaryId") Long diaryId){
+    public ApiResponse<DiaryResponseDTO.DeleteDiaryResultDTO> deleteDiary(@RequestHeader(value = "Authorization", required = false) String authorizationHeader,
+                                                                          @PathVariable("diaryId") Long diaryId){
         //accessToken에서 userId 추출
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         Long userId = (Long) authentication.getPrincipal();
@@ -73,8 +69,8 @@ public class DiaryController implements DiarySpecification {
         return ApiResponse.onSuccess(diaryCommandService.deleteDiary(diaryId, userId));
     }
     @PostMapping("/text")
-    public ApiResponse<DiaryResponseDTO.CreateResultDTO> createDiaryByText(@RequestHeader(value = "Authorization", required = false) String authorizationHeader,
-                                                                           @RequestBody DiaryRequestDTO.DiaryDTO request){
+    public ApiResponse<DiaryResponseDTO.CreateDiaryResultDTO> createDiaryByText(@RequestHeader(value = "Authorization", required = false) String authorizationHeader,
+                                                                                @RequestBody DiaryRequestDTO.CreateDiaryDTO request){
         //accessToken에서 userId 추출
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         Long userId = (Long) authentication.getPrincipal();
@@ -82,7 +78,7 @@ public class DiaryController implements DiarySpecification {
         return ApiResponse.onSuccess(diaryCommandService.createDiary(request, userId));
     }
     @PostMapping("/voice")
-    public ApiResponse<DiaryResponseDTO.CreateResultDTO> createDiaryByVoice(@RequestBody DiaryRequestDTO.DiaryDTO request){
+    public ApiResponse<DiaryResponseDTO.CreateDiaryResultDTO> createDiaryByVoice(@RequestBody DiaryRequestDTO.CreateDiaryDTO request){
         //Todo: 음성인식 결과를 다듬어주는 로직 필요
         return null;
     }

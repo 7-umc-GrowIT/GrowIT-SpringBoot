@@ -5,4 +5,6 @@ import umc.GrowIT.Server.web.dto.ItemDTO.ItemResponseDTO;
 
 public interface ItemQueryService {
     public ItemResponseDTO.ItemListDTO getItemList(ItemCategory category, Long userId);
+
+    public ItemResponseDTO.ItemListDTO getUserOwnedItemList(ItemCategory category, Long userId);
 }

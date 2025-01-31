@@ -5,8 +5,9 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import umc.GrowIT.Server.domain.ChallengeKeyword;
-import umc.GrowIT.Server.domain.enums.ChallengeType;
+import umc.GrowIT.Server.domain.enums.UserChallengeType;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 public class ChallengeResponseDTO {
@@ -71,7 +72,7 @@ public class ChallengeResponseDTO {
     public static class ChallengeStatusDTO {
         private Long id;
         private String title;
-        private ChallengeType dtype;
+        private UserChallengeType dtype;
         private Integer time;
         private boolean completed;
     }
@@ -81,11 +82,15 @@ public class ChallengeResponseDTO {
     @Builder
     @NoArgsConstructor
     @AllArgsConstructor
-    public static class AddProofDTO {
+    public static class AddProofResultDTO {
         private Long challengeId;
+        private String title;
+        private Integer time;
         private String certificationImage;
+        private UserChallengeType dtype;
         private String thoughts;
         private boolean completed;
+        private LocalDateTime certificationDate;
     }
 
     // 첼린지 인증 내역
@@ -95,10 +100,13 @@ public class ChallengeResponseDTO {
     @AllArgsConstructor
     public static class ProofDetailsDTO {
         private Long challengeId;
+        private String title;
         private String certificationImage;
         private String thoughts;
-        private boolean completed;
+        private Integer time;
+        private LocalDateTime certificationDate;
     }
+
 
     // 선택한 챌린지 저장
     @Getter
@@ -107,10 +115,20 @@ public class ChallengeResponseDTO {
     @AllArgsConstructor
     public static class SelectChallengeDTO {
         private Long id;
-        private ChallengeType dtype;
+        private UserChallengeType dtype;
         private String title;
         private String content;
         private Integer time;
+    }
+
+    // 챌린지 수정
+    @Getter
+    @Builder
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class ModifyProofDTO {
+        private String certificationImage;
+        private String thoughts;
     }
 
     // 챌린지 삭제 응답 DTO

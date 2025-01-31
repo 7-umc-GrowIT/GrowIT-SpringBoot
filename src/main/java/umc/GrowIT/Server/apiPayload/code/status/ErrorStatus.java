@@ -46,6 +46,9 @@ public enum ErrorStatus implements BaseErrorCode {
 
     // 챌린지 관련 에러
     CHALLENGE_NOT_FOUND(HttpStatus.NOT_FOUND, "CHALLENGE4001", "챌린지를 찾을 수 없습니다."),
+    CHALLENGE_VERIFY_NOT_EXISTS(HttpStatus.BAD_REQUEST, "CHALLENGE4002", "챌린지 인증 내역이 존재하지 않습니다."),
+    CHALLENGE_USER_NOT_MATCH(HttpStatus.BAD_REQUEST, "CHALLENGE4003", "유저 아이디가 챌린지 아이디와 일치하지 않습니다."),
+    CHALLENGE_VERIFY_ALREADY_EXISTS(HttpStatus.BAD_REQUEST, "CHALLENGE4004", "이미 완료된 챌린지입니다."),
 
     //기타 에러
     PASSWORD_NOT_MATCH(HttpStatus.BAD_REQUEST, "PWD4001", "비밀번호 확인이 일치하지 않습니다."),
@@ -80,6 +83,7 @@ public enum ErrorStatus implements BaseErrorCode {
     DIARY_NOT_FOUND(HttpStatus.BAD_REQUEST, "DIARY4001", "존재하지 않는 일기입니다."),
     DIARY_CHARACTER_LIMIT(HttpStatus.BAD_REQUEST, "DIARY4002", "100자 이내로 작성된 일기입니다."),
     DIARY_ALREADY_EXISTS(HttpStatus.BAD_REQUEST, "DIARY4003", "해당날짜에 이미 일기가 존재합니다."),
+    DIARY_SAME_CONTENT(HttpStatus.BAD_REQUEST, "DIARY4004", "기존 일기와 동일한 내용입니다."),
 
     // s3 관련 에러
     S3_BAD_FILE_EXTENSION(HttpStatus.BAD_REQUEST, "S3_4001", "파일 확장자가 잘못되었습니다."),

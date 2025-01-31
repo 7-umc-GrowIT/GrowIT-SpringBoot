@@ -19,6 +19,6 @@ public class GroRequestDTO {
     @Size(min = 2, max = 10, message = "2글자에서 20글자 사이로 입력해야합니다.")
     private String name;
 
-    @Schema(description = "배경아이템의 이름", example = "별")
+    @Schema(description = "배경아이템의 이름", example = "별 배경화면 / 하트 배경화면 / 나무 배경화면")
     private String backgroundItem;
 }

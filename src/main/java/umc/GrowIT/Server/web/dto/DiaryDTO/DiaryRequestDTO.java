@@ -9,7 +9,7 @@ import java.time.LocalDate;
 public class DiaryRequestDTO {
     @Getter
     @Setter
-    public static class DiaryDTO {
+    public static class CreateDiaryDTO {
         @NotNull
         String content; //작성 내용
         @NotNull
@@ -18,7 +18,7 @@ public class DiaryRequestDTO {
 
     @Getter
     @Setter
-    public static class ModifyDTO{
+    public static class ModifyDiaryDTO {
         @NotNull
         String content; //수정 내용
     }

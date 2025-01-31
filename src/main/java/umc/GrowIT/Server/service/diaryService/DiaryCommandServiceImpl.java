@@ -2,7 +2,6 @@ package umc.GrowIT.Server.service.diaryService;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 import umc.GrowIT.Server.apiPayload.code.status.ErrorStatus;
 import umc.GrowIT.Server.apiPayload.exception.DiaryHandler;
 import umc.GrowIT.Server.apiPayload.exception.UserHandler;
@@ -15,7 +14,6 @@ import umc.GrowIT.Server.web.dto.DiaryDTO.DiaryRequestDTO;
 import umc.GrowIT.Server.web.dto.DiaryDTO.DiaryResponseDTO;
 
 import java.time.LocalDate;
-import java.util.NoSuchElementException;
 import java.util.Optional;
 
 @Service
@@ -24,14 +22,14 @@ public class DiaryCommandServiceImpl implements DiaryCommandService{
     private final DiaryRepository diaryRepository;
     private final UserRepository userRepository;
     @Override
-    public DiaryResponseDTO.ModifyResultDTO modifyDiary(DiaryRequestDTO.ModifyDTO request, Long diaryId, Long userId) {
+    public DiaryResponseDTO.ModifyDiaryResultDTO modifyDiary(DiaryRequestDTO.ModifyDiaryDTO request, Long diaryId, Long userId) {
 
         Optional<Diary> optionalDiary = diaryRepository.findByUserIdAndId(userId, diaryId);
         Diary diary = optionalDiary.orElseThrow(()->new DiaryHandler(ErrorStatus.DIARY_NOT_FOUND));
 
-        //일기 내용이 100자 이상인지 검사
-        if(request.getContent().length()<100){
-            throw new UserHandler(ErrorStatus.DIARY_CHARACTER_LIMIT);
+        //기존의 내용과 변경되지 않았을 경우
+        if(diary.getContent().equals(request.getContent())){
+            throw new DiaryHandler(ErrorStatus.DIARY_SAME_CONTENT);
         }
 
         diary.setContent(request.getContent());
@@ -41,7 +39,7 @@ public class DiaryCommandServiceImpl implements DiaryCommandService{
     }
 
     @Override
-    public DiaryResponseDTO.CreateResultDTO createDiary(DiaryRequestDTO.DiaryDTO request, Long userId) {
+    public DiaryResponseDTO.CreateDiaryResultDTO createDiary(DiaryRequestDTO.CreateDiaryDTO request, Long userId) {
 
         //유저 조회
         User user = userRepository.findById(userId).orElseThrow(() -> new UserHandler(ErrorStatus.USER_NOT_FOUND));
@@ -75,7 +73,7 @@ public class DiaryCommandServiceImpl implements DiaryCommandService{
     }
 
     @Override
-    public DiaryResponseDTO.DeleteResultDTO deleteDiary(Long diaryId, Long userId) {
+    public DiaryResponseDTO.DeleteDiaryResultDTO deleteDiary(Long diaryId, Long userId) {
 
         Optional<Diary> optionalDiary = diaryRepository.findByUserIdAndId(userId, diaryId);
         Diary diary = optionalDiary.orElseThrow(()->new DiaryHandler(ErrorStatus.DIARY_NOT_FOUND));
