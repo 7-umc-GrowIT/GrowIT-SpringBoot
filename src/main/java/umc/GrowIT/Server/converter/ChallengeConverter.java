@@ -3,6 +3,7 @@ package umc.GrowIT.Server.converter;
 import umc.GrowIT.Server.domain.Challenge;
 import umc.GrowIT.Server.domain.User;
 import umc.GrowIT.Server.domain.UserChallenge;
+import umc.GrowIT.Server.domain.enums.UserChallengeType;
 import umc.GrowIT.Server.web.dto.ChallengeDTO.ChallengeRequestDTO;
 import umc.GrowIT.Server.web.dto.ChallengeDTO.ChallengeResponseDTO;
 
@@ -71,6 +72,16 @@ public class ChallengeConverter {
                 .certificationImage(userChallenge.getCertificationImage())
                 .thoughts(userChallenge.getThoughts())
                 .certificationDate(userChallenge.getCreatedAt())
+                .build();
+    }
+
+    // UserChallenge 생성
+    public static UserChallenge createUserChallenge(User user, Challenge challenge, UserChallengeType dtype) {
+        return UserChallenge.builder()
+                .user(user)
+                .challenge(challenge)
+                .dtype(dtype)
+                .completed(false)
                 .build();
     }
 

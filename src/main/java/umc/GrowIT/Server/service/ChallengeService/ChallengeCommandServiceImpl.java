@@ -31,12 +31,12 @@ public class ChallengeCommandServiceImpl implements ChallengeCommandService {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new ChallengeHandler(ErrorStatus.USER_NOT_FOUND));
 
-        UserChallenge userChallenge = UserChallenge.builder()
-                .user(user)
-                .challenge(challenge)
-                .dtype(dtype)
-                .completed(false)
-                .build();
+        // 이미 저장된 UserChallenge 확인 및 예외 처리
+        if (userChallengeRepository.ChallengeExists(userId, challengeId, dtype)) {
+            throw new ChallengeHandler(ErrorStatus.CHALLENGE_ALREADY_SAVED);
+        }
+
+        UserChallenge userChallenge = ChallengeConverter.createUserChallenge(user, challenge, dtype); // userChallenge 생성
         userChallengeRepository.save(userChallenge);
 
         return ChallengeConverter.toSelectChallengeDTO(userChallenge);
