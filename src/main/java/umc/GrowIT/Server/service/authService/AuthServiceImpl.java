@@ -28,6 +28,8 @@ import java.time.LocalDateTime;
 
 import org.springframework.beans.factory.annotation.Value;
 
+import static umc.GrowIT.Server.domain.enums.UserStatus.INACTIVE;
+
 @Service
 @RequiredArgsConstructor
 public class AuthServiceImpl implements AuthService {
@@ -82,10 +84,12 @@ public class AuthServiceImpl implements AuthService {
             if (user != null) {
                 throw new UserHandler(ErrorStatus.EMAIL_ALREADY_EXISTS);
             }
-        } else if (type == AuthType.PASSWORD_RESET) { //비밀번호 변경 (이메일이 존재해야 함)
+        } else if (type == AuthType.PASSWORD_RESET) { //비밀번호 변경 (이메일이 존재해야 함, 탈퇴하지 않은 회원이어야 함)
             if (user == null) {
                 throw new UserHandler(ErrorStatus.USER_NOT_FOUND);
             }
+            if (user.getStatus() == INACTIVE)
+                throw new UserHandler(ErrorStatus.USER_STATUS_INACTIVE);
         } else { //type이 잘못됨
             throw new AuthHandler(ErrorStatus.INVALID_AUTH_TYPE);
         }

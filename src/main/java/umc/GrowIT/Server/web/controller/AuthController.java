@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.*;
 import umc.GrowIT.Server.apiPayload.ApiResponse;
 import umc.GrowIT.Server.domain.enums.AuthType;
 import umc.GrowIT.Server.service.authService.AuthService;
-import umc.GrowIT.Server.service.authService.UserCommandService;
+import umc.GrowIT.Server.service.userService.UserCommandService;
 import umc.GrowIT.Server.service.refreshTokenService.RefreshTokenCommandService;
 import umc.GrowIT.Server.web.controller.specification.AuthSpecification;
 import umc.GrowIT.Server.web.dto.AuthDTO.AuthRequestDTO;

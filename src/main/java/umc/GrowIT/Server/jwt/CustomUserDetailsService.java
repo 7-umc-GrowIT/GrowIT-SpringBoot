@@ -1,20 +1,15 @@
-package umc.GrowIT.Server.service.authService;
+package umc.GrowIT.Server.jwt;
 
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import umc.GrowIT.Server.domain.CustomUserDetails;
 import umc.GrowIT.Server.domain.User;
 import umc.GrowIT.Server.repository.UserRepository;
 
 import java.util.Collections;
-
-import static umc.GrowIT.Server.domain.enums.UserStatus.ACTIVE;
 
 @Service
 @RequiredArgsConstructor
@@ -33,8 +28,7 @@ public class CustomUserDetailsService implements UserDetailsService {
                 user.getEmail(),
                 user.getPassword(),
                 Collections.singletonList(new SimpleGrantedAuthority(String.valueOf(user.getRole()))),
-                user.getId(),
-                user.getStatus()
+                user.getId()
         );
 
 
