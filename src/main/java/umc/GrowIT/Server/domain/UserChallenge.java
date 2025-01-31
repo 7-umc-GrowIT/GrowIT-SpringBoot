@@ -31,6 +31,7 @@ public class UserChallenge extends BaseEntity {
     @Column(name = "certification_image", length = 255)
     private String certificationImage;
 
+    @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private UserChallengeType dtype;
 
