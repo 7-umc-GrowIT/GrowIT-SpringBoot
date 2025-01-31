@@ -27,9 +27,9 @@ public class DiaryCommandServiceImpl implements DiaryCommandService{
         Optional<Diary> optionalDiary = diaryRepository.findByUserIdAndId(userId, diaryId);
         Diary diary = optionalDiary.orElseThrow(()->new DiaryHandler(ErrorStatus.DIARY_NOT_FOUND));
 
-        //일기 내용이 100자 이상인지 검사
-        if(request.getContent().length()<100){
-            throw new UserHandler(ErrorStatus.DIARY_CHARACTER_LIMIT);
+        //기존의 내용과 변경되지 않았을 경우
+        if(diary.getContent().equals(request.getContent())){
+            throw new DiaryHandler(ErrorStatus.DIARY_SAME_CONTENT);
         }
 
         diary.setContent(request.getContent());
