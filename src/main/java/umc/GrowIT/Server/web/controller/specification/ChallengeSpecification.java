@@ -33,13 +33,13 @@ public interface ChallengeSpecification {
 
 
 
-    @PostMapping("{userChallengeId}/select")
+    @PostMapping("{challengeId}/select")
     @Operation(summary = "선택된 챌린지 저장 API", description = "사용자가 선택한 챌린지를 저장합니다.")
     @ApiResponses({
             @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "COMMON200", description = "⭕ SUCCESS"),
             @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "COMMON400", description = "❌ BAD, 잘못된 요청", content = @Content(schema = @Schema(implementation = ApiResponse.class)))
     })
-    ApiResponse<ChallengeResponseDTO.SelectChallengeDTO> selectChallenge(@PathVariable Long challengeId);
+    ApiResponse<ChallengeResponseDTO.SelectChallengeDTO> selectChallenge(@PathVariable Long challengeId, @RequestParam UserChallengeType dtype);
 
     @PostMapping("{userChallengeId}/prove")
     @Operation(summary = "챌린지 인증 작성 API", description = "챌린지 인증을 작성하는 API입니다.")

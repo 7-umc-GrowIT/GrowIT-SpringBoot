@@ -10,6 +10,7 @@ import umc.GrowIT.Server.converter.ChallengeConverter;
 import umc.GrowIT.Server.domain.Challenge;
 import umc.GrowIT.Server.domain.User;
 import umc.GrowIT.Server.domain.UserChallenge;
+import umc.GrowIT.Server.domain.enums.UserChallengeType;
 import umc.GrowIT.Server.repository.ChallengeRepository;
 import umc.GrowIT.Server.repository.UserChallengeRepository;
 import umc.GrowIT.Server.repository.UserRepository;
@@ -25,7 +26,7 @@ public class ChallengeCommandServiceImpl implements ChallengeCommandService {
     private final ChallengeRepository challengeRepository;
 
     @Override
-    public ChallengeResponseDTO.SelectChallengeDTO selectChallenge(Long userId, Long challengeId) {
+    public ChallengeResponseDTO.SelectChallengeDTO selectChallenge(Long userId, Long challengeId, UserChallengeType dtype) {
         Challenge challenge = challengeRepository.findById(challengeId).orElseThrow(() -> new ChallengeHandler(ErrorStatus.CHALLENGE_NOT_FOUND));
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new ChallengeHandler(ErrorStatus.USER_NOT_FOUND));
@@ -33,6 +34,7 @@ public class ChallengeCommandServiceImpl implements ChallengeCommandService {
         UserChallenge userChallenge = UserChallenge.builder()
                 .user(user)
                 .challenge(challenge)
+                .dtype(dtype)
                 .completed(false)
                 .build();
         userChallengeRepository.save(userChallenge);
