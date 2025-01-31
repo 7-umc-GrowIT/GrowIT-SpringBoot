@@ -43,7 +43,7 @@ jobs:
 
       # 6. 빌드된 JAR 파일을 아티팩트로 업로드
       - name: Upload build artifact
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: GrowItServer        # 아티팩트 이름 지정
           path: build/libs/*.jar    # 업로드할 JAR 파일 경로
@@ -56,7 +56,7 @@ jobs:
     steps:
       # 1. 이전 빌드 작업에서 생성된 아티팩트 다운로드
       - name: Download build artifact
-        uses: actions/download-artifact@v3
+        uses: actions/download-artifact@v4
         with:
           name: GrowItServer    # 다운로드할 아티팩트 이름
           path: build/libs/     # 저장할 경로

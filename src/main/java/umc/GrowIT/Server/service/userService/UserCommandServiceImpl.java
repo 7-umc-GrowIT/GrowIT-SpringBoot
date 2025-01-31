@@ -1,13 +1,11 @@
-package umc.GrowIT.Server.service.authService;
+package umc.GrowIT.Server.service.userService;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
-import org.springframework.security.authentication.DisabledException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -19,7 +17,7 @@ import umc.GrowIT.Server.converter.TermConverter;
 import umc.GrowIT.Server.converter.UserConverter;
 import umc.GrowIT.Server.domain.*;
 import umc.GrowIT.Server.domain.enums.TermType;
-import umc.GrowIT.Server.domain.enums.UserStatus;
+import umc.GrowIT.Server.jwt.CustomUserDetails;
 import umc.GrowIT.Server.service.refreshTokenService.RefreshTokenCommandService;
 import umc.GrowIT.Server.web.dto.UserDTO.UserRequestDTO;
 import umc.GrowIT.Server.web.dto.UserDTO.UserResponseDTO;
@@ -31,6 +29,8 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
+
+import static umc.GrowIT.Server.domain.enums.UserStatus.INACTIVE;
 
 
 @Service
@@ -110,14 +110,16 @@ public class UserCommandServiceImpl implements UserCommandService {
         try {
             User user = userRepository.findByEmail(email)
                     .orElseThrow(() -> new UserHandler(ErrorStatus.USER_NOT_FOUND));
+
+            if (user.getStatus() == INACTIVE)
+                throw new UserHandler(ErrorStatus.USER_STATUS_INACTIVE);
+
             UserResponseDTO.TokenDTO tokenDTO = performAuthentication(email, password);
             setRefreshToken(tokenDTO.getRefreshToken(), user);
 
             return tokenDTO;
         } catch (UsernameNotFoundException | BadCredentialsException e) {
             throw new UserHandler(ErrorStatus.USER_NOT_FOUND); //사용자가 입력한 email 또는 password 데이터가 데이터베이스에 없을 때 예외 처리
-        } catch (DisabledException e) {
-            throw new UserHandler(ErrorStatus.USER_STATUS_INACTIVE); //탈퇴한 회원일 때 예외 처리
         }
     }
 
@@ -139,7 +141,7 @@ public class UserCommandServiceImpl implements UserCommandService {
                         new UserHandler(ErrorStatus.USER_NOT_FOUND));
 
                 //탈퇴한 회원일 때 예외 처리
-                if (user.get().getStatus() == UserStatus.INACTIVE)
+                if (user.get().getStatus() == INACTIVE)
                     throw new UserHandler(ErrorStatus.USER_STATUS_INACTIVE);
 
                 //사용자 비밀번호 변경
@@ -154,8 +156,7 @@ public class UserCommandServiceImpl implements UserCommandService {
                 user.getEmail(),
                 user.getPassword(),
                 Collections.singletonList(new SimpleGrantedAuthority(String.valueOf(user.getRole()))),
-                user.getId(),
-                user.getStatus()
+                user.getId()
         );
     }
 
@@ -166,7 +167,7 @@ public class UserCommandServiceImpl implements UserCommandService {
                 .orElseThrow(() -> new UserHandler(ErrorStatus.USER_NOT_FOUND));
 
         // 2. soft delete로 진행하기 때문에 status를 inactive로 변경
-        if (deleteUser.getStatus() == UserStatus.INACTIVE) {
+        if (deleteUser.getStatus() == INACTIVE) {
             throw new UserHandler(ErrorStatus.USER_STATUS_INACTIVE);
         }
         deleteUser.deleteAccount();

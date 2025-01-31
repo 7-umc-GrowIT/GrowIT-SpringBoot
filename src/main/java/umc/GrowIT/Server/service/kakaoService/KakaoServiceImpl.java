@@ -1,4 +1,4 @@
-package umc.GrowIT.Server.service.authService;
+package umc.GrowIT.Server.service.kakaoService;
 
 import org.springframework.stereotype.Service;
 import umc.GrowIT.Server.web.dto.UserDTO.KakaoResponseDTO;

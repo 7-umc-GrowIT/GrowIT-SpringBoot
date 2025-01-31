@@ -10,9 +10,9 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
-import umc.GrowIT.Server.apiPayload.exception.CustomAuthenticationEntryPoint;
-import umc.GrowIT.Server.filter.JwtAuthenticationFilter;
-import umc.GrowIT.Server.service.authService.CustomUserDetailsService;
+import umc.GrowIT.Server.jwt.CustomAuthenticationEntryPoint;
+import umc.GrowIT.Server.jwt.JwtAuthenticationFilter;
+import umc.GrowIT.Server.jwt.CustomUserDetailsService;
 
 @Configuration
 @EnableWebSecurity

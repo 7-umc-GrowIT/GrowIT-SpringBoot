@@ -20,7 +20,7 @@ public enum ErrorStatus implements BaseErrorCode {
     NICKNAME_NOT_EXIST(HttpStatus.BAD_REQUEST, "USER4001", "비밀번호 확인이 일치하지 않습니다."),
     USER_NOT_FOUND(HttpStatus.UNAUTHORIZED, "USER4002", "이메일 또는 패스워드가 일치하지 않습니다."),
     EMAIL_ALREADY_EXISTS(HttpStatus.CONFLICT, "USER4003", "이미 존재하는 이메일입니다."),
-    USER_STATUS_INACTIVE(HttpStatus.UNAUTHORIZED, "USER4004", "탈퇴한 회원입니다."),
+    USER_STATUS_INACTIVE(HttpStatus.FORBIDDEN, "USER4004", "탈퇴한 회원입니다."),
 
     //사용자 챌린지 관련 에러
     USER_CHALLENGE_NOT_FOUND(HttpStatus.NOT_FOUND, "UC4001", "사용자 챌린지가 존재하지 않습니다"),
@@ -40,6 +40,7 @@ public enum ErrorStatus implements BaseErrorCode {
     INVALID_AUTH_TYPE(HttpStatus.BAD_REQUEST, "AUTH4006", "이메일 인증 타입이 잘못되었습니다."),
     AUTH_CODE_NOT_FOUND(HttpStatus.BAD_REQUEST, "AUTH4007", "유효한 인증번호가 없습니다."),
     AUTH_CODE_MISMATCH(HttpStatus.BAD_REQUEST, "AUTH4008", "인증번호가 올바르지 않습니다."),
+    MISSING_TOKEN(HttpStatus.UNAUTHORIZED, "AUTH4009", "토큰이 존재하지 않습니다."),
     EMAIL_SEND_FAIL(HttpStatus.INTERNAL_SERVER_ERROR, "AUTH5001", "이메일 전송에 실패했습니다."),
     EMAIL_ENCODING_FAIL(HttpStatus.INTERNAL_SERVER_ERROR, "AUTH5002", "이메일 내용 인코딩에 실패했습니다."),
     REFRESH_TOKEN_NOT_FOUND(HttpStatus.NOT_FOUND, "AUTH4007", "데이터베이스에서 refreshToken을 찾을 수 없습니다."),
