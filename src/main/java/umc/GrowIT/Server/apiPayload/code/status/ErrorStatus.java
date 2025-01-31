@@ -47,7 +47,7 @@ public enum ErrorStatus implements BaseErrorCode {
     // 챌린지 관련 에러
     CHALLENGE_NOT_FOUND(HttpStatus.NOT_FOUND, "CHALLENGE4001", "챌린지를 찾을 수 없습니다."),
     CHALLENGE_VERIFY_NOT_EXISTS(HttpStatus.BAD_REQUEST, "CHALLENGE4002", "챌린지 인증 내역이 존재하지 않습니다."),
-    CHALLENGE_USER_NOT_MATCH(HttpStatus.BAD_REQUEST, "CHALLENGE4003", "유저 아이디가 챌린지 아이디와 일치하지 않습니다."),
+    CHALLENGE_NOT_COMPLETE(HttpStatus.BAD_REQUEST, "CHALLENGE4003", "미완료한 챌린지입니다."),
     CHALLENGE_VERIFY_ALREADY_EXISTS(HttpStatus.BAD_REQUEST, "CHALLENGE4004", "이미 완료된 챌린지입니다."),
 
     //기타 에러

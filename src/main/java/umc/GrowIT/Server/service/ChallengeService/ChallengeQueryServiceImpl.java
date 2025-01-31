@@ -77,7 +77,11 @@ public class ChallengeQueryServiceImpl implements ChallengeQueryService {
     public ChallengeResponseDTO.ProofDetailsDTO getChallengeProofDetails(Long userId, Long challengeId) {
 
         UserChallenge userChallenge = userChallengeRepository.findByIdAndUserId(challengeId, userId)
-                .orElseThrow(() -> new ChallengeHandler(ErrorStatus.CHALLENGE_VERIFY_NOT_EXISTS));
+                .orElseThrow(() -> new ChallengeHandler(ErrorStatus.USER_CHALLENGE_NOT_FOUND));
+
+        if (!userChallenge.isCompleted()) {
+            throw new ChallengeHandler(ErrorStatus.CHALLENGE_VERIFY_NOT_EXISTS);
+        }
 
         Challenge challenge = userChallenge.getChallenge();
         return ChallengeConverter.toChallengeProofDetailsDTO(challenge, userChallenge);
