@@ -1,6 +1,8 @@
 package umc.GrowIT.Server.jwt;
 
 import io.jsonwebtoken.ExpiredJwtException;
+import io.jsonwebtoken.MalformedJwtException;
+import io.jsonwebtoken.UnsupportedJwtException;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
@@ -12,6 +14,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
 import java.io.IOException;
+import io.jsonwebtoken.SignatureException;
 
 import static umc.GrowIT.Server.apiPayload.code.status.ErrorStatus.*;
 
@@ -28,21 +31,35 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         try {
             String token = resolveToken(request); //Authorization 헤더에서 토큰 추출
 
+            //토큰이 주어졌는지 확인
             if (token == null) {
                 throw new JwtAuthenticationException(MISSING_TOKEN);
             }
 
-            if (jwtTokenUtil.validateToken(token)) { //토큰이 제공되고, 토큰 자체가 유효한지 확인
-                if (jwtTokenUtil.isUserInactive(token)) //토큰에서 사용자 정보 읽어서 탈퇴한 회원인지 확인
-                    throw new JwtAuthenticationException(USER_STATUS_INACTIVE);
+            //토큰에서 사용자 정보 읽어서 탈퇴한 회원인지 확인
+            if (jwtTokenUtil.isUserInactive(token))
+                throw new JwtAuthenticationException(USER_STATUS_INACTIVE);
+
+            //토큰이 유효한지 확인
+            if (jwtTokenUtil.validateToken(token)) {
                 Authentication authentication = jwtTokenUtil.getAuthentication(token); //토큰에서 사용자 정보 추출
                 SecurityContextHolder.getContext().setAuthentication(authentication); //SecurityContext 에 사용자 정보 저장
             }
 
-        } catch (ExpiredJwtException e) {
-            request.setAttribute("errorStatus", EXPIRED_TOKEN); //CustomAuthenticationEntryPoint 에서 처리
         } catch (JwtAuthenticationException e) {
-            request.setAttribute("errorStatus", e.getErrorStatus());
+            request.setAttribute("errorStatus", e.getErrorStatus()); //CustomAuthenticationEntryPoint 에서 처리
+        } catch (ExpiredJwtException e) {
+            request.setAttribute("errorStatus", EXPIRED_TOKEN);
+        } catch (IllegalArgumentException e) {
+            request.setAttribute("errorStatus", INVALID_TOKEN_FORMAT);
+        } catch (SignatureException e){
+            request.setAttribute("errorStatus", INVALID_SIGNATURE);
+        } catch (MalformedJwtException e) {
+            request.setAttribute("errorStatus", MALFORMED_TOKEN);
+        } catch (UnsupportedJwtException e) {
+            request.setAttribute("errorStatus", UNSUPPORTED_TOKEN);
+        } catch (Exception e) {
+            request.setAttribute("errorStatus", INVALID_TOKEN);
         }
 
         filterChain.doFilter(request, response); //다음 필터로 요청 전달
