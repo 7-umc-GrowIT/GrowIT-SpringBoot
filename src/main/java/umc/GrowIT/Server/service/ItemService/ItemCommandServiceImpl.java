@@ -10,20 +10,23 @@ import umc.GrowIT.Server.converter.UserConverter;
 import umc.GrowIT.Server.domain.Item;
 import umc.GrowIT.Server.domain.User;
 import umc.GrowIT.Server.domain.UserItem;
+import umc.GrowIT.Server.domain.enums.ItemStatus;
 import umc.GrowIT.Server.repository.ItemRepository.ItemRepository;
 import umc.GrowIT.Server.repository.UserItemRepository;
 import umc.GrowIT.Server.repository.UserRepository;
 import umc.GrowIT.Server.web.dto.ItemDTO.ItemResponseDTO;
+import umc.GrowIT.Server.web.dto.ItemEquipDTO.ItemEquipResponseDTO;
 
 @Service
 @RequiredArgsConstructor
+@Transactional
 public class ItemCommandServiceImpl implements ItemCommandService {
 
     private final UserRepository userRepository;
     private final ItemRepository itemRepository;
     private final UserItemRepository userItemRepository;
 
-    @Override
+    @Override //아이템 구매 기능
     public ItemResponseDTO.PurchaseItemResponseDTO purchase(Long itemId, Long userId) {
         // 1. 사용자 조회하고 없으면 오류
         User user = userRepository.findById(userId)
@@ -58,5 +61,27 @@ public class ItemCommandServiceImpl implements ItemCommandService {
 
         // converter 작업
         return ItemConverter.toPurchaseItemResponseDTO(savedUserItem);
+    }
+
+    @Override
+    public ItemEquipResponseDTO updateItemStatus(Long userId, Long itemId, String status) {
+
+        UserItem userItem = userItemRepository.findByUserIdAndItemId(userId, itemId)
+                .orElseThrow(() -> new ItemHandler(ErrorStatus.ITEM_NOT_OWNED));
+
+        // 현재 상태와 요청된 상태가 같을 때 각각 다른 에러 발생
+        if (userItem.getStatus() != ItemStatus.valueOf(status)) {
+            if (ItemStatus.valueOf(status) == ItemStatus.UNEQUIPPED && userItem.getStatus() != ItemStatus.UNEQUIPPED) { //현재 해제상태라고 요청이 왔는데(착용 요청) 착용상태인 경우
+                throw new ItemHandler(ErrorStatus.ITEM_ALREADY_EQUIPPED);
+            }
+
+            if(ItemStatus.valueOf(status) == ItemStatus.EQUIPPED && userItem.getStatus() != ItemStatus.EQUIPPED) { //착상태라고 요청이 왔는데(해제 요청) 착용중이지 않은 경우
+                throw new ItemHandler(ErrorStatus.ITEM_NOT_EQUIPPED);
+            }
+        }
+
+        userItem.toggleStatus();
+
+        return ItemConverter.itemEquipDTO(userItem);
     }
 }

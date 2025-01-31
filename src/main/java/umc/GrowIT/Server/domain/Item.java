@@ -38,6 +38,12 @@ public class Item extends BaseEntity {
     @Column(nullable = false, columnDefinition = "TEXT")
     private String imageKey;
 
+    @Column(nullable = false, columnDefinition = "TEXT")
+    private String groImageUrl;
+
+    @Column(nullable = false, columnDefinition = "TEXT")
+    private String groImageKey;
+
     @OneToMany(mappedBy = "item")
     private List<UserItem> userItems;
 }
