@@ -44,6 +44,7 @@ public enum ErrorStatus implements BaseErrorCode {
     EMAIL_SEND_FAIL(HttpStatus.INTERNAL_SERVER_ERROR, "AUTH5001", "이메일 전송에 실패했습니다."),
     EMAIL_ENCODING_FAIL(HttpStatus.INTERNAL_SERVER_ERROR, "AUTH5002", "이메일 내용 인코딩에 실패했습니다."),
     REFRESH_TOKEN_NOT_FOUND(HttpStatus.NOT_FOUND, "AUTH4007", "데이터베이스에서 refreshToken을 찾을 수 없습니다."),
+    KAKAO_AUTH_CODE_ERROR(HttpStatus.BAD_REQUEST, "AUTH4030", "잘못된 요청입니다. 인가 코드가 유효한지 확인하세요."),
 
     // 챌린지 관련 에러
     CHALLENGE_NOT_FOUND(HttpStatus.NOT_FOUND, "CHALLENGE4001", "챌린지를 찾을 수 없습니다."),
