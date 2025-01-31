@@ -2,6 +2,7 @@ package umc.GrowIT.Server.jwt;
 
 import io.jsonwebtoken.ExpiredJwtException;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
 import lombok.RequiredArgsConstructor;
@@ -28,21 +29,27 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         try {
             String token = resolveToken(request); //Authorization 헤더에서 토큰 추출
 
+            //토큰이 주어졌는지 확인
             if (token == null) {
                 throw new JwtAuthenticationException(MISSING_TOKEN);
             }
 
-            if (jwtTokenUtil.validateToken(token)) { //토큰이 제공되고, 토큰 자체가 유효한지 확인
-                if (jwtTokenUtil.isUserInactive(token)) //토큰에서 사용자 정보 읽어서 탈퇴한 회원인지 확인
-                    throw new JwtAuthenticationException(USER_STATUS_INACTIVE);
+            //토큰에서 사용자 정보 읽어서 탈퇴한 회원인지 확인
+            if (jwtTokenUtil.isUserInactive(token))
+                throw new JwtAuthenticationException(USER_STATUS_INACTIVE);
+
+            //토큰이 유효한지 확인
+            if (jwtTokenUtil.validateToken(token)) {
                 Authentication authentication = jwtTokenUtil.getAuthentication(token); //토큰에서 사용자 정보 추출
                 SecurityContextHolder.getContext().setAuthentication(authentication); //SecurityContext 에 사용자 정보 저장
             }
 
-        } catch (ExpiredJwtException e) {
-            request.setAttribute("errorStatus", EXPIRED_TOKEN); //CustomAuthenticationEntryPoint 에서 처리
         } catch (JwtAuthenticationException e) {
-            request.setAttribute("errorStatus", e.getErrorStatus());
+            request.setAttribute("errorStatus", e.getErrorStatus()); //CustomAuthenticationEntryPoint 에서 처리
+        } catch (ExpiredJwtException e) {
+            request.setAttribute("errorStatus", EXPIRED_TOKEN);
+        } catch (Exception e) {
+            request.setAttribute("errorStatus", INVALID_TOKEN);
         }
 
         filterChain.doFilter(request, response); //다음 필터로 요청 전달

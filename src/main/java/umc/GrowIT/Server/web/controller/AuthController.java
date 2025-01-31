@@ -80,7 +80,12 @@ public class AuthController implements AuthSpecification {
     }
 
     @PostMapping("/login/kakao")
-    public ApiResponse<KakaoResponseDTO.KakaoTokenDTO> kakaoLogin(@RequestParam(value = "code", required = false) String code){
+    public ApiResponse<KakaoResponseDTO.KakaoTokenDTO> kakaoLogin(@RequestParam(value = "code") String code) {
+        return null;
+    }
+
+    @GetMapping("/kakao/test")
+    public ApiResponse<KakaoResponseDTO.KakaoTokenDTO> kakaoTest(@RequestParam(value = "code") String code) {
         return null;
     }
 }

@@ -85,8 +85,9 @@ public interface AuthSpecification {
     })
     ApiResponse<AuthResponseDTO.VerifyAuthCodeResponseDTO> verifyAuthCode(@RequestBody @Valid AuthRequestDTO.VerifyAuthCodeRequestDTO request);
 
-    @GetMapping("/login/kakao")
+    @PostMapping("/login/kakao")
     @Operation(summary = "카카오 소셜 로그인", description = "", security = @SecurityRequirement(name = ""))
     @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "COMMON200", description = "⭕ SUCCESS")
-    ApiResponse<KakaoResponseDTO.KakaoTokenDTO> kakaoLogin(@RequestParam(value = "code", required = false) String code);
+    ApiResponse<KakaoResponseDTO.KakaoTokenDTO> kakaoLogin(@RequestParam(value = "code") String code);
+
 }

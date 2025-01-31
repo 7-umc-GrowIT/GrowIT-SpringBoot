@@ -24,6 +24,8 @@ public class CustomAuthenticationEntryPoint implements AuthenticationEntryPoint 
         ErrorStatus errorStatus = (ErrorStatus) request.getAttribute("errorStatus");
         ErrorReasonDTO errorReasonDTO = errorStatus.getReasonHttpStatus();
 
+        //TODO: errorStatus NullPointerException 처리
+
         response.setStatus(errorReasonDTO.getHttpStatus().value());
         response.setContentType("application/json");
         response.setCharacterEncoding("UTF-8");
