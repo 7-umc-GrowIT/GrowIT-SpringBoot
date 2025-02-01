@@ -1,10 +1,11 @@
 package umc.GrowIT.Server.service.kakaoService;
 
-import umc.GrowIT.Server.web.dto.UserDTO.KakaoResponseDTO;
+import reactor.core.publisher.Mono;
+import umc.GrowIT.Server.web.dto.OAuthDTO.OAuthResponseDTO;
 
 
 public interface KakaoService {
 
-    KakaoResponseDTO.KakaoTokenDTO getToken(String code);
+    Mono<OAuthResponseDTO.KakaoTokenResponseDTO> getToken(String code);
 
 }
