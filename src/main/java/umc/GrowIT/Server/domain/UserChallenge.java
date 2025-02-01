@@ -42,9 +42,9 @@ public class UserChallenge extends BaseEntity {
         this.challenge = challenge;
     }
 
-    public void verifyUserChallenge(ChallengeRequestDTO.ProofRequestDTO proofRequest){
+    public void verifyUserChallenge(ChallengeRequestDTO.ProofRequestDTO proofRequest, String imageUrl){
         thoughts = proofRequest.getThoughts();
-        certificationImage = proofRequest.getCertificationImage();
+        certificationImage = imageUrl;
         completed = true;
     }
 

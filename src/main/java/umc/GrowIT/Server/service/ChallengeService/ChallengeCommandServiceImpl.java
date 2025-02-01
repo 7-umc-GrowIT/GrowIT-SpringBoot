@@ -13,6 +13,7 @@ import umc.GrowIT.Server.domain.UserChallenge;
 import umc.GrowIT.Server.repository.ChallengeRepository;
 import umc.GrowIT.Server.repository.UserChallengeRepository;
 import umc.GrowIT.Server.repository.UserRepository;
+import umc.GrowIT.Server.service.ImageService.ImageService;
 import umc.GrowIT.Server.web.dto.ChallengeDTO.ChallengeRequestDTO;
 import umc.GrowIT.Server.web.dto.ChallengeDTO.ChallengeResponseDTO;
 
@@ -22,24 +23,33 @@ public class ChallengeCommandServiceImpl implements ChallengeCommandService {
 
     private final UserRepository userRepository;
     private final UserChallengeRepository userChallengeRepository;
-
+    private final ImageService imageService;
     @Override
     @Transactional
     public ChallengeResponseDTO.ProofDetailsDTO createChallengeProof(Long userId, Long challengeId, ChallengeRequestDTO.ProofRequestDTO proofRequest) {
 
+        // 1️⃣ 사용자챌린지 검증
         UserChallenge userChallenge = userChallengeRepository.findByIdAndUserId(challengeId, userId)
                 .orElseThrow(() -> new ChallengeHandler(ErrorStatus.USER_CHALLENGE_NOT_FOUND));
 
         if (userChallenge.isCompleted()) {
             throw new ChallengeHandler(ErrorStatus.CHALLENGE_VERIFY_ALREADY_EXISTS);
         }
-        if (proofRequest != null) {
-            userChallenge.verifyUserChallenge(proofRequest);
+
+        // 2️⃣ 이미지 업로드 (MultipartFile을 DTO에서 가져와 S3에 저장)
+        String imageUrl = null;
+        if (proofRequest.getCertificationImage() != null && !proofRequest.getCertificationImage().isEmpty()) {
+            imageUrl = imageService.upload(proofRequest.getCertificationImage());
         }
 
+        // 3️⃣ 챌린지 인증 정보 저장
+        userChallenge.verifyUserChallenge(proofRequest, imageUrl);
         userChallengeRepository.save(userChallenge);
+
+        // 4️⃣ 응답 DTO 변환 및 반환
         return ChallengeConverter.toProofDetailsDTO(userChallenge.getChallenge(), userChallenge);
     }
+
 
     @Override
     @Transactional
@@ -48,7 +58,7 @@ public class ChallengeCommandServiceImpl implements ChallengeCommandService {
                 .orElseThrow(() -> new ChallengeHandler(ErrorStatus.CHALLENGE_VERIFY_NOT_EXISTS));
 
         if (updateRequest != null) {
-            userChallenge.verifyUserChallenge(updateRequest);
+            //userChallenge.verifyUserChallenge(updateRequest, imageUrl);
         }
 
         userChallengeRepository.save(userChallenge);
