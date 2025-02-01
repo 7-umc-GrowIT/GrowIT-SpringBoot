@@ -31,11 +31,6 @@ public class ChallengeCommandServiceImpl implements ChallengeCommandService {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new ChallengeHandler(ErrorStatus.USER_NOT_FOUND));
 
-        // 이미 저장된 UserChallenge 확인 및 예외 처리
-        if (userChallengeRepository.existsByUserIdAndChallengeIdAndDtype(userId, challengeId, dtype)) {
-            throw new ChallengeHandler(ErrorStatus.CHALLENGE_ALREADY_SAVED);
-        }
-
         UserChallenge userChallenge = ChallengeConverter.createUserChallenge(user, challenge, dtype); // userChallenge 생성
         userChallengeRepository.save(userChallenge);
 
