@@ -39,9 +39,9 @@ public class ChallengeCommandServiceImpl implements ChallengeCommandService {
 
     @Override
     @Transactional
-    public ChallengeResponseDTO.ProofDetailsDTO createChallengeProof(Long userId, Long challengeId, ChallengeRequestDTO.ProofRequestDTO proofRequest) {
+    public ChallengeResponseDTO.ProofDetailsDTO createChallengeProof(Long userId, Long userChallengeId, ChallengeRequestDTO.ProofRequestDTO proofRequest) {
 
-        UserChallenge userChallenge = userChallengeRepository.findByIdAndUserId(challengeId, userId)
+        UserChallenge userChallenge = userChallengeRepository.findByIdAndUserId(userChallengeId, userId)
                 .orElseThrow(() -> new ChallengeHandler(ErrorStatus.USER_CHALLENGE_NOT_FOUND));
 
         if (userChallenge.isCompleted()) {
@@ -55,8 +55,8 @@ public class ChallengeCommandServiceImpl implements ChallengeCommandService {
         return ChallengeConverter.toProofDetailsDTO(userChallenge.getChallenge(), userChallenge);
     }
 
-    public ChallengeResponseDTO.ModifyProofDTO updateChallengeProof(Long userId, Long challengeId, ChallengeRequestDTO.ProofRequestDTO updateRequest) {
-        UserChallenge userChallenge = userChallengeRepository.findByIdAndUserId(challengeId, userId)
+    public ChallengeResponseDTO.ModifyProofDTO updateChallengeProof(Long userId, Long userChallengeId, ChallengeRequestDTO.ProofRequestDTO updateRequest) {
+        UserChallenge userChallenge = userChallengeRepository.findByIdAndUserId(userChallengeId, userId)
                 .orElseThrow(() -> new ChallengeHandler(ErrorStatus.CHALLENGE_VERIFY_NOT_EXISTS));
 
         if (updateRequest != null) {

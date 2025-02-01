@@ -74,9 +74,9 @@ public class ChallengeQueryServiceImpl implements ChallengeQueryService {
     // 챌린지 인증 내역 조회
     @Override
     @Transactional(readOnly = true)
-    public ChallengeResponseDTO.ProofDetailsDTO getChallengeProofDetails(Long userId, Long challengeId) {
+    public ChallengeResponseDTO.ProofDetailsDTO getChallengeProofDetails(Long userId, Long userChallengeId) {
 
-        UserChallenge userChallenge = userChallengeRepository.findByIdAndUserId(challengeId, userId)
+        UserChallenge userChallenge = userChallengeRepository.findByIdAndUserId(userChallengeId, userId)
                 .orElseThrow(() -> new ChallengeHandler(ErrorStatus.USER_CHALLENGE_NOT_FOUND));
 
         if (!userChallenge.isCompleted()) {
