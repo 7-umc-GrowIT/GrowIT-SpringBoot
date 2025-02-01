@@ -11,6 +11,8 @@ import umc.GrowIT.Server.apiPayload.code.status.ErrorStatus;
 
 import java.io.IOException;
 
+import static umc.GrowIT.Server.apiPayload.code.status.ErrorStatus._BAD_REQUEST;
+
 @Component
 public class CustomAuthenticationEntryPoint implements AuthenticationEntryPoint {
     private final ObjectMapper objectMapper;
@@ -22,6 +24,10 @@ public class CustomAuthenticationEntryPoint implements AuthenticationEntryPoint 
     @Override
     public void commence(HttpServletRequest request, HttpServletResponse response, AuthenticationException authException) throws IOException {
         ErrorStatus errorStatus = (ErrorStatus) request.getAttribute("errorStatus");
+
+        if (errorStatus == null)
+            errorStatus = _BAD_REQUEST;
+
         ErrorReasonDTO errorReasonDTO = errorStatus.getReasonHttpStatus();
 
         response.setStatus(errorReasonDTO.getHttpStatus().value());
