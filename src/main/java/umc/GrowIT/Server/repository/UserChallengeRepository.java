@@ -25,7 +25,7 @@ public interface UserChallengeRepository extends JpaRepository<UserChallenge, Lo
             @Param("completed") Boolean completed);
 
     // 선택한 챌린지를 이미 저장하였는지 조회하는 메서드
-    boolean ChallengeExists(Long userId, Long challengeId, UserChallengeType dtype);
+    boolean existsByUserIdAndChallengeIdAndDtype(Long userId, Long challengeId, UserChallengeType dtype);
 
 }
 

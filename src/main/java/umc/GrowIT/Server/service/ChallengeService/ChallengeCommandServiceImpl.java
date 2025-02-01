@@ -32,7 +32,7 @@ public class ChallengeCommandServiceImpl implements ChallengeCommandService {
                 .orElseThrow(() -> new ChallengeHandler(ErrorStatus.USER_NOT_FOUND));
 
         // 이미 저장된 UserChallenge 확인 및 예외 처리
-        if (userChallengeRepository.ChallengeExists(userId, challengeId, dtype)) {
+        if (userChallengeRepository.existsByUserIdAndChallengeIdAndDtype(userId, challengeId, dtype)) {
             throw new ChallengeHandler(ErrorStatus.CHALLENGE_ALREADY_SAVED);
         }
 
