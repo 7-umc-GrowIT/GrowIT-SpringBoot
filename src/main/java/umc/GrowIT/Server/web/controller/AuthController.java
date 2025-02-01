@@ -7,15 +7,17 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
+import reactor.core.publisher.Mono;
 import umc.GrowIT.Server.apiPayload.ApiResponse;
 import umc.GrowIT.Server.domain.enums.AuthType;
 import umc.GrowIT.Server.service.authService.AuthService;
+import umc.GrowIT.Server.service.kakaoService.KakaoService;
 import umc.GrowIT.Server.service.userService.UserCommandService;
 import umc.GrowIT.Server.service.refreshTokenService.RefreshTokenCommandService;
 import umc.GrowIT.Server.web.controller.specification.AuthSpecification;
 import umc.GrowIT.Server.web.dto.AuthDTO.AuthRequestDTO;
 import umc.GrowIT.Server.web.dto.AuthDTO.AuthResponseDTO;
-import umc.GrowIT.Server.web.dto.UserDTO.KakaoResponseDTO;
+import umc.GrowIT.Server.web.dto.OAuthDTO.OAuthResponseDTO;
 import umc.GrowIT.Server.web.dto.UserDTO.UserRequestDTO;
 import umc.GrowIT.Server.web.dto.UserDTO.UserResponseDTO;
 
@@ -29,6 +31,7 @@ public class AuthController implements AuthSpecification {
     private final UserCommandService userCommandService;
     private final AuthService authService;
     private final RefreshTokenCommandService refreshTokenCommandService;
+    private final KakaoService kakaoService;
 
     @PostMapping("/login/email")
     public ApiResponse<UserResponseDTO.TokenDTO> loginEmail(@RequestBody @Valid UserRequestDTO.EmailLoginDTO emailLoginDTO) {
@@ -80,7 +83,12 @@ public class AuthController implements AuthSpecification {
     }
 
     @PostMapping("/login/kakao")
-    public ApiResponse<KakaoResponseDTO.KakaoTokenDTO> kakaoLogin(@RequestParam(value = "code", required = false) String code){
-        return null;
+    public ApiResponse<Void> kakaoLogin(@RequestParam(value = "code") String code) {
+        return ApiResponse.onSuccess();
+    }
+
+    @PostMapping("/kakao/test")
+    public Mono<OAuthResponseDTO.KakaoTokenResponseDTO> getKakaoToken(@RequestParam String code) {
+        return kakaoService.getToken(code);
     }
 }
