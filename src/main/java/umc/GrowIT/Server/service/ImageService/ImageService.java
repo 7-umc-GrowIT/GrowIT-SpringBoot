@@ -83,6 +83,9 @@ public class ImageService implements ImageUtils {
     }
 
     public String getBucketKey(String profilePath){
-        return profilePath.substring(profilePath.lastIndexOf('/') + 1);
+        if(profilePath == null) {
+            throw new ImageHandler(ErrorStatus.S3_FILE_DELETE_FAILED);
+        }
+        return profilePath.replace(baseUrl + "/", "");
     }
 }

@@ -42,14 +42,14 @@ public interface ChallengeSpecification {
     })
     ApiResponse<ChallengeResponseDTO> selectChallenge(@PathVariable Long challengeId);
 
-    @PostMapping(value = "/{userChallengeId}/prove", consumes = "multipart/form-data")
+    @PostMapping(value = "{userChallengeId}/prove", consumes = "multipart/form-data")
     @Operation(summary = "챌린지 인증 작성 API", description = "챌린지 인증을 작성하는 API입니다. <br>" +
             "multipart/form-data 형식의 이미지를 input으로 받습니다. 이때 key 값은 file 입니다.")
     @ApiResponses({
             @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "COMMON200", description = "⭕ SUCCESS"),
             @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "COMMON400", description = "❌ BAD, 잘못된 요청", content = @Content(schema = @Schema(implementation = ApiResponse.class)))
     })
-    ApiResponse<ChallengeResponseDTO.ProofDetailsDTO> createChallengeProof(@PathVariable Long userChallengeId, @RequestBody ChallengeRequestDTO.ProofRequestDTO proofRequest);
+    ApiResponse<ChallengeResponseDTO.ProofDetailsDTO> createChallengeProof(@PathVariable Long userChallengeId, @ModelAttribute ChallengeRequestDTO.ProofRequestDTO proofRequest);
 
     @GetMapping("{userChallengeId}")
     @Operation(summary = "챌린지 인증 내용 조회 API", description = "특정 챌린지의 인증 내용을 조회합니다.")
@@ -59,14 +59,14 @@ public interface ChallengeSpecification {
     })
     ApiResponse<ChallengeResponseDTO.ProofDetailsDTO> getChallengeProofDetails(@PathVariable Long userChallengeId);
 
-    @PatchMapping("{userChallengeId}")
+    @PatchMapping(value="{userChallengeId}", consumes = "multipart/form-data")
     @Operation(summary = "챌린지 인증 수정 API", description = "챌린지 인증을 수정하는 API입니다.")
     @ApiResponses({
             @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "COMMON200", description = "⭕ SUCCESS"),
             @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "COMMON400", description = "❌ BAD, 잘못된 요청", content = @Content(schema = @Schema(implementation = ApiResponse.class)))
     })
 
-    ApiResponse<ChallengeResponseDTO.ModifyProofDTO> updateChallengeProof(@PathVariable Long userChallengeId, @RequestBody ChallengeRequestDTO.ProofRequestDTO updateRequest);
+    ApiResponse<ChallengeResponseDTO.ModifyProofDTO> updateChallengeProof(@PathVariable Long userChallengeId, @ModelAttribute ChallengeRequestDTO.ProofRequestDTO updateRequest);
 
 
     @DeleteMapping("{userChallengeId}")

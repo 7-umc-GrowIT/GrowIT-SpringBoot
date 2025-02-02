@@ -26,10 +26,10 @@ public class ChallengeCommandServiceImpl implements ChallengeCommandService {
     private final ImageService imageService;
     @Override
     @Transactional
-    public ChallengeResponseDTO.ProofDetailsDTO createChallengeProof(Long userId, Long challengeId, ChallengeRequestDTO.ProofRequestDTO proofRequest) {
+    public ChallengeResponseDTO.ProofDetailsDTO createChallengeProof(Long userId, Long userChallengeId, ChallengeRequestDTO.ProofRequestDTO proofRequest) {
 
         // 1️⃣ 사용자챌린지 검증
-        UserChallenge userChallenge = userChallengeRepository.findByIdAndUserId(challengeId, userId)
+        UserChallenge userChallenge = userChallengeRepository.findByIdAndUserId(userChallengeId, userId)
                 .orElseThrow(() -> new ChallengeHandler(ErrorStatus.USER_CHALLENGE_NOT_FOUND));
 
         if (userChallenge.isCompleted()) {
@@ -53,14 +53,20 @@ public class ChallengeCommandServiceImpl implements ChallengeCommandService {
 
     @Override
     @Transactional
-    public ChallengeResponseDTO.ModifyProofDTO updateChallengeProof(Long userId, Long challengeId, ChallengeRequestDTO.ProofRequestDTO updateRequest) {
-        UserChallenge userChallenge = userChallengeRepository.findByIdAndUserId(challengeId, userId)
+    public ChallengeResponseDTO.ModifyProofDTO updateChallengeProof(Long userId, Long userChallengeId, ChallengeRequestDTO.ProofRequestDTO updateRequest) {
+        UserChallenge userChallenge = userChallengeRepository.findByIdAndUserId(userChallengeId, userId)
                 .orElseThrow(() -> new ChallengeHandler(ErrorStatus.CHALLENGE_VERIFY_NOT_EXISTS));
 
-        if (updateRequest != null) {
-            //userChallenge.verifyUserChallenge(updateRequest, imageUrl);
+        String oldImageUrl = userChallenge.getCertificationImage();
+        String newImageUrl = oldImageUrl;
+        if (updateRequest.getCertificationImage() != null && !updateRequest.getCertificationImage().isEmpty()) {
+            if(oldImageUrl != null){
+                imageService.delete(oldImageUrl);
+            }
+            newImageUrl = imageService.upload(updateRequest.getCertificationImage());
         }
 
+        userChallenge.verifyUserChallenge(updateRequest, newImageUrl);
         userChallengeRepository.save(userChallenge);
         return ChallengeConverter.toChallengeModifyProofDTO(userChallenge);
     }

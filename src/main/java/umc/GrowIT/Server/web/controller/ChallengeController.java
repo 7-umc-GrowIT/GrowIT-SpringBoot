@@ -55,7 +55,7 @@ public class ChallengeController implements ChallengeSpecification {
         return null;
     }
 
-    @PostMapping(value = "/{userChallengeId}/prove", consumes = "multipart/form-data")
+    @PostMapping(value = "{userChallengeId}/prove", consumes = "multipart/form-data")
     public ApiResponse<ChallengeResponseDTO.ProofDetailsDTO> createChallengeProof(@PathVariable Long userChallengeId, @ModelAttribute ChallengeRequestDTO.ProofRequestDTO proofRequest) {
 
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
@@ -75,9 +75,8 @@ public class ChallengeController implements ChallengeSpecification {
         return ApiResponse.onSuccess(response);
     }
 
-    @PatchMapping("{userChallengeId}")
-    public ApiResponse<ChallengeResponseDTO.ModifyProofDTO> updateChallengeProof(@PathVariable("userChallengeId") Long userChallengeId,
-                                                                  @RequestBody ChallengeRequestDTO.ProofRequestDTO updateRequest) {
+    @PatchMapping(value="{userChallengeId}", consumes = "multipart/form-data")
+    public ApiResponse<ChallengeResponseDTO.ModifyProofDTO> updateChallengeProof(@PathVariable("userChallengeId") Long userChallengeId, @ModelAttribute ChallengeRequestDTO.ProofRequestDTO updateRequest) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         Long userId = (Long) authentication.getPrincipal();
         ChallengeResponseDTO.ModifyProofDTO response = challengeCommandService.updateChallengeProof(userId, userChallengeId, updateRequest);
