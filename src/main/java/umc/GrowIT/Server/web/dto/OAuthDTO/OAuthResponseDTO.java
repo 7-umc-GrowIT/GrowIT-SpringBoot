@@ -34,5 +34,4 @@ public class OAuthResponseDTO {
         private LocalDateTime connected_at;
         private KakaoDTO.KakaoAccount kakao_account;
     }
-
 }

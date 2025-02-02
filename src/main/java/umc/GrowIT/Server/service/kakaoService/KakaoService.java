@@ -9,5 +9,4 @@ public interface KakaoService {
     Mono<OAuthResponseDTO.KakaoTokenResponseDTO> requestKakaoToken(String code);
     Mono<OAuthResponseDTO.KakaoUserInfoResponseDTO> requestKakaoUserInfo(String accessToken);
     Mono<OAuthResponseDTO.KakaoUserInfoResponseDTO> getKakaoUserInfo(String code);
-
 }
