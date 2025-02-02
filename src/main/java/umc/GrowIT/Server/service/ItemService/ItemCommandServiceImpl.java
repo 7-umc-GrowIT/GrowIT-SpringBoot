@@ -69,13 +69,15 @@ public class ItemCommandServiceImpl implements ItemCommandService {
         UserItem userItem = userItemRepository.findByUserIdAndItemId(userId, itemId)
                 .orElseThrow(() -> new ItemHandler(ErrorStatus.ITEM_NOT_OWNED));
 
-        // 현재 상태와 요청된 상태가 같을 때 각각 다른 에러 발생
+        // 오류 코드를 구분하기위한 조건문
         if (userItem.getStatus() != ItemStatus.valueOf(status)) {
-            if (ItemStatus.valueOf(status) == ItemStatus.UNEQUIPPED && userItem.getStatus() != ItemStatus.UNEQUIPPED) { //현재 해제상태라고 요청이 왔는데(착용 요청) 착용상태인 경우
+            // 사용자가 현재 상태를 해제상태(UNEQUIPPED)로 전달했는데 실제로는 해제상태가 아닌 경우 -> 실제로는 착용중인 아이템인데 해제상태라고 잘못 전달한 경우
+            if (ItemStatus.valueOf(status) == ItemStatus.UNEQUIPPED && userItem.getStatus() != ItemStatus.UNEQUIPPED) {
                 throw new ItemHandler(ErrorStatus.ITEM_ALREADY_EQUIPPED);
             }
 
-            if(ItemStatus.valueOf(status) == ItemStatus.EQUIPPED && userItem.getStatus() != ItemStatus.EQUIPPED) { //착상태라고 요청이 왔는데(해제 요청) 착용중이지 않은 경우
+            // 사용자가 현재 상태를 착용상태(EQUIPPED)로 전달했는데 실제로는 착용상태가 아닌 경우 -> 실제로는 해제상태인 아이템인데 착용상태라고 잘못 전달한 경우
+            if(ItemStatus.valueOf(status) == ItemStatus.EQUIPPED && userItem.getStatus() != ItemStatus.EQUIPPED) {
                 throw new ItemHandler(ErrorStatus.ITEM_NOT_EQUIPPED);
             }
         }
