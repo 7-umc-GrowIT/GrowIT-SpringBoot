@@ -18,6 +18,8 @@ public class ChallengeRequestDTO {
         @Schema(description = "인증 이미지 파일 (multipart/form-data)", type = "string", format = "binary")
         @Nullable // 클라이언트가 이미지를 업로드하지 않으면 null 허용
         private MultipartFile certificationImage;
+        @Schema(description = "소감 (텍스트)")
+        @Nullable
         private String thoughts;
     }
 
