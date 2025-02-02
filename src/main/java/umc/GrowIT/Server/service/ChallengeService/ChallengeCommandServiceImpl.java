@@ -28,7 +28,6 @@ public class ChallengeCommandServiceImpl implements ChallengeCommandService {
     @Transactional
     public ChallengeResponseDTO.ProofDetailsDTO createChallengeProof(Long userId, Long userChallengeId, ChallengeRequestDTO.ProofRequestDTO proofRequest) {
 
-        // 1️⃣ 사용자챌린지 검증
         UserChallenge userChallenge = userChallengeRepository.findByIdAndUserId(userChallengeId, userId)
                 .orElseThrow(() -> new ChallengeHandler(ErrorStatus.USER_CHALLENGE_NOT_FOUND));
 
@@ -36,17 +35,14 @@ public class ChallengeCommandServiceImpl implements ChallengeCommandService {
             throw new ChallengeHandler(ErrorStatus.CHALLENGE_VERIFY_ALREADY_EXISTS);
         }
 
-        // 2️⃣ 이미지 업로드 (MultipartFile을 DTO에서 가져와 S3에 저장)
+        // 이미지 업로드
         String imageUrl = null;
         if (proofRequest.getCertificationImage() != null && !proofRequest.getCertificationImage().isEmpty()) {
             imageUrl = imageService.upload(proofRequest.getCertificationImage());
         }
 
-        // 3️⃣ 챌린지 인증 정보 저장
         userChallenge.verifyUserChallenge(proofRequest, imageUrl);
         userChallengeRepository.save(userChallenge);
-
-        // 4️⃣ 응답 DTO 변환 및 반환
         return ChallengeConverter.toProofDetailsDTO(userChallenge.getChallenge(), userChallenge, imageUrl);
     }
 
@@ -59,14 +55,21 @@ public class ChallengeCommandServiceImpl implements ChallengeCommandService {
 
         String oldImageUrl = userChallenge.getCertificationImage();
         String newImageUrl = oldImageUrl;
+
+        // 새 이미지 업로드 (새 이미지가 있을 경우에만)
         if (updateRequest.getCertificationImage() != null && !updateRequest.getCertificationImage().isEmpty()) {
-            if(oldImageUrl != null){
-                imageService.delete(oldImageUrl);
+            if (oldImageUrl != null) {
+                imageService.delete(oldImageUrl); // 기존 이미지 삭제
             }
             newImageUrl = imageService.upload(updateRequest.getCertificationImage());
+            userChallenge.setCertificationImage(newImageUrl); // 이미지 URL 업데이트
         }
 
-        userChallenge.verifyUserChallenge(updateRequest, newImageUrl);
+        // 소감 업데이트 (null이 아닌 경우에만 변경)
+        if(updateRequest.getThoughts() != null) {
+            userChallenge.setThoughts(updateRequest.getThoughts());
+        }
+
         userChallengeRepository.save(userChallenge);
         return ChallengeConverter.toChallengeModifyProofDTO(userChallenge);
     }

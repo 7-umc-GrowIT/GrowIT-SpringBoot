@@ -80,9 +80,6 @@ public class ChallengeQueryServiceImpl implements ChallengeQueryService {
                 .orElseThrow(() -> new ChallengeHandler(ErrorStatus.USER_CHALLENGE_NOT_FOUND));
 
         String imageUrl = userChallenge.getCertificationImage();
-
-        //Challenge challenge = userChallenge.getChallenge();
-        //return ChallengeConverter.toChallengeProofDetailsDTO(challenge, userChallenge);
         return ChallengeConverter.toProofDetailsDTO(userChallenge.getChallenge(), userChallenge, imageUrl);
     }
 

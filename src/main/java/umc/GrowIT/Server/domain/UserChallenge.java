@@ -42,6 +42,10 @@ public class UserChallenge extends BaseEntity {
         this.challenge = challenge;
     }
 
+    public void setThoughts(String thoughts) { this.thoughts = thoughts; }
+
+    public void setCertificationImage(String certificationImage) { this.certificationImage = certificationImage; }
+    // 인증 작성 (최초 등록 또는 전체 업데이트용)
     public void verifyUserChallenge(ChallengeRequestDTO.ProofRequestDTO proofRequest, String imageUrl){
         thoughts = proofRequest.getThoughts();
         certificationImage = imageUrl;
