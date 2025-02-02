@@ -47,7 +47,7 @@ public class ChallengeCommandServiceImpl implements ChallengeCommandService {
         userChallengeRepository.save(userChallenge);
 
         // 4️⃣ 응답 DTO 변환 및 반환
-        return ChallengeConverter.toProofDetailsDTO(userChallenge.getChallenge(), userChallenge);
+        return ChallengeConverter.toProofDetailsDTO(userChallenge.getChallenge(), userChallenge, imageUrl);
     }
 
 
