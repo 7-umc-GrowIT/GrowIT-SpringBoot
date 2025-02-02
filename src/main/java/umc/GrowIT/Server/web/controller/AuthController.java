@@ -59,7 +59,6 @@ public class AuthController implements AuthSpecification {
         Long userId = (Long) authentication.getPrincipal();
 
         UserResponseDTO.DeleteUserResponseDTO deleteUser = userCommandService.delete(userId);
-
         return ApiResponse.onSuccess(deleteUser);
     }
 
@@ -88,7 +87,7 @@ public class AuthController implements AuthSpecification {
     }
 
     @PostMapping("/kakao/test")
-    public Mono<OAuthResponseDTO.KakaoTokenResponseDTO> getKakaoToken(@RequestParam String code) {
-        return kakaoService.getToken(code);
+    public Mono<OAuthResponseDTO.KakaoUserInfoResponseDTO> getKakaoToken(@RequestParam String code) {
+        return kakaoService.getKakaoUserInfo(code);
     }
 }

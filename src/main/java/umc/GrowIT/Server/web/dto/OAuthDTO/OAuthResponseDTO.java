@@ -5,6 +5,8 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+import java.time.LocalDateTime;
+
 public class OAuthResponseDTO {
 
     @Getter
@@ -20,5 +22,16 @@ public class OAuthResponseDTO {
         private String refresh_token;
         private Integer refresh_token_expires_in;
         private String scope;
+    }
+
+    @Getter
+    @Builder
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class KakaoUserInfoResponseDTO {
+
+        private Long id;
+        private LocalDateTime connected_at;
+        private KakaoDTO.KakaoAccount kakao_account;
     }
 }
