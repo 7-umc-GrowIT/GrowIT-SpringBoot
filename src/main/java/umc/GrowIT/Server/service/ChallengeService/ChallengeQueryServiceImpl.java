@@ -110,13 +110,13 @@ public class ChallengeQueryServiceImpl implements ChallengeQueryService {
     // 챌린지 인증 내역 조회
     @Override
     @Transactional(readOnly = true)
-    public ChallengeResponseDTO.ProofDetailsDTO getChallengeProofDetails(Long userId, Long challengeId) {
+    public ChallengeResponseDTO.ProofDetailsDTO getChallengeProofDetails(Long userId, Long userChallengeId) {
 
-        UserChallenge userChallenge = userChallengeRepository.findByIdAndUserId(challengeId, userId)
-                .orElseThrow(() -> new ChallengeHandler(ErrorStatus.CHALLENGE_VERIFY_NOT_EXISTS));
+        UserChallenge userChallenge = userChallengeRepository.findByIdAndUserId(userChallengeId, userId)
+                .orElseThrow(() -> new ChallengeHandler(ErrorStatus.USER_CHALLENGE_NOT_FOUND));
 
-        Challenge challenge = userChallenge.getChallenge();
-        return ChallengeConverter.toChallengeProofDetailsDTO(challenge, userChallenge);
+        String imageUrl = userChallenge.getCertificationImage();
+        return ChallengeConverter.toProofDetailsDTO(userChallenge.getChallenge(), userChallenge, imageUrl);
     }
 
 
