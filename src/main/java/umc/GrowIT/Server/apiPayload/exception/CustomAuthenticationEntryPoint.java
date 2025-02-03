@@ -1,4 +1,4 @@
-package umc.GrowIT.Server.jwt;
+package umc.GrowIT.Server.apiPayload.exception;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.servlet.http.HttpServletRequest;

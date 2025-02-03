@@ -77,7 +77,7 @@ public class AuthServiceImpl implements AuthService {
 
     // 이메일 체크
     public void checkEmail(AuthType type, String email) {
-        User user = userRepository.findByEmail(email)
+        User user = userRepository.findByPrimaryEmail(email)
                 .orElse(null); // 사용자가 존재하지 않으면 null을 반환
 
         if (type == AuthType.SIGNUP) { //회원가입 (이메일이 존재하면 X)

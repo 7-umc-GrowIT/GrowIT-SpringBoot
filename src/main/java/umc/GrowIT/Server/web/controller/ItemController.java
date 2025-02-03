@@ -24,6 +24,7 @@ public class ItemController implements ItemSpecification {
     private final ItemCommandService itemCommandService;
 
     @Override
+    @GetMapping("/items")
     public ApiResponse<ItemResponseDTO.ItemListDTO> getItemList(ItemCategory category) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         Long userId = (Long) authentication.getPrincipal(); //사용자 식별 id
@@ -33,11 +34,13 @@ public class ItemController implements ItemSpecification {
     }
 
     @Override
+    @PatchMapping("/items/{itemId}")
     public ApiResponse<ItemEquipResponseDTO> updateItemStatus(Long itemId, ItemEquipRequestDTO request) {
         return ApiResponse.onSuccess(null);
     }
 
     @Override
+    @PostMapping("/items/{itemId}/purchase")
     public ApiResponse<ItemResponseDTO.PurchaseItemResponseDTO> purchaseItem(Long itemId) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         Long userId = (Long) authentication.getPrincipal(); //사용자 식별 id

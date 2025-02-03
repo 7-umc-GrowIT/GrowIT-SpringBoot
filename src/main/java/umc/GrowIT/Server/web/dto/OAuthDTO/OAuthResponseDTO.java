@@ -4,6 +4,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import umc.GrowIT.Server.web.dto.UserDTO.UserResponseDTO;
 
 import java.time.LocalDateTime;
 

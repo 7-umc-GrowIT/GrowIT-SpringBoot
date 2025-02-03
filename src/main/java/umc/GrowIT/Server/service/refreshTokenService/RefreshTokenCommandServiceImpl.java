@@ -7,12 +7,12 @@ import umc.GrowIT.Server.apiPayload.code.status.ErrorStatus;
 import umc.GrowIT.Server.apiPayload.exception.AuthHandler;
 import umc.GrowIT.Server.apiPayload.exception.UserHandler;
 import umc.GrowIT.Server.converter.TokenConverter;
-import umc.GrowIT.Server.jwt.CustomUserDetails;
+import umc.GrowIT.Server.domain.CustomUserDetails;
 import umc.GrowIT.Server.domain.RefreshToken;
 import umc.GrowIT.Server.domain.User;
-import umc.GrowIT.Server.jwt.JwtTokenUtil;
+import umc.GrowIT.Server.util.JwtTokenUtil;
 import umc.GrowIT.Server.repository.RefreshTokenRepository;
-import umc.GrowIT.Server.jwt.CustomUserDetailsService;
+import umc.GrowIT.Server.service.userService.CustomUserDetailsService;
 import umc.GrowIT.Server.web.dto.UserDTO.UserRequestDTO;
 import umc.GrowIT.Server.web.dto.UserDTO.UserResponseDTO;
 
@@ -56,7 +56,7 @@ public class RefreshTokenCommandServiceImpl implements RefreshTokenCommandServic
             throw new AuthHandler(ErrorStatus.EXPIRED_TOKEN);
         }
 
-        CustomUserDetails customUserDetails = customUserDetailsService.loadUserByUsername(storedRefreshToken.getUser().getEmail());
+        CustomUserDetails customUserDetails = customUserDetailsService.loadUserByUsername(storedRefreshToken.getUser().getPrimaryEmail());
 
         String accessToken = jwtTokenUtil.generateAccessToken(customUserDetails); //액세스 토큰 생성
 
