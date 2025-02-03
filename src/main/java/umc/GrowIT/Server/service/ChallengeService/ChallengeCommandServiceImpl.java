@@ -13,6 +13,7 @@ import umc.GrowIT.Server.domain.UserChallenge;
 import umc.GrowIT.Server.repository.ChallengeRepository;
 import umc.GrowIT.Server.repository.UserChallengeRepository;
 import umc.GrowIT.Server.repository.UserRepository;
+import umc.GrowIT.Server.service.ImageService.ImageService;
 import umc.GrowIT.Server.web.dto.ChallengeDTO.ChallengeRequestDTO;
 import umc.GrowIT.Server.web.dto.ChallengeDTO.ChallengeResponseDTO;
 
@@ -22,33 +23,51 @@ public class ChallengeCommandServiceImpl implements ChallengeCommandService {
 
     private final UserRepository userRepository;
     private final UserChallengeRepository userChallengeRepository;
-
+    private final ImageService imageService;
     @Override
     @Transactional
-    public ChallengeResponseDTO.ProofDetailsDTO createChallengeProof(Long userId, Long challengeId, ChallengeRequestDTO.ProofRequestDTO proofRequest) {
+    public ChallengeResponseDTO.ProofDetailsDTO createChallengeProof(Long userId, Long userChallengeId, ChallengeRequestDTO.ProofRequestDTO proofRequest) {
 
-        UserChallenge userChallenge = userChallengeRepository.findByIdAndUserId(challengeId, userId)
+        UserChallenge userChallenge = userChallengeRepository.findByIdAndUserId(userChallengeId, userId)
                 .orElseThrow(() -> new ChallengeHandler(ErrorStatus.USER_CHALLENGE_NOT_FOUND));
 
         if (userChallenge.isCompleted()) {
             throw new ChallengeHandler(ErrorStatus.CHALLENGE_VERIFY_ALREADY_EXISTS);
         }
-        if (proofRequest != null) {
-            userChallenge.verifyUserChallenge(proofRequest);
+
+        // 이미지 업로드
+        String imageUrl = null;
+        if (proofRequest.getCertificationImage() != null && !proofRequest.getCertificationImage().isEmpty()) {
+            imageUrl = imageService.upload(proofRequest.getCertificationImage());
         }
 
+        userChallenge.verifyUserChallenge(proofRequest, imageUrl);
         userChallengeRepository.save(userChallenge);
-        return ChallengeConverter.toProofDetailsDTO(userChallenge.getChallenge(), userChallenge);
+        return ChallengeConverter.toProofDetailsDTO(userChallenge.getChallenge(), userChallenge, imageUrl);
     }
+
 
     @Override
     @Transactional
-    public ChallengeResponseDTO.ModifyProofDTO updateChallengeProof(Long userId, Long challengeId, ChallengeRequestDTO.ProofRequestDTO updateRequest) {
-        UserChallenge userChallenge = userChallengeRepository.findByIdAndUserId(challengeId, userId)
+    public ChallengeResponseDTO.ModifyProofDTO updateChallengeProof(Long userId, Long userChallengeId, ChallengeRequestDTO.ProofRequestDTO updateRequest) {
+        UserChallenge userChallenge = userChallengeRepository.findByIdAndUserId(userChallengeId, userId)
                 .orElseThrow(() -> new ChallengeHandler(ErrorStatus.CHALLENGE_VERIFY_NOT_EXISTS));
 
-        if (updateRequest != null) {
-            userChallenge.verifyUserChallenge(updateRequest);
+        String oldImageUrl = userChallenge.getCertificationImage();
+        String newImageUrl = oldImageUrl;
+
+        // 새 이미지 업로드 (새 이미지가 있을 경우에만)
+        if (updateRequest.getCertificationImage() != null && !updateRequest.getCertificationImage().isEmpty()) {
+            if (oldImageUrl != null) {
+                imageService.delete(oldImageUrl); // 기존 이미지 삭제
+            }
+            newImageUrl = imageService.upload(updateRequest.getCertificationImage());
+            userChallenge.setCertificationImage(newImageUrl); // 이미지 URL 업데이트
+        }
+
+        // 소감 업데이트 (null이 아닌 경우에만 변경)
+        if(updateRequest.getThoughts() != null) {
+            userChallenge.setThoughts(updateRequest.getThoughts());
         }
 
         userChallengeRepository.save(userChallenge);
