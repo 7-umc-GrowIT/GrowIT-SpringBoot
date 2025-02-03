@@ -21,7 +21,7 @@ public class Challenge extends BaseEntity {
     @Column(length = 50, nullable = false)
     private String title;
 
-    @Column(length = 255, nullable = false)
+    @Column(nullable = false)
     private String content;
 
     @Column(nullable = false)
