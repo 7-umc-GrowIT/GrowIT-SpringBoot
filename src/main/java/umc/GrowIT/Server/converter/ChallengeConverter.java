@@ -4,8 +4,10 @@ import umc.GrowIT.Server.domain.Challenge;
 import umc.GrowIT.Server.domain.ChallengeKeyword;
 import umc.GrowIT.Server.domain.Keyword;
 import umc.GrowIT.Server.domain.UserChallenge;
+import umc.GrowIT.Server.domain.enums.UserChallengeType;
 import umc.GrowIT.Server.web.dto.ChallengeDTO.ChallengeResponseDTO;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -16,6 +18,7 @@ public class ChallengeConverter {
         return ChallengeResponseDTO.RecommendedChallengeDTO.builder()
                 .title(userChallenge.getChallenge().getTitle())
                 .content(userChallenge.getChallenge().getContent())
+                .dtype(userChallenge.getDtype())
                 .time(userChallenge.getChallenge().getTime())
                 .completed(userChallenge.isCompleted())
                 .build();
@@ -23,11 +26,28 @@ public class ChallengeConverter {
 
     // 추천 챌린지 리스트를 반환
     public static List<ChallengeResponseDTO.RecommendedChallengeDTO> toRecommendedChallengeListDTO(List<UserChallenge> userChallenges) {
-        return userChallenges.stream()
-                .filter(userChallenge -> !userChallenge.isCompleted()) // 완료되지 않은 챌린지만 필터링
+        // 1. dtype이 "DAILY"인 챌린지 2개 선택
+        List<UserChallenge> dailyChallenges = userChallenges.stream()
+                .filter(userChallenge -> userChallenge.getDtype() == UserChallengeType.DAILY)
+                .limit(2)
+                .toList();
+
+        // 2. dtype이 "RANDOM"인 챌린지 1개 선택
+        List<UserChallenge> randomChallenge = userChallenges.stream()
+                .filter(userChallenge -> userChallenge.getDtype() == UserChallengeType.RANDOM)
+                .limit(1)
+                .toList();
+
+        // 3. 선택된 챌린지들을 합쳐서 DTO로 변환
+        List<UserChallenge> selectedChallenges = new ArrayList<>();
+        selectedChallenges.addAll(dailyChallenges);
+        selectedChallenges.addAll(randomChallenge);
+
+        return selectedChallenges.stream()
                 .map(ChallengeConverter::toRecommendedChallengeDTO)
                 .collect(Collectors.toList());
     }
+
 
     // 챌린지 리포트를 ChallengeHome.ChallengeReport로 변환
     public static ChallengeResponseDTO.ChallengeReportDTO toChallengeReportDTO(int totalCredits, int totalDiaries, String userDate) {

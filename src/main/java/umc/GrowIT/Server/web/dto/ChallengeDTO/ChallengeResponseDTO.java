@@ -36,6 +36,7 @@ public class ChallengeResponseDTO {
     public static class RecommendedChallengeDTO {
         private String title;
         private String content;
+        private UserChallengeType dtype;
         private Integer time;
         private boolean completed;
     }
