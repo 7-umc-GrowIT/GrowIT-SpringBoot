@@ -6,7 +6,6 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.reactive.function.client.WebClient;
@@ -14,6 +13,7 @@ import org.springframework.web.reactive.function.client.WebClient;
 import org.springframework.http.HttpStatusCode;
 import reactor.core.publisher.Mono;
 import umc.GrowIT.Server.apiPayload.exception.AuthHandler;
+import umc.GrowIT.Server.domain.OAuthAccount;
 import umc.GrowIT.Server.domain.User;
 import umc.GrowIT.Server.repository.OAuthAccountRepository;
 import umc.GrowIT.Server.service.userService.UserCommandService;
@@ -45,6 +45,22 @@ public class KakaoServiceImpl implements KakaoService {
     private String clientSecret;
 
     /**
+     * 사용자 정보를 카카오 서버에 요청하고 저장합니다.
+     *
+     * @param code 카카오 서버로부터 받은 인가 코드
+     */
+    public OAuthResponseDTO.KakaoUserInfoResponseDTO saveKakaoUserInfo(String code) {
+        OAuthResponseDTO.KakaoTokenResponseDTO kakaoTokenResponse = requestKakaoToken(code);
+
+        if (kakaoTokenResponse == null)
+            throw new AuthHandler(KAKAO_AUTH_CODE_ERROR);
+
+        String accessToken = kakaoTokenResponse.getAccess_token();
+        log.info("AT : " + accessToken);
+        return requestKakaoUserInfo(accessToken);
+    }
+
+    /**
      * 인가 코드로 카카오 서버에서 Access Token, Refresh Token 을 얻어옵니다
      *
      * @param code 카카오 서버로부터 받은 인가 코드
@@ -52,7 +68,7 @@ public class KakaoServiceImpl implements KakaoService {
      * @throws AuthHandler 인가 코드 잘못 주었을 때 예외 처리
      */
     @Override
-    public Mono<OAuthResponseDTO.KakaoTokenResponseDTO> requestKakaoToken(String code){
+    public OAuthResponseDTO.KakaoTokenResponseDTO requestKakaoToken(String code){
         MultiValueMap<String, String> requestBody = new LinkedMultiValueMap<>();
         requestBody.add("grant_type", grantType);
         requestBody.add("client_id", clientId);
@@ -67,7 +83,8 @@ public class KakaoServiceImpl implements KakaoService {
                 .retrieve() //서버 응답 가져오기
                 .onStatus(HttpStatusCode::is4xxClientError,
                         response -> Mono.error(new AuthHandler(KAKAO_AUTH_CODE_ERROR)))
-                .bodyToMono(OAuthResponseDTO.KakaoTokenResponseDTO.class); //응답 본문 -> Mono
+                .bodyToMono(OAuthResponseDTO.KakaoTokenResponseDTO.class) //응답 본문 -> Mono
+                .block();
     }
 
     /**
@@ -76,39 +93,35 @@ public class KakaoServiceImpl implements KakaoService {
      * @param accessToken 카카오 서버로부터 받은 AccessToken
      * @return 사용자 정보 (이메일, 닉네임)
      */
-    public Mono<OAuthResponseDTO.KakaoUserInfoResponseDTO> requestKakaoUserInfo(String accessToken) {
+    public OAuthResponseDTO.KakaoUserInfoResponseDTO requestKakaoUserInfo(String accessToken) {
             return kakaoApiWebClient.get()
                     .uri("/v2/user/me")
                     .header(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken)
                     .retrieve()
-                    .bodyToMono(OAuthResponseDTO.KakaoUserInfoResponseDTO.class);
+                    .bodyToMono(OAuthResponseDTO.KakaoUserInfoResponseDTO.class)
+                    .block();
     }
 
-    public Mono<OAuthResponseDTO.KakaoUserInfoResponseDTO> getKakaoUserInfo(String code) {
-        return requestKakaoToken(code)
-                .flatMap(tokenResponseBody -> { //비동기 작업 체이닝
-                    String accessToken = tokenResponseBody.getAccess_token();
-                    log.info("AT : " + accessToken);
-                    return requestKakaoUserInfo(accessToken);
-                });
-    }
+    /**
+     * 기존 계정이 있는 경우 (카카오 로그인을 한 적이 있는 경우) 로그인 처리,
+     * 기존 계정이 없는 경우 회원가입을 위한 약관 정보 요청을 유도
+     *
+     * @param code 카카오 서버로부터 받은 인증 코드
+     * @return 회원가입 필요 여부, AT/RT
+     */
+    public UserResponseDTO.KakaoLoginDTO loginKakao(String code) {
+        OAuthResponseDTO.KakaoUserInfoResponseDTO kakaoUserInfoResponse = saveKakaoUserInfo(code);
+        OAuthAccount oAuthAccount = oAuthAccountRepository.findByProviderId(kakaoUserInfoResponse.getId())
+                .orElse(null); // 값이 없으면 null
 
-    @Transactional
-    public Mono<UserResponseDTO.KakaoLoginDTO> loginKakao(String code) {
-        return getKakaoUserInfo(code)
-                .flatMap(kakaoUserInfo ->
-                        Mono.justOrEmpty(oAuthAccountRepository.findByProviderId(kakaoUserInfo.getId()))
-                                .flatMap(oAuthAccount -> {
-                                    // 기존 계정이 있는 경우 로그인 처리 AT, RT 발급
-                                    User user = oAuthAccount.getUser();
-                                    UserResponseDTO.TokenDTO tokenDTO = jwtTokenUtil.generateToken(
-                                            userCommandService.createUserDetails(user));
-                                    userCommandService.setRefreshToken(tokenDTO.getRefreshToken(), user);
-                                    return Mono.just(toKakaoLoginDTO(false, tokenDTO));
-                                })
-                                // 기존 계정이 없을 경우 회원 가입에 필요한 약관 동의 목록 요청
-                                .switchIfEmpty(Mono.just(toKakaoLoginDTO(true, null)))
-                );
+        if (oAuthAccount == null)
+            return toKakaoLoginDTO(true, null);
+        else {
+            User user = oAuthAccount.getUser();
+            UserResponseDTO.TokenDTO tokenDTO = jwtTokenUtil.generateToken(
+                    userCommandService.createUserDetails(user));
+            userCommandService.setRefreshToken(tokenDTO.getRefreshToken(), user);
+            return toKakaoLoginDTO(false, tokenDTO);
+        }
     }
-
 }

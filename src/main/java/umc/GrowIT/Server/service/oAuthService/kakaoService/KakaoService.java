@@ -7,8 +7,8 @@ import umc.GrowIT.Server.web.dto.UserDTO.UserResponseDTO;
 
 public interface KakaoService {
 
-    Mono<OAuthResponseDTO.KakaoTokenResponseDTO> requestKakaoToken(String code);
-    Mono<OAuthResponseDTO.KakaoUserInfoResponseDTO> requestKakaoUserInfo(String accessToken);
-    Mono<OAuthResponseDTO.KakaoUserInfoResponseDTO> getKakaoUserInfo(String code);
-    Mono<UserResponseDTO.KakaoLoginDTO> loginKakao(String code);
+    OAuthResponseDTO.KakaoTokenResponseDTO requestKakaoToken(String code);
+    OAuthResponseDTO.KakaoUserInfoResponseDTO requestKakaoUserInfo(String accessToken);
+    OAuthResponseDTO.KakaoUserInfoResponseDTO saveKakaoUserInfo(String code);
+    UserResponseDTO.KakaoLoginDTO loginKakao(String code);
 }

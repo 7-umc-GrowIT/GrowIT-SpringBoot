@@ -76,7 +76,7 @@ public class AuthController implements AuthSpecification {
     @Override
     @PostMapping("/login/kakao")
     public ApiResponse<UserResponseDTO.KakaoLoginDTO> loginKakao(@RequestParam(value = "code") String code) {
-        UserResponseDTO.KakaoLoginDTO kakaoLoginDTO = kakaoService.loginKakao(code).block();
+        UserResponseDTO.KakaoLoginDTO kakaoLoginDTO = kakaoService.loginKakao(code);
         if (kakaoLoginDTO.getSignupRequired())
             return ApiResponse.onSuccess(NEED_TO_ACCEPT_TERMS, kakaoLoginDTO);
         return ApiResponse.onSuccess(kakaoLoginDTO);
