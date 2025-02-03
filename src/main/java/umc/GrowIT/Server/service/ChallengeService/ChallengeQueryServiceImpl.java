@@ -7,9 +7,13 @@ import umc.GrowIT.Server.apiPayload.code.status.ErrorStatus;
 import umc.GrowIT.Server.apiPayload.exception.ChallengeHandler;
 import umc.GrowIT.Server.converter.ChallengeConverter;
 import umc.GrowIT.Server.domain.Challenge;
+import umc.GrowIT.Server.domain.ChallengeKeyword;
+import umc.GrowIT.Server.domain.Keyword;
 import umc.GrowIT.Server.domain.UserChallenge;
 import umc.GrowIT.Server.domain.enums.UserChallengeType;
+import umc.GrowIT.Server.repository.ChallengeKeywordRepository;
 import umc.GrowIT.Server.repository.ChallengeRepository;
+import umc.GrowIT.Server.repository.KeywordRepository;
 import umc.GrowIT.Server.repository.UserChallengeRepository;
 import umc.GrowIT.Server.web.dto.ChallengeDTO.ChallengeResponseDTO;
 
@@ -17,6 +21,7 @@ import java.time.LocalDate;
 import java.time.temporal.ChronoUnit;
 import java.util.Collections;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -24,7 +29,8 @@ public class ChallengeQueryServiceImpl implements ChallengeQueryService {
 
     private final ChallengeRepository challengeRepository;
     private final UserChallengeRepository userChallengeRepository;
-
+    private final KeywordRepository keywordRepository;
+    private final ChallengeKeywordRepository challengeKeywordRepository;
     @Override
     public int getTotalCredits(Long userId) {
         // TODO: 총 크레딧 수 조회 로직 구현
@@ -52,14 +58,30 @@ public class ChallengeQueryServiceImpl implements ChallengeQueryService {
 
     @Override
     public ChallengeResponseDTO.ChallengeHomeDTO getChallengeHome(Long userId) {
+        // 1. 추천 챌린지 조회
+        List<Challenge> recommendedChallenges = challengeRepository.findRecommendedChallengesByUserId(userId);
+
+        // 2. Keyword 데이터 조회 후 문자열 리스트로 변환
+        List<String> keywordNames = keywordRepository.findAll()
+                .stream()
+                .limit(3) // 최대 3개만 추출
+                .map(Keyword::getName)
+                .toList();
+
+        // 3. DTO 생성 및 반환
         return ChallengeConverter.toChallengeHomeDTO(
-                challengeRepository.findRecommendedChallengesByUserId(userId),
-                challengeRepository.findCompletedChallengeIdsByUserId(userId),
+                recommendedChallenges,
                 getTotalCredits(userId),
                 getTotalDiaries(userId),
-                getUserDate(userId)
+                getUserDate(userId),
+                keywordNames
         );
     }
+
+
+
+
+
 
     @Override
     public ChallengeResponseDTO.ChallengeStatusListDTO getChallengeStatus(Long userId, UserChallengeType dtype, Boolean completed) {

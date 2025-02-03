@@ -1,9 +1,9 @@
 package umc.GrowIT.Server.converter;
 
 import umc.GrowIT.Server.domain.Challenge;
-import umc.GrowIT.Server.domain.User;
+import umc.GrowIT.Server.domain.ChallengeKeyword;
+import umc.GrowIT.Server.domain.Keyword;
 import umc.GrowIT.Server.domain.UserChallenge;
-import umc.GrowIT.Server.web.dto.ChallengeDTO.ChallengeRequestDTO;
 import umc.GrowIT.Server.web.dto.ChallengeDTO.ChallengeResponseDTO;
 
 import java.util.List;
@@ -14,17 +14,25 @@ public class ChallengeConverter {
     // 챌린지 1개를 ChallengeHomeDTO.RecommendedChallenge로 변환
     public static ChallengeResponseDTO.RecommendedChallengeDTO toRecommendedChallengeDTO(Challenge challenge, boolean isCompleted) {
         return ChallengeResponseDTO.RecommendedChallengeDTO.builder()
-                .challengeKeywords(challenge.getChallengeKeywords())
                 .title(challenge.getTitle())
+                .content(challenge.getContent())
                 .time(challenge.getTime())
                 .isCompleted(isCompleted)
                 .build();
     }
 
+    // Keyword 엔티티 리스트를 KeywordDTO 리스트로 변환
+    public static List<ChallengeResponseDTO.KeywordDTO> toKeywordDTOList(List<Keyword> keywords) {
+        return keywords.stream()
+                .map(keyword -> new ChallengeResponseDTO.KeywordDTO(keyword.getName())) // 이름만 포함
+                .toList();
+    }
+
+
     // 추천 챌린지 리스트를 반환
-    public static List<ChallengeResponseDTO.RecommendedChallengeDTO> toRecommendedChallengeListDTO(List<Challenge> challenges, List<Long> completedChallengeIds) {
+    public static List<ChallengeResponseDTO.RecommendedChallengeDTO> toRecommendedChallengeListDTO(List<Challenge> challenges) {
         return challenges.stream()
-                .map(challenge -> toRecommendedChallengeDTO(challenge, completedChallengeIds.contains(challenge.getId())))
+                .map(challenge -> toRecommendedChallengeDTO(challenge, false))
                 .collect(Collectors.toList());
     }
 
@@ -39,12 +47,13 @@ public class ChallengeConverter {
 
     // 전체 챌린지 홈 데이터를 ChallengeHomeDTO로 변환
     public static ChallengeResponseDTO.ChallengeHomeDTO toChallengeHomeDTO(List<Challenge> recommendedChallenges,
-                                                                        List<Long> completedChallengeIds,
                                                                         int totalCredits,
                                                                         int totalDiaries,
-                                                                        String diaryGoal) {
+                                                                        String diaryGoal, List<String> keywords) {
+
         return ChallengeResponseDTO.ChallengeHomeDTO.builder()
-                .recommendedChallenges(toRecommendedChallengeListDTO(recommendedChallenges, completedChallengeIds))
+                .challengeKeywords(keywords) // 변환된 DTO 적용
+                .recommendedChallenges(toRecommendedChallengeListDTO(recommendedChallenges))
                 .challengeReport(toChallengeReportDTO(totalCredits, totalDiaries, diaryGoal))
                 .build();
     }
