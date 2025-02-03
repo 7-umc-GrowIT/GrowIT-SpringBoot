@@ -12,27 +12,20 @@ import java.util.stream.Collectors;
 public class ChallengeConverter {
 
     // 챌린지 1개를 ChallengeHomeDTO.RecommendedChallenge로 변환
-    public static ChallengeResponseDTO.RecommendedChallengeDTO toRecommendedChallengeDTO(Challenge challenge, boolean isCompleted) {
+    public static ChallengeResponseDTO.RecommendedChallengeDTO toRecommendedChallengeDTO(UserChallenge userChallenge) {
         return ChallengeResponseDTO.RecommendedChallengeDTO.builder()
-                .title(challenge.getTitle())
-                .content(challenge.getContent())
-                .time(challenge.getTime())
-                .isCompleted(isCompleted)
+                .title(userChallenge.getChallenge().getTitle())
+                .content(userChallenge.getChallenge().getContent())
+                .time(userChallenge.getChallenge().getTime())
+                .completed(userChallenge.isCompleted())
                 .build();
     }
 
-    // Keyword 엔티티 리스트를 KeywordDTO 리스트로 변환
-    public static List<ChallengeResponseDTO.KeywordDTO> toKeywordDTOList(List<Keyword> keywords) {
-        return keywords.stream()
-                .map(keyword -> new ChallengeResponseDTO.KeywordDTO(keyword.getName())) // 이름만 포함
-                .toList();
-    }
-
-
     // 추천 챌린지 리스트를 반환
-    public static List<ChallengeResponseDTO.RecommendedChallengeDTO> toRecommendedChallengeListDTO(List<Challenge> challenges) {
-        return challenges.stream()
-                .map(challenge -> toRecommendedChallengeDTO(challenge, false))
+    public static List<ChallengeResponseDTO.RecommendedChallengeDTO> toRecommendedChallengeListDTO(List<UserChallenge> userChallenges) {
+        return userChallenges.stream()
+                .filter(userChallenge -> !userChallenge.isCompleted()) // 완료되지 않은 챌린지만 필터링
+                .map(ChallengeConverter::toRecommendedChallengeDTO)
                 .collect(Collectors.toList());
     }
 
@@ -46,14 +39,14 @@ public class ChallengeConverter {
     }
 
     // 전체 챌린지 홈 데이터를 ChallengeHomeDTO로 변환
-    public static ChallengeResponseDTO.ChallengeHomeDTO toChallengeHomeDTO(List<Challenge> recommendedChallenges,
+    public static ChallengeResponseDTO.ChallengeHomeDTO toChallengeHomeDTO(List<UserChallenge> userChallenges,
                                                                         int totalCredits,
                                                                         int totalDiaries,
                                                                         String diaryGoal, List<String> keywords) {
 
         return ChallengeResponseDTO.ChallengeHomeDTO.builder()
                 .challengeKeywords(keywords) // 변환된 DTO 적용
-                .recommendedChallenges(toRecommendedChallengeListDTO(recommendedChallenges))
+                .recommendedChallenges(toRecommendedChallengeListDTO(userChallenges))
                 .challengeReport(toChallengeReportDTO(totalCredits, totalDiaries, diaryGoal))
                 .build();
     }

@@ -37,7 +37,7 @@ public class ChallengeResponseDTO {
         private String title;
         private String content;
         private Integer time;
-        private boolean isCompleted;
+        private boolean completed;
     }
 
     // 챌린지 리포트
