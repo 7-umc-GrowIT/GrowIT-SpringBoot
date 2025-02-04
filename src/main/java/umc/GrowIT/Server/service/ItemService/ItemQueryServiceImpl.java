@@ -1,33 +1,93 @@
 package umc.GrowIT.Server.service.ItemService;
 
+import com.amazonaws.HttpMethod;
+import com.amazonaws.services.s3.AmazonS3;
+import com.amazonaws.services.s3.model.GeneratePresignedUrlRequest;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import umc.GrowIT.Server.converter.ItemConverter;
 import umc.GrowIT.Server.domain.Item;
 import umc.GrowIT.Server.domain.enums.ItemCategory;
 import umc.GrowIT.Server.repository.ItemRepository.ItemRepository;
+import umc.GrowIT.Server.repository.UserItemRepository;
 import umc.GrowIT.Server.web.dto.ItemDTO.ItemResponseDTO;
 
+import java.util.Date;
 import java.util.List;
+import java.util.Map;
+import java.util.concurrent.TimeUnit;
+import java.util.stream.Collectors;
 
 
 @Service
 @RequiredArgsConstructor
-@Transactional(readOnly = true)
+@Slf4j
 public class ItemQueryServiceImpl implements ItemQueryService {
-    private final ItemRepository itemRepository;
 
-    @Override // 아이템리스트
+    private final AmazonS3 amazonS3;
+    private final ItemRepository itemRepository;
+    private final UserItemRepository userItemRepository;
+
+    @Value("${aws.s3.bucket}")
+    private String bucketName;
+
+    @Override
+    @Transactional(readOnly = true)
     public ItemResponseDTO.ItemListDTO getItemList(ItemCategory category, Long userId) {
         List<Item> itemList = itemRepository.findAllByCategory(category);
-        return ItemConverter.toItemListDTO(itemList, userId, itemRepository);
+
+        // 각 아이템에 대한 Pre-signed URL 생성
+        Map<Item, String> itemUrls = createItemPreSignedUrl(itemList);
+        Map<Item, String> groItemUrls = createGroItemPreSignedUrl(itemList);
+
+        return ItemConverter.toItemListDTO(itemList, userId, itemRepository, itemUrls, groItemUrls);
     }
 
-
-    // 사용자가 보유한 아이템만 조회하는 메서드
+    @Override
+    @Transactional(readOnly = true)
     public ItemResponseDTO.ItemListDTO getUserOwnedItemList(ItemCategory category, Long userId) {
-        List<Item> userItems = itemRepository.findItemsByUserIdAndCategory(userId, category);
-        return ItemConverter.toItemListDTO(userItems, userId, itemRepository);
+        // 사용자가 보유한 아이템 목록 조회
+        List<Item> ownedItemList = userItemRepository.findItemsByUserIdAndCategory(userId, category);
+
+        // 각 아이템에 대한 Pre-signed URL 생성
+        Map<Item, String> itemUrls = createItemPreSignedUrl(ownedItemList);
+        Map<Item, String> groItemUrls = createGroItemPreSignedUrl(ownedItemList);
+
+        return ItemConverter.toItemListDTO(ownedItemList, userId, itemRepository, itemUrls, groItemUrls);
+    }
+
+    // 상점 리스트용 이미지의 Pre-signed URL 생성
+    private Map<Item, String> createItemPreSignedUrl(List<Item> items) {
+        return items.stream()
+                .collect(Collectors.toMap(
+                        item -> item,
+                        item -> {
+                            Date expiration = new Date(System.currentTimeMillis() + TimeUnit.MINUTES.toMillis(15));
+                            GeneratePresignedUrlRequest generatePresignedUrlRequest =
+                                    new GeneratePresignedUrlRequest(bucketName, item.getImageKey())
+                                            .withMethod(HttpMethod.GET)
+                                            .withExpiration(expiration);
+                            return amazonS3.generatePresignedUrl(generatePresignedUrlRequest).toString();
+                        }
+                ));
+    }
+
+    // 그로 착용용 이미지의 Pre-signed URL 생성
+    private Map<Item, String> createGroItemPreSignedUrl(List<Item> items) {
+        return items.stream()
+                .collect(Collectors.toMap(
+                        item -> item,
+                        item -> {
+                            Date expiration = new Date(System.currentTimeMillis() + TimeUnit.MINUTES.toMillis(15));
+                            GeneratePresignedUrlRequest generatePresignedUrlRequest =
+                                    new GeneratePresignedUrlRequest(bucketName, item.getGroImageKey())
+                                            .withMethod(HttpMethod.GET)
+                                            .withExpiration(expiration);
+                            return amazonS3.generatePresignedUrl(generatePresignedUrlRequest).toString();
+                        }
+                ));
     }
 }

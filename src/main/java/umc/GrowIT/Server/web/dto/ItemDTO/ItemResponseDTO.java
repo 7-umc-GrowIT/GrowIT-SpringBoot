@@ -33,8 +33,11 @@ public class ItemResponseDTO {
         @Schema(description = "아이템 가격 (크레딧)", example = "120")
         Integer price;
 
-        @Schema(description = "이미지 URL")
+        @Schema(description = "상점 리스트용 이미지 URL")
         String imageUrl;
+
+        @Schema(description = "그로 착용용 이미지 URL")
+        String groImageUrl;
 
         @Schema(description = "상점에서 사용될 경우 배경색")
         String shopBackgroundColor;
@@ -47,8 +50,6 @@ public class ItemResponseDTO {
 
         @Schema(description = "구매 여부", example = "false")
         boolean purchased;
-
-
     }
 
     // 아이템 주문 응답 DTO

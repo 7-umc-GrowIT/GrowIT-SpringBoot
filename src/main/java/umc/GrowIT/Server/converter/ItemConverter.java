@@ -10,31 +10,49 @@ import umc.GrowIT.Server.web.dto.ItemEquipDTO.ItemEquipResponseDTO;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 public class ItemConverter {
 
     //아이템 1개 반환
-    public static ItemResponseDTO.ItemDTO toItemDTO(Item item, Long userId, ItemRepository itemRepository) {
+    public static ItemResponseDTO.ItemDTO toItemDTO(
+            Item item,
+            Long userId,
+            ItemRepository itemRepository,
+            String itemUrl,
+            String groItemUrl) {
+
         ItemStatus status = itemRepository.findStatusByUserIdAndItemId(userId, item.getId());
 
         return ItemResponseDTO.ItemDTO.builder()
                 .id(item.getId())
                 .name(item.getName())
                 .price(item.getPrice())
-                .imageUrl(item.getImageUrl())
+                .imageUrl(itemUrl)
+                .groImageUrl(groItemUrl)
                 .shopBackgroundColor(item.getShopBackgroundColor())
                 .category(item.getCategory().toString())
-                .status(status != null ? status.toString() : null) //status가 null일 경우(보유하지않은 경우) >> 기본값 null로 설정
+                .status(status != null ? status.toString() : null)
                 .purchased(itemRepository.existsByUserItemsUserIdAndId(userId, item.getId()))
                 .build();
     }
 
-    //아이템리스트 반환
-    public static ItemResponseDTO.ItemListDTO toItemListDTO(List<Item> itemList, Long userId, ItemRepository itemRepository) {
+    public static ItemResponseDTO.ItemListDTO toItemListDTO(
+            List<Item> itemList,
+            Long userId,
+            ItemRepository itemRepository,
+            Map<Item, String> itemUrls,
+            Map<Item, String> groItemUrls) {
+
         return ItemResponseDTO.ItemListDTO.builder()
                 .itemList(itemList.stream()
-                        .map(item -> toItemDTO(item, userId, itemRepository))
+                        .map(item -> toItemDTO(
+                                item,
+                                userId,
+                                itemRepository,
+                                itemUrls.get(item),
+                                groItemUrls.get(item)))
                         .collect(Collectors.toList()))
                 .build();
     }
