@@ -94,9 +94,7 @@ public class DiaryController implements DiarySpecification {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         Long userId = (Long) authentication.getPrincipal();
 
-        //Todo: 저장된 대화 내용을 토대로 요약 및 일기 작성
-
-        return null;
+        return ApiResponse.onSuccess(diaryCommandService.createDiaryByVoice(request, userId));
     }
 
 

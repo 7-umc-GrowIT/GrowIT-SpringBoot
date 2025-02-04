@@ -34,6 +34,6 @@ public class DiaryRequestDTO {
     @Setter
     public static class SummaryDTO {
         @NotNull
-        String date;
+        LocalDate date;
     }
 }

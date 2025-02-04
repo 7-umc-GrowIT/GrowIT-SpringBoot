@@ -75,4 +75,13 @@ public class DiaryConverter {
                 .chat(aiChat)
                 .build();
     }
+
+    public static DiaryResponseDTO.SummaryResultDTO toSummaryResultDTO(Diary diary){
+
+        return DiaryResponseDTO.SummaryResultDTO.builder()
+                .diaryId(diary.getId())
+                .content(diary.getContent())
+                .date(diary.getDate())
+                .build();
+    }
 }
