@@ -7,6 +7,9 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.springframework.lang.Nullable;
 import org.springframework.web.multipart.MultipartFile;
+import umc.GrowIT.Server.domain.enums.UserChallengeType;
+
+import java.util.List;
 
 public class ChallengeRequestDTO {
 
@@ -19,6 +22,15 @@ public class ChallengeRequestDTO {
         private MultipartFile certificationImage;
         @Schema(description = "소감 (텍스트)")
         private String thoughts;
+    }
+
+    @Data
+    @Builder
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class SelectChallengeRequestDTO {
+        private List<Long> challengeIds;
+        private UserChallengeType dtype;
     }
 
 }

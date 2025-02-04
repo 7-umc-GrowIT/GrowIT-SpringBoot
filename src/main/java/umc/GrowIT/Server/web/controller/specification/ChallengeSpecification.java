@@ -12,6 +12,8 @@ import umc.GrowIT.Server.domain.enums.UserChallengeType;
 import umc.GrowIT.Server.web.dto.ChallengeDTO.ChallengeRequestDTO;
 import umc.GrowIT.Server.web.dto.ChallengeDTO.ChallengeResponseDTO;
 
+import java.util.List;
+
 public interface ChallengeSpecification {
 
     @GetMapping("summary")
@@ -43,7 +45,7 @@ public interface ChallengeSpecification {
             @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "COMMON200", description = "⭕ SUCCESS"),
             @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "COMMON400", description = "❌ BAD, 잘못된 요청", content = @Content(schema = @Schema(implementation = ApiResponse.class)))
     })
-    ApiResponse<ChallengeResponseDTO.SelectChallengeDTO> selectChallenge(@PathVariable Long challengeId, @RequestParam UserChallengeType dtype);
+    ApiResponse<ChallengeResponseDTO.SelectChallengeDTO> selectChallenges(@RequestBody List<ChallengeRequestDTO.SelectChallengeRequestDTO> selectRequestList);
 
     @PostMapping(value = "{userChallengeId}/prove", consumes = "multipart/form-data")
     @Operation(summary = "챌린지 인증 작성 API", description = "챌린지 인증을 작성하는 API입니다. <br>" +
