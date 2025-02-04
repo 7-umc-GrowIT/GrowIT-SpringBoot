@@ -60,6 +60,11 @@ public class ChallengeCommandServiceImpl implements ChallengeCommandService {
                 }
             }
 
+            // 데일리 챌린지와 랜덤 챌린지 합쳐서 최소 1개 이상 선택
+            if (dailyChallengeCount == 0 && randomChallengeCount == 0) {
+                throw new ChallengeHandler(ErrorStatus.CHALLENGE_AT_LEAST);
+            }
+
             // 각 챌린지를 UserChallenge로 생성 및 저장
             List<UserChallenge> userChallenges = challengeIds.stream()
                     .map(challengeId -> {
@@ -75,16 +80,6 @@ public class ChallengeCommandServiceImpl implements ChallengeCommandService {
             savedUserChallenges.addAll(userChallenges);
         }
 
-        // 데일리와 랜덤 챌린지 합쳐서 최소 1개 이상 선택했는지 확인
-        int totalChallengesCount = dailyChallengeCount + randomChallengeCount;
-        if (totalChallengesCount == 0) {
-            throw new ChallengeHandler(ErrorStatus.CHALLENGE_AT_LEAST);
-        }
-
-        // 예외 처리: 최대 3개까지 선택 가능
-        if (totalChallengesCount > 3) {
-            throw new ChallengeHandler(ErrorStatus.CHALLENGE_SAVE_LIMIT);
-        }
 
         // DTO 변환 및 반환
         return ChallengeConverter.toSelectChallengeDTO(savedUserChallenges);
