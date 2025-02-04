@@ -37,6 +37,7 @@ public class DiaryCommandServiceImpl implements DiaryCommandService{
     @Autowired
     private RestTemplate template;
 
+    //userId-대화내용 저장용 HashMap
     private final Map<Long, List<ChatGPTRequest>> conversationHistory = new HashMap<>();
     @Override
     public DiaryResponseDTO.ModifyDiaryResultDTO modifyDiary(DiaryRequestDTO.ModifyDiaryDTO request, Long diaryId, Long userId) {
@@ -140,8 +141,6 @@ public class DiaryCommandServiceImpl implements DiaryCommandService{
         // 대화 기록 유지
         conversationHistory.put(userId, messages);
 
-        System.out.println(messages);
-
         return DiaryConverter.toVoiceChatResultDTO(aiChat);
     }
 
@@ -191,8 +190,6 @@ public class DiaryCommandServiceImpl implements DiaryCommandService{
 
         // 대화 기록 삭제
         conversationHistory.remove(userId);
-
-        System.out.println(messages);
 
         return DiaryConverter.toSummaryResultDTO(diary);
     }
