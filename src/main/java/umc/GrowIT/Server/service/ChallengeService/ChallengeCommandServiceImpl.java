@@ -31,15 +31,63 @@ public class ChallengeCommandServiceImpl implements ChallengeCommandService {
     private final ImageService imageService;
 
     @Override
-    public ChallengeResponseDTO.SelectChallengeDTO selectChallenge(Long userId, Long challengeId, UserChallengeType dtype) {
-        Challenge challenge = challengeRepository.findById(challengeId).orElseThrow(() -> new ChallengeHandler(ErrorStatus.CHALLENGE_NOT_FOUND));
+    @Transactional
+    public ChallengeResponseDTO.SelectChallengeDTO selectChallenges(Long userId, List<ChallengeRequestDTO.SelectChallengeRequestDTO> selectRequestList) {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new ChallengeHandler(ErrorStatus.USER_NOT_FOUND));
 
-        UserChallenge userChallenge = ChallengeConverter.createUserChallenge(user, challenge, dtype); // userChallenge 생성
-        userChallengeRepository.save(userChallenge);
+        // 전체 선택된 챌린지 개수 초기화
+        int dailyChallengeCount = 0;
+        int randomChallengeCount = 0;
 
-        return ChallengeConverter.toSelectChallengeDTO(userChallenge);
+        // 선택한 UserChallenge 저장
+        List<UserChallenge> savedUserChallenges = new ArrayList<>();
+
+        for (ChallengeRequestDTO.SelectChallengeRequestDTO selectRequest : selectRequestList) {
+            List<Long> challengeIds = selectRequest.getChallengeIds();
+            UserChallengeType dtype = selectRequest.getDtype();
+
+            // 현재 dtype에 따라 저장 가능한 최대 개수 확인
+            if (dtype == UserChallengeType.DAILY) {
+                dailyChallengeCount += challengeIds.size();
+                if (dailyChallengeCount > 2) {
+                    throw new ChallengeHandler(ErrorStatus.CHALLENGE_DAILY_MAX);
+                }
+            } else if (dtype == UserChallengeType.RANDOM) {
+                randomChallengeCount += challengeIds.size();
+                if (randomChallengeCount > 1) {
+                    throw new ChallengeHandler(ErrorStatus.CHALLENGE_RANDOM_MAX);
+                }
+            }
+
+            // 각 챌린지를 UserChallenge로 생성 및 저장
+            List<UserChallenge> userChallenges = challengeIds.stream()
+                    .map(challengeId -> {
+                        Challenge challenge = challengeRepository.findById(challengeId)
+                                .orElseThrow(() -> new ChallengeHandler(ErrorStatus.CHALLENGE_NOT_FOUND));
+
+                        // UserChallenge 생성
+                        UserChallenge userChallenge = ChallengeConverter.createUserChallenge(user, challenge, dtype);
+                        return userChallengeRepository.save(userChallenge);
+                    })
+                    .toList();
+
+            savedUserChallenges.addAll(userChallenges);
+        }
+
+        // 데일리와 랜덤 챌린지 합쳐서 최소 1개 이상 선택했는지 확인
+        int totalChallengesCount = dailyChallengeCount + randomChallengeCount;
+        if (totalChallengesCount == 0) {
+            throw new ChallengeHandler(ErrorStatus.CHALLENGE_AT_LEAST);
+        }
+
+        // 예외 처리: 최대 3개까지 선택 가능
+        if (totalChallengesCount > 3) {
+            throw new ChallengeHandler(ErrorStatus.CHALLENGE_SAVE_LIMIT);
+        }
+
+        // DTO 변환 및 반환
+        return ChallengeConverter.toSelectChallengeDTO(savedUserChallenges);
     }
 
 
