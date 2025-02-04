@@ -10,4 +10,6 @@ public interface DiaryCommandService {
     public DiaryResponseDTO.CreateDiaryResultDTO createDiary(DiaryRequestDTO.CreateDiaryDTO request, Long userId);
 
     public DiaryResponseDTO.DeleteDiaryResultDTO deleteDiary(Long diaryId, Long userId);
+
+    public DiaryResponseDTO.VoiceChatResultDTO chatByVoice(DiaryRequestDTO.VoiceChatDTO request, Long userId);
 }

@@ -84,9 +84,7 @@ public class DiaryController implements DiarySpecification {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         Long userId = (Long) authentication.getPrincipal();
 
-        //Todo: 음성인식내용을 토대로 AI답변 생성, 대화내용 저장
-
-        return null;
+        return ApiResponse.onSuccess(diaryCommandService.chatByVoice(request, userId));
     }
 
     @PostMapping("/summary")
