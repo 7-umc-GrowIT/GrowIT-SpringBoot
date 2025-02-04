@@ -36,16 +36,6 @@ public class ChallengeCommandServiceImpl implements ChallengeCommandService {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new ChallengeHandler(ErrorStatus.USER_NOT_FOUND));
 
-        // 전체 선택한 챌린지 ID의 개수 계산
-        int totalChallengesCount = selectRequestList.stream()
-                .mapToInt(request -> request.getChallengeIds().size())
-                .sum();
-
-        // 예외 처리: 최대 3개까지 선택 가능
-        if (totalChallengesCount > 3) {
-            throw new ChallengeHandler(ErrorStatus.CHALLENGE_SAVE_LIMIT);
-        }
-
         // 전체 선택된 챌린지 개수 초기화
         int dailyChallengeCount = 0;
         int randomChallengeCount = 0;
@@ -56,11 +46,6 @@ public class ChallengeCommandServiceImpl implements ChallengeCommandService {
         for (ChallengeRequestDTO.SelectChallengeRequestDTO selectRequest : selectRequestList) {
             List<Long> challengeIds = selectRequest.getChallengeIds();
             UserChallengeType dtype = selectRequest.getDtype();
-
-            // challengeIds가 비어 있으면 예외 처리
-            if (challengeIds == null || challengeIds.isEmpty()) {
-                throw new ChallengeHandler(ErrorStatus.CHALLENGE_AT_LEAST);
-            }
 
             // 현재 dtype에 따라 저장 가능한 최대 개수 확인
             if (dtype == UserChallengeType.DAILY) {
@@ -88,6 +73,17 @@ public class ChallengeCommandServiceImpl implements ChallengeCommandService {
                     .toList();
 
             savedUserChallenges.addAll(userChallenges);
+        }
+
+        // 데일리와 랜덤 챌린지 합쳐서 최소 1개 이상 선택했는지 확인
+        int totalChallengesCount = dailyChallengeCount + randomChallengeCount;
+        if (totalChallengesCount == 0) {
+            throw new ChallengeHandler(ErrorStatus.CHALLENGE_AT_LEAST);
+        }
+
+        // 예외 처리: 최대 3개까지 선택 가능
+        if (totalChallengesCount > 3) {
+            throw new ChallengeHandler(ErrorStatus.CHALLENGE_SAVE_LIMIT);
         }
 
         // DTO 변환 및 반환
