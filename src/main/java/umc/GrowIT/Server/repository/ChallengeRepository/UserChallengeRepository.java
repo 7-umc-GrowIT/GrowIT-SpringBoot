@@ -34,7 +34,6 @@ public interface UserChallengeRepository extends JpaRepository<UserChallenge, Lo
             @Param("userId") Long userId,
             @Param("dtype") UserChallengeType dtype);
 
-
 }
 
 

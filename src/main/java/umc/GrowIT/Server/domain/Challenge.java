@@ -51,5 +51,4 @@ public class Challenge extends BaseEntity {
         this.challengeKeywords.add(challengeKeyword);
         challengeKeyword.setChallenge(this);
     }
-
 }

@@ -9,5 +9,5 @@ public interface ChallengeQueryService {
     String getDiaryDate(Long userId);
     ChallengeResponseDTO.ChallengeHomeDTO getChallengeHome(Long userId);
     ChallengeResponseDTO.ChallengeStatusListDTO getChallengeStatus(Long userId, UserChallengeType dtype, Boolean completed);
-    ChallengeResponseDTO.ProofDetailsDTO getChallengeProofDetails(Long userId, Long challengeId);
+    ChallengeResponseDTO.ProofDetailsDTO getChallengeProofDetails(Long userId, Long userChallengeId);
 }

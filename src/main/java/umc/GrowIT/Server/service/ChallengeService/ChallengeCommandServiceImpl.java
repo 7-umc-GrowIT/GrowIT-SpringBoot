@@ -7,12 +7,19 @@ import umc.GrowIT.Server.apiPayload.code.status.ErrorStatus;
 import umc.GrowIT.Server.apiPayload.exception.ChallengeHandler;
 import umc.GrowIT.Server.apiPayload.exception.UserHandler;
 import umc.GrowIT.Server.converter.ChallengeConverter;
+import umc.GrowIT.Server.domain.Challenge;
+import umc.GrowIT.Server.domain.User;
 import umc.GrowIT.Server.domain.UserChallenge;
+import umc.GrowIT.Server.domain.enums.UserChallengeType;
+import umc.GrowIT.Server.repository.ChallengeRepository.ChallengeRepository;
 import umc.GrowIT.Server.repository.ChallengeRepository.UserChallengeRepository;
 import umc.GrowIT.Server.repository.UserRepository;
 import umc.GrowIT.Server.service.ImageService.ImageService;
 import umc.GrowIT.Server.web.dto.ChallengeDTO.ChallengeRequestDTO;
 import umc.GrowIT.Server.web.dto.ChallengeDTO.ChallengeResponseDTO;
+
+import java.util.ArrayList;
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -20,7 +27,23 @@ public class ChallengeCommandServiceImpl implements ChallengeCommandService {
 
     private final UserRepository userRepository;
     private final UserChallengeRepository userChallengeRepository;
+    private final ChallengeRepository challengeRepository;
     private final ImageService imageService;
+
+    @Override
+    public ChallengeResponseDTO.SelectChallengeDTO selectChallenge(Long userId, Long challengeId, UserChallengeType dtype) {
+        Challenge challenge = challengeRepository.findById(challengeId).orElseThrow(() -> new ChallengeHandler(ErrorStatus.CHALLENGE_NOT_FOUND));
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new ChallengeHandler(ErrorStatus.USER_NOT_FOUND));
+
+        UserChallenge userChallenge = ChallengeConverter.createUserChallenge(user, challenge, dtype); // userChallenge 생성
+        userChallengeRepository.save(userChallenge);
+
+        return ChallengeConverter.toSelectChallengeDTO(userChallenge);
+    }
+
+
+
     @Override
     @Transactional
     public ChallengeResponseDTO.ProofDetailsDTO createChallengeProof(Long userId, Long userChallengeId, ChallengeRequestDTO.ProofRequestDTO proofRequest) {
@@ -42,7 +65,6 @@ public class ChallengeCommandServiceImpl implements ChallengeCommandService {
         userChallengeRepository.save(userChallenge);
         return ChallengeConverter.toProofDetailsDTO(userChallenge.getChallenge(), userChallenge, imageUrl);
     }
-
 
     @Override
     @Transactional
@@ -70,7 +92,6 @@ public class ChallengeCommandServiceImpl implements ChallengeCommandService {
         userChallengeRepository.save(userChallenge);
         return ChallengeConverter.toChallengeModifyProofDTO(userChallenge);
     }
-
 
     public ChallengeResponseDTO.DeleteChallengeResponseDTO delete(Long userChallengeId, Long userId) {
         // 1. userId를 조회하고 없으면 오류

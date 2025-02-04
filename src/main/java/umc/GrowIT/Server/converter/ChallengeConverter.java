@@ -1,9 +1,6 @@
 package umc.GrowIT.Server.converter;
 
-import umc.GrowIT.Server.domain.Challenge;
-import umc.GrowIT.Server.domain.ChallengeKeyword;
-import umc.GrowIT.Server.domain.Keyword;
-import umc.GrowIT.Server.domain.UserChallenge;
+import umc.GrowIT.Server.domain.*;
 import umc.GrowIT.Server.domain.enums.UserChallengeType;
 import umc.GrowIT.Server.web.dto.ChallengeDTO.ChallengeResponseDTO;
 
@@ -95,6 +92,28 @@ public class ChallengeConverter {
                 .certificationDate(userChallenge.getCreatedAt())
                 .build();
     }
+
+    // UserChallenge 생성
+    public static UserChallenge createUserChallenge(User user, Challenge challenge, UserChallengeType dtype) {
+        return UserChallenge.builder()
+                .user(user)
+                .challenge(challenge)
+                .dtype(dtype)
+                .completed(false)
+                .build();
+    }
+
+    // 선택한 챌린지 저장
+    public static ChallengeResponseDTO.SelectChallengeDTO toSelectChallengeDTO(UserChallenge userChallenge) {
+        return ChallengeResponseDTO.SelectChallengeDTO.builder()
+                .id(userChallenge.getChallenge().getId())
+                .dtype(userChallenge.getDtype())
+                .title(userChallenge.getChallenge().getTitle())
+                .content(userChallenge.getChallenge().getContent())
+                .time(userChallenge.getChallenge().getTime())
+                .build();
+    }
+
 
     // 챌린지 수정
     public static ChallengeResponseDTO.ModifyProofDTO toChallengeModifyProofDTO(UserChallenge userChallenge) {

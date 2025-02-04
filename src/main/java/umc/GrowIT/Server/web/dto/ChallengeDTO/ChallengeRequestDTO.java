@@ -7,6 +7,9 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.springframework.lang.Nullable;
 import org.springframework.web.multipart.MultipartFile;
+import umc.GrowIT.Server.domain.enums.UserChallengeType;
+
+import java.util.List;
 
 public class ChallengeRequestDTO {
 
@@ -20,5 +23,6 @@ public class ChallengeRequestDTO {
         @Schema(description = "소감 (텍스트)", requiredMode = Schema.RequiredMode.REQUIRED)
         private String thoughts;
     }
+
 
 }

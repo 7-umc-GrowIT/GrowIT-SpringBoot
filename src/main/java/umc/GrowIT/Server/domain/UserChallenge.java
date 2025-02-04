@@ -35,8 +35,8 @@ public class UserChallenge extends BaseEntity {
     @Column(nullable = false)
     private UserChallengeType dtype;
 
-    @Column(name = "completed", nullable = false)
-    private boolean completed = false;
+    @Column(nullable = false)
+    private boolean completed;
 
     public void setChallenge(Challenge challenge) {
         this.challenge = challenge;
