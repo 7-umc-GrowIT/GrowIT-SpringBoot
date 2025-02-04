@@ -20,4 +20,8 @@ public interface DiaryRepository extends JpaRepository<Diary, Long> {
     Optional<Diary> findByUserIdAndId(Long userId, Long diaryId);
 
     boolean existsByUserIdAndDate(Long userId, LocalDate date);
+
+    @Query("SELECT MIN(d.date) FROM Diary d WHERE d.user.id = :userId") // 최초 일기 작성 날짜 조회
+    Optional<LocalDate> findFirstDiaryDateByUserId(@Param("userId") Long userId);
+
 }

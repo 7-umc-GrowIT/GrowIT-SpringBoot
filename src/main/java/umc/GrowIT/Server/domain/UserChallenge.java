@@ -28,7 +28,7 @@ public class UserChallenge extends BaseEntity {
     @Column(name = "thoughts", length = 100, nullable = false)
     private String thoughts;
 
-    @Column(name = "certification_image")
+    @Column(name = "certification_image", nullable = false)
     private String certificationImage;
 
     @Enumerated(EnumType.STRING)
