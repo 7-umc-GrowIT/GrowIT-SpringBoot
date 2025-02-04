@@ -17,6 +17,11 @@ public interface UserChallengeRepository extends JpaRepository<UserChallenge, Lo
     @Query("SELECT uc FROM UserChallenge uc JOIN FETCH uc.challenge WHERE uc.user.id = :userId AND uc.completed = false")
     List<UserChallenge> findUserChallengesByUserId(@Param("userId") Long userId);
 
+    // 오늘 날짜 기준으로 저장된 챌린지만 필터링
+    @Query("SELECT uc FROM UserChallenge uc WHERE uc.user.id = :userId AND DATE(uc.createdAt) = CURRENT_DATE")
+    List<UserChallenge> findTodayUserChallengesByUserId(@Param("userId") Long userId);
+
+
     // 1. 유저의 완료 또는 미완료 챌린지 조회 (dtype 무시)
     @Query("SELECT uc FROM UserChallenge uc " +
             "WHERE uc.user.id = :userId " +

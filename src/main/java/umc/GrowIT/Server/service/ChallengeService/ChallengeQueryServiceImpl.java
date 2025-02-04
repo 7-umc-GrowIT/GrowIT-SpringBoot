@@ -58,8 +58,8 @@ public class ChallengeQueryServiceImpl implements ChallengeQueryService {
 
     @Override
     public ChallengeResponseDTO.ChallengeHomeDTO getChallengeHome(Long userId) {
-        // 1. 추천 챌린지 조회
-        List<UserChallenge> userChallenges = userChallengeRepository.findUserChallengesByUserId(userId);
+        // 1. 오늘 저장된 챌린지 조회
+        List<UserChallenge> todayChallenges = userChallengeRepository.findTodayUserChallengesByUserId(userId);
 
         // 2. Keyword 데이터 조회 후 문자열 리스트로 변환
         List<String> keywordNames = keywordRepository.findAll()
@@ -70,17 +70,13 @@ public class ChallengeQueryServiceImpl implements ChallengeQueryService {
 
         // 3. DTO 생성 및 반환
         return ChallengeConverter.toChallengeHomeDTO(
-                userChallenges,
+                todayChallenges, // 오늘 저장된 챌린지만 전달
                 getTotalCredits(userId),
                 getTotalDiaries(userId),
                 getDiaryDate(userId),
                 keywordNames
         );
     }
-
-
-
-
 
 
     @Override
