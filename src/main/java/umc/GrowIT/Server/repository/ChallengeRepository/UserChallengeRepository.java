@@ -6,6 +6,7 @@ import org.springframework.data.repository.query.Param;
 import umc.GrowIT.Server.domain.UserChallenge;
 import umc.GrowIT.Server.domain.enums.UserChallengeType;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -18,8 +19,14 @@ public interface UserChallengeRepository extends JpaRepository<UserChallenge, Lo
     List<UserChallenge> findUserChallengesByUserId(@Param("userId") Long userId);
 
     // 오늘 날짜 기준으로 저장된 챌린지만 필터링
-    @Query("SELECT uc FROM UserChallenge uc WHERE uc.user.id = :userId AND DATE(uc.createdAt) = CURRENT_DATE")
-    List<UserChallenge> findTodayUserChallengesByUserId(@Param("userId") Long userId);
+    @Query("SELECT uc FROM UserChallenge uc " +
+            "WHERE uc.user.id = :userId " +
+            "AND uc.createdAt BETWEEN :startOfDay AND :endOfDay")
+    List<UserChallenge> findTodayUserChallengesByUserId(
+            @Param("userId") Long userId,
+            @Param("startOfDay") LocalDateTime startOfDay,
+            @Param("endOfDay") LocalDateTime endOfDay);
+
 
 
     // 1. 유저의 완료 또는 미완료 챌린지 조회 (dtype 무시)

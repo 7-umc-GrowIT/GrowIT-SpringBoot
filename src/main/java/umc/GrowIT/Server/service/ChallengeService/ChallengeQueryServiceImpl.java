@@ -17,6 +17,8 @@ import umc.GrowIT.Server.repository.diaryRepository.DiaryRepository;
 import umc.GrowIT.Server.web.dto.ChallengeDTO.ChallengeResponseDTO;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.time.temporal.ChronoUnit;
 import java.util.Collections;
 import java.util.List;
@@ -58,25 +60,30 @@ public class ChallengeQueryServiceImpl implements ChallengeQueryService {
 
     @Override
     public ChallengeResponseDTO.ChallengeHomeDTO getChallengeHome(Long userId) {
-        // 1. 오늘 저장된 챌린지 조회
-        List<UserChallenge> todayChallenges = userChallengeRepository.findTodayUserChallengesByUserId(userId);
+        // 1. 오늘의 시작 시간과 끝 시간 계산
+        LocalDateTime startOfDay = LocalDate.now().atStartOfDay(); // 오늘 자정 00:00:00
+        LocalDateTime endOfDay = LocalDate.now().atTime(LocalTime.MAX); // 오늘 끝 23:59:59
 
-        // 2. Keyword 데이터 조회 후 문자열 리스트로 변환
+        // 2. 오늘 저장된 챌린지 조회
+        List<UserChallenge> todayChallenges = userChallengeRepository.findTodayUserChallengesByUserId(userId, startOfDay, endOfDay);
+
+        // 3. Keyword 데이터 조회 후 문자열 리스트로 변환
         List<String> keywordNames = keywordRepository.findAll()
                 .stream()
                 .limit(3) // 최대 3개만 추출
                 .map(Keyword::getName)
                 .toList();
 
-        // 3. DTO 생성 및 반환
+        // 4. DTO 생성 및 반환
         return ChallengeConverter.toChallengeHomeDTO(
-                todayChallenges, // 오늘 저장된 챌린지만 전달
-                getTotalCredits(userId),
-                getTotalDiaries(userId),
-                getDiaryDate(userId),
-                keywordNames
+                todayChallenges, // 오늘 저장된 챌린지 데이터만 전달
+                getTotalCredits(userId), // 총 크레딧 수
+                getTotalDiaries(userId), // 총 작성된 일기 수
+                getDiaryDate(userId), // 작성 기간 (예: D+15)
+                keywordNames // 추천 키워드
         );
     }
+
 
 
     @Override
