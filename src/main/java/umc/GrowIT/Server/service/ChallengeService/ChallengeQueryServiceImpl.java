@@ -44,7 +44,7 @@ public class ChallengeQueryServiceImpl implements ChallengeQueryService {
     }
 
     @Override
-    public String getUserDate(Long userId) {
+    public String getDiaryDate(Long userId) {
         // TODO: 사용자가 일기를 처음 작성한 날짜와 오늘 날짜 간의 차이를 계산
         LocalDate firstDiaryDate = diaryRepository.findFirstDiaryDateByUserId(userId) // 최초 일기 작성 날짜 조회
                 .orElse(LocalDate.now()); // 일기를 작성한 기록이 없으면 오늘 날짜를 기본값으로 사용
@@ -73,7 +73,7 @@ public class ChallengeQueryServiceImpl implements ChallengeQueryService {
                 userChallenges,
                 getTotalCredits(userId),
                 getTotalDiaries(userId),
-                getUserDate(userId),
+                getDiaryDate(userId),
                 keywordNames
         );
     }
