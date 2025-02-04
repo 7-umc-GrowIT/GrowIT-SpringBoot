@@ -11,7 +11,10 @@ import umc.GrowIT.Server.apiPayload.code.ReasonDTO;
 public enum SuccessStatus implements BaseCode {
 
     // 일반적인 응답
-    _OK(HttpStatus.OK, "COMMON200", "성공입니다.");
+    _OK(HttpStatus.OK, "COMMON200", "성공입니다."),
+
+    // 카카오 로그인 -> 회원가입 요청
+    NEED_TO_ACCEPT_TERMS(HttpStatus.ACCEPTED, "TERM2001", "회원가입을 위해 약관 동의 목록이 추가적으로 필요합니다.");
 
     private final HttpStatus httpStatus;
     private final String code;

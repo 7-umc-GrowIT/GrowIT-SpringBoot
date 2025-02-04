@@ -1,9 +1,8 @@
-package umc.GrowIT.Server.jwt;
+package umc.GrowIT.Server.domain;
 
 import lombok.Getter;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.User;
-import umc.GrowIT.Server.domain.enums.UserStatus;
 
 import java.util.Collection;
 
