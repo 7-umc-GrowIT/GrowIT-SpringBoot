@@ -107,28 +107,19 @@ public class ChallengeResponseDTO {
         private LocalDateTime certificationDate;
     }
 
-
     // 선택한 챌린지 저장
     @Getter
     @Builder
     @NoArgsConstructor
     @AllArgsConstructor
     public static class SelectChallengeDTO {
-        private List<SelectedChallengesInfo> selectedChallenges;
-    }
-
-    @Getter
-    @Builder
-    @NoArgsConstructor
-    @AllArgsConstructor
-    public static class SelectedChallengesInfo {
         private Long id;
-        private Long challengeId;
         private UserChallengeType dtype;
         private String title;
         private String content;
         private Integer time;
     }
+
     // 챌린지 수정
     @Getter
     @Builder

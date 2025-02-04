@@ -24,13 +24,5 @@ public class ChallengeRequestDTO {
         private String thoughts;
     }
 
-    @Data
-    @Builder
-    @NoArgsConstructor
-    @AllArgsConstructor
-    public static class SelectChallengeRequestDTO {
-        private List<Long> challengeIds;
-        private UserChallengeType dtype;
-    }
 
 }
