@@ -49,14 +49,15 @@ public class ItemQueryServiceImpl implements ItemQueryService {
     @Override
     @Transactional(readOnly = true)
     public ItemResponseDTO.ItemListDTO getUserOwnedItemList(ItemCategory category, Long userId) {
-        // 사용자가 보유한 아이템 목록 조회
-        List<Item> ownedItemList = userItemRepository.findItemsByUserIdAndCategory(userId, category);
+        // 기존의 잘 작동하던 코드 유지
+        List<Item> userItems = itemRepository.findItemsByUserIdAndCategory(userId, category);
 
-        // 각 아이템에 대한 Pre-signed URL 생성
-        Map<Item, String> itemUrls = createItemPreSignedUrl(ownedItemList);
-        Map<Item, String> groItemUrls = createGroItemPreSignedUrl(ownedItemList);
+        // Pre-signed URL 생성 로직만 추가
+        Map<Item, String> itemUrls = createItemPreSignedUrl(userItems);
+        Map<Item, String> groItemUrls = createGroItemPreSignedUrl(userItems);
 
-        return ItemConverter.toItemListDTO(ownedItemList, userId, itemRepository, itemUrls, groItemUrls);
+        // converter에 URL 맵 전달
+        return ItemConverter.toItemListDTO(userItems, userId, itemRepository, itemUrls, groItemUrls);
     }
 
     // 상점 리스트용 이미지의 Pre-signed URL 생성
