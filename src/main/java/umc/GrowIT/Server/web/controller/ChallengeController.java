@@ -20,6 +20,8 @@ import org.springframework.web.bind.annotation.RestController;
 import umc.GrowIT.Server.web.dto.ChallengeDTO.ChallengeResponseDTO;
 import umc.GrowIT.Server.web.dto.ImageDTO.UploadImageResponse;
 
+import java.util.List;
+
 @Tag(name = "Challenge", description = "챌린지 관련 API")
 @RestController
 @RequiredArgsConstructor
@@ -50,9 +52,13 @@ public class ChallengeController implements ChallengeSpecification {
         return ApiResponse.onSuccess(challengeStatusList);
     }
 
-    @PostMapping("{userChallengeId}/select")
-    public ApiResponse<ChallengeResponseDTO> selectChallenge(@PathVariable Long userChallengeId) {
-        return null;
+    @PostMapping("/{challengeId}/select")
+    public ApiResponse<ChallengeResponseDTO.SelectChallengeDTO> selectChallenge(@PathVariable Long challengeId, @RequestParam UserChallengeType dtype) {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        Long userId = (Long) authentication.getPrincipal();
+
+        ChallengeResponseDTO.SelectChallengeDTO response = challengeCommandService.selectChallenge(userId, challengeId, dtype);
+        return ApiResponse.onSuccess(response);
     }
 
     @PostMapping(value = "{userChallengeId}/prove", consumes = "multipart/form-data")

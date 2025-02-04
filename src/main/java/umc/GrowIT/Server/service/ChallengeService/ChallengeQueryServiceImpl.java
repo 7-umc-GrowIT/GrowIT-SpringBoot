@@ -93,6 +93,10 @@ public class ChallengeQueryServiceImpl implements ChallengeQueryService {
         UserChallenge userChallenge = userChallengeRepository.findByIdAndUserId(userChallengeId, userId)
                 .orElseThrow(() -> new ChallengeHandler(ErrorStatus.USER_CHALLENGE_NOT_FOUND));
 
+        if (!userChallenge.isCompleted()) {
+            throw new ChallengeHandler(ErrorStatus.CHALLENGE_VERIFY_NOT_EXISTS);
+        }
+
         String imageUrl = userChallenge.getCertificationImage();
         return ChallengeConverter.toProofDetailsDTO(userChallenge.getChallenge(), userChallenge, imageUrl);
     }
