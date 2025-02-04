@@ -78,12 +78,28 @@ public class DiaryController implements DiarySpecification {
         return ApiResponse.onSuccess(diaryCommandService.createDiary(request, userId));
     }
     @PostMapping("/voice")
-    public ApiResponse<DiaryResponseDTO.CreateDiaryResultDTO> createDiaryByVoice(@RequestBody DiaryRequestDTO.CreateDiaryDTO request){
-        //Todo: 음성인식 결과를 다듬어주는 로직 필요
+    public ApiResponse<DiaryResponseDTO.VoiceChatResultDTO> chatByVoice(@RequestBody DiaryRequestDTO.VoiceChatDTO request){
+
+        //accessToken에서 userId 추출
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        Long userId = (Long) authentication.getPrincipal();
+
+        //Todo: 음성인식내용을 토대로 AI답변 생성, 대화내용 저장
+
         return null;
     }
 
+    @PostMapping("/summary")
+    public ApiResponse<DiaryResponseDTO.SummaryResultDTO> createDiaryByVoice(DiaryRequestDTO.SummaryDTO request) {
 
+        //accessToken에서 userId 추출
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        Long userId = (Long) authentication.getPrincipal();
+
+        //Todo: 저장된 대화 내용을 토대로 요약 및 일기 작성
+
+        return null;
+    }
 
 
 }
