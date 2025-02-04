@@ -1,4 +1,4 @@
-package umc.GrowIT.Server.jwt;
+package umc.GrowIT.Server.apiPayload.exception;
 
 import lombok.Getter;
 import org.springframework.security.core.AuthenticationException;

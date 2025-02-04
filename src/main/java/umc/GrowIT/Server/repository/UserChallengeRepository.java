@@ -14,16 +14,22 @@ public interface UserChallengeRepository extends JpaRepository<UserChallenge, Lo
     // 특정 챌린지 ID와 매핑된 인증 내역 조회
     Optional<UserChallenge> findByIdAndUserId(@Param("challengeId") Long challengeId, @Param("userId") Long userId);
 
-
-    // 유저의 완료/미완료 챌린지 현황 조회
+    // 1. 유저의 완료 또는 미완료 챌린지 조회 (dtype 무시)
     @Query("SELECT uc FROM UserChallenge uc " +
             "WHERE uc.user.id = :userId " +
-            "AND (:dtype IS NULL OR uc.dtype = :dtype) " +
             "AND uc.completed = :completed")
     List<UserChallenge> findChallengesByCompletionStatus(
             @Param("userId") Long userId,
-            @Param("dtype") UserChallengeType dtype,
             @Param("completed") Boolean completed);
+
+    // 2. 특정 dtype에 대해 미완료 챌린지 조회 (completed가 true인 챌린지는 제외)
+    @Query("SELECT uc FROM UserChallenge uc " +
+            "WHERE uc.user.id = :userId " +
+            "AND uc.dtype = :dtype " +
+            "AND uc.completed = false")  // 항상 미완료 챌린지만 조회
+    List<UserChallenge> findChallengesByDtypeAndCompletionStatus(
+            @Param("userId") Long userId,
+            @Param("dtype") UserChallengeType dtype);
 
 }
 

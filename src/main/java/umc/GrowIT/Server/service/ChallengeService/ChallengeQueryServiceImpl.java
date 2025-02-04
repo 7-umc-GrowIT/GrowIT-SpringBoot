@@ -15,6 +15,7 @@ import umc.GrowIT.Server.web.dto.ChallengeDTO.ChallengeResponseDTO;
 
 import java.time.LocalDate;
 import java.time.temporal.ChronoUnit;
+import java.util.Collections;
 import java.util.List;
 
 @Service
@@ -62,8 +63,21 @@ public class ChallengeQueryServiceImpl implements ChallengeQueryService {
 
     @Override
     public ChallengeResponseDTO.ChallengeStatusListDTO getChallengeStatus(Long userId, UserChallengeType dtype, Boolean completed) {
-        // 완료된 챌린지 또는 미완료된 챌린지 조회
-        List<UserChallenge> userChallenges = userChallengeRepository.findChallengesByCompletionStatus(userId, dtype, completed);
+        List<UserChallenge> userChallenges;
+
+        // dtype이 null이면 전체 챌린지 중 완료/미완료만 조회
+        if (dtype == null) {
+            userChallenges = userChallengeRepository.findChallengesByCompletionStatus(userId, completed);
+        }
+        // dtype이 RANDOM 또는 DAILY인 경우 미완료 챌린지만 조회 (completed = false 고정)
+        else if (!completed) {
+            userChallenges = userChallengeRepository.findChallengesByDtypeAndCompletionStatus(userId, dtype);
+        }
+        // dtype이 RANDOM 또는 DAILY인데 completed가 true이면 빈 리스트 반환 (잘못된 요청 방지)
+        else {
+            userChallenges = Collections.emptyList();
+        }
+
         List<ChallengeResponseDTO.ChallengeStatusDTO> challenges = ChallengeConverter.toChallengeStatusListDTO(userChallenges);
 
         return ChallengeResponseDTO.ChallengeStatusListDTO.builder()
@@ -83,8 +97,8 @@ public class ChallengeQueryServiceImpl implements ChallengeQueryService {
             throw new ChallengeHandler(ErrorStatus.CHALLENGE_VERIFY_NOT_EXISTS);
         }
 
-        Challenge challenge = userChallenge.getChallenge();
-        return ChallengeConverter.toChallengeProofDetailsDTO(challenge, userChallenge);
+        String imageUrl = userChallenge.getCertificationImage();
+        return ChallengeConverter.toProofDetailsDTO(userChallenge.getChallenge(), userChallenge, imageUrl);
     }
 
 

@@ -10,14 +10,10 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
-import org.springframework.web.cors.CorsConfiguration;
-import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 import org.springframework.web.cors.CorsConfigurationSource;
-import umc.GrowIT.Server.jwt.CustomAuthenticationEntryPoint;
-import umc.GrowIT.Server.jwt.JwtAuthenticationFilter;
-import umc.GrowIT.Server.jwt.CustomUserDetailsService;
-
-import java.util.List;
+import umc.GrowIT.Server.apiPayload.exception.CustomAuthenticationEntryPoint;
+import umc.GrowIT.Server.filter.JwtAuthenticationFilter;
+import umc.GrowIT.Server.service.userService.CustomUserDetailsService;
 
 @Configuration
 @EnableWebSecurity
@@ -66,7 +62,7 @@ public class SecurityConfig {
         http
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/swagger-ui/**", "/v3/api-docs/**").permitAll() //인증 없이 접근 가능
-                        .requestMatchers("/auth/login/email", "/auth/login/kakao", "/auth/kakao/test", "/auth/email", "/users/password", "/auth/users", "/terms", "/auth/verification", "/auth/reissue").permitAll() //인증 없이 접근 가능
+                        .requestMatchers("/auth/**", "/users/password", "/terms").permitAll() //인증 없이 접근 가능
                         .anyRequest().authenticated() //나머지 요청은 인증 필요
                 );
 

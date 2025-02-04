@@ -18,6 +18,7 @@ public class TermController implements TermSpecification {
 
     private final TermQueryService termQueryService;
 
+    @Override
     @GetMapping("/terms")
     public ApiResponse<List<TermResponseDTO.TermDTO>> getTerms() {
         return ApiResponse.onSuccess(termQueryService.getTerms());

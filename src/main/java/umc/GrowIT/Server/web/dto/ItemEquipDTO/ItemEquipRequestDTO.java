@@ -12,12 +12,10 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @Builder
 public class ItemEquipRequestDTO {
-    @Schema(
-            description = "아이템 착용 상태",
-            example = "EQUIPPED",
-            allowableValues = {"EQUIPPED", "UNEQUIPPED"},
-            required = true
-    )
+
+
+    @Schema(description = "아이템 착용 상태(EQUIPPED -> 해제, UNEQUIPPED -> 착용) ", example = "EQUIPPED", allowableValues = {"EQUIPPED", "UNEQUIPPED"}, required = true)
     @NotNull(message = "착용 상태는 필수입니다.")
     private String status;
+
 }
