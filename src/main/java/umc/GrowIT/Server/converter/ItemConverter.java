@@ -6,7 +6,9 @@ import umc.GrowIT.Server.domain.UserItem;
 import umc.GrowIT.Server.domain.enums.ItemStatus;
 import umc.GrowIT.Server.repository.ItemRepository.ItemRepository;
 import umc.GrowIT.Server.web.dto.ItemDTO.ItemResponseDTO;
+import umc.GrowIT.Server.web.dto.ItemEquipDTO.ItemEquipResponseDTO;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -50,5 +52,18 @@ public class ItemConverter {
                 .itemName(userItem.getItem().getName())
                 .build()
                 ;
+    }
+
+    public static ItemEquipResponseDTO itemEquipDTO(UserItem userItem){
+
+
+        return ItemEquipResponseDTO.builder()
+                .itemId(userItem.getItem().getId())
+                .name(userItem.getItem().getName())
+                .category(userItem.getItem().getCategory().name())
+                .status(userItem.getStatus().name())
+                .updatedAt(LocalDateTime.now().toString())
+                .build();
+
     }
 }
