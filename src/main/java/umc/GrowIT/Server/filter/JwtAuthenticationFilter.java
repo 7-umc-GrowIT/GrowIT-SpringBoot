@@ -1,4 +1,4 @@
-package umc.GrowIT.Server.jwt;
+package umc.GrowIT.Server.filter;
 
 import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.MalformedJwtException;
@@ -15,6 +15,8 @@ import jakarta.servlet.http.HttpServletResponse;
 
 import java.io.IOException;
 import io.jsonwebtoken.SignatureException;
+import umc.GrowIT.Server.apiPayload.exception.JwtAuthenticationException;
+import umc.GrowIT.Server.util.JwtTokenUtil;
 
 import static umc.GrowIT.Server.apiPayload.code.status.ErrorStatus.*;
 

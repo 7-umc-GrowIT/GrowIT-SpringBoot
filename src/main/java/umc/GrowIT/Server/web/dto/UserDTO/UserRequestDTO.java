@@ -37,6 +37,15 @@ public class UserRequestDTO {
     @Getter
     @NoArgsConstructor
     @AllArgsConstructor
+    public static class UserTermsDTO {
+        @NotEmpty(message = "필수 입력 항목입니다.")
+        private List<TermRequestDTO.UserTermDTO> userTerms;
+    }
+
+    @Builder
+    @Getter
+    @NoArgsConstructor
+    @AllArgsConstructor
     public static class EmailLoginDTO {
 
         @NotBlank(message = "필수 입력 항목입니다.")

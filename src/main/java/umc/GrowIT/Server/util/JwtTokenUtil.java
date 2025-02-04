@@ -1,4 +1,4 @@
-package umc.GrowIT.Server.jwt;
+package umc.GrowIT.Server.util;
 
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.ExpiredJwtException;
@@ -12,6 +12,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.stereotype.Component;
+import umc.GrowIT.Server.domain.CustomUserDetails;
 import umc.GrowIT.Server.service.userService.UserQueryService;
 import umc.GrowIT.Server.web.dto.UserDTO.UserResponseDTO;
 

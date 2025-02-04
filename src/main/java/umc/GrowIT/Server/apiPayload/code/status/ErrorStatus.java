@@ -65,6 +65,8 @@ public enum ErrorStatus implements BaseErrorCode {
     ITEM_NOT_FOUND(HttpStatus.BAD_REQUEST, "ITEM4001", "아이템을 찾을 수 없습니다."),
     ITEM_NOT_OWNED(HttpStatus.BAD_REQUEST, "ITEM4002", "보유하지 않은 아이템입니다."),
     ITEM_OWNED(HttpStatus.BAD_REQUEST, "ITEM4003", "이미 보유 중인 아이템입니다."),
+    ITEM_ALREADY_EQUIPPED(HttpStatus.BAD_REQUEST, "ITEM4004", "이미 착용중인 아이템입니다."),
+    ITEM_NOT_EQUIPPED(HttpStatus.BAD_REQUEST, "ITEM4005", "착용중인 아이템이 아닙니다."),
 
     // 사용자 아이템 관련 에러
     USER_ITEM_NOT_FOUND(HttpStatus.NOT_FOUND, "UI4001", "사용자 아이템이 존재하지 않습니다."),

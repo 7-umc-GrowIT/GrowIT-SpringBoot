@@ -10,6 +10,8 @@ import umc.GrowIT.Server.domain.enums.UserStatus;
 
 import java.util.List;
 
+import static umc.GrowIT.Server.domain.enums.UserStatus.ACTIVE;
+
 @Entity
 @Getter
 @Builder
@@ -22,9 +24,8 @@ public class User extends BaseEntity {
     private Long id;
 
     @Column(unique = true, length = 50)
-    private String email;
+    private String primaryEmail;
 
-    @Column(nullable = false)
     private String password;
 
     @Column(nullable = false, length = 20)
@@ -43,9 +44,6 @@ public class User extends BaseEntity {
     private Integer totalCredit;
 
     @Enumerated(EnumType.STRING)
-    private Provider provider;
-
-    @Enumerated(EnumType.STRING)
     private Role role;
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
@@ -58,6 +56,9 @@ public class User extends BaseEntity {
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
     private List<Diary> diaries;
 
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
+    private List<OAuthAccount> oAuthAccounts;
+
     @Setter
     @OneToOne(fetch = FetchType.LAZY, orphanRemoval = true)
     @JoinColumn(name = "refresh_token_id")
@@ -68,7 +69,7 @@ public class User extends BaseEntity {
     }
 
     public void deleteAccount() {
-        if (this.status == UserStatus.ACTIVE) {
+        if (this.status == ACTIVE) {
             this.status = UserStatus.INACTIVE;
         }
     }

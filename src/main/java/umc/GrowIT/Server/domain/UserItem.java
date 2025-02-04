@@ -35,4 +35,17 @@ public class UserItem extends BaseEntity {
     public void setItem(Item item) {
         this.item = item;
     }
+
+    public void setStatus(ItemStatus status) { this.status = status; }
+
+    //착용상태(status)를 바꾸는 메서드
+    public void toggleStatus() {
+        System.out.println("변경전 상태 : " + this.status);
+        if (this.status == ItemStatus.EQUIPPED) {
+            this.status = ItemStatus.UNEQUIPPED;
+        } else {
+            this.status = ItemStatus.EQUIPPED;
+        }
+        System.out.println("변경후 상태 : " + this.status);
+    }
 }

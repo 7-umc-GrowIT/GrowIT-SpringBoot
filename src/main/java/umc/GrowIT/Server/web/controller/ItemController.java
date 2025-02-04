@@ -8,6 +8,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 import umc.GrowIT.Server.apiPayload.ApiResponse;
 import umc.GrowIT.Server.domain.enums.ItemCategory;
+import umc.GrowIT.Server.domain.enums.ItemStatus;
 import umc.GrowIT.Server.service.ItemService.ItemCommandService;
 import umc.GrowIT.Server.service.ItemService.ItemQueryServiceImpl;
 import umc.GrowIT.Server.web.controller.specification.ItemSpecification;
@@ -24,6 +25,7 @@ public class ItemController implements ItemSpecification {
     private final ItemCommandService itemCommandService;
 
     @Override
+    @GetMapping("/items")
     public ApiResponse<ItemResponseDTO.ItemListDTO> getItemList(ItemCategory category) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         Long userId = (Long) authentication.getPrincipal(); //사용자 식별 id
@@ -32,12 +34,20 @@ public class ItemController implements ItemSpecification {
 
     }
 
+    //그로 아이템 착용/해제
     @Override
+    @PatchMapping("/items/{itemId}")
     public ApiResponse<ItemEquipResponseDTO> updateItemStatus(Long itemId, ItemEquipRequestDTO request) {
-        return ApiResponse.onSuccess(null);
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        Long userId = (Long) authentication.getPrincipal();
+
+        String status = request.getStatus();
+
+        return ApiResponse.onSuccess(itemCommandService.updateItemStatus(userId, itemId, status));
     }
 
     @Override
+    @PostMapping("/items/{itemId}/purchase")
     public ApiResponse<ItemResponseDTO.PurchaseItemResponseDTO> purchaseItem(Long itemId) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         Long userId = (Long) authentication.getPrincipal(); //사용자 식별 id
