@@ -29,7 +29,8 @@ public interface ItemSpecification {
 
 
     @PatchMapping("/items/{itemId}")
-    @Operation(summary = "아이템 착용/해제", description = "사용자가 보유한 아이템의 착용 상태를 변경합니다.")
+    @Operation(summary = "아이템 착용/해제", description = "아이템의 착용 상태를 변경합니다. " +
+            "착용하려면 EQUIPPED를, 해제하려면 UNEQUIPPED를 전달하세요.")
     @ApiResponses({
             @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "COMMON200", description = "⭕ SUCCESS"),
             @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "ITEM4004", description = "❌ 이미 착용중인 아이템입니다.", content = @Content(schema = @Schema(implementation = ApiResponse.class))),
@@ -39,9 +40,6 @@ public interface ItemSpecification {
             @Parameter(description = "아이템 ID", example = "1")
             @PathVariable(name = "itemId") Long itemId,
             @Valid @RequestBody @io.swagger.v3.oas.annotations.parameters.RequestBody(
-                    description = "아이템 현재 착용 상태 정보" +
-                            "현재 착용상태(해제 요청을 원한다면) -> EQUIPPED" +
-                            "현재 해제상태(착용 요청을 원한다면) -> UNEQUIPPED",
                     required = true,
                     content = @Content(
                             schema = @Schema(implementation = ItemEquipRequestDTO.class)
