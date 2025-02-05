@@ -100,7 +100,12 @@ public enum ErrorStatus implements BaseErrorCode {
     S3_FILE_EMPTY(HttpStatus.BAD_REQUEST, "S3_4002", "파일이 비어 있습니다."),
     S3_FILE_UPLOAD_FAIL(HttpStatus.INTERNAL_SERVER_ERROR, "S3_5001", "파일 업로드에 실패했습니다."),
     S3_FILE_OVER_SIZE(HttpStatus.BAD_REQUEST, "S3_4003", "파일 크기가 10MB를 초과했습니다."),
-    S3_FILE_DELETE_FAILED(HttpStatus.BAD_REQUEST, "S3_4004", "파일 삭제에 실패했습니다.");
+    S3_FILE_DELETE_FAILED(HttpStatus.BAD_REQUEST, "S3_4004", "파일 삭제에 실패했습니다."),
+
+    // OAuth 관련 에러
+    ACCOUNT_ALREADY_EXISTS(HttpStatus.CONFLICT, "OAUTH_4001", "이미 가입한 계정입니다.")
+
+    ;
 
 
     private final HttpStatus httpStatus;

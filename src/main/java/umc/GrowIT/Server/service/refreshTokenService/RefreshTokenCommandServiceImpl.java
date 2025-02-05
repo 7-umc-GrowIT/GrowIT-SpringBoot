@@ -13,6 +13,8 @@ import umc.GrowIT.Server.domain.User;
 import umc.GrowIT.Server.util.JwtTokenUtil;
 import umc.GrowIT.Server.repository.RefreshTokenRepository;
 import umc.GrowIT.Server.service.userService.CustomUserDetailsService;
+import umc.GrowIT.Server.web.dto.TokenDTO.TokenRequestDTO;
+import umc.GrowIT.Server.web.dto.TokenDTO.TokenResponseDTO;
 import umc.GrowIT.Server.web.dto.UserDTO.UserRequestDTO;
 import umc.GrowIT.Server.web.dto.UserDTO.UserResponseDTO;
 
@@ -44,7 +46,7 @@ public class RefreshTokenCommandServiceImpl implements RefreshTokenCommandServic
 
     @Transactional(noRollbackFor = AuthHandler.class)
     @Override
-    public UserResponseDTO.AccessTokenDTO reissueToken(UserRequestDTO.ReissueDTO reissueDTO) {
+    public TokenResponseDTO.AccessTokenDTO reissueToken(TokenRequestDTO.ReissueDTO reissueDTO) {
         RefreshToken storedRefreshToken = refreshTokenRepository.findByRefreshToken(reissueDTO.getRefreshToken()) //요청한 refresh token 이 database 에 존재하는지 확인
                 .orElseThrow(() -> new AuthHandler(ErrorStatus.REFRESH_TOKEN_NOT_FOUND));
 

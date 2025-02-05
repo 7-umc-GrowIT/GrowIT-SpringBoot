@@ -6,7 +6,6 @@ import org.springframework.transaction.annotation.Transactional;
 import umc.GrowIT.Server.apiPayload.code.status.ErrorStatus;
 import umc.GrowIT.Server.apiPayload.exception.ItemHandler;
 import umc.GrowIT.Server.converter.ItemConverter;
-import umc.GrowIT.Server.converter.UserConverter;
 import umc.GrowIT.Server.domain.Item;
 import umc.GrowIT.Server.domain.User;
 import umc.GrowIT.Server.domain.UserItem;

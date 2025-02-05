@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.reactive.function.client.WebClient;
@@ -18,10 +19,13 @@ import umc.GrowIT.Server.domain.User;
 import umc.GrowIT.Server.repository.OAuthAccountRepository;
 import umc.GrowIT.Server.service.userService.UserCommandService;
 import umc.GrowIT.Server.util.JwtTokenUtil;
+import umc.GrowIT.Server.web.dto.OAuthDTO.OAuthApiResponseDTO;
 import umc.GrowIT.Server.web.dto.OAuthDTO.OAuthResponseDTO;
+import umc.GrowIT.Server.web.dto.TokenDTO.TokenResponseDTO;
 import umc.GrowIT.Server.web.dto.UserDTO.UserResponseDTO;
 
 import static umc.GrowIT.Server.apiPayload.code.status.ErrorStatus.KAKAO_AUTH_CODE_ERROR;
+import static umc.GrowIT.Server.converter.OAuthConverter.toOAuthUserInfoDTO;
 import static umc.GrowIT.Server.converter.UserConverter.toKakaoLoginDTO;
 
 @Service
@@ -49,14 +53,13 @@ public class KakaoServiceImpl implements KakaoService {
      *
      * @param code 카카오 서버로부터 받은 인가 코드
      */
-    public OAuthResponseDTO.KakaoUserInfoResponseDTO saveKakaoUserInfo(String code) {
-        OAuthResponseDTO.KakaoTokenResponseDTO kakaoTokenResponse = requestKakaoToken(code);
+    public OAuthApiResponseDTO.KakaoUserInfoResponseDTO saveKakaoUserInfo(String code) {
+        OAuthApiResponseDTO.KakaoTokenResponseDTO kakaoTokenResponse = requestKakaoToken(code);
 
         if (kakaoTokenResponse == null)
             throw new AuthHandler(KAKAO_AUTH_CODE_ERROR);
 
         String accessToken = kakaoTokenResponse.getAccess_token();
-        log.info("AT : " + accessToken);
         return requestKakaoUserInfo(accessToken);
     }
 
@@ -68,7 +71,7 @@ public class KakaoServiceImpl implements KakaoService {
      * @throws AuthHandler 인가 코드 잘못 주었을 때 예외 처리
      */
     @Override
-    public OAuthResponseDTO.KakaoTokenResponseDTO requestKakaoToken(String code){
+    public OAuthApiResponseDTO.KakaoTokenResponseDTO requestKakaoToken(String code){
         MultiValueMap<String, String> requestBody = new LinkedMultiValueMap<>();
         requestBody.add("grant_type", grantType);
         requestBody.add("client_id", clientId);
@@ -83,7 +86,7 @@ public class KakaoServiceImpl implements KakaoService {
                 .retrieve() //서버 응답 가져오기
                 .onStatus(HttpStatusCode::is4xxClientError,
                         response -> Mono.error(new AuthHandler(KAKAO_AUTH_CODE_ERROR)))
-                .bodyToMono(OAuthResponseDTO.KakaoTokenResponseDTO.class) //응답 본문 -> Mono
+                .bodyToMono(OAuthApiResponseDTO.KakaoTokenResponseDTO.class) //응답 본문 -> Mono
                 .block();
     }
 
@@ -93,12 +96,12 @@ public class KakaoServiceImpl implements KakaoService {
      * @param accessToken 카카오 서버로부터 받은 AccessToken
      * @return 사용자 정보 (이메일, 닉네임)
      */
-    public OAuthResponseDTO.KakaoUserInfoResponseDTO requestKakaoUserInfo(String accessToken) {
+    public OAuthApiResponseDTO.KakaoUserInfoResponseDTO requestKakaoUserInfo(String accessToken) {
             return kakaoApiWebClient.get()
                     .uri("/v2/user/me")
                     .header(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken)
                     .retrieve()
-                    .bodyToMono(OAuthResponseDTO.KakaoUserInfoResponseDTO.class)
+                    .bodyToMono(OAuthApiResponseDTO.KakaoUserInfoResponseDTO.class)
                     .block();
     }
 
@@ -109,19 +112,20 @@ public class KakaoServiceImpl implements KakaoService {
      * @param code 카카오 서버로부터 받은 인증 코드
      * @return 회원가입 필요 여부, AT/RT
      */
-    public UserResponseDTO.KakaoLoginDTO loginKakao(String code) {
-        OAuthResponseDTO.KakaoUserInfoResponseDTO kakaoUserInfoResponse = saveKakaoUserInfo(code);
+    @Transactional
+    public OAuthResponseDTO.KakaoLoginDTO loginKakao(String code) {
+        OAuthApiResponseDTO.KakaoUserInfoResponseDTO kakaoUserInfoResponse = saveKakaoUserInfo(code);
         OAuthAccount oAuthAccount = oAuthAccountRepository.findByProviderId(kakaoUserInfoResponse.getId())
                 .orElse(null); // 값이 없으면 null
 
         if (oAuthAccount == null)
-            return toKakaoLoginDTO(true, null);
+            return toKakaoLoginDTO(true, toOAuthUserInfoDTO(kakaoUserInfoResponse), null);
         else {
             User user = oAuthAccount.getUser();
-            UserResponseDTO.TokenDTO tokenDTO = jwtTokenUtil.generateToken(
+            TokenResponseDTO.TokenDTO tokenDTO = jwtTokenUtil.generateToken(
                     userCommandService.createUserDetails(user));
             userCommandService.setRefreshToken(tokenDTO.getRefreshToken(), user);
-            return toKakaoLoginDTO(false, tokenDTO);
+            return toKakaoLoginDTO(false, null, tokenDTO);
         }
     }
 }

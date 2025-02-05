@@ -2,6 +2,7 @@ package umc.GrowIT.Server.converter;
 
 import umc.GrowIT.Server.domain.RefreshToken;
 import umc.GrowIT.Server.domain.User;
+import umc.GrowIT.Server.web.dto.TokenDTO.TokenResponseDTO;
 import umc.GrowIT.Server.web.dto.UserDTO.UserResponseDTO;
 
 import java.time.LocalDateTime;
@@ -16,14 +17,14 @@ public class TokenConverter {
                 .build();
     }
 
-    public static UserResponseDTO.AccessTokenDTO toAccessTokenDTO(String accessToken) {
-        return UserResponseDTO.AccessTokenDTO.builder()
+    public static TokenResponseDTO.AccessTokenDTO toAccessTokenDTO(String accessToken) {
+        return TokenResponseDTO.AccessTokenDTO.builder()
                 .accessToken(accessToken)
                 .build();
     }
 
-    public static UserResponseDTO.TokenDTO toTokenDTO(String accessToken, String refreshToken){
-        return UserResponseDTO.TokenDTO.builder()
+    public static TokenResponseDTO.TokenDTO toTokenDTO(String accessToken, String refreshToken){
+        return TokenResponseDTO.TokenDTO.builder()
                 .accessToken(accessToken)
                 .refreshToken(refreshToken)
                 .build();

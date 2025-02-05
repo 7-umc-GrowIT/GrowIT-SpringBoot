@@ -19,6 +19,9 @@ import umc.GrowIT.Server.domain.*;
 import umc.GrowIT.Server.domain.enums.TermType;
 import umc.GrowIT.Server.domain.CustomUserDetails;
 import umc.GrowIT.Server.service.refreshTokenService.RefreshTokenCommandService;
+import umc.GrowIT.Server.service.termService.TermQueryService;
+import umc.GrowIT.Server.web.dto.TermDTO.TermRequestDTO;
+import umc.GrowIT.Server.web.dto.TokenDTO.TokenResponseDTO;
 import umc.GrowIT.Server.web.dto.UserDTO.UserRequestDTO;
 import umc.GrowIT.Server.web.dto.UserDTO.UserResponseDTO;
 import umc.GrowIT.Server.repository.TermRepository;
@@ -38,69 +41,46 @@ import static umc.GrowIT.Server.domain.enums.UserStatus.INACTIVE;
 @Transactional
 public class UserCommandServiceImpl implements UserCommandService {
 
-    public static final int TERM_COUNT = 6;
     private final UserRepository userRepository;
-    private final TermRepository termRepository;
+    private final TermQueryService termQueryService;
     private final PasswordEncoder passwordEncoder;
     private final JwtTokenUtil jwtTokenUtil;
     private final RefreshTokenCommandService refreshTokenCommandService;
     private final AuthenticationManager authenticationManager;
 
     @Override
-    public UserResponseDTO.TokenDTO createUser(UserRequestDTO.UserInfoDTO userInfoDTO) {
+    public TokenResponseDTO.TokenDTO signupEmail(UserRequestDTO.UserInfoDTO userInfoDTO) {
         //인증 받지 않았을 때 예외 처리
         if (userInfoDTO.getIsVerified() == null || !userInfoDTO.getIsVerified())
             throw new UserHandler(ErrorStatus.EMAIL_NOT_VERIFIED);
 
         String email = userInfoDTO.getEmail();
-        Optional<User> user = userRepository.findByPrimaryEmail(email);
 
         //이미 가입한 회원일 때(이메일 존재) 예외 처리
-        if (user.isPresent()) {
+        if (userRepository.existsByPrimaryEmail(email))
             throw new UserHandler(ErrorStatus.EMAIL_ALREADY_EXISTS);
-        }
-
-        //전체 약관 정보가 주어지지 않았을 때 예외 처리
-        if (userInfoDTO.getUserTerms().size() < TERM_COUNT) {
-            throw new TermHandler(ErrorStatus.ALL_TERMS_REQUIRED);
-        }
 
         //User 엔티티로 변환
         User newUser = UserConverter.toUser(userInfoDTO);
         newUser.encodePassword(passwordEncoder.encode(newUser.getPassword()));
 
-        /*
-         * 사용자 약관 처리 과정
-         * 1. UserInfoDTO 내부 userTerms(term_id, agreed) Stream 형태로 처리
-         * 2. 약관 존재 여부 및 동의 상태 검증
-         * 3. UserTerm 엔티티로 변환
-        */
-        List<UserTerm> userTerms = userInfoDTO.getUserTerms().stream()
-                .map(tempUserTerm -> {
-                    Term term = termRepository.findById(tempUserTerm.getTermId())
-                            .orElse(null);
-                    //존재하지 않는 약관을 요청하면 예외 처리
-                    if (term == null) {
-                        throw new TermHandler(ErrorStatus.TERM_NOT_FOUND);
-                        //필수 약관에 동의하지 않으면 예외 처리
-                    } else if (term.getType() == TermType.MANDATORY && !tempUserTerm.getAgreed()) {
-                        throw new TermHandler(ErrorStatus.MANDATORY_TERMS_REQUIRED);
-                    }
-                    return TermConverter.toUserTerm(tempUserTerm.getAgreed(), term, newUser);
-                })
-                .collect(Collectors.toList());
+        //약관 정보 유효성 검사 및 UserTerm 엔티티 생성
+        List<UserTerm> userTerms = termQueryService.checkUserTerms(userInfoDTO.getUserTerms(), newUser);
 
         newUser.setUserTerms(userTerms);
         userRepository.save(newUser);
 
-        UserResponseDTO.TokenDTO tokenDTO = performAuthentication(userInfoDTO.getEmail(), userInfoDTO.getPassword()); //자동 로그인 처리
-        setRefreshToken(tokenDTO.getRefreshToken(), newUser); //refresh token 엔티티 변환 및 user 엔티티에 refresh token 저장
+        //자동 로그인 처리
+        TokenResponseDTO.TokenDTO tokenDTO = performAuthentication(userInfoDTO.getEmail(), userInfoDTO.getPassword());
+
+        //refresh token 엔티티 변환 및 user 엔티티에 refresh token 저장
+        setRefreshToken(tokenDTO.getRefreshToken(), newUser);
 
         return tokenDTO;
     }
 
     @Override
-    public UserResponseDTO.TokenDTO emailLogin(UserRequestDTO.EmailLoginDTO emailLoginDTO) {
+    public TokenResponseDTO.TokenDTO loginEmail(UserRequestDTO.EmailLoginDTO emailLoginDTO) {
         String email = emailLoginDTO.getEmail(); //사용자가 입력한 email
         String password = emailLoginDTO.getPassword(); //사용자가 입력한 password
 
@@ -112,7 +92,7 @@ public class UserCommandServiceImpl implements UserCommandService {
             if (user.getStatus() == INACTIVE)
                 throw new UserHandler(ErrorStatus.USER_STATUS_INACTIVE);
 
-            UserResponseDTO.TokenDTO tokenDTO = performAuthentication(email, password);
+            TokenResponseDTO.TokenDTO tokenDTO = performAuthentication(email, password);
             setRefreshToken(tokenDTO.getRefreshToken(), user);
 
             return tokenDTO;
@@ -153,7 +133,6 @@ public class UserCommandServiceImpl implements UserCommandService {
     public CustomUserDetails createUserDetails(User user) {
         return new CustomUserDetails(
                 user.getPrimaryEmail(),
-                user.getPassword(),
                 Collections.singletonList(new SimpleGrantedAuthority(String.valueOf(user.getRole()))),
                 user.getId()
         );
@@ -183,12 +162,16 @@ public class UserCommandServiceImpl implements UserCommandService {
     }
 
     @Override
-    public UserResponseDTO.TokenDTO performAuthentication(String email, String password) {
+    public TokenResponseDTO.TokenDTO performAuthentication(String email, String password) {
+        //인증되지 않은 상태의 Authentication 객체 생성
         UsernamePasswordAuthenticationToken authenticationToken =
-                new UsernamePasswordAuthenticationToken(email, password); //인증되지 않은 상태의 Authentication 객체 생성
+                new UsernamePasswordAuthenticationToken(email, password);
 
-        Authentication authentication = authenticationManager.authenticate(authenticationToken); //인증 성공 시 인증된 상태의 Authentication 객체 반환, 인증 실패 시 예외 던짐
-        UserResponseDTO.TokenDTO tokenDTO = jwtTokenUtil.generateToken((CustomUserDetails) authentication.getPrincipal()); //인증 성공 시 JWT 토큰 생성
+        //인증 성공 시 인증된 상태의 Authentication 객체 반환, 인증 실패 시 예외 던짐
+        Authentication authentication = authenticationManager.authenticate(authenticationToken);
+
+        //인증 성공 시 JWT 토큰 생성
+        TokenResponseDTO.TokenDTO tokenDTO = jwtTokenUtil.generateToken((CustomUserDetails) authentication.getPrincipal());
 
         return tokenDTO;
     }

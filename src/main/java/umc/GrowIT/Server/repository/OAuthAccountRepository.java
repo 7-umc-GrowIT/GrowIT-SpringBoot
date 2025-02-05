@@ -9,4 +9,6 @@ import java.util.Optional;
 public interface OAuthAccountRepository extends JpaRepository<OAuthAccount, Long> {
     @EntityGraph(attributePaths = {"user"})
     Optional<OAuthAccount> findByProviderId(Long providerId);
+
+    boolean existsByProviderId(Long providerId);
 }
