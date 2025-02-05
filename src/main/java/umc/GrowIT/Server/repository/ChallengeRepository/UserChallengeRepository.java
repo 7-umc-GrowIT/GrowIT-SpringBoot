@@ -29,14 +29,6 @@ public interface UserChallengeRepository extends JpaRepository<UserChallenge, Lo
             @Param("endOfDay") LocalDateTime endOfDay);
 
 
-    @Modifying
-    @Query("DELETE FROM UserChallenge uc WHERE uc.user.id = :userId AND uc.completed = false AND uc.createdAt BETWEEN :startOfYesterday AND :endOfYesterday")
-    void deleteUnverifiedChallenges(@Param("userId") Long userId,
-                                    @Param("startOfYesterday") LocalDateTime startOfYesterday,
-                                    @Param("endOfYesterday") LocalDateTime endOfYesterday);
-
-
-
     // 1. 유저의 완료 또는 미완료 챌린지 조회 (dtype 무시)
     @Query("SELECT uc FROM UserChallenge uc " +
             "WHERE uc.user.id = :userId " +

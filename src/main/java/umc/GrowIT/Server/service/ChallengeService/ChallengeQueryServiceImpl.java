@@ -47,12 +47,12 @@ public class ChallengeQueryServiceImpl implements ChallengeQueryService {
 
     @Override
     public String getDiaryDate(Long userId) {
-        // TODO: 사용자가 일기를 처음 작성한 날짜와 오늘 날짜 간의 차이를 계산
-        LocalDate firstDiaryDate = diaryRepository.findFirstDiaryDateByUserId(userId) // 최초 일기 작성 날짜 조회
-                .orElse(LocalDate.now()); // 일기를 작성한 기록이 없으면 오늘 날짜를 기본값으로 사용
+        // 사용자가 마지막으로 일기를 작성한 날짜 조회
+        LocalDate lastDiaryDate = diaryRepository.findLastDiaryDateByUserId(userId)
+                .orElse(LocalDate.now()); // 작성 기록이 없으면 오늘 날짜를 기본값으로 사용
 
         // 오늘 날짜와의 차이를 계산
-        long days = ChronoUnit.DAYS.between(firstDiaryDate, LocalDate.now());
+        long days = ChronoUnit.DAYS.between(lastDiaryDate, LocalDate.now());
 
         return "D+" + days;
     }
@@ -61,12 +61,6 @@ public class ChallengeQueryServiceImpl implements ChallengeQueryService {
     @Override
     @Transactional
     public ChallengeResponseDTO.ChallengeHomeDTO getChallengeHome(Long userId) {
-        // 1. 어제의 시작 시간과 끝 시간 계산
-        LocalDateTime startOfYesterday = LocalDate.now().minusDays(1).atStartOfDay(); // 어제 자정
-        LocalDateTime endOfYesterday = LocalDate.now().minusDays(1).atTime(LocalTime.MAX); // 어제 끝
-
-        // **어제의 미인증 챌린지 삭제**
-        userChallengeRepository.deleteUnverifiedChallenges(userId, startOfYesterday, endOfYesterday);
 
         // 2. 오늘의 시작 시간과 끝 시간 계산
         LocalDateTime startOfDay = LocalDate.now().atStartOfDay(); // 오늘 자정 00:00:00
