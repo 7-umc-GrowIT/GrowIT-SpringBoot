@@ -78,7 +78,6 @@ public class ChallengeResponseDTO {
     }
 
     // 챌린지 인증 응답 DTO
-
     @Getter
     @Builder
     @NoArgsConstructor
@@ -106,6 +105,19 @@ public class ChallengeResponseDTO {
         private String thoughts;
         private Integer time;
         private LocalDateTime certificationDate;
+    }
+
+    // 선택한 챌린지 저장
+    @Getter
+    @Builder
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class SelectChallengeDTO {
+        private Long id;
+        private UserChallengeType dtype;
+        private String title;
+        private String content;
+        private Integer time;
     }
 
     // 챌린지 수정

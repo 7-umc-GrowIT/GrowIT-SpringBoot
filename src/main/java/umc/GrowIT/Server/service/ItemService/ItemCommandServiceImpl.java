@@ -62,30 +62,6 @@ public class ItemCommandServiceImpl implements ItemCommandService {
         return ItemConverter.toPurchaseItemResponseDTO(savedUserItem);
     }
 
-//    @Override
-//    public ItemEquipResponseDTO updateItemStatus(Long userId, Long itemId, String status) {
-//
-//        UserItem userItem = userItemRepository.findByUserIdAndItemId(userId, itemId)
-//                .orElseThrow(() -> new ItemHandler(ErrorStatus.ITEM_NOT_OWNED));
-//
-//        // 오류 코드를 구분하기위한 조건문
-//        if (userItem.getStatus() != ItemStatus.valueOf(status)) {
-//            // 사용자가 현재 상태를 해제상태(UNEQUIPPED)로 전달했는데 실제로는 해제상태가 아닌 경우 -> 실제로는 착용중인 아이템인데 해제상태라고 잘못 전달한 경우
-//            if (ItemStatus.valueOf(status) == ItemStatus.UNEQUIPPED && userItem.getStatus() != ItemStatus.UNEQUIPPED) {
-//                throw new ItemHandler(ErrorStatus.ITEM_ALREADY_EQUIPPED);
-//            }
-//
-//            // 사용자가 현재 상태를 착용상태(EQUIPPED)로 전달했는데 실제로는 착용상태가 아닌 경우 -> 실제로는 해제상태인 아이템인데 착용상태라고 잘못 전달한 경우
-//            if(ItemStatus.valueOf(status) == ItemStatus.EQUIPPED && userItem.getStatus() != ItemStatus.EQUIPPED) {
-//                throw new ItemHandler(ErrorStatus.ITEM_NOT_EQUIPPED);
-//            }
-//        }
-//
-//        userItem.toggleStatus();
-//
-//        return ItemConverter.itemEquipDTO(userItem);
-//    }
-
 
     @Override
     public ItemEquipResponseDTO updateItemStatus(Long userId, Long itemId, String requestStatus) {

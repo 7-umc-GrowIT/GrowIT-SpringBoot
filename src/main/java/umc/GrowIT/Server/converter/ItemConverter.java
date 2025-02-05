@@ -10,31 +10,50 @@ import umc.GrowIT.Server.web.dto.ItemEquipDTO.ItemEquipResponseDTO;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 public class ItemConverter {
 
     //아이템 1개 반환
-    public static ItemResponseDTO.ItemDTO toItemDTO(Item item, Long userId, ItemRepository itemRepository) {
-        ItemStatus status = itemRepository.findStatusByUserIdAndItemId(userId, item.getId());
+    public static ItemResponseDTO.ItemDTO toItemDTO(
+            Item item,
+            Long userId,
+            ItemStatus status,
+            boolean isPurchased,
+            String itemUrl,
+            String groItemUrl) {
 
         return ItemResponseDTO.ItemDTO.builder()
                 .id(item.getId())
                 .name(item.getName())
                 .price(item.getPrice())
-                .imageUrl(item.getImageUrl())
+                .imageUrl(itemUrl)
+                .groImageUrl(groItemUrl)
                 .shopBackgroundColor(item.getShopBackgroundColor())
                 .category(item.getCategory().toString())
-                .status(status != null ? status.toString() : null) //status가 null일 경우(보유하지않은 경우) >> 기본값 null로 설정
-                .purchased(itemRepository.existsByUserItemsUserIdAndId(userId, item.getId()))
+                .status(status != null ? status.toString() : null)
+                .purchased(isPurchased)
                 .build();
     }
 
-    //아이템리스트 반환
-    public static ItemResponseDTO.ItemListDTO toItemListDTO(List<Item> itemList, Long userId, ItemRepository itemRepository) {
+    public static ItemResponseDTO.ItemListDTO toItemListDTO(
+            List<Item> itemList,
+            Long userId,
+            Map<Long, ItemStatus> itemStatuses,
+            Map<Long, Boolean> purchaseStatuses,
+            Map<Item, String> itemUrls,
+            Map<Item, String> groItemUrls) {
+
         return ItemResponseDTO.ItemListDTO.builder()
                 .itemList(itemList.stream()
-                        .map(item -> toItemDTO(item, userId, itemRepository))
+                        .map(item -> toItemDTO(
+                                item,
+                                userId,
+                                itemStatuses.get(item.getId()),
+                                purchaseStatuses.get(item.getId()),
+                                itemUrls.get(item),
+                                groItemUrls.get(item)))
                         .collect(Collectors.toList()))
                 .build();
     }

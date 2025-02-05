@@ -55,8 +55,9 @@ public enum ErrorStatus implements BaseErrorCode {
     // 챌린지 관련 에러
     CHALLENGE_NOT_FOUND(HttpStatus.NOT_FOUND, "CHALLENGE4001", "챌린지를 찾을 수 없습니다."),
     CHALLENGE_VERIFY_NOT_EXISTS(HttpStatus.BAD_REQUEST, "CHALLENGE4002", "챌린지 인증 내역이 존재하지 않습니다."),
-    CHALLENGE_USER_NOT_MATCH(HttpStatus.BAD_REQUEST, "CHALLENGE4003", "유저 아이디가 챌린지 아이디와 일치하지 않습니다."),
+    CHALLENGE_NOT_COMPLETE(HttpStatus.BAD_REQUEST, "CHALLENGE4003", "미완료한 챌린지입니다."),
     CHALLENGE_VERIFY_ALREADY_EXISTS(HttpStatus.BAD_REQUEST, "CHALLENGE4004", "이미 완료된 챌린지입니다."),
+    CHALLENGE_ALREADY_SAVED(HttpStatus.BAD_REQUEST, "CHALLENGE4005", "이미 저장된 챌린지입니다."),
 
     //기타 에러
     PASSWORD_NOT_MATCH(HttpStatus.BAD_REQUEST, "PWD4001", "비밀번호 확인이 일치하지 않습니다."),
@@ -72,7 +73,7 @@ public enum ErrorStatus implements BaseErrorCode {
     USER_ITEM_NOT_FOUND(HttpStatus.NOT_FOUND, "UI4001", "사용자 아이템이 존재하지 않습니다."),
     EQUIPPED_USER_ITEM_NOT_FOUND(HttpStatus.NOT_FOUND, "UI4002", "착용 중인 사용자 아이템이 존재하지 않습니다."),
 
-    //결제관련에러
+    //결제 관련 에러
     PAYMENT_ERROR(HttpStatus.BAD_REQUEST, "PAYMENT4001", "결제정보가 정확하지 않습니다."),
 
     // 크레딧 관련 에러
@@ -83,7 +84,7 @@ public enum ErrorStatus implements BaseErrorCode {
     DATE_NOT_FOUND(HttpStatus.BAD_REQUEST, "DATE4001", "유효하지 않은 날짜입니다."),
     DATE_IS_AFTER(HttpStatus.BAD_REQUEST, "DATE4002", "날짜는 오늘 이후로 설정할 수 없습니다."),
 
-    //그로관련
+    //그로 관련
     GRO_NICKNAME_ALREADY_EXISTS(HttpStatus.CONFLICT, "GRO4001", "이미 사용 중인 닉네임입니다."),
     GRO_NICKNAME_LENGTH_INVALID(HttpStatus.BAD_REQUEST, "Gro4002", "닉네임은 2글자에서 20글자 사이여야 합니다."),
     GRO_NOT_FOUND(HttpStatus.NOT_FOUND, "GRO4003", "그로에 대한 정보가 존재하지 않습니다."),
@@ -95,7 +96,7 @@ public enum ErrorStatus implements BaseErrorCode {
     DIARY_ALREADY_EXISTS(HttpStatus.BAD_REQUEST, "DIARY4003", "해당날짜에 이미 일기가 존재합니다."),
     DIARY_SAME_CONTENT(HttpStatus.BAD_REQUEST, "DIARY4004", "기존 일기와 동일한 내용입니다."),
 
-    // s3 관련 에러
+    // S3 관련 에러
     S3_BAD_FILE_EXTENSION(HttpStatus.BAD_REQUEST, "S3_4001", "파일 확장자가 잘못되었습니다."),
     S3_FILE_EMPTY(HttpStatus.BAD_REQUEST, "S3_4002", "파일이 비어 있습니다."),
     S3_FILE_UPLOAD_FAIL(HttpStatus.INTERNAL_SERVER_ERROR, "S3_5001", "파일 업로드에 실패했습니다."),

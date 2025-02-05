@@ -22,4 +22,18 @@ public class DiaryRequestDTO {
         @NotNull
         String content; //수정 내용
     }
+
+    @Getter
+    @Setter
+    public static class VoiceChatDTO {
+        @NotNull
+        String chat; //사용자의 음성내용
+    }
+
+    @Getter
+    @Setter
+    public static class SummaryDTO {
+        @NotNull
+        LocalDate date;
+    }
 }

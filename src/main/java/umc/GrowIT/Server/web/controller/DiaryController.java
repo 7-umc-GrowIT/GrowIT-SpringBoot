@@ -20,8 +20,7 @@ public class DiaryController implements DiarySpecification {
     private final DiaryQueryService diaryQueryService;
     private final DiaryCommandService diaryCommandService;
     @GetMapping("/dates")
-    public ApiResponse<DiaryResponseDTO.DiaryDateListDTO> getDiaryDate(@RequestHeader(value = "Authorization", required = false) String authorizationHeader,
-                                                                       @RequestParam Integer year,
+    public ApiResponse<DiaryResponseDTO.DiaryDateListDTO> getDiaryDate(@RequestParam Integer year,
                                                                        @RequestParam Integer month){
         //accessToken에서 userId 추출
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
@@ -30,8 +29,7 @@ public class DiaryController implements DiarySpecification {
         return ApiResponse.onSuccess(diaryQueryService.getDiaryDate(year,month,userId));
     }
     @GetMapping("/")
-    public ApiResponse<DiaryResponseDTO.DiaryListDTO> getDiaryList(@RequestHeader(value = "Authorization", required = false) String authorizationHeader,
-                                                                   @RequestParam Integer year,
+    public ApiResponse<DiaryResponseDTO.DiaryListDTO> getDiaryList(@RequestParam Integer year,
                                                                    @RequestParam Integer month){
         //accessToken에서 userId 추출
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
@@ -40,8 +38,7 @@ public class DiaryController implements DiarySpecification {
         return ApiResponse.onSuccess(diaryQueryService.getDiaryList(year,month,userId));
     }
     @GetMapping("/{diaryId}")
-    public ApiResponse<DiaryResponseDTO.DiaryDTO> getDiary(@RequestHeader(value = "Authorization", required = false) String authorizationHeader,
-                                                           @PathVariable("diaryId") Long diaryId){
+    public ApiResponse<DiaryResponseDTO.DiaryDTO> getDiary(@PathVariable("diaryId") Long diaryId){
         //accessToken에서 userId 추출
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         Long userId = (Long) authentication.getPrincipal();
@@ -50,8 +47,7 @@ public class DiaryController implements DiarySpecification {
     }
 
     @PatchMapping("/{diaryId}")
-    public ApiResponse<DiaryResponseDTO.ModifyDiaryResultDTO> modifyDiary(@RequestHeader(value = "Authorization", required = false) String authorizationHeader,
-                                                                          @PathVariable("diaryId") Long diaryId, @RequestBody DiaryRequestDTO.ModifyDiaryDTO request){
+    public ApiResponse<DiaryResponseDTO.ModifyDiaryResultDTO> modifyDiary(@PathVariable("diaryId") Long diaryId, @RequestBody DiaryRequestDTO.ModifyDiaryDTO request){
         //accessToken에서 userId 추출
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         Long userId = (Long) authentication.getPrincipal();
@@ -60,8 +56,7 @@ public class DiaryController implements DiarySpecification {
     }
 
     @DeleteMapping("/{diaryId}")
-    public ApiResponse<DiaryResponseDTO.DeleteDiaryResultDTO> deleteDiary(@RequestHeader(value = "Authorization", required = false) String authorizationHeader,
-                                                                          @PathVariable("diaryId") Long diaryId){
+    public ApiResponse<DiaryResponseDTO.DeleteDiaryResultDTO> deleteDiary(@PathVariable("diaryId") Long diaryId){
         //accessToken에서 userId 추출
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         Long userId = (Long) authentication.getPrincipal();
@@ -69,8 +64,7 @@ public class DiaryController implements DiarySpecification {
         return ApiResponse.onSuccess(diaryCommandService.deleteDiary(diaryId, userId));
     }
     @PostMapping("/text")
-    public ApiResponse<DiaryResponseDTO.CreateDiaryResultDTO> createDiaryByText(@RequestHeader(value = "Authorization", required = false) String authorizationHeader,
-                                                                                @RequestBody DiaryRequestDTO.CreateDiaryDTO request){
+    public ApiResponse<DiaryResponseDTO.CreateDiaryResultDTO> createDiaryByText(@RequestBody DiaryRequestDTO.CreateDiaryDTO request){
         //accessToken에서 userId 추출
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         Long userId = (Long) authentication.getPrincipal();
@@ -78,12 +72,24 @@ public class DiaryController implements DiarySpecification {
         return ApiResponse.onSuccess(diaryCommandService.createDiary(request, userId));
     }
     @PostMapping("/voice")
-    public ApiResponse<DiaryResponseDTO.CreateDiaryResultDTO> createDiaryByVoice(@RequestBody DiaryRequestDTO.CreateDiaryDTO request){
-        //Todo: 음성인식 결과를 다듬어주는 로직 필요
-        return null;
+    public ApiResponse<DiaryResponseDTO.VoiceChatResultDTO> chatByVoice(@RequestBody DiaryRequestDTO.VoiceChatDTO request){
+
+        //accessToken에서 userId 추출
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        Long userId = (Long) authentication.getPrincipal();
+
+        return ApiResponse.onSuccess(diaryCommandService.chatByVoice(request, userId));
     }
 
+    @PostMapping("/summary")
+    public ApiResponse<DiaryResponseDTO.SummaryResultDTO> createDiaryByVoice(@RequestBody DiaryRequestDTO.SummaryDTO request) {
 
+        //accessToken에서 userId 추출
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        Long userId = (Long) authentication.getPrincipal();
+
+        return ApiResponse.onSuccess(diaryCommandService.createDiaryByVoice(request, userId));
+    }
 
 
 }
