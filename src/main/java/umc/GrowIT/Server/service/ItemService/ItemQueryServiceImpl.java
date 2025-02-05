@@ -11,11 +11,13 @@ import org.springframework.transaction.annotation.Transactional;
 import umc.GrowIT.Server.converter.ItemConverter;
 import umc.GrowIT.Server.domain.Item;
 import umc.GrowIT.Server.domain.enums.ItemCategory;
+import umc.GrowIT.Server.domain.enums.ItemStatus;
 import umc.GrowIT.Server.repository.ItemRepository.ItemRepository;
 import umc.GrowIT.Server.repository.UserItemRepository;
 import umc.GrowIT.Server.web.dto.ItemDTO.ItemResponseDTO;
 
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
@@ -39,11 +41,25 @@ public class ItemQueryServiceImpl implements ItemQueryService {
     public ItemResponseDTO.ItemListDTO getItemList(ItemCategory category, Long userId) {
         List<Item> itemList = itemRepository.findAllByCategory(category);
 
-        // 각 아이템에 대한 Pre-signed URL 생성
+        // status 조회 - null 처리 추가
+        Map<Long, ItemStatus> itemStatuses = new HashMap<>();
+        itemList.forEach(item -> {
+            ItemStatus status = itemRepository.findStatusByUserIdAndItemId(userId, item.getId());
+            itemStatuses.put(item.getId(), status);  // null이어도 저장 가능
+        });
+
+        // 구매여부 조회
+        Map<Long, Boolean> purchaseStatuses = itemList.stream()
+                .collect(Collectors.toMap(
+                        Item::getId,
+                        item -> itemRepository.existsByUserItemsUserIdAndId(userId, item.getId())
+                ));
+
+        // Pre-signed URL 생성
         Map<Item, String> itemUrls = createItemPreSignedUrl(itemList);
         Map<Item, String> groItemUrls = createGroItemPreSignedUrl(itemList);
 
-        return ItemConverter.toItemListDTO(itemList, userId, itemRepository, itemUrls, groItemUrls);
+        return ItemConverter.toItemListDTO(itemList, userId, itemStatuses, purchaseStatuses, itemUrls, groItemUrls);
     }
 
     @Override
@@ -52,12 +68,26 @@ public class ItemQueryServiceImpl implements ItemQueryService {
         // 기존의 잘 작동하던 코드 유지
         List<Item> userItems = itemRepository.findItemsByUserIdAndCategory(userId, category);
 
+        // status 조회 - null 처리 추가
+        Map<Long, ItemStatus> itemStatuses = new HashMap<>();
+        userItems.forEach(item -> {
+            ItemStatus status = itemRepository.findStatusByUserIdAndItemId(userId, item.getId());
+            itemStatuses.put(item.getId(), status);  // null이어도 저장 가능
+        });
+
+        // 구매여부 조회
+        Map<Long, Boolean> purchaseStatuses = userItems.stream()
+                .collect(Collectors.toMap(
+                        Item::getId,
+                        item -> itemRepository.existsByUserItemsUserIdAndId(userId, item.getId())
+                ));
+
         // Pre-signed URL 생성 로직만 추가
         Map<Item, String> itemUrls = createItemPreSignedUrl(userItems);
         Map<Item, String> groItemUrls = createGroItemPreSignedUrl(userItems);
 
         // converter에 URL 맵 전달
-        return ItemConverter.toItemListDTO(userItems, userId, itemRepository, itemUrls, groItemUrls);
+        return ItemConverter.toItemListDTO(userItems, userId, itemStatuses, purchaseStatuses, itemUrls, groItemUrls);
     }
 
     // 상점 리스트용 이미지의 Pre-signed URL 생성
@@ -92,3 +122,6 @@ public class ItemQueryServiceImpl implements ItemQueryService {
                 ));
     }
 }
+
+
+

@@ -19,11 +19,10 @@ public class ItemConverter {
     public static ItemResponseDTO.ItemDTO toItemDTO(
             Item item,
             Long userId,
-            ItemRepository itemRepository,
+            ItemStatus status,
+            boolean isPurchased,
             String itemUrl,
             String groItemUrl) {
-
-        ItemStatus status = itemRepository.findStatusByUserIdAndItemId(userId, item.getId());
 
         return ItemResponseDTO.ItemDTO.builder()
                 .id(item.getId())
@@ -34,14 +33,15 @@ public class ItemConverter {
                 .shopBackgroundColor(item.getShopBackgroundColor())
                 .category(item.getCategory().toString())
                 .status(status != null ? status.toString() : null)
-                .purchased(itemRepository.existsByUserItemsUserIdAndId(userId, item.getId()))
+                .purchased(isPurchased)
                 .build();
     }
 
     public static ItemResponseDTO.ItemListDTO toItemListDTO(
             List<Item> itemList,
             Long userId,
-            ItemRepository itemRepository,
+            Map<Long, ItemStatus> itemStatuses,
+            Map<Long, Boolean> purchaseStatuses,
             Map<Item, String> itemUrls,
             Map<Item, String> groItemUrls) {
 
@@ -50,7 +50,8 @@ public class ItemConverter {
                         .map(item -> toItemDTO(
                                 item,
                                 userId,
-                                itemRepository,
+                                itemStatuses.get(item.getId()),
+                                purchaseStatuses.get(item.getId()),
                                 itemUrls.get(item),
                                 groItemUrls.get(item)))
                         .collect(Collectors.toList()))
