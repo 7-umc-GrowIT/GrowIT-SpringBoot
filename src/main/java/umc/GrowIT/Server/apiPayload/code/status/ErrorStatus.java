@@ -57,11 +57,10 @@ public enum ErrorStatus implements BaseErrorCode {
     CHALLENGE_VERIFY_NOT_EXISTS(HttpStatus.BAD_REQUEST, "CHALLENGE4002", "챌린지 인증 내역이 존재하지 않습니다."),
     CHALLENGE_NOT_COMPLETE(HttpStatus.BAD_REQUEST, "CHALLENGE4003", "미완료한 챌린지입니다."),
     CHALLENGE_VERIFY_ALREADY_EXISTS(HttpStatus.BAD_REQUEST, "CHALLENGE4004", "이미 완료된 챌린지입니다."),
-    CHALLENGE_ALREADY_SAVED(HttpStatus.BAD_REQUEST, "CHALLENGE4005", "이미 저장된 챌린지입니다."),
-    CHALLENGE_SAVE_LIMIT(HttpStatus.BAD_REQUEST, "CHALLENGE4006", "챌린지는 3개까지 저장 가능합니다."),
-    CHALLENGE_AT_LEAST(HttpStatus.BAD_REQUEST, "CHALLENGE4007", "최소 하나의 챌린지를 선택해야 합니다."),
-    CHALLENGE_DAILY_MAX(HttpStatus.BAD_REQUEST, "CHALLENGE4008", "데일리 챌린지는 최대 2개까지만 저장 가능합니다."),
-    CHALLENGE_RANDOM_MAX(HttpStatus.BAD_REQUEST, "CHALLENGE4009", "랜덤 챌린지는 1개만 저장 가능합니다."),
+    CHALLENGE_SAVE_LIMIT(HttpStatus.BAD_REQUEST, "CHALLENGE4005", "챌린지는 3개까지 저장 가능합니다."),
+    CHALLENGE_AT_LEAST(HttpStatus.BAD_REQUEST, "CHALLENGE4006", "최소 하나의 챌린지를 선택해야 합니다."),
+    CHALLENGE_DAILY_MAX(HttpStatus.BAD_REQUEST, "CHALLENGE4007", "데일리 챌린지는 최대 2개까지만 저장 가능합니다."),
+    CHALLENGE_RANDOM_MAX(HttpStatus.BAD_REQUEST, "CHALLENGE4008", "랜덤 챌린지는 1개만 저장 가능합니다."),
 
     //기타 에러
     PASSWORD_NOT_MATCH(HttpStatus.BAD_REQUEST, "PWD4001", "비밀번호 확인이 일치하지 않습니다."),
