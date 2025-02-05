@@ -1,6 +1,7 @@
 package umc.GrowIT.Server.repository.ChallengeRepository;
 
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import umc.GrowIT.Server.domain.UserChallenge;
@@ -26,6 +27,13 @@ public interface UserChallengeRepository extends JpaRepository<UserChallenge, Lo
             @Param("userId") Long userId,
             @Param("startOfDay") LocalDateTime startOfDay,
             @Param("endOfDay") LocalDateTime endOfDay);
+
+
+    @Modifying
+    @Query("DELETE FROM UserChallenge uc WHERE uc.user.id = :userId AND uc.completed = false AND uc.createdAt BETWEEN :startOfYesterday AND :endOfYesterday")
+    void deleteUnverifiedChallenges(@Param("userId") Long userId,
+                                    @Param("startOfYesterday") LocalDateTime startOfYesterday,
+                                    @Param("endOfYesterday") LocalDateTime endOfYesterday);
 
 
 
