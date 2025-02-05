@@ -28,4 +28,5 @@ public interface ItemRepository extends JpaRepository<Item, Long> {
     @Query("SELECT ui.status FROM UserItem ui WHERE ui.user.id = :userId AND ui.item.id = :itemId")
     ItemStatus findStatusByUserIdAndItemId(Long userId, Long itemId);
 
+
 }
