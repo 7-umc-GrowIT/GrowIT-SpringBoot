@@ -24,10 +24,10 @@ public class UserConverter {
                 .build();
     }
 
-    public static User toUser(OAuthApiResponseDTO.OAuthUserInfoDTO oAuthuserInfoDTO) {
+    public static User toUser(OAuthApiResponseDTO.OAuthUserInfoDTO oAuthUserInfoDTO) {
         return User.builder()
-                .name(oAuthuserInfoDTO.getName())
-                .primaryEmail(null)
+                .name(oAuthUserInfoDTO.getName())
+                .primaryEmail(oAuthUserInfoDTO.getEmail())
                 .password(null)
                 .currentCredit(0)
                 .totalCredit(0)

@@ -21,9 +21,9 @@ public interface UserCommandService {
 
     UserResponseDTO.DeleteUserResponseDTO delete(Long userId);
 
-    CustomUserDetails createUserDetails(User user);
-
-    void setRefreshToken(String refreshToken, User user);
+    TokenResponseDTO.TokenDTO issueTokenAndSetRefreshToken(User user);
 
     TokenResponseDTO.TokenDTO performAuthentication(String email, String password);
+
+    void setRefreshToken(String refreshToken, User user);
 }

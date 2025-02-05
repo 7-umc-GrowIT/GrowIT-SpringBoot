@@ -18,7 +18,9 @@ import umc.GrowIT.Server.converter.UserConverter;
 import umc.GrowIT.Server.domain.*;
 import umc.GrowIT.Server.domain.enums.TermType;
 import umc.GrowIT.Server.domain.CustomUserDetails;
+import umc.GrowIT.Server.repository.OAuthAccountRepository;
 import umc.GrowIT.Server.service.refreshTokenService.RefreshTokenCommandService;
+import umc.GrowIT.Server.service.termService.TermCommandService;
 import umc.GrowIT.Server.service.termService.TermQueryService;
 import umc.GrowIT.Server.web.dto.TermDTO.TermRequestDTO;
 import umc.GrowIT.Server.web.dto.TokenDTO.TokenResponseDTO;
@@ -33,6 +35,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+import static umc.GrowIT.Server.apiPayload.code.status.ErrorStatus._BAD_REQUEST;
 import static umc.GrowIT.Server.domain.enums.UserStatus.INACTIVE;
 
 
@@ -43,9 +46,12 @@ public class UserCommandServiceImpl implements UserCommandService {
 
     private final UserRepository userRepository;
     private final TermQueryService termQueryService;
+    private final TermCommandService termCommandService;
+    private final RefreshTokenCommandService refreshTokenCommandService;
+    private final CustomUserDetailsService customUserDetailsService;
+
     private final PasswordEncoder passwordEncoder;
     private final JwtTokenUtil jwtTokenUtil;
-    private final RefreshTokenCommandService refreshTokenCommandService;
     private final AuthenticationManager authenticationManager;
 
     @Override
@@ -56,27 +62,34 @@ public class UserCommandServiceImpl implements UserCommandService {
 
         String email = userInfoDTO.getEmail();
 
-        //이미 가입한 회원일 때(이메일 존재) 예외 처리
-        if (userRepository.existsByPrimaryEmail(email))
-            throw new UserHandler(ErrorStatus.EMAIL_ALREADY_EXISTS);
+        // 이미 이메일 가입 했거나, 카카오 간편 가입한 회원
+        if (userRepository.existsByPrimaryEmail(email)) {
+            String password = userRepository.findPasswordByPrimaryEmail(email);
 
-        //User 엔티티로 변환
+            // 이미 이메일 가입한 회원
+            if (password != null) {
+                throw new UserHandler(ErrorStatus.EMAIL_ALREADY_EXISTS);
+            }
+
+            // 카카오 간편 가입한 회원
+            User user = userRepository.findByPrimaryEmail(email)
+                    .orElseThrow(() -> new UserHandler(_BAD_REQUEST));
+            user.linkUserWithKakaoAccount(email, passwordEncoder.encode(userInfoDTO.getPassword())); // 이메일, 비밀번호 업데이트
+            termCommandService.updateUserTerms(userInfoDTO.getUserTerms()); // 약관 목록 업데이트
+            return issueTokenAndSetRefreshToken(user);
+        }
+
+        // 최초 이메일 회원가입
         User newUser = UserConverter.toUser(userInfoDTO);
         newUser.encodePassword(passwordEncoder.encode(newUser.getPassword()));
 
-        //약관 정보 유효성 검사 및 UserTerm 엔티티 생성
+        // 약관 정보 유효성 검사 및 UserTerm 엔티티 생성
         List<UserTerm> userTerms = termQueryService.checkUserTerms(userInfoDTO.getUserTerms(), newUser);
-
         newUser.setUserTerms(userTerms);
-        userRepository.save(newUser);
 
-        //자동 로그인 처리
-        TokenResponseDTO.TokenDTO tokenDTO = performAuthentication(userInfoDTO.getEmail(), userInfoDTO.getPassword());
+        // User 엔티티 저장 및 AT/RT 발급
+        return issueTokenAndSetRefreshToken(userRepository.save(newUser));
 
-        //refresh token 엔티티 변환 및 user 엔티티에 refresh token 저장
-        setRefreshToken(tokenDTO.getRefreshToken(), newUser);
-
-        return tokenDTO;
     }
 
     @Override
@@ -129,16 +142,6 @@ public class UserCommandServiceImpl implements UserCommandService {
     }
 
     @Override
-    @Transactional
-    public CustomUserDetails createUserDetails(User user) {
-        return new CustomUserDetails(
-                user.getPrimaryEmail(),
-                Collections.singletonList(new SimpleGrantedAuthority(String.valueOf(user.getRole()))),
-                user.getId()
-        );
-    }
-
-    @Override
     public UserResponseDTO.DeleteUserResponseDTO delete(Long userId) {
         // 1. userId를 통해 조회하고 없으면 오류
         User deleteUser = userRepository.findById(userId)
@@ -153,6 +156,20 @@ public class UserCommandServiceImpl implements UserCommandService {
 
         // 3. converter 작업
         return UserConverter.toDeletedUser(deleteUser);
+    }
+
+    /**
+     * AT/RT 발급 및 RT DB 저장
+     */
+    @Override
+    public TokenResponseDTO.TokenDTO issueTokenAndSetRefreshToken(User user) {
+        TokenResponseDTO.TokenDTO tokenDTO = jwtTokenUtil.generateToken(
+                customUserDetailsService.loadUserByUsername(user.getPrimaryEmail()));
+
+        RefreshToken refreshTokenEntity = refreshTokenCommandService.createRefreshToken(tokenDTO.getRefreshToken(), user);
+        user.setRefreshToken(refreshTokenEntity);
+
+        return tokenDTO;
     }
 
     @Override

@@ -23,7 +23,7 @@ public class User extends BaseEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(length = 50)
+    @Column(unique = true, length = 50)
     private String primaryEmail;
 
     private String password;
@@ -80,6 +80,11 @@ public class User extends BaseEntity {
 
     public void deleteRefreshToken() {
         this.refreshToken = null;
+    }
+
+    public void linkUserWithKakaoAccount(String email, String password) {
+        this.primaryEmail = email;
+        this.password = password;
     }
 
 }
