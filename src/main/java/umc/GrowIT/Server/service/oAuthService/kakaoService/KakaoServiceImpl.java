@@ -48,11 +48,11 @@ public class KakaoServiceImpl implements KakaoService {
     private final WebClient kakaoApiWebClient;
 
     private String grantType = "authorization_code";
-    @Value("${spring.oauth2.client.kakao.client-id}")
+    @Value("${spring.oauth2.client.ios-kakao.client-id}")
     private String clientId;
-    @Value("${spring.oauth2.client.kakao.redirect-uri}")
+    @Value("${spring.oauth2.client.ios-kakao.redirect-uri}")
     private String redirectUri;
-    @Value("${spring.oauth2.client.kakao.client-secret}")
+    @Value("${spring.oauth2.client.ios-kakao.client-secret}")
     private String clientSecret;
 
     /**
