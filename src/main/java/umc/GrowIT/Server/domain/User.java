@@ -82,4 +82,9 @@ public class User extends BaseEntity {
         this.refreshToken = null;
     }
 
+    public void linkUserWithKakaoAccount(String email, String password) {
+        this.primaryEmail = email;
+        this.password = password;
+    }
+
 }

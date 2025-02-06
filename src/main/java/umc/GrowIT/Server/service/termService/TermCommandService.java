@@ -7,5 +7,5 @@ import java.util.List;
 
 public interface TermCommandService {
 
-    void createUserTerms(List<TermRequestDTO.UserTermDTO> userTermDTO);
+    void updateUserTerms(List<TermRequestDTO.UserTermDTO> userTermDTO);
 }

@@ -8,13 +8,17 @@ import org.springframework.web.bind.annotation.*;
 import umc.GrowIT.Server.apiPayload.ApiResponse;
 import umc.GrowIT.Server.domain.enums.AuthType;
 import umc.GrowIT.Server.service.authService.AuthService;
-import umc.GrowIT.Server.service.oAuthService.OAuthService;
+import umc.GrowIT.Server.service.oAuthService.OAuthCommandService;
 import umc.GrowIT.Server.service.oAuthService.kakaoService.KakaoService;
 import umc.GrowIT.Server.service.userService.UserCommandService;
 import umc.GrowIT.Server.service.refreshTokenService.RefreshTokenCommandService;
 import umc.GrowIT.Server.web.controller.specification.AuthSpecification;
 import umc.GrowIT.Server.web.dto.AuthDTO.AuthRequestDTO;
 import umc.GrowIT.Server.web.dto.AuthDTO.AuthResponseDTO;
+import umc.GrowIT.Server.web.dto.OAuthDTO.OAuthRequestDTO;
+import umc.GrowIT.Server.web.dto.OAuthDTO.OAuthResponseDTO;
+import umc.GrowIT.Server.web.dto.TokenDTO.TokenRequestDTO;
+import umc.GrowIT.Server.web.dto.TokenDTO.TokenResponseDTO;
 import umc.GrowIT.Server.web.dto.UserDTO.UserRequestDTO;
 import umc.GrowIT.Server.web.dto.UserDTO.UserResponseDTO;
 
@@ -31,26 +35,26 @@ public class AuthController implements AuthSpecification {
     private final AuthService authService;
     private final RefreshTokenCommandService refreshTokenCommandService;
     private final KakaoService kakaoService;
-    private final OAuthService oAuthService;
+    private final OAuthCommandService oAuthService;
 
     @Override
     @PostMapping("/login")
-    public ApiResponse<UserResponseDTO.TokenDTO> loginEmail(@RequestBody @Valid UserRequestDTO.EmailLoginDTO emailLoginDTO) {
-        UserResponseDTO.TokenDTO tokenDTO = userCommandService.emailLogin(emailLoginDTO);
+    public ApiResponse<TokenResponseDTO.TokenDTO> loginEmail(@RequestBody @Valid UserRequestDTO.EmailLoginDTO emailLoginDTO) {
+        TokenResponseDTO.TokenDTO tokenDTO = userCommandService.loginEmail(emailLoginDTO);
         return ApiResponse.onSuccess(tokenDTO);
     }
 
     @Override
     @PostMapping("/signup")
-    public ApiResponse<UserResponseDTO.TokenDTO> signupEmail(@RequestBody @Valid UserRequestDTO.UserInfoDTO userInfoDTO) {
-        UserResponseDTO.TokenDTO tokenDTO = userCommandService.createUser(userInfoDTO);
+    public ApiResponse<TokenResponseDTO.TokenDTO> signupEmail(@RequestBody @Valid UserRequestDTO.UserInfoDTO userInfoDTO) {
+        TokenResponseDTO.TokenDTO tokenDTO = userCommandService.signupEmail(userInfoDTO);
         return ApiResponse.onSuccess(tokenDTO);
     }
 
     @Override
     @PostMapping("/reissue")
-    public ApiResponse<UserResponseDTO.AccessTokenDTO> reissueToken(@RequestBody @Valid UserRequestDTO.ReissueDTO reissueDTO) {
-        UserResponseDTO.AccessTokenDTO accessTokenDTO = refreshTokenCommandService.reissueToken(reissueDTO);
+    public ApiResponse<TokenResponseDTO.AccessTokenDTO> reissueToken(@RequestBody @Valid TokenRequestDTO.ReissueDTO reissueDTO) {
+        TokenResponseDTO.AccessTokenDTO accessTokenDTO = refreshTokenCommandService.reissueToken(reissueDTO);
         return ApiResponse.onSuccess(accessTokenDTO);
     }
 
@@ -75,8 +79,8 @@ public class AuthController implements AuthSpecification {
 
     @Override
     @PostMapping("/login/kakao")
-    public ApiResponse<UserResponseDTO.KakaoLoginDTO> loginKakao(@RequestParam(value = "code") String code) {
-        UserResponseDTO.KakaoLoginDTO kakaoLoginDTO = kakaoService.loginKakao(code);
+    public ApiResponse<OAuthResponseDTO.KakaoLoginDTO> loginKakao(@RequestParam(value = "code") String code) {
+        OAuthResponseDTO.KakaoLoginDTO kakaoLoginDTO = kakaoService.loginKakao(code);
         if (kakaoLoginDTO.getSignupRequired())
             return ApiResponse.onSuccess(NEED_TO_ACCEPT_TERMS, kakaoLoginDTO);
         return ApiResponse.onSuccess(kakaoLoginDTO);
@@ -84,8 +88,8 @@ public class AuthController implements AuthSpecification {
 
     @Override
     @PostMapping("/signup/social")
-    public ApiResponse<UserResponseDTO.TokenDTO> signupSocial(@RequestBody @Valid UserRequestDTO.UserTermsDTO userTermsDTO) {
-        UserResponseDTO.TokenDTO tokenDTO = oAuthService.signupSocial(userTermsDTO);
+    public ApiResponse<TokenResponseDTO.TokenDTO> signupSocial(@RequestBody @Valid OAuthRequestDTO.OAuthUserInfoAndUserTermsDTO oAuthUserInfoAndUserTermsDTO) {
+        TokenResponseDTO.TokenDTO tokenDTO = oAuthService.signupSocial(oAuthUserInfoAndUserTermsDTO);
         return ApiResponse.onSuccess(tokenDTO);
     }
 }

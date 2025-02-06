@@ -4,6 +4,7 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import org.springframework.web.bind.annotation.GetMapping;
 import umc.GrowIT.Server.apiPayload.ApiResponse;
+import umc.GrowIT.Server.domain.Term;
 import umc.GrowIT.Server.web.dto.TermDTO.TermResponseDTO;
 
 import java.util.List;

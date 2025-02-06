@@ -26,4 +26,7 @@ public class UserTerm extends BaseEntity {
     @JoinColumn(name = "term_id")
     private Term term;
 
+    public void updateAgreed(boolean agreed){
+        this.agreed = agreed;
+    }
 }
