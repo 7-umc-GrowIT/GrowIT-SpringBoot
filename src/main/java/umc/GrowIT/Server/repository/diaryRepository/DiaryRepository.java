@@ -20,4 +20,9 @@ public interface DiaryRepository extends JpaRepository<Diary, Long> {
     Optional<Diary> findByUserIdAndId(Long userId, Long diaryId);
 
     boolean existsByUserIdAndDate(Long userId, LocalDate date);
+
+    @Query("SELECT MAX(d.date) FROM Diary d WHERE d.user.id = :userId") // 마지막 일기 작성 날짜 조회
+    Optional<LocalDate> findLastDiaryDateByUserId(@Param("userId") Long userId);
+
+
 }

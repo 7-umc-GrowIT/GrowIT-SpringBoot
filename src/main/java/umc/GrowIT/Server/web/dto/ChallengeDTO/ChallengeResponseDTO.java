@@ -4,7 +4,6 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import umc.GrowIT.Server.domain.ChallengeKeyword;
 import umc.GrowIT.Server.domain.enums.UserChallengeType;
 
 import java.time.LocalDateTime;
@@ -17,20 +16,29 @@ public class ChallengeResponseDTO {
     @NoArgsConstructor
     @AllArgsConstructor
     public static class ChallengeHomeDTO {
+        private List<String> challengeKeywords;
         private List<RecommendedChallengeDTO> recommendedChallenges; // 오늘의 챌린지 추천
         private ChallengeReportDTO challengeReport; // 챌린지 리포트
     }
 
+    @Getter
+    @Builder
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class KeywordDTO {
+        private String name;
+    }
     // 챌린지 추천
     @Getter
     @Builder
     @NoArgsConstructor
     @AllArgsConstructor
     public static class RecommendedChallengeDTO {
-        private List<ChallengeKeyword> challengeKeywords;
         private String title;
+        private String content;
+        private UserChallengeType dtype;
         private Integer time;
-        private boolean isCompleted;
+        private boolean completed;
     }
 
     // 챌린지 리포트
@@ -41,7 +49,7 @@ public class ChallengeResponseDTO {
     public static class ChallengeReportDTO {
         private int totalCredits;
         private int totalDiaries;
-        private String userDate;
+        private String diaryDate;
     }
 
     // 챌린지 현황 응답 DTO
