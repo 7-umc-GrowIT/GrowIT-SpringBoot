@@ -163,7 +163,7 @@ public class GroCommandServiceImpl implements GroCommandService{
                             // 프리사인드 URL 생성 (15분 유효 기간)
                             Date expiration = new Date(System.currentTimeMillis() + TimeUnit.MINUTES.toMillis(15));
 
-                            GeneratePresignedUrlRequest generatePresignedUrlRequest = new GeneratePresignedUrlRequest(bucketName, item.getImageKey())
+                            GeneratePresignedUrlRequest generatePresignedUrlRequest = new GeneratePresignedUrlRequest(bucketName, item.getGroImageKey())
                                     .withMethod(HttpMethod.GET)
                                     .withExpiration(expiration);
 

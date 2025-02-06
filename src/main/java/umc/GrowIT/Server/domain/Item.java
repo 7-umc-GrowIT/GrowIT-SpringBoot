@@ -33,13 +33,7 @@ public class Item extends BaseEntity {
     private String shopBackgroundColor;
 
     @Column(nullable = false, columnDefinition = "TEXT")
-    private String imageUrl;
-
-    @Column(nullable = false, columnDefinition = "TEXT")
     private String imageKey;
-
-    @Column(nullable = false, columnDefinition = "TEXT")
-    private String groImageUrl;
 
     @Column(nullable = false, columnDefinition = "TEXT")
     private String groImageKey;
