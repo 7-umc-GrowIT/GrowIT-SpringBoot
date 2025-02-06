@@ -6,7 +6,6 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import umc.GrowIT.Server.web.dto.TokenDTO.TokenResponseDTO;
-import umc.GrowIT.Server.web.dto.UserDTO.UserResponseDTO;
 
 import static com.fasterxml.jackson.annotation.JsonInclude.Include.NON_NULL;
 
