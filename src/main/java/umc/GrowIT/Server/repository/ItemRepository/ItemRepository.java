@@ -18,6 +18,8 @@ public interface ItemRepository extends JpaRepository<Item, Long> {
     // UserItem을 통해 현재 사용자의 특정 아이템 구매여부 판별
     boolean existsByUserItemsUserIdAndId(Long userId, Long itemId);
 
+    Optional<Item> findById(Long id);
+
     Optional<Item> findByName(String name);
 
     //사용자가 보유한 아이템만 조회(userId, category)
