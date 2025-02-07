@@ -61,7 +61,7 @@ public class GroCommandServiceImpl implements GroCommandService{
                 .orElseThrow(() -> new ItemHandler(ErrorStatus.ITEM_NOT_FOUND));
 
         //기본 핑크색 PLANT 조회
-        Item basicPlantItem = itemRepository.findById(1L)
+        Item basicPlantItem = itemRepository.findByName("핑크 머그컵")
                 .orElseThrow(() -> new ItemHandler(ErrorStatus.ITEM_NOT_FOUND));
 
         // Gro 생성 및 저장
