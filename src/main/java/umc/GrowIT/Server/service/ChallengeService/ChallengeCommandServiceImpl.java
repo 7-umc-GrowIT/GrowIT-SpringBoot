@@ -36,17 +36,6 @@ public class ChallengeCommandServiceImpl implements ChallengeCommandService {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new ChallengeHandler(ErrorStatus.USER_NOT_FOUND));
 
-        // 유저가 오늘 챌린지를 저장한 적이 있는지 확인
-        boolean hasSavedToday = userChallengeRepository.existsTodayChallengesByUserId(userId);
-
-        // 이미 저장한 적이 있으면 추가 저장 불가능
-        if (hasSavedToday) {
-            throw new ChallengeHandler(ErrorStatus.CHALLENGE_ALREADY_SAVED);
-        }
-
-        // 현재 유저가 오늘 저장한 챌린지 개수 조회
-        int todayChallengeCount = userChallengeRepository.countTodayChallengesByUserId(userId);
-
         // 전체 선택된 챌린지 개수 초기화
         int dailyChallengeCount = 0;
         int randomChallengeCount = 0;
@@ -58,10 +47,6 @@ public class ChallengeCommandServiceImpl implements ChallengeCommandService {
             List<Long> challengeIds = selectRequest.getChallengeIds();
             UserChallengeType dtype = selectRequest.getDtype();
 
-            // 오늘 저장된 챌린지 개수 + 새로 저장하려는 챌린지 개수가 3개 초과하는지 확인
-            if (todayChallengeCount + challengeIds.size() > 3) {
-                throw new ChallengeHandler(ErrorStatus.CHALLENGE_SAVE_LIMIT);
-            }
 
             // 현재 dtype에 따라 저장 가능한 최대 개수 확인
             if (dtype == UserChallengeType.DAILY) {
