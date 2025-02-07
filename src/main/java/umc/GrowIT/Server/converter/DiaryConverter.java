@@ -68,4 +68,20 @@ public class DiaryConverter {
                 .message("일기를 삭제했어요.")
                 .build();
     }
+
+    public static DiaryResponseDTO.VoiceChatResultDTO toVoiceChatResultDTO(String aiChat){
+
+        return DiaryResponseDTO.VoiceChatResultDTO.builder()
+                .chat(aiChat)
+                .build();
+    }
+
+    public static DiaryResponseDTO.SummaryResultDTO toSummaryResultDTO(Diary diary){
+
+        return DiaryResponseDTO.SummaryResultDTO.builder()
+                .diaryId(diary.getId())
+                .content(diary.getContent())
+                .date(diary.getDate())
+                .build();
+    }
 }

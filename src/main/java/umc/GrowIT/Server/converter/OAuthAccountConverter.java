@@ -2,17 +2,17 @@ package umc.GrowIT.Server.converter;
 
 import umc.GrowIT.Server.domain.OAuthAccount;
 import umc.GrowIT.Server.domain.User;
-import umc.GrowIT.Server.web.dto.OAuthDTO.OAuthResponseDTO;
+import umc.GrowIT.Server.web.dto.OAuthDTO.OAuthApiResponseDTO;
 
 import static umc.GrowIT.Server.domain.enums.Provider.KAKAO;
 
 public class OAuthAccountConverter {
-    public static OAuthAccount toOAuthAccount(OAuthResponseDTO.KakaoUserInfoResponseDTO kakaoUserInfo, User user) {
+    public static OAuthAccount toOAuthAccount(OAuthApiResponseDTO.OAuthUserInfoDTO oAuthuserInfoDTO, User newUser) {
         return OAuthAccount.builder()
-                .providerId(kakaoUserInfo.getId())
                 .provider(KAKAO)
-                .email(kakaoUserInfo.getKakao_account().getEmail())
-                .user(user)
+                .providerId(oAuthuserInfoDTO.getId())
+                .email(oAuthuserInfoDTO.getEmail())
+                .user(newUser)
                 .build();
     }
 }

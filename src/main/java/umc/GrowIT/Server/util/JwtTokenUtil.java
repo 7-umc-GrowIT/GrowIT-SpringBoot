@@ -14,6 +14,7 @@ import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.stereotype.Component;
 import umc.GrowIT.Server.domain.CustomUserDetails;
 import umc.GrowIT.Server.service.userService.UserQueryService;
+import umc.GrowIT.Server.web.dto.TokenDTO.TokenResponseDTO;
 import umc.GrowIT.Server.web.dto.UserDTO.UserResponseDTO;
 
 import java.security.Key;
@@ -41,7 +42,7 @@ public class JwtTokenUtil {
     }
 
     // AccessToken, RefreshToken 생성 메소드 호출
-    public UserResponseDTO.TokenDTO generateToken(CustomUserDetails customUserDetails) {
+    public TokenResponseDTO.TokenDTO generateToken(CustomUserDetails customUserDetails) {
         String accessToken = generateAccessToken(customUserDetails);
         String refreshToken = generateRefreshToken(customUserDetails);
 

@@ -57,11 +57,10 @@ public enum ErrorStatus implements BaseErrorCode {
     CHALLENGE_VERIFY_NOT_EXISTS(HttpStatus.BAD_REQUEST, "CHALLENGE4002", "챌린지 인증 내역이 존재하지 않습니다."),
     CHALLENGE_NOT_COMPLETE(HttpStatus.BAD_REQUEST, "CHALLENGE4003", "미완료한 챌린지입니다."),
     CHALLENGE_VERIFY_ALREADY_EXISTS(HttpStatus.BAD_REQUEST, "CHALLENGE4004", "이미 완료된 챌린지입니다."),
-    CHALLENGE_ALREADY_SAVED(HttpStatus.BAD_REQUEST, "CHALLENGE4005", "이미 저장된 챌린지입니다."),
-    CHALLENGE_SAVE_LIMIT(HttpStatus.BAD_REQUEST, "CHALLENGE4006", "챌린지는 3개까지 저장 가능합니다."),
-    CHALLENGE_AT_LEAST(HttpStatus.BAD_REQUEST, "CHALLENGE4007", "최소 하나의 챌린지를 선택해야 합니다."),
-    CHALLENGE_DAILY_MAX(HttpStatus.BAD_REQUEST, "CHALLENGE4008", "데일리 챌린지는 최대 2개까지만 저장 가능합니다."),
-    CHALLENGE_RANDOM_MAX(HttpStatus.BAD_REQUEST, "CHALLENGE4009", "랜덤 챌린지는 1개만 저장 가능합니다."),
+    CHALLENGE_SAVE_LIMIT(HttpStatus.BAD_REQUEST, "CHALLENGE4005", "챌린지는 3개까지 저장 가능합니다."),
+    CHALLENGE_AT_LEAST(HttpStatus.BAD_REQUEST, "CHALLENGE4006", "최소 하나의 챌린지를 선택해야 합니다."),
+    CHALLENGE_DAILY_MAX(HttpStatus.BAD_REQUEST, "CHALLENGE4007", "데일리 챌린지는 최대 2개까지만 저장 가능합니다."),
+    CHALLENGE_RANDOM_MAX(HttpStatus.BAD_REQUEST, "CHALLENGE4008", "랜덤 챌린지는 1개만 저장 가능합니다."),
 
     //기타 에러
     PASSWORD_NOT_MATCH(HttpStatus.BAD_REQUEST, "PWD4001", "비밀번호 확인이 일치하지 않습니다."),
@@ -105,7 +104,14 @@ public enum ErrorStatus implements BaseErrorCode {
     S3_FILE_EMPTY(HttpStatus.BAD_REQUEST, "S3_4002", "파일이 비어 있습니다."),
     S3_FILE_UPLOAD_FAIL(HttpStatus.INTERNAL_SERVER_ERROR, "S3_5001", "파일 업로드에 실패했습니다."),
     S3_FILE_OVER_SIZE(HttpStatus.BAD_REQUEST, "S3_4003", "파일 크기가 10MB를 초과했습니다."),
-    S3_FILE_DELETE_FAILED(HttpStatus.BAD_REQUEST, "S3_4004", "파일 삭제에 실패했습니다.");
+    S3_FILE_DELETE_FAILED(HttpStatus.BAD_REQUEST, "S3_4004", "파일 삭제에 실패했습니다."),
+
+    // OAuth 관련 에러
+    ACCOUNT_ALREADY_EXISTS(HttpStatus.CONFLICT, "OAUTH_4001", "이미 가입한 계정입니다."),
+    ACCOUNT_NOT_FOUND(HttpStatus.NOT_FOUND, "OAUTH_4002", "존재하지 않는 계정입니다."),
+    ACCOUNT_BAD_REQUEST(HttpStatus.BAD_REQUEST, "OAUTH_4003", "요청한 이메일로 가입할 수 없습니다.")
+
+    ;
 
 
     private final HttpStatus httpStatus;

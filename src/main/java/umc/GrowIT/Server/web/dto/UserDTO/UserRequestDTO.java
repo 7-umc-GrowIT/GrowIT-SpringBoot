@@ -5,6 +5,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import umc.GrowIT.Server.web.dto.OAuthDTO.OAuthApiResponseDTO;
 import umc.GrowIT.Server.web.dto.TermDTO.TermRequestDTO;
 
 import java.util.List;
@@ -29,15 +30,6 @@ public class UserRequestDTO {
         @Size(min = 8, max = 30, message =  "크기는 8에서 30 사이입니다.")
         private String password;
 
-        @NotEmpty(message = "필수 입력 항목입니다.")
-        private List<TermRequestDTO.UserTermDTO> userTerms;
-    }
-
-    @Builder
-    @Getter
-    @NoArgsConstructor
-    @AllArgsConstructor
-    public static class UserTermsDTO {
         @NotEmpty(message = "필수 입력 항목입니다.")
         private List<TermRequestDTO.UserTermDTO> userTerms;
     }
@@ -72,13 +64,5 @@ public class UserRequestDTO {
 
         @Size(min = 8, max = 30, message = "크기는 8에서 30 사이입니다.")
         private String passwordCheck;
-    }
-
-    @Builder
-    @Getter
-    @NoArgsConstructor
-    @AllArgsConstructor
-    public static class ReissueDTO {
-        private String refreshToken;
     }
 }

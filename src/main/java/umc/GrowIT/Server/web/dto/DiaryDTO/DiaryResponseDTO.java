@@ -68,4 +68,22 @@ public class DiaryResponseDTO {
     public static class DeleteDiaryResultDTO {
         String message;
     }
+
+    @Builder
+    @Getter
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class VoiceChatResultDTO {
+        String chat;    //AI의 답변내용
+    }
+
+    @Builder
+    @Getter
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class SummaryResultDTO {
+        Long diaryId;
+        String content;
+        LocalDate date;
+    }
 }
