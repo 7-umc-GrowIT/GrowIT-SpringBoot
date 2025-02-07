@@ -28,6 +28,13 @@ public interface UserChallengeRepository extends JpaRepository<UserChallenge, Lo
             @Param("startOfDay") LocalDateTime startOfDay,
             @Param("endOfDay") LocalDateTime endOfDay);
 
+    // 오늘 저장한 챌린지 개수를 조회하는 메서드
+    @Query("SELECT COUNT(uc) FROM UserChallenge uc WHERE uc.user.id = :userId AND DATE(uc.createdAt) = CURRENT_DATE")
+    int countTodayChallengesByUserId(@Param("userId") Long userId);
+
+    // 오늘 챌린지를 저장한 적이 있는지 확인하는 메서드
+    @Query("SELECT COUNT(uc) > 0 FROM UserChallenge uc WHERE uc.user.id = :userId AND DATE(uc.createdAt) = CURRENT_DATE")
+    boolean existsTodayChallengesByUserId(@Param("userId") Long userId);
 
     // 1. 유저의 완료 또는 미완료 챌린지 조회 (dtype 무시)
     @Query("SELECT uc FROM UserChallenge uc " +
