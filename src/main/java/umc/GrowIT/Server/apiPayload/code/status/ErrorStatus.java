@@ -61,6 +61,7 @@ public enum ErrorStatus implements BaseErrorCode {
     CHALLENGE_AT_LEAST(HttpStatus.BAD_REQUEST, "CHALLENGE4006", "최소 하나의 챌린지를 선택해야 합니다."),
     CHALLENGE_DAILY_MAX(HttpStatus.BAD_REQUEST, "CHALLENGE4007", "데일리 챌린지는 최대 2개까지만 저장 가능합니다."),
     CHALLENGE_RANDOM_MAX(HttpStatus.BAD_REQUEST, "CHALLENGE4008", "랜덤 챌린지는 1개만 저장 가능합니다."),
+    RELATED_CHALLENGE_NOT_FOUND(HttpStatus.NOT_FOUND, "CHALLENGE5001", "연관된 챌린지가 없습니다."),
 
     //기타 에러
     PASSWORD_NOT_MATCH(HttpStatus.BAD_REQUEST, "PWD4001", "비밀번호 확인이 일치하지 않습니다."),
@@ -109,8 +110,15 @@ public enum ErrorStatus implements BaseErrorCode {
     // OAuth 관련 에러
     ACCOUNT_ALREADY_EXISTS(HttpStatus.CONFLICT, "OAUTH_4001", "이미 가입한 계정입니다."),
     ACCOUNT_NOT_FOUND(HttpStatus.NOT_FOUND, "OAUTH_4002", "존재하지 않는 계정입니다."),
-    ACCOUNT_BAD_REQUEST(HttpStatus.BAD_REQUEST, "OAUTH_4003", "요청한 이메일로 가입할 수 없습니다.")
+    ACCOUNT_BAD_REQUEST(HttpStatus.BAD_REQUEST, "OAUTH_4003", "요청한 이메일로 가입할 수 없습니다."),
 
+    // 감정 관련 에러
+    KEYWORD_NOT_FOUND(HttpStatus.NOT_FOUND, "KEYWORD5001", "감정키워드가 존재하지 않습니다."),
+
+    // GPT 관련 에러
+    GPT_RESPONSE_EMPTY(HttpStatus.INTERNAL_SERVER_ERROR, "GPT5001", "GPT 응답이 비어있습니다. 다시 시도해 주세요."),
+    EMOTIONS_COUNT_INVALID(HttpStatus.INTERNAL_SERVER_ERROR, "GPT5002", "GPT 응답에서 감정의 개수는 3개여야 합니다."),
+    EMOTIONS_DUPLICATE(HttpStatus.INTERNAL_SERVER_ERROR, "GPT5003", "GPT 응답에서 중복된 감정이 존재합니다."),
     ;
 
 

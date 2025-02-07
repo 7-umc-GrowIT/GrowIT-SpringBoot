@@ -36,4 +36,7 @@ public interface ChallengeRepository extends JpaRepository<Challenge, Long> {
     @Query("SELECT uc FROM UserChallenge uc WHERE uc.challenge.id = :challengeId")
     Optional<UserChallenge> findByChallengeId(@Param("challengeId") Long challengeId);
 
+
+    @Query("SELECT c FROM Challenge c WHERE c NOT IN :dailyChallenges ORDER BY FUNCTION('RAND') LIMIT 1")
+    Challenge findRandomRemainingChallenge(@Param("dailyChallenges") List<Challenge> dailyChallenges);
 }
