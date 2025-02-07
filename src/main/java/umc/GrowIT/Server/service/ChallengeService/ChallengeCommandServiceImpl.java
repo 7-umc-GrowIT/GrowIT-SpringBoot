@@ -37,7 +37,7 @@ public class ChallengeCommandServiceImpl implements ChallengeCommandService {
     private final KeywordRepository keywordRepository;
     private final ImageService imageService;
 
-    @Value("${openai.model}")
+    @Value("${openai.model2}")
     private String model;
 
     @Value("${openai.api.url}")
