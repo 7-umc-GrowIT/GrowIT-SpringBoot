@@ -15,6 +15,7 @@ import umc.GrowIT.Server.domain.UserChallenge;
 import umc.GrowIT.Server.domain.enums.UserChallengeType;
 import umc.GrowIT.Server.repository.ChallengeRepository;
 import umc.GrowIT.Server.repository.UserChallengeRepository;
+import umc.GrowIT.Server.service.S3Service.S3Service;
 import umc.GrowIT.Server.web.dto.ChallengeDTO.ChallengeResponseDTO;
 
 import java.net.URL;
@@ -32,6 +33,7 @@ public class ChallengeQueryServiceImpl implements ChallengeQueryService {
     private final ChallengeRepository challengeRepository;
     private final UserChallengeRepository userChallengeRepository;
     private final AmazonS3 amazonS3;
+    private final S3Service s3Service;
 
     @Value("${aws.s3.bucket}")
     private String bucketName;
@@ -111,28 +113,12 @@ public class ChallengeQueryServiceImpl implements ChallengeQueryService {
         // S3의 인증 이미지 경로 가져오기
         String imageKey = userChallenge.getCertificationImage();
 
-        // Presigned URL 생성
-        String presignedUrl = createPresignedUrlForProof(imageKey);
+        // Presigned URL 생성 (이미지가 존재하는 경우에만)
+        String presignedUrl = (imageKey != null && !imageKey.isEmpty())
+                ? s3Service.generatePresignedUrlForDownload(imageKey)
+                : null; // 이미지가 없으면 null 반환
 
         return ChallengeConverter.toProofDetailsDTO(userChallenge.getChallenge(), userChallenge, presignedUrl);
-    }
-
-
-    // 챌린지 인증 이미지에 대한 Presigned URL 생성
-    public String createPresignedUrlForProof(String imageKey) {
-        if (imageKey == null || imageKey.isEmpty()) {
-            return null; // 이미지가 없는 경우 처리
-        }
-
-        // 프리사인드 URL 15분 유효
-        Date expiration = new Date(System.currentTimeMillis() + TimeUnit.MINUTES.toMillis(15));
-
-        GeneratePresignedUrlRequest generatePresignedUrlRequest =
-                new GeneratePresignedUrlRequest(bucketName, imageKey)
-                        .withMethod(HttpMethod.GET)
-                        .withExpiration(expiration);
-
-        return amazonS3.generatePresignedUrl(generatePresignedUrlRequest).toString();
     }
 
 }

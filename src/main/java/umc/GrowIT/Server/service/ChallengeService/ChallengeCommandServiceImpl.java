@@ -35,6 +35,7 @@ public class ChallengeCommandServiceImpl implements ChallengeCommandService {
 
     @Value("${aws.s3.bucket}")
     private String bucketName;
+
     @Override
     @Transactional
     public ChallengeResponseDTO.SelectChallengeDTO selectChallenges(Long userId, List<ChallengeRequestDTO.SelectChallengeRequestDTO> selectRequestList) {
@@ -104,10 +105,7 @@ public class ChallengeCommandServiceImpl implements ChallengeCommandService {
         }
 
         // 이미지 업로드
-        String imageUrl = null;
-        if (proofRequest.getCertificationImage() != null && !proofRequest.getCertificationImage().isEmpty()) {
-            imageUrl = imageService.upload(proofRequest.getCertificationImage());
-        }
+        String imageUrl = proofRequest.getCertificationImageUrl();
 
         userChallenge.verifyUserChallenge(proofRequest, imageUrl);
         userChallengeRepository.save(userChallenge);
@@ -120,26 +118,34 @@ public class ChallengeCommandServiceImpl implements ChallengeCommandService {
         UserChallenge userChallenge = userChallengeRepository.findByIdAndUserId(userChallengeId, userId)
                 .orElseThrow(() -> new ChallengeHandler(ErrorStatus.CHALLENGE_VERIFY_NOT_EXISTS));
 
-        String oldImageUrl = userChallenge.getCertificationImage();
-        String newImageUrl = oldImageUrl;
-
-        // 새 이미지 업로드 (새 이미지가 있을 경우에만)
-        if (updateRequest.getCertificationImage() != null && !updateRequest.getCertificationImage().isEmpty()) {
-            if (oldImageUrl != null) {
-                imageService.delete(oldImageUrl); // 기존 이미지 삭제
+        // ✅ 기존 이미지 URL 가져오기
+        if (userChallenge.getCertificationImage() != null) {
+            // 사용자가 새로운 이미지 없이 요청을 보낸 경우, 기존 이미지 삭제
+            if (updateRequest.getCertificationImageUrl() == null || updateRequest.getCertificationImageUrl().isEmpty()) {
+                imageService.delete(userChallenge.getCertificationImage()); // 기존 이미지 삭제
+                userChallenge.setCertificationImage(null); // 이미지 삭제 처리
             }
-            newImageUrl = imageService.upload(updateRequest.getCertificationImage());
-            userChallenge.setCertificationImage(newImageUrl); // 이미지 URL 업데이트
+            // 사용자가 새로운 이미지를 업로드한 경우, 기존 이미지 삭제 후 새 이미지 저장
+            else {
+                imageService.delete(userChallenge.getCertificationImage()); // 기존 이미지 삭제
+                userChallenge.setCertificationImage(updateRequest.getCertificationImageUrl());
+            }
+        }
+        // ✅ 기존 이미지가 없는 경우, 새로운 이미지가 있다면 추가
+        else if (updateRequest.getCertificationImageUrl() != null && !updateRequest.getCertificationImageUrl().isEmpty()) {
+            userChallenge.setCertificationImage(updateRequest.getCertificationImageUrl());
         }
 
-        // 소감 업데이트 (null이 아닌 경우에만 변경)
-        if(updateRequest.getThoughts() != null) {
+        // ✅ 소감 업데이트 (null이 아닌 경우에만 변경)
+        if (updateRequest.getThoughts() != null) {
             userChallenge.setThoughts(updateRequest.getThoughts());
         }
 
+        // ✅ 변경 사항을 저장
         userChallengeRepository.save(userChallenge);
         return ChallengeConverter.toChallengeModifyProofDTO(userChallenge);
     }
+
 
     public ChallengeResponseDTO.DeleteChallengeResponseDTO delete(Long userChallengeId, Long userId) {
         // 1. userId를 조회하고 없으면 오류
