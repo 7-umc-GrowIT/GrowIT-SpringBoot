@@ -1,6 +1,8 @@
 package umc.GrowIT.Server.service.ChallengeService;
 
+import com.amazonaws.services.s3.AmazonS3;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import umc.GrowIT.Server.apiPayload.code.status.ErrorStatus;
@@ -29,7 +31,10 @@ public class ChallengeCommandServiceImpl implements ChallengeCommandService {
     private final UserChallengeRepository userChallengeRepository;
     private final ChallengeRepository challengeRepository;
     private final ImageService imageService;
+    private final AmazonS3 amazonS3;
 
+    @Value("${aws.s3.bucket}")
+    private String bucketName;
     @Override
     @Transactional
     public ChallengeResponseDTO.SelectChallengeDTO selectChallenges(Long userId, List<ChallengeRequestDTO.SelectChallengeRequestDTO> selectRequestList) {

@@ -1,6 +1,10 @@
 package umc.GrowIT.Server.service.ChallengeService;
 
+import com.amazonaws.HttpMethod;
+import com.amazonaws.services.s3.AmazonS3;
+import com.amazonaws.services.s3.model.GeneratePresignedUrlRequest;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import umc.GrowIT.Server.apiPayload.code.status.ErrorStatus;
@@ -13,10 +17,13 @@ import umc.GrowIT.Server.repository.ChallengeRepository;
 import umc.GrowIT.Server.repository.UserChallengeRepository;
 import umc.GrowIT.Server.web.dto.ChallengeDTO.ChallengeResponseDTO;
 
+import java.net.URL;
 import java.time.LocalDate;
 import java.time.temporal.ChronoUnit;
 import java.util.Collections;
+import java.util.Date;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 @Service
 @RequiredArgsConstructor
@@ -24,6 +31,10 @@ public class ChallengeQueryServiceImpl implements ChallengeQueryService {
 
     private final ChallengeRepository challengeRepository;
     private final UserChallengeRepository userChallengeRepository;
+    private final AmazonS3 amazonS3;
+
+    @Value("${aws.s3.bucket}")
+    private String bucketName;
 
     @Override
     public int getTotalCredits(Long userId) {
@@ -97,9 +108,31 @@ public class ChallengeQueryServiceImpl implements ChallengeQueryService {
             throw new ChallengeHandler(ErrorStatus.CHALLENGE_VERIFY_NOT_EXISTS);
         }
 
-        String imageUrl = userChallenge.getCertificationImage();
-        return ChallengeConverter.toProofDetailsDTO(userChallenge.getChallenge(), userChallenge, imageUrl);
+        // S3의 인증 이미지 경로 가져오기
+        String imageKey = userChallenge.getCertificationImage();
+
+        // Presigned URL 생성
+        String presignedUrl = createPresignedUrlForProof(imageKey);
+
+        return ChallengeConverter.toProofDetailsDTO(userChallenge.getChallenge(), userChallenge, presignedUrl);
     }
 
+
+    // 챌린지 인증 이미지에 대한 Presigned URL 생성
+    public String createPresignedUrlForProof(String imageKey) {
+        if (imageKey == null || imageKey.isEmpty()) {
+            return null; // 이미지가 없는 경우 처리
+        }
+
+        // 프리사인드 URL 15분 유효
+        Date expiration = new Date(System.currentTimeMillis() + TimeUnit.MINUTES.toMillis(15));
+
+        GeneratePresignedUrlRequest generatePresignedUrlRequest =
+                new GeneratePresignedUrlRequest(bucketName, imageKey)
+                        .withMethod(HttpMethod.GET)
+                        .withExpiration(expiration);
+
+        return amazonS3.generatePresignedUrl(generatePresignedUrlRequest).toString();
+    }
 
 }
