@@ -113,7 +113,12 @@ public class ChallengeCommandServiceImpl implements ChallengeCommandService {
     @Transactional
     public ChallengeResponseDTO.ModifyProofDTO updateChallengeProof(Long userId, Long userChallengeId, ChallengeRequestDTO.ProofRequestDTO updateRequest) {
         UserChallenge userChallenge = userChallengeRepository.findByIdAndUserId(userChallengeId, userId)
-                .orElseThrow(() -> new ChallengeHandler(ErrorStatus.CHALLENGE_VERIFY_NOT_EXISTS));
+                .orElseThrow(() -> new ChallengeHandler(ErrorStatus.USER_CHALLENGE_NOT_FOUND));
+
+        // 인증이 완료되지 않았을 경우 예외 발생
+        if (!userChallenge.isCompleted()) {
+            throw new ChallengeHandler(ErrorStatus.CHALLENGE_NOT_COMPLETED);
+        }
 
         String oldImageUrl = userChallenge.getCertificationImage();
         String newImageUrl = oldImageUrl;

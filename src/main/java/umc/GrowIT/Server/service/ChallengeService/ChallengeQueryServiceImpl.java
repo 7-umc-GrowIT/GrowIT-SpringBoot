@@ -120,7 +120,7 @@ public class ChallengeQueryServiceImpl implements ChallengeQueryService {
                 .orElseThrow(() -> new ChallengeHandler(ErrorStatus.USER_CHALLENGE_NOT_FOUND));
 
         if (!userChallenge.isCompleted()) {
-            throw new ChallengeHandler(ErrorStatus.CHALLENGE_VERIFY_NOT_EXISTS);
+            throw new ChallengeHandler(ErrorStatus.CHALLENGE_NOT_COMPLETED);
         }
 
         String imageUrl = userChallenge.getCertificationImage();
