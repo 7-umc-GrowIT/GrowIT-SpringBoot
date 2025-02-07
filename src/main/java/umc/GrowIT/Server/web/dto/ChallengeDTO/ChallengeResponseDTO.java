@@ -34,6 +34,7 @@ public class ChallengeResponseDTO {
     @NoArgsConstructor
     @AllArgsConstructor
     public static class RecommendedChallengeDTO {
+        private Long id;
         private String title;
         private String content;
         private UserChallengeType dtype;
@@ -52,7 +53,6 @@ public class ChallengeResponseDTO {
         private String diaryDate;
     }
 
-    // 챌린지 현황 응답 DTO
     @Getter
     @Builder
     @NoArgsConstructor
@@ -91,7 +91,7 @@ public class ChallengeResponseDTO {
     @NoArgsConstructor
     @AllArgsConstructor
     public static class AddProofResultDTO {
-        private Long challengeId;
+        private Long id;
         private String title;
         private Integer time;
         private String certificationImage;
@@ -107,7 +107,7 @@ public class ChallengeResponseDTO {
     @NoArgsConstructor
     @AllArgsConstructor
     public static class ProofDetailsDTO {
-        private Long challengeId;
+        private Long id;
         private String title;
         private String certificationImage;
         private String thoughts;
@@ -129,7 +129,6 @@ public class ChallengeResponseDTO {
     @AllArgsConstructor
     public static class SelectedChallengesInfo {
         private Long id;
-        private Long challengeId;
         private UserChallengeType dtype;
         private String title;
         private String content;

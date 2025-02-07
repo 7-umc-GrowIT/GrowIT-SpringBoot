@@ -13,6 +13,7 @@ public class ChallengeConverter {
     // 챌린지 1개를 ChallengeHomeDTO.RecommendedChallenge로 변환
     public static ChallengeResponseDTO.RecommendedChallengeDTO toRecommendedChallengeDTO(UserChallenge userChallenge) {
         return ChallengeResponseDTO.RecommendedChallengeDTO.builder()
+                .id(userChallenge.getId())
                 .title(userChallenge.getChallenge().getTitle())
                 .content(userChallenge.getChallenge().getContent())
                 .dtype(userChallenge.getDtype())
@@ -72,7 +73,7 @@ public class ChallengeConverter {
     public static List<ChallengeResponseDTO.ChallengeStatusDTO> toChallengeStatusListDTO(List<UserChallenge> userChallenges) {
         return userChallenges.stream()
                 .map(userChallenge -> ChallengeResponseDTO.ChallengeStatusDTO.builder()
-                        .id(userChallenge.getChallenge().getId())
+                        .id(userChallenge.getId())
                         .title(userChallenge.getChallenge().getTitle())
                         .dtype(userChallenge.getDtype())
                         .time(userChallenge.getChallenge().getTime())
@@ -84,7 +85,7 @@ public class ChallengeConverter {
     // 챌린지 인증 작성 결과 반환
     public static ChallengeResponseDTO.ProofDetailsDTO toProofDetailsDTO(Challenge challenge, UserChallenge userChallenge, String imageUrl) {
         return ChallengeResponseDTO.ProofDetailsDTO.builder()
-                .challengeId(challenge.getId())
+                .id(userChallenge.getId())
                 .title(challenge.getTitle())
                 .time(challenge.getTime())
                 .certificationImage(imageUrl)
@@ -107,8 +108,7 @@ public class ChallengeConverter {
     public static ChallengeResponseDTO.SelectChallengeDTO toSelectChallengeDTO(List<UserChallenge> userChallenges) {
         List<ChallengeResponseDTO.SelectedChallengesInfo> selectedChallenges = userChallenges.stream()
                 .map(userChallenge -> ChallengeResponseDTO.SelectedChallengesInfo.builder()
-                        .id(userChallenge.getId()) // ✅ UserChallenge ID
-                        .challengeId(userChallenge.getChallenge().getId()) // ✅ Challenge ID
+                        .id(userChallenge.getId())
                         .dtype(userChallenge.getDtype())
                         .title(userChallenge.getChallenge().getTitle())
                         .content(userChallenge.getChallenge().getContent())
@@ -133,7 +133,7 @@ public class ChallengeConverter {
     // 챌린지 인증 내역 조회
     public static ChallengeResponseDTO.ProofDetailsDTO toChallengeProofDetailsDTO(Challenge challenge, UserChallenge userChallenge) {
         return ChallengeResponseDTO.ProofDetailsDTO.builder()
-                .challengeId(challenge.getId())
+                .id(userChallenge.getId())
                 .title(challenge.getTitle())
                 .time(challenge.getTime())
                 .certificationImage(userChallenge.getCertificationImage())
