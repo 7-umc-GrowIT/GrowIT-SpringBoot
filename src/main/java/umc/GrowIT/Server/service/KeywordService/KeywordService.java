@@ -7,6 +7,8 @@ import umc.GrowIT.Server.repository.diaryRepository.DiaryRepository;
 import umc.GrowIT.Server.domain.Keyword;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -19,8 +21,9 @@ public class KeywordService {
     private final KeywordRepository keywordRepository;
 
     public List<String> getTodayDiaryKeywords(Long userId) {
-        LocalDate today = LocalDate.now();
-        return diaryRepository.findTodayDiaryByUserId(userId, today)
+        LocalDateTime startOfDay = LocalDate.now().atStartOfDay();
+        LocalDateTime endOfDay = LocalDate.now().atTime(LocalTime.MAX);
+        return diaryRepository.findTodayDiaryByUserId(userId, startOfDay, endOfDay)
                 .map(diary -> diary.getDiaryKeywords().stream()
                         .map(diaryKeyword -> diaryKeyword.getKeyword().getName())
                         .limit(3)
