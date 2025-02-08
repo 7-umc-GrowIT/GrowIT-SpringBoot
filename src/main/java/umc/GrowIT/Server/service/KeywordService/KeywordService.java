@@ -18,7 +18,7 @@ public class KeywordService {
 
     public List<String> getRecentDiaryKeywords(Long userId) {
         // 최신 일기의 키워드 2개 가져오기
-        List<String> diaryKeywordNames = diaryRepository.findLatestDiaryByUserId(userId)
+        List<String> diaryKeywordNames = diaryRepository.findTodayDiaryByUserId(userId)
                 .map(diary -> diary.getDiaryKeywords().stream()
                         .map(diaryKeyword -> diaryKeyword.getKeyword().getName())
                         .limit(2) // **최대 2개 선택**
