@@ -6,6 +6,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import umc.GrowIT.Server.domain.ChallengeKeyword;
 import umc.GrowIT.Server.domain.enums.UserChallengeType;
+import umc.GrowIT.Server.web.dto.KeywordDTO.KeywordResponseDTO;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -147,5 +148,27 @@ public class ChallengeResponseDTO {
         // TODO 디테일하게 결정 필요
         private Long id;
         private String message; // ex) 챌린지 삭제가 완료되었습니다
+    }
+
+    // 챌린지 추천 응답 DTO
+    @Getter
+    @Builder
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class RecommendChallengesResponseDTO {
+        private List<KeywordResponseDTO.KeywordDTO> emotionKeywords; //감정키워드
+        private List<ChallengeDTO> recommendedChallenges; //추천챌린지
+    }
+
+    @Getter
+    @Builder
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class ChallengeDTO {
+        private Long id; // 챌린지 ID
+        private String title; //챌린지 제목
+        private String content; //챌린지 내용
+        private Integer time; //챌린지 소요시간
+        private UserChallengeType type; //추천 타입 (Daily or Random)
     }
 }

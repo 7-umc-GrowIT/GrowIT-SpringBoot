@@ -1,12 +1,15 @@
 package umc.GrowIT.Server.converter;
 
 import umc.GrowIT.Server.domain.Challenge;
+import umc.GrowIT.Server.domain.Keyword;
 import umc.GrowIT.Server.domain.User;
 import umc.GrowIT.Server.domain.UserChallenge;
 import umc.GrowIT.Server.domain.enums.UserChallengeType;
 import umc.GrowIT.Server.web.dto.ChallengeDTO.ChallengeRequestDTO;
 import umc.GrowIT.Server.web.dto.ChallengeDTO.ChallengeResponseDTO;
+import umc.GrowIT.Server.web.dto.KeywordDTO.KeywordResponseDTO;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -124,10 +127,45 @@ public class ChallengeConverter {
                 .build();
     }
 
+    // 챌린지 삭제
     public static ChallengeResponseDTO.DeleteChallengeResponseDTO toDeletedUserChallenge(UserChallenge userChallenge) {
         return ChallengeResponseDTO.DeleteChallengeResponseDTO.builder()
                 .id(userChallenge.getId())
                 .message("챌린지를 삭제했어요")
+                .build();
+    }
+
+    // 챌린지 추천
+    public static ChallengeResponseDTO.RecommendChallengesResponseDTO toRecommendedChallengeDTO(List<Keyword> analyzedEmotions, List<Challenge> dailyChallenges, Challenge randomChallenge) {
+       // 감정키워드 변환
+        List<KeywordResponseDTO.KeywordDTO> emotionKeywordsDTOs = KeywordConverter.toKeywordsDTO(analyzedEmotions);
+
+        // daily 챌린지 변환
+        List<ChallengeResponseDTO.ChallengeDTO> recommendedChallenges = dailyChallenges.stream()
+                .map(challenge -> ChallengeResponseDTO.ChallengeDTO.builder()
+                        .id(challenge.getId())
+                        .title(challenge.getTitle())
+                        .content(challenge.getContent())
+                        .time(challenge.getTime())
+                        .type(UserChallengeType.DAILY)
+                        .build())
+                .collect(Collectors.toList());
+
+        // random 챌린지 변환 후 리스트에 추가
+        recommendedChallenges.add(
+                ChallengeResponseDTO.ChallengeDTO.builder()
+                        .id(randomChallenge.getId())
+                        .title(randomChallenge.getTitle())
+                        .content(randomChallenge.getContent())
+                        .time(randomChallenge.getTime())
+                        .type(UserChallengeType.RANDOM)
+                        .build()
+        );
+
+        // 최종 response
+        return ChallengeResponseDTO.RecommendChallengesResponseDTO.builder()
+                .emotionKeywords(emotionKeywordsDTOs)
+                .recommendedChallenges(recommendedChallenges)
                 .build();
     }
 }
