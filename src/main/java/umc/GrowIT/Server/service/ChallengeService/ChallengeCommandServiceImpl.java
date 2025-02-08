@@ -36,6 +36,14 @@ public class ChallengeCommandServiceImpl implements ChallengeCommandService {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new ChallengeHandler(ErrorStatus.USER_NOT_FOUND));
 
+        // 유저가 오늘 챌린지를 저장한 적이 있는지 확인
+        boolean hasSavedToday = userChallengeRepository.existsTodayChallengesByUserId(userId);
+
+        // 이미 저장한 적이 있으면 추가 저장 불가능
+        if (hasSavedToday) {
+            throw new ChallengeHandler(ErrorStatus.CHALLENGE_ALREADY_SAVED);
+        }
+
         // 전체 선택된 챌린지 개수 초기화
         int dailyChallengeCount = 0;
         int randomChallengeCount = 0;
