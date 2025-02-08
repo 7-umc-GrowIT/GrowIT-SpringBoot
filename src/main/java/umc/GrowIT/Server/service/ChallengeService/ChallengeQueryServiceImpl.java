@@ -70,8 +70,8 @@ public class ChallengeQueryServiceImpl implements ChallengeQueryService {
         // 오늘 저장된 챌린지 조회
         List<UserChallenge> todayChallenges = userChallengeRepository.findTodayUserChallengesByUserId(userId, startOfDay, endOfDay);
 
-        // 감정 키워드 조회 (사용자의 최신 일기 기반)
-        List<String> keywordNames = keywordService.getRecentDiaryKeywords(userId);
+        // 감정 키워드 조회 (사용자가 오늘 작성한 일기 기반)
+        List<String> keywordNames = keywordService.getTodayDiaryKeywords(userId);
 
         return ChallengeConverter.toChallengeHomeDTO(
                 todayChallenges,

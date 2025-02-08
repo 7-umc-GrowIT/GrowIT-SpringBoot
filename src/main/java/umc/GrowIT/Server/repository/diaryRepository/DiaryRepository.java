@@ -25,6 +25,6 @@ public interface DiaryRepository extends JpaRepository<Diary, Long> {
     Optional<LocalDate> findLastDiaryDateByUserId(@Param("userId") Long userId);
 
     // 오늘 작성한 일기 조회
-    @Query("SELECT d FROM Diary d WHERE d.user.id = :userId AND d.date = CURRENT_DATE")
-    Optional<Diary> findTodayDiaryByUserId(@Param("userId") Long userId);
+    @Query("SELECT d FROM Diary d WHERE d.user.id = :userId AND d.date = :today")
+    Optional<Diary> findTodayDiaryByUserId(@Param("userId") Long userId, @Param("today") LocalDate today);
 }

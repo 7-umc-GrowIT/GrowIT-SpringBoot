@@ -5,6 +5,8 @@ import org.springframework.stereotype.Service;
 import umc.GrowIT.Server.repository.KeywordRepository;
 import umc.GrowIT.Server.repository.diaryRepository.DiaryRepository;
 import umc.GrowIT.Server.domain.Keyword;
+
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -16,22 +18,15 @@ public class KeywordService {
     private final DiaryRepository diaryRepository;
     private final KeywordRepository keywordRepository;
 
-    public List<String> getRecentDiaryKeywords(Long userId) {
-        // 최신 일기의 키워드 2개 가져오기
-        List<String> diaryKeywordNames = diaryRepository.findTodayDiaryByUserId(userId)
+    public List<String> getTodayDiaryKeywords(Long userId) {
+        LocalDate today = LocalDate.now();
+        return diaryRepository.findTodayDiaryByUserId(userId, today)
                 .map(diary -> diary.getDiaryKeywords().stream()
                         .map(diaryKeyword -> diaryKeyword.getKeyword().getName())
-                        .limit(2) // **최대 2개 선택**
+                        .limit(3)
                         .toList())
-                .orElseGet(Collections::emptyList);
+                .orElseGet(Collections::emptyList); // 일기가 없으면 빈 리스트 반환
 
-        // 랜덤 키워드 1개 추가
-        String randomKeyword = keywordRepository.findRandomKeyword().getName();
-
-        List<String> finalKeywords = new ArrayList<>(diaryKeywordNames);
-        finalKeywords.add(randomKeyword);
-
-        return finalKeywords;
     }
 }
 
