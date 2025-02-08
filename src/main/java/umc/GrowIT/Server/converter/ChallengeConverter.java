@@ -141,31 +141,31 @@ public class ChallengeConverter {
         List<KeywordResponseDTO.KeywordDTO> emotionKeywordsDTOs = KeywordConverter.toKeywordsDTO(analyzedEmotions);
 
         // daily 챌린지 변환
-        List<ChallengeResponseDTO.ChallengeDTO> dailyChallengesDTOs = dailyChallenges.stream()
-                .map(challenge ->
-                        ChallengeResponseDTO.ChallengeDTO.builder()
+        List<ChallengeResponseDTO.ChallengeDTO> recommendedChallenges = dailyChallenges.stream()
+                .map(challenge -> ChallengeResponseDTO.ChallengeDTO.builder()
                         .id(challenge.getId())
                         .title(challenge.getTitle())
                         .content(challenge.getContent())
                         .time(challenge.getTime())
                         .type(UserChallengeType.DAILY)
                         .build())
-                .toList();
+                .collect(Collectors.toList());
 
-        // random 챌린지 변환
-        ChallengeResponseDTO.ChallengeDTO randomChallengeDTO = ChallengeResponseDTO.ChallengeDTO.builder()
-                .id(randomChallenge.getId())
-                .title(randomChallenge.getTitle())
-                .content(randomChallenge.getContent())
-                .time(randomChallenge.getTime())
-                .type(UserChallengeType.RANDOM) // RANDOM 타입 설정
-                .build();
+        // random 챌린지 변환 후 리스트에 추가
+        recommendedChallenges.add(
+                ChallengeResponseDTO.ChallengeDTO.builder()
+                        .id(randomChallenge.getId())
+                        .title(randomChallenge.getTitle())
+                        .content(randomChallenge.getContent())
+                        .time(randomChallenge.getTime())
+                        .type(UserChallengeType.RANDOM)
+                        .build()
+        );
 
         // 최종 response
         return ChallengeResponseDTO.RecommendChallengesResponseDTO.builder()
                 .emotionKeywords(emotionKeywordsDTOs)
-                .dailyChallenges(dailyChallengesDTOs)
-                .randomChallenge(randomChallengeDTO)
+                .recommendedChallenges(recommendedChallenges)
                 .build();
     }
 }

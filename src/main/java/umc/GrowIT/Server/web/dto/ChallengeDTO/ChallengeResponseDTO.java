@@ -157,8 +157,7 @@ public class ChallengeResponseDTO {
     @AllArgsConstructor
     public static class RecommendChallengesResponseDTO {
         private List<KeywordResponseDTO.KeywordDTO> emotionKeywords; //감정키워드
-        private List<ChallengeDTO> dailyChallenges; //데일리
-        private ChallengeDTO randomChallenge; //랜덤
+        private List<ChallengeDTO> recommendedChallenges; //추천챌린지
     }
 
     @Getter
