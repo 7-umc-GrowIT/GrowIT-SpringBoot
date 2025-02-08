@@ -6,14 +6,14 @@ import org.springframework.transaction.annotation.Transactional;
 import umc.GrowIT.Server.apiPayload.code.status.ErrorStatus;
 import umc.GrowIT.Server.apiPayload.exception.ChallengeHandler;
 import umc.GrowIT.Server.converter.ChallengeConverter;
-import umc.GrowIT.Server.domain.Keyword;
 import umc.GrowIT.Server.domain.UserChallenge;
 import umc.GrowIT.Server.domain.enums.UserChallengeType;
 import umc.GrowIT.Server.repository.ChallengeKeywordRepository;
-import umc.GrowIT.Server.repository.ChallengeRepository.ChallengeRepository;
+import umc.GrowIT.Server.repository.ChallengeRepository;
 import umc.GrowIT.Server.repository.KeywordRepository;
-import umc.GrowIT.Server.repository.ChallengeRepository.UserChallengeRepository;
+import umc.GrowIT.Server.repository.UserChallengeRepository;
 import umc.GrowIT.Server.repository.diaryRepository.DiaryRepository;
+import umc.GrowIT.Server.service.KeywordService.KeywordService;
 import umc.GrowIT.Server.web.dto.ChallengeDTO.ChallengeResponseDTO;
 
 import java.time.LocalDate;
@@ -32,6 +32,7 @@ public class ChallengeQueryServiceImpl implements ChallengeQueryService {
     private final KeywordRepository keywordRepository;
     private final ChallengeKeywordRepository challengeKeywordRepository;
     private final DiaryRepository diaryRepository;
+    private final KeywordService keywordService;
     @Override
     public int getTotalCredits(Long userId) {
         // TODO: 총 크레딧 수 조회 로직 구현
@@ -62,19 +63,15 @@ public class ChallengeQueryServiceImpl implements ChallengeQueryService {
     @Transactional
     public ChallengeResponseDTO.ChallengeHomeDTO getChallengeHome(Long userId) {
 
-        // 2. 오늘의 시작 시간과 끝 시간 계산
+        // 오늘의 시작 시간과 끝 시간 계산
         LocalDateTime startOfDay = LocalDate.now().atStartOfDay(); // 오늘 자정 00:00:00
         LocalDateTime endOfDay = LocalDate.now().atTime(LocalTime.MAX); // 오늘 끝 23:59:59
 
-        // 3. 오늘 저장된 챌린지 조회
+        // 오늘 저장된 챌린지 조회
         List<UserChallenge> todayChallenges = userChallengeRepository.findTodayUserChallengesByUserId(userId, startOfDay, endOfDay);
 
-        // 4. Keyword 데이터 조회 후 문자열 리스트로 변환
-        List<String> keywordNames = keywordRepository.findAll()
-                .stream()
-                .limit(3) // 최대 3개만 추출
-                .map(Keyword::getName)
-                .toList();
+        // 감정 키워드 조회 (사용자의 최신 일기 기반)
+        List<String> keywordNames = keywordService.getRecentDiaryKeywords(userId);
 
         return ChallengeConverter.toChallengeHomeDTO(
                 todayChallenges,
