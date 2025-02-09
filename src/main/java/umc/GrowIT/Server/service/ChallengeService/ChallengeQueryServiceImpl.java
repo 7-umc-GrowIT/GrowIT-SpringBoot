@@ -6,14 +6,19 @@ import org.springframework.transaction.annotation.Transactional;
 import umc.GrowIT.Server.apiPayload.code.status.ErrorStatus;
 import umc.GrowIT.Server.apiPayload.exception.ChallengeHandler;
 import umc.GrowIT.Server.converter.ChallengeConverter;
-import umc.GrowIT.Server.domain.Challenge;
 import umc.GrowIT.Server.domain.UserChallenge;
 import umc.GrowIT.Server.domain.enums.UserChallengeType;
+import umc.GrowIT.Server.repository.ChallengeKeywordRepository;
 import umc.GrowIT.Server.repository.ChallengeRepository;
+import umc.GrowIT.Server.repository.KeywordRepository;
 import umc.GrowIT.Server.repository.UserChallengeRepository;
+import umc.GrowIT.Server.repository.diaryRepository.DiaryRepository;
+import umc.GrowIT.Server.service.KeywordService.KeywordService;
 import umc.GrowIT.Server.web.dto.ChallengeDTO.ChallengeResponseDTO;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.time.temporal.ChronoUnit;
 import java.util.Collections;
 import java.util.List;
@@ -24,7 +29,10 @@ public class ChallengeQueryServiceImpl implements ChallengeQueryService {
 
     private final ChallengeRepository challengeRepository;
     private final UserChallengeRepository userChallengeRepository;
-
+    private final KeywordRepository keywordRepository;
+    private final ChallengeKeywordRepository challengeKeywordRepository;
+    private final DiaryRepository diaryRepository;
+    private final KeywordService keywordService;
     @Override
     public int getTotalCredits(Long userId) {
         // TODO: 총 크레딧 수 조회 로직 구현
@@ -39,27 +47,42 @@ public class ChallengeQueryServiceImpl implements ChallengeQueryService {
     }
 
     @Override
-    public String getUserDate(Long userId) {
-        // TODO: 사용자가 가입한 날짜와 오늘 날짜 간의 차이를 계산
-        LocalDate joinDate = challengeRepository.findJoinDateByUserId(userId)
-                .orElse(LocalDate.now()); // 가입 날짜가 없으면 오늘 날짜를 기본값으로 사용
+    public String getDiaryDate(Long userId) {
+        // 사용자가 마지막으로 일기를 작성한 날짜 조회
+        LocalDate lastDiaryDate = diaryRepository.findLastDiaryDateByUserId(userId)
+                .orElse(LocalDate.now()); // 작성 기록이 없으면 오늘 날짜를 기본값으로 사용
 
         // 오늘 날짜와의 차이를 계산
-        long days = ChronoUnit.DAYS.between(joinDate, LocalDate.now());
+        long days = ChronoUnit.DAYS.between(lastDiaryDate, LocalDate.now());
 
         return "D+" + days;
     }
 
+
     @Override
+    @Transactional
     public ChallengeResponseDTO.ChallengeHomeDTO getChallengeHome(Long userId) {
+
+        // 오늘의 시작 시간과 끝 시간 계산
+        LocalDateTime startOfDay = LocalDate.now().atStartOfDay(); // 오늘 자정 00:00:00
+        LocalDateTime endOfDay = LocalDate.now().atTime(LocalTime.MAX); // 오늘 끝 23:59:59
+
+        // 오늘 저장된 챌린지 조회
+        List<UserChallenge> todayChallenges = userChallengeRepository.findTodayUserChallengesByUserId(userId, startOfDay, endOfDay);
+
+        // 감정 키워드 조회 (사용자가 오늘 작성한 일기 기반)
+        List<String> keywordNames = keywordService.getTodayDiaryKeywords(userId);
+
         return ChallengeConverter.toChallengeHomeDTO(
-                challengeRepository.findRecommendedChallengesByUserId(userId),
-                challengeRepository.findCompletedChallengeIdsByUserId(userId),
+                todayChallenges,
                 getTotalCredits(userId),
                 getTotalDiaries(userId),
-                getUserDate(userId)
+                getDiaryDate(userId),
+                keywordNames
         );
     }
+
+
 
     @Override
     public ChallengeResponseDTO.ChallengeStatusListDTO getChallengeStatus(Long userId, UserChallengeType dtype, Boolean completed) {
@@ -94,7 +117,7 @@ public class ChallengeQueryServiceImpl implements ChallengeQueryService {
                 .orElseThrow(() -> new ChallengeHandler(ErrorStatus.USER_CHALLENGE_NOT_FOUND));
 
         if (!userChallenge.isCompleted()) {
-            throw new ChallengeHandler(ErrorStatus.CHALLENGE_VERIFY_NOT_EXISTS);
+            throw new ChallengeHandler(ErrorStatus.CHALLENGE_NOT_COMPLETED);
         }
 
         String imageUrl = userChallenge.getCertificationImage();

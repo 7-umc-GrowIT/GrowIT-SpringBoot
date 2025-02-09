@@ -17,9 +17,9 @@ public class ChallengeRequestDTO {
     @NoArgsConstructor
     @AllArgsConstructor
     public static class ProofRequestDTO {
-        @Schema(description = "인증 이미지 파일 (multipart/form-data)", type = "string", format = "binary")
+        @Schema(description = "인증 이미지 파일 (multipart/form-data)", requiredMode = Schema.RequiredMode.REQUIRED)
         private MultipartFile certificationImage;
-        @Schema(description = "소감 (텍스트)")
+        @Schema(description = "소감 (텍스트)", requiredMode = Schema.RequiredMode.REQUIRED)
         private String thoughts;
     }
 

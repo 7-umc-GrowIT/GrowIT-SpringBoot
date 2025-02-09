@@ -25,7 +25,7 @@ public class UserChallenge extends BaseEntity {
     @JoinColumn(name = "challenge_id", nullable = false)
     private Challenge challenge;
 
-    @Column(name = "thoughts", length = 100)
+    @Column(name = "thoughts", length = 100, nullable = false)
     private String thoughts;
 
     @Column(name = "certification_image", columnDefinition = "TEXT")

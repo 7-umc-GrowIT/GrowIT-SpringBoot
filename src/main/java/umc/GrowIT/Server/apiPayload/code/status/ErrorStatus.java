@@ -54,8 +54,8 @@ public enum ErrorStatus implements BaseErrorCode {
 
     // 챌린지 관련 에러
     CHALLENGE_NOT_FOUND(HttpStatus.NOT_FOUND, "CHALLENGE4001", "챌린지를 찾을 수 없습니다."),
-    CHALLENGE_VERIFY_NOT_EXISTS(HttpStatus.BAD_REQUEST, "CHALLENGE4002", "챌린지 인증 내역이 존재하지 않습니다."),
-    CHALLENGE_NOT_COMPLETE(HttpStatus.BAD_REQUEST, "CHALLENGE4003", "미완료한 챌린지입니다."),
+    CHALLENGE_NOT_COMPLETED(HttpStatus.BAD_REQUEST, "CHALLENGE4002", "챌린지 인증이 완료되지 않았습니다."),
+    CHALLENGE_ALREADY_SAVED(HttpStatus.BAD_REQUEST, "CHALLENGE4003", "오늘 이미 챌린지를 저장하였습니다. 추가 저장은 불가능합니다."),
     CHALLENGE_VERIFY_ALREADY_EXISTS(HttpStatus.BAD_REQUEST, "CHALLENGE4004", "이미 완료된 챌린지입니다."),
     CHALLENGE_SAVE_LIMIT(HttpStatus.BAD_REQUEST, "CHALLENGE4005", "챌린지는 3개까지 저장 가능합니다."),
     CHALLENGE_AT_LEAST(HttpStatus.BAD_REQUEST, "CHALLENGE4006", "최소 하나의 챌린지를 선택해야 합니다."),
