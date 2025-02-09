@@ -25,10 +25,14 @@ public class UserChallenge extends BaseEntity {
     @JoinColumn(name = "challenge_id", nullable = false)
     private Challenge challenge;
 
-    @Column(name = "thoughts", length = 100)
+    @Column(name = "thoughts", length = 100, nullable = false)
     private String thoughts;
 
+<<<<<<< HEAD
     @Column(name = "certification_image", length = 2000)
+=======
+    @Column(name = "certification_image", columnDefinition = "TEXT")
+>>>>>>> b62f6431a43d92ae7196ca726ae795fc09e7c97c
     private String certificationImage;
 
     @Enumerated(EnumType.STRING)

@@ -4,8 +4,8 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import umc.GrowIT.Server.domain.ChallengeKeyword;
 import umc.GrowIT.Server.domain.enums.UserChallengeType;
+import umc.GrowIT.Server.web.dto.KeywordDTO.KeywordResponseDTO;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -17,20 +17,30 @@ public class ChallengeResponseDTO {
     @NoArgsConstructor
     @AllArgsConstructor
     public static class ChallengeHomeDTO {
+        private List<String> challengeKeywords;
         private List<RecommendedChallengeDTO> recommendedChallenges; // 오늘의 챌린지 추천
         private ChallengeReportDTO challengeReport; // 챌린지 리포트
     }
 
+    @Getter
+    @Builder
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class KeywordDTO {
+        private String name;
+    }
     // 챌린지 추천
     @Getter
     @Builder
     @NoArgsConstructor
     @AllArgsConstructor
     public static class RecommendedChallengeDTO {
-        private List<ChallengeKeyword> challengeKeywords;
+        private Long id;
         private String title;
+        private String content;
+        private UserChallengeType dtype;
         private Integer time;
-        private boolean isCompleted;
+        private boolean completed;
     }
 
     // 챌린지 리포트
@@ -41,10 +51,9 @@ public class ChallengeResponseDTO {
     public static class ChallengeReportDTO {
         private int totalCredits;
         private int totalDiaries;
-        private String userDate;
+        private String diaryDate;
     }
 
-    // 챌린지 현황 응답 DTO
     @Getter
     @Builder
     @NoArgsConstructor
@@ -83,7 +92,7 @@ public class ChallengeResponseDTO {
     @NoArgsConstructor
     @AllArgsConstructor
     public static class AddProofResultDTO {
-        private Long challengeId;
+        private Long id;
         private String title;
         private Integer time;
         private String certificationImage;
@@ -99,7 +108,7 @@ public class ChallengeResponseDTO {
     @NoArgsConstructor
     @AllArgsConstructor
     public static class ProofDetailsDTO {
-        private Long challengeId;
+        private Long id;
         private String title;
         private String certificationImage;
         private String thoughts;
@@ -121,7 +130,6 @@ public class ChallengeResponseDTO {
     @AllArgsConstructor
     public static class SelectedChallengesInfo {
         private Long id;
-        private Long challengeId;
         private UserChallengeType dtype;
         private String title;
         private String content;
@@ -147,5 +155,27 @@ public class ChallengeResponseDTO {
         // TODO 디테일하게 결정 필요
         private Long id;
         private String message; // ex) 챌린지 삭제가 완료되었습니다
+    }
+
+    // 챌린지 추천 응답 DTO
+    @Getter
+    @Builder
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class RecommendChallengesResponseDTO {
+        private List<KeywordResponseDTO.KeywordDTO> emotionKeywords; //감정키워드
+        private List<ChallengeDTO> recommendedChallenges; //추천챌린지
+    }
+
+    @Getter
+    @Builder
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class ChallengeDTO {
+        private Long id; // 챌린지 ID
+        private String title; //챌린지 제목
+        private String content; //챌린지 내용
+        private Integer time; //챌린지 소요시간
+        private UserChallengeType type; //추천 타입 (Daily or Random)
     }
 }
