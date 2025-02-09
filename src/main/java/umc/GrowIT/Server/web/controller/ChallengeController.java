@@ -81,7 +81,7 @@ public class ChallengeController implements ChallengeSpecification {
         return ApiResponse.onSuccess(response);
     }
 
-    @PutMapping("{userChallengeId}")
+    @PatchMapping("{userChallengeId}")
     public ApiResponse<ChallengeResponseDTO.ModifyProofDTO> updateChallengeProof(@PathVariable("userChallengeId") Long userChallengeId, @RequestBody ChallengeRequestDTO.ProofRequestDTO updateRequest) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         Long userId = (Long) authentication.getPrincipal();

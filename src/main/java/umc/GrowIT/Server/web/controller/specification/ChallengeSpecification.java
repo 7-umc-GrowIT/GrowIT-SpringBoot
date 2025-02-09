@@ -82,7 +82,7 @@ public interface ChallengeSpecification {
     ApiResponse<ChallengeResponseDTO.ProofDetailsDTO> getChallengeProofDetails(@PathVariable Long userChallengeId);
 
 
-    @PutMapping("{userChallengeId}")
+    @PatchMapping("{userChallengeId}")
     @Operation(summary = "챌린지 인증 수정 API", description = "챌린지 인증을 수정하는 API입니다.")
     @ApiResponses({
             @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "COMMON200", description = "⭕ SUCCESS"),
