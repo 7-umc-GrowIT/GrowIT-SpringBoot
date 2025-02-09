@@ -20,7 +20,7 @@ public class S3Service {
     @Value("${aws.s3.bucket}")
     private String bucketName;
 
-    // ✅ Presigned URL 생성 (업로드)
+    // Presigned URL 생성 (업로드)
     public String generatePresignedUrlForUpload(String fileName) {
         // 파일 경로에 폴더 추가
         String objectKey = "challenges/" + fileName;
@@ -29,14 +29,14 @@ public class S3Service {
         Date expiration = new Date(System.currentTimeMillis() + TimeUnit.MINUTES.toMillis(10));
 
         GeneratePresignedUrlRequest request = new GeneratePresignedUrlRequest(bucketName, objectKey)
-                .withMethod(HttpMethod.PUT) // ✅ 업로드용 (PUT 요청)
+                .withMethod(HttpMethod.PUT) // 업로드용 (PUT 요청)
                 .withExpiration(expiration);
 
         URL presignedUrl = amazonS3.generatePresignedUrl(request);
         return presignedUrl.toString();
     }
 
-    // ✅ Presigned URL 생성 (다운로드)
+    // Presigned URL 생성 (다운로드)
     public String generatePresignedUrlForDownload(String fileName) {
         // 파일 경로에 폴더 추가
         String objectKey = "challenges/" + fileName;
@@ -44,7 +44,7 @@ public class S3Service {
         Date expiration = new Date(System.currentTimeMillis() + TimeUnit.MINUTES.toMillis(10));
 
         GeneratePresignedUrlRequest request = new GeneratePresignedUrlRequest(bucketName, objectKey)
-                .withMethod(HttpMethod.GET) // ✅ 다운로드용 (GET 요청)
+                .withMethod(HttpMethod.GET) // 다운로드용 (GET 요청)
                 .withExpiration(expiration);
 
         URL presignedUrl = amazonS3.generatePresignedUrl(request);
