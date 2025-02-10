@@ -279,9 +279,12 @@ public class DiaryCommandServiceImpl implements DiaryCommandService{
     // 일기 분석 (일기 -> 감정)
     private List<Keyword> openAIAnalyzeDiary(String diaryContent, String emotions) {
 
+        log.info("[프롬프트의 감정들] : " + emotions);
+
         // 프롬프트
         String prompt = String.format("""
-            다음 일기를 분석하여 %s 감정들 중 가장 해당되는 감정을 3개 선택해주세요.
+            다음 일기를 분석하여 %s 감정들 중에서 가장 해당되는 감정을 3개 선택해주세요.
+            목록에 없는 감정을 사용하면 안 됩니다.
             
             일기 내용: %s
             
