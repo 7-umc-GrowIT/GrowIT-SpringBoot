@@ -99,6 +99,8 @@ public enum ErrorStatus implements BaseErrorCode {
     DIARY_CHARACTER_LIMIT(HttpStatus.BAD_REQUEST, "DIARY4002", "100자 이내로 작성된 일기입니다."),
     DIARY_ALREADY_EXISTS(HttpStatus.BAD_REQUEST, "DIARY4003", "해당날짜에 이미 일기가 존재합니다."),
     DIARY_SAME_CONTENT(HttpStatus.BAD_REQUEST, "DIARY4004", "기존 일기와 동일한 내용입니다."),
+    ANALYZED_DIARY(HttpStatus.BAD_REQUEST, "DIARY4005", "이미 분석된 일기입니다."),
+    DIARY_NOT_TODAY(HttpStatus.BAD_REQUEST, "DIARY4006", "오늘의 일기만 분석이 가능합니다."),
 
     // S3 관련 에러
     S3_BAD_FILE_EXTENSION(HttpStatus.BAD_REQUEST, "S3_4001", "파일 확장자가 잘못되었습니다."),
