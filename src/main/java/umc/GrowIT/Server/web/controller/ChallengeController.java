@@ -98,10 +98,4 @@ public class ChallengeController implements ChallengeSpecification {
         ChallengeResponseDTO.DeleteChallengeResponseDTO deleteChallenge = challengeCommandService.delete(userChallengeId, userId);
         return ApiResponse.onSuccess(deleteChallenge);
     }
-
-    @Override
-    public ApiResponse<ChallengeResponseDTO.RecommendChallengesResponseDTO> recommendChallenges(ChallengeRequestDTO.RecommendChallengesRequestDTO diaryContent) {
-        ChallengeResponseDTO.RecommendChallengesResponseDTO result = challengeCommandService.recommend(diaryContent);
-        return ApiResponse.onSuccess(result);
-    }
 }

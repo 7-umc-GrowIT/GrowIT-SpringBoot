@@ -154,11 +154,7 @@ public class ChallengeConverter {
                 .build();
     }
 
-    // 챌린지 추천
-    public static ChallengeResponseDTO.RecommendChallengesResponseDTO toRecommendedChallengeDTO(List<Keyword> analyzedEmotions, List<Challenge> dailyChallenges, Challenge randomChallenge) {
-       // 감정키워드 변환
-        List<KeywordResponseDTO.KeywordDTO> emotionKeywordsDTOs = KeywordConverter.toKeywordsDTO(analyzedEmotions);
-
+    public static List<ChallengeResponseDTO.ChallengeDTO> toRecommendedChallenges(List<Challenge> dailyChallenges, Challenge randomChallenge) {
         // daily 챌린지 변환
         List<ChallengeResponseDTO.ChallengeDTO> recommendedChallenges = dailyChallenges.stream()
                 .map(challenge -> ChallengeResponseDTO.ChallengeDTO.builder()
@@ -181,10 +177,6 @@ public class ChallengeConverter {
                         .build()
         );
 
-        // 최종 response
-        return ChallengeResponseDTO.RecommendChallengesResponseDTO.builder()
-                .emotionKeywords(emotionKeywordsDTOs)
-                .recommendedChallenges(recommendedChallenges)
-                .build();
+        return recommendedChallenges;
     }
 }
