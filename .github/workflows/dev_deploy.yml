@@ -3,7 +3,7 @@ name: GrowIt CI/CD Pipeline
 
 on:
   push:
-    branches: [ develop ]
+    branches: [ refactor/#170 ]
     paths:                          #소스 코드나 빌드 스크립트가 변경된 경우에만 파이프라인 실행
       - 'src/**'
       - 'build.gradle'
