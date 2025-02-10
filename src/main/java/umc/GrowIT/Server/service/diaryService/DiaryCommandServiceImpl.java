@@ -28,7 +28,7 @@ public class DiaryCommandServiceImpl implements DiaryCommandService{
     private final DiaryRepository diaryRepository;
     private final UserRepository userRepository;
 
-    @Value("${openai.model}")
+    @Value("${openai.model1}")
     private String model;
 
     @Value("${openai.api.url}")
