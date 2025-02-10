@@ -50,7 +50,7 @@ public enum ErrorStatus implements BaseErrorCode {
     EMAIL_SEND_FAIL(HttpStatus.INTERNAL_SERVER_ERROR, "AUTH5001", "이메일 전송에 실패했습니다."),
     EMAIL_ENCODING_FAIL(HttpStatus.INTERNAL_SERVER_ERROR, "AUTH5002", "이메일 내용 인코딩에 실패했습니다."),
 
-    KAKAO_AUTH_CODE_ERROR(HttpStatus.BAD_REQUEST, "AUTH4030", "잘못된 요청입니다. 인가 코드가 유효한지 확인하세요."),
+    KAKAO_AUTH_CODE_ERROR(HttpStatus.BAD_REQUEST, "AUTH4030", "인가 코드가 유효한지 확인하세요. (동일한 인가 코드 재요청 불가, 인가 코드 발급 후 10분 이내 요청)"),
 
     // 챌린지 관련 에러
     CHALLENGE_NOT_FOUND(HttpStatus.NOT_FOUND, "CHALLENGE4001", "챌린지를 찾을 수 없습니다."),
@@ -99,6 +99,8 @@ public enum ErrorStatus implements BaseErrorCode {
     DIARY_CHARACTER_LIMIT(HttpStatus.BAD_REQUEST, "DIARY4002", "100자 이내로 작성된 일기입니다."),
     DIARY_ALREADY_EXISTS(HttpStatus.BAD_REQUEST, "DIARY4003", "해당날짜에 이미 일기가 존재합니다."),
     DIARY_SAME_CONTENT(HttpStatus.BAD_REQUEST, "DIARY4004", "기존 일기와 동일한 내용입니다."),
+    ANALYZED_DIARY(HttpStatus.BAD_REQUEST, "DIARY4005", "이미 분석된 일기입니다."),
+    DIARY_NOT_TODAY(HttpStatus.BAD_REQUEST, "DIARY4006", "오늘의 일기만 분석이 가능합니다."),
 
     // S3 관련 에러
     S3_BAD_FILE_EXTENSION(HttpStatus.BAD_REQUEST, "S3_4001", "파일 확장자가 잘못되었습니다."),
@@ -108,7 +110,7 @@ public enum ErrorStatus implements BaseErrorCode {
     S3_FILE_DELETE_FAILED(HttpStatus.BAD_REQUEST, "S3_4004", "파일 삭제에 실패했습니다."),
 
     // OAuth 관련 에러
-    ACCOUNT_ALREADY_EXISTS(HttpStatus.CONFLICT, "OAUTH_4001", "이미 가입한 계정입니다."),
+    ACCOUNT_ALREADY_EXISTS(HttpStatus.CONFLICT, "OAUTH_4001", "이미 가입한 소셜 계정입니다."),
     ACCOUNT_NOT_FOUND(HttpStatus.NOT_FOUND, "OAUTH_4002", "존재하지 않는 계정입니다."),
     ACCOUNT_BAD_REQUEST(HttpStatus.BAD_REQUEST, "OAUTH_4003", "요청한 이메일로 가입할 수 없습니다."),
 

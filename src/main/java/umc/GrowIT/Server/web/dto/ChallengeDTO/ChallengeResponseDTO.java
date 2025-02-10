@@ -157,16 +157,6 @@ public class ChallengeResponseDTO {
         private String message; // ex) 챌린지 삭제가 완료되었습니다
     }
 
-    // 챌린지 추천 응답 DTO
-    @Getter
-    @Builder
-    @NoArgsConstructor
-    @AllArgsConstructor
-    public static class RecommendChallengesResponseDTO {
-        private List<KeywordResponseDTO.KeywordDTO> emotionKeywords; //감정키워드
-        private List<ChallengeDTO> recommendedChallenges; //추천챌린지
-    }
-
     @Getter
     @Builder
     @NoArgsConstructor

@@ -4,6 +4,9 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import umc.GrowIT.Server.domain.enums.UserChallengeType;
+import umc.GrowIT.Server.web.dto.ChallengeDTO.ChallengeResponseDTO;
+import umc.GrowIT.Server.web.dto.KeywordDTO.KeywordResponseDTO;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -85,5 +88,15 @@ public class DiaryResponseDTO {
         Long diaryId;
         String content;
         LocalDate date;
+    }
+
+    // 챌린지 추천 응답 DTO
+    @Getter
+    @Builder
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class AnalyzedDiaryResponseDTO {
+        private List<KeywordResponseDTO.KeywordDTO> emotionKeywords; //감정키워드
+        private List<ChallengeResponseDTO.ChallengeDTO> recommendedChallenges; //추천챌린지
     }
 }

@@ -28,14 +28,4 @@ public class ChallengeRequestDTO {
         private List<Long> challengeIds;
         private UserChallengeType dtype;
     }
-
-
-    @Data
-    @Builder
-    @NoArgsConstructor
-    @AllArgsConstructor
-    public static class RecommendChallengesRequestDTO {
-        @NotNull
-        String diaryContent; //일기 내용
-    }
 }
