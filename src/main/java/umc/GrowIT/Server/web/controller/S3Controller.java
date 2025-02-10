@@ -17,7 +17,7 @@ public class S3Controller {
     private final S3Service s3Service;
 
     // S3 파일 업로드용 PreSigned URL 발급
-    @GetMapping("/upload-url")
+    @PutMapping("upload-url")
     public ApiResponse<Map<String, String>> getPresignedUploadUrl(@RequestParam String fileName) {
         // 파일 이름 검증
         if (fileName == null || fileName.isEmpty()) {
@@ -45,13 +45,13 @@ public class S3Controller {
     }
 
     // S3 파일 다운로드용 PreSigned URL 발급
-    @GetMapping("/download-url")
+    @GetMapping("download-url")
     public ApiResponse<String> getPresignedDownloadUrl(@RequestParam String fileName) {
         String presignedUrl = s3Service.generatePresignedUrlForDownload(fileName);
         return ApiResponse.onSuccess(presignedUrl);
     }
 
-    // PreSigned URL 생성 API
+    // PreSigned URL 생성 API (클라이언트가 s3에 직접 업로드하도록 제공)
     @PostMapping("generate-presigned-url")
     public ApiResponse<String> generatePresignedUrl(@RequestParam String fileName) {
         String presignedUrl = s3Service.generatePresignedUrlForUpload(fileName);
