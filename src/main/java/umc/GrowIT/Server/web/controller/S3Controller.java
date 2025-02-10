@@ -44,19 +44,5 @@ public class S3Controller {
         return ApiResponse.onSuccess(response);
     }
 
-    // S3 파일 다운로드용 PreSigned URL 발급
-    @GetMapping("download-url")
-    public ApiResponse<String> getPresignedDownloadUrl(@RequestParam String fileName) {
-        String presignedUrl = s3Service.generatePresignedUrlForDownload(fileName);
-        return ApiResponse.onSuccess(presignedUrl);
-    }
-
-    // PreSigned URL 생성 API (클라이언트가 s3에 직접 업로드하도록 제공)
-    @PostMapping("generate-presigned-url")
-    public ApiResponse<String> generatePresignedUrl(@RequestParam String fileName) {
-        String presignedUrl = s3Service.generatePresignedUrlForUpload(fileName);
-        return ApiResponse.onSuccess(presignedUrl);
-    }
-
 }
 
