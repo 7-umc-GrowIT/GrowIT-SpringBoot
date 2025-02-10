@@ -29,7 +29,10 @@ public class DiaryCommandServiceImpl implements DiaryCommandService{
     private final UserRepository userRepository;
 
     @Value("${openai.model1}")
-    private String model;
+    private String chatModel;
+
+    @Value("${openai.model2}")
+    private String summaryModel;
 
     @Value("${openai.api.url}")
     private String apiURL;
@@ -121,14 +124,14 @@ public class DiaryCommandServiceImpl implements DiaryCommandService{
 
         //처음 대화라면 시스템 프롬프트 추가
         if(messages.isEmpty()){
-            messages.add(new Message("system", "너는 사용자와 대화하며 일기를 작성하는 챗봇이야. 사용자의 말에 공감하며 가끔씩 감정을 이끌어내는 질문을 해야해."));
+            messages.add(new Message("system", "너는 사용자와 대화하며 일기를 작성하는 챗봇이야. role: user인 경우 사용자의 말이고, role: assistant인 경우 너가 사용자의 말에 대답하는 말이야. 사용자와의 대화 내용을 기억하고 사용자의 마지막말에 대해 상황에 맞게 대답해줘. 그리고 사용자의 말에 공감하며 가끔씩 감정을 이끌어내는 질문을 해야해. 반드시 존댓말을 사용하고 맞춤법은 제대로 맞춰줘."));
         }
 
         // 사용자의 입력을 대화 목록에 추가
         messages.add(new Message("user", userChat));
 
         // ChatGPT 요청 생성
-        ChatGPTRequest gptRequest = new ChatGPTRequest(model, messages);
+        ChatGPTRequest gptRequest = new ChatGPTRequest(chatModel, messages);
 
         // API 요청 및 응답 처리
         ChatGPTResponse chatGPTResponse = template.postForObject(apiURL, gptRequest, ChatGPTResponse.class);
@@ -168,10 +171,10 @@ public class DiaryCommandServiceImpl implements DiaryCommandService{
         List<Message> messages = conversationHistory.get(userId);
 
         // AI에게 대화내용 요약 요청
-        messages.add(new Message("system", "위의 내용은 사용자가 AI와 대화한 기록이야. 이 기록을 바탕으로 사용자가 직접 작성한 것 처럼 일기를 작성해줘. 사용자의 감정이 풍부하게 드러나도록 작성해줘. 또한 일기에서 AI와 대화했다는 사실이 드러나지 않도록 작성해줘."));
+        messages.add(new Message("system", "다음의 내용은 사용자가 AI와 대화한 기록이야. role: user인 경우 사용자의 말이고, role: assistant인 경우 AI가 사용자의 말에 대답하는 말이야. 이 기록을 바탕으로 사용자가 직접 작성한 것 처럼 1인칭 시점으로 일기를 작성해줘. 사용자의 감정이 풍부하게 드러나도록 작성해줘. 또한 일기에서 AI와 대화했다는 사실이 드러나지 않도록 작성해줘."));
 
         // ChatGPT 요청 생성
-        ChatGPTRequest gptRequest = new ChatGPTRequest(model, messages);
+        ChatGPTRequest gptRequest = new ChatGPTRequest(summaryModel, messages);
 
         // API 요청 및 응답 처리
         ChatGPTResponse chatGPTResponse = template.postForObject(apiURL, gptRequest, ChatGPTResponse.class);
