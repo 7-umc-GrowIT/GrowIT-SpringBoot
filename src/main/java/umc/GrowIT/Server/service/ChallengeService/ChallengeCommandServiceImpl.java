@@ -117,7 +117,8 @@ public class ChallengeCommandServiceImpl implements ChallengeCommandService {
 
     @Override
     @Transactional
-    public ChallengeResponseDTO.ModifyProofDTO updateChallengeProof(Long userId, Long userChallengeId, ChallengeRequestDTO.ProofRequestDTO updateRequest) {
+    public ChallengeResponseDTO.ModifyProofDTO updateChallengeProof(Long userId, Long userChallengeId, ChallengeRequestDTO.UpdateProofRequestDTO updateRequest) {
+        // 유저 챌린지 조회
         UserChallenge userChallenge = userChallengeRepository.findByIdAndUserId(userChallengeId, userId)
                 .orElseThrow(() -> new ChallengeHandler(ErrorStatus.USER_CHALLENGE_NOT_FOUND));
 
@@ -126,33 +127,23 @@ public class ChallengeCommandServiceImpl implements ChallengeCommandService {
             throw new ChallengeHandler(ErrorStatus.CHALLENGE_NOT_COMPLETED);
         }
 
-        // ✅ 기존 이미지 URL 가져오기
-        if (userChallenge.getCertificationImage() != null) {
-            // 사용자가 새로운 이미지 없이 요청을 보낸 경우, 기존 이미지 삭제
-            if (updateRequest.getCertificationImageUrl() == null || updateRequest.getCertificationImageUrl().isEmpty()) {
+        // 인증 이미지 업데이트
+        if (updateRequest.getCertificationImageUrl() != null && !updateRequest.getCertificationImageUrl().isEmpty()) {
+            if (userChallenge.getCertificationImage() != null) {
                 imageService.delete(userChallenge.getCertificationImage()); // 기존 이미지 삭제
-                userChallenge.setCertificationImage(null); // 이미지 삭제 처리
             }
-            // 사용자가 새로운 이미지를 업로드한 경우, 기존 이미지 삭제 후 새 이미지 저장
-            else {
-                imageService.delete(userChallenge.getCertificationImage()); // 기존 이미지 삭제
-                userChallenge.setCertificationImage(updateRequest.getCertificationImageUrl());
-            }
-        }
-        // ✅ 기존 이미지가 없는 경우, 새로운 이미지가 있다면 추가
-        else if (updateRequest.getCertificationImageUrl() != null && !updateRequest.getCertificationImageUrl().isEmpty()) {
-            userChallenge.setCertificationImage(updateRequest.getCertificationImageUrl());
+            userChallenge.setCertificationImage(updateRequest.getCertificationImageUrl()); // 새 이미지 설정
         }
 
-        // ✅ 소감 업데이트 (null이 아닌 경우에만 변경)
-        if (updateRequest.getThoughts() != null) {
+        // 소감 업데이트
+        if (updateRequest.getThoughts() != null && !updateRequest.getThoughts().isEmpty()) {
             userChallenge.setThoughts(updateRequest.getThoughts());
         }
 
-        // ✅ 변경 사항을 저장
         userChallengeRepository.save(userChallenge);
         return ChallengeConverter.toChallengeModifyProofDTO(userChallenge);
     }
+
 
 
     // 삭제

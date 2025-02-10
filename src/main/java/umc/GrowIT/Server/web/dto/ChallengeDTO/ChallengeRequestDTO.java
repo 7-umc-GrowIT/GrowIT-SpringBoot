@@ -24,6 +24,18 @@ public class ChallengeRequestDTO {
     @Builder
     @NoArgsConstructor
     @AllArgsConstructor
+    public static class UpdateProofRequestDTO {
+        @Schema(description = "S3 업로드 후 반환된 URL (Presigned URL 사용 시)")
+        private String certificationImageUrl;
+        @Schema(description = "소감 (텍스트)")
+        private String thoughts;
+    }
+
+
+    @Data
+    @Builder
+    @NoArgsConstructor
+    @AllArgsConstructor
     public static class SelectChallengeRequestDTO {
         private List<Long> challengeIds;
         private UserChallengeType dtype;
