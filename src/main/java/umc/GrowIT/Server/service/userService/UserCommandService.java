@@ -26,4 +26,6 @@ public interface UserCommandService {
     TokenResponseDTO.TokenDTO performAuthentication(String email, String password);
 
     void setRefreshToken(String refreshToken, User user);
+
+    void checkUserInactive(User user);
 }
