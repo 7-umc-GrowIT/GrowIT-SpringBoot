@@ -36,6 +36,19 @@ public class S3Service {
         return presignedUrl.toString();
     }
 
-}
+    // Presigned URL 생성 (다운로드)
+    public String generatePresignedUrlForDownload(String fileName) {
+        // 파일 경로에 폴더 추가
+        String objectKey = "challenges/" + fileName;
+        // PreSigned URL 유효 시간 설정 (10분)
+        Date expiration = new Date(System.currentTimeMillis() + TimeUnit.MINUTES.toMillis(10));
+
+        GeneratePresignedUrlRequest request = new GeneratePresignedUrlRequest(bucketName, objectKey)
+                .withMethod(HttpMethod.GET) // 다운로드용 (GET 요청)
+                .withExpiration(expiration);
+
+        URL presignedUrl = amazonS3.generatePresignedUrl(request);
+        return presignedUrl.toString();
+    }}
 
 

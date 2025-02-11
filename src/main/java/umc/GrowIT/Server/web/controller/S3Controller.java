@@ -44,5 +44,12 @@ public class S3Controller {
         return ApiResponse.onSuccess(response);
     }
 
+    // S3 파일 다운로드용 PreSigned URL 발급
+    @GetMapping("download-url")
+    public ApiResponse<String> getPresignedDownloadUrl(@RequestParam String fileName) {
+        String presignedUrl = s3Service.generatePresignedUrlForDownload(fileName);
+        return ApiResponse.onSuccess(presignedUrl);
+    }
+
 }
 
