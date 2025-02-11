@@ -89,7 +89,7 @@ public interface ChallengeSpecification {
             @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "COMMON400", description = "❌ BAD, 잘못된 요청", content = @Content(schema = @Schema(implementation = ApiResponse.class)))
     })
 
-    ApiResponse<ChallengeResponseDTO.ModifyProofDTO> updateChallengeProof(@PathVariable Long userChallengeId, @RequestBody(required = false) ChallengeRequestDTO.UpdateProofRequestDTO updateRequest);
+    ApiResponse<ChallengeResponseDTO.ModifyProofDTO> updateChallengeProof(@PathVariable Long userChallengeId, @RequestBody(required = false) ChallengeRequestDTO.ProofRequestDTO updateRequest);
 
 
     @DeleteMapping("{userChallengeId}")

@@ -137,12 +137,12 @@ public class ChallengeQueryServiceImpl implements ChallengeQueryService {
         // S3의 인증 이미지 경로 가져오기
         String imageKey = userChallenge.getCertificationImage();
 
-        // Presigned URL 생성 (이미지가 존재하는 경우에만)
-        String presignedUrl = (imageKey != null && !imageKey.isEmpty())
-                ? s3Service.generatePresignedUrlForDownload(imageKey)
+        // Presigned URL 대신 S3의 기본 파일 URL 반환
+        String imageUrl = (imageKey != null && !imageKey.isEmpty())
+                ? "https://" + bucketName + ".s3.amazonaws.com/" + imageKey
                 : null; // 이미지가 없으면 null 반환
 
-        return ChallengeConverter.toProofDetailsDTO(userChallenge.getChallenge(), userChallenge, presignedUrl);
+        return ChallengeConverter.toProofDetailsDTO(userChallenge.getChallenge(), userChallenge, imageUrl);
     }
 
 }
