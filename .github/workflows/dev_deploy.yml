@@ -1,25 +1,22 @@
 name: GrowIt CI/CD Pipeline
 
-
 on:
   push:
     branches: [ refactor/#170 ]
-    paths:                          #소스 코드나 빌드 스크립트가 변경된 경우에만 파이프라인 실행
+    paths:
       - 'src/**'
       - 'build.gradle'
       - 'settings.gradle'
       - '.github/workflows/**'
 
-# 전역 환경 변수 설정 추가
 env:
-  GRADLE_OPTS: "-Dorg.gradle.daemon=false -Dorg.gradle.workers.max=4"  # Gradle 데몬을 비활성화
-  JAVA_OPTS: "-Xmx4g" # JVM의 최대 힙 메모리 4GB로 제한
+  GRADLE_OPTS: "-Dorg.gradle.daemon=false -Dorg.gradle.workers.max=4"
+  JAVA_OPTS: "-Xmx4g"
 
 jobs:
-
   test:
     runs-on: ubuntu-latest
-    
+
     steps:
       - uses: actions/checkout@v3
 
@@ -28,7 +25,6 @@ jobs:
         with:
           distribution: 'temurin'
           java-version: '17'
-
 
       - name: Setup Gradle Cache
         uses: actions/cache@v3
@@ -40,25 +36,47 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-gradle-
 
+      # 테스트용 application.yml 생성
+      - name: Make test application.yml
+        run: |
+          mkdir -p ./src/test/resources
+          cat << EOF > ./src/test/resources/application.yml
+          spring:
+            datasource:
+              driver-class-name: org.h2.Driver
+              url: jdbc:h2:mem:testdb;MODE=MySQL
+              username: sa
+              password: 
+            jpa:
+              hibernate:
+                ddl-auto: create-drop
+              properties:
+                hibernate:
+                  dialect: org.hibernate.dialect.H2Dialect
+                  format_sql: true
+              show-sql: true
+            jwt:
+              secretKey: ${{ secrets.TEST_APPLICATION_YML }}
+          EOF
+        shell: bash
+
       - name: Grant execute permission for gradlew
         run: chmod +x gradlew
 
-      #병렬 테스트 설정
       - name: Test with Gradle
         run: ./gradlew test --parallel --max-workers=4
 
-      # 테스트 결과 저장 추가
       - name: Publish Test Results
         uses: actions/upload-artifact@v4
         if: success() || failure()
         with:
           name: test-results
           path: build/reports/tests/
-  #---------------------------------------------------------------------------------------------테스트
+
   build:
-    needs: test  # 테스트 성공 후 빌드하도록 의존성 추가
+    needs: test
     runs-on: ubuntu-latest
-    
+
     steps:
       - uses: actions/checkout@v3
 
@@ -68,7 +86,6 @@ jobs:
           distribution: 'temurin'
           java-version: '17'
 
-      # Gradle 캐시 설정 추가 -> 테스트와 빌드는 캐시 설정 별도
       - name: Setup Gradle Cache
         uses: actions/cache@v3
         with:
@@ -88,24 +105,22 @@ jobs:
       - name: Grant execute permission for gradlew
         run: chmod +x gradlew
 
-      # 병렬 빌드 및 캐시 사용 설정 추가
       - name: Build with Gradle
         uses: gradle/gradle-build-action@v2
         with:
-          arguments: build -x test --parallel --build-cache #앞에서 했으므로 테스트는 제외 / 병령실행 / Gradle 빌드 캐시 사용
+          arguments: build -x test --parallel --build-cache
 
-        #빌드 결과물 저장
       - name: Upload build artifact
         uses: actions/upload-artifact@v4
         with:
           name: GrowItServer
           path: build/libs/*.jar
-          retention-days: 1  # 보관 기간 설정 추가
+          retention-days: 1
 
   deploy:
     needs: build
     runs-on: ubuntu-latest
-    
+
     steps:
       - name: Download build artifact
         uses: actions/download-artifact@v4
@@ -113,7 +128,6 @@ jobs:
           name: GrowItServer
           path: build/libs/
 
-      #배포 전 서버 상태 체크
       - name: Health check before deploy
         run: |
           response=$(curl --write-out '%{http_code}' --silent --output /dev/null http://${{ secrets.EC2_HOST }}:8080/health || echo "000")
@@ -130,7 +144,6 @@ jobs:
           
           jar_file=$(find build/libs -name '*.jar' ! -name '*plain.jar' | head -n 1)
           
-          #배포 스크립트 분리 및 개선
           cat << 'EOF' > deploy.sh
           #!/bin/bash
           
@@ -139,32 +152,26 @@ jobs:
           LOG_PATH="/home/$EC2_USERNAME/app.log"
           BACKUP_PATH="/home/$EC2_USERNAME/backup"
           
-          # 백업 디렉토리 생성
           mkdir -p $BACKUP_PATH
           
-          # 기존 JAR 백업
           if [ -f $JAR_PATH ]; then
             mv $JAR_PATH $BACKUP_PATH/$APP_NAME.jar.$(date +%Y%m%d_%H%M%S)
           fi
           
-          # 로그 백업
           if [ -f $LOG_PATH ]; then
             mv $LOG_PATH $BACKUP_PATH/app.log.$(date +%Y%m%d_%H%M%S)
           fi
           
-          # 실행 중인 애플리케이션 종료
           pid=$(pgrep -f $APP_NAME)
           if [ ! -z "$pid" ]; then
             kill -15 $pid
             sleep 10
           
-            # 강제 종료가 필요한 경우
             if ps -p $pid > /dev/null; then
               kill -9 $pid
             fi
           fi
           
-          # 새 버전 실행 (JVM 옵션 최적화)
           nohup java -jar \
             -Dspring.profiles.active=prod \
             -XX:+HeapDumpOnOutOfMemoryError \
@@ -172,7 +179,6 @@ jobs:
             -Xms512m -Xmx1024m \
             $JAR_PATH > $LOG_PATH 2>&1 &
           
-          # 실행 확인
           sleep 30
           if pgrep -f $APP_NAME > /dev/null; then
             echo "Application started successfully"
@@ -183,7 +189,6 @@ jobs:
           fi
           EOF
           
-          # 배포 스크립트 전송 및 실행
           scp -i private_key.pem -o StrictHostKeyChecking=no deploy.sh $EC2_USERNAME@$EC2_HOST:/home/$EC2_USERNAME/
           scp -i private_key.pem -o StrictHostKeyChecking=no "$jar_file" $EC2_USERNAME@$EC2_HOST:$JAR_PATH
           
@@ -193,4 +198,3 @@ jobs:
           "
           
           rm -f private_key.pem
-

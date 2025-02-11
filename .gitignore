@@ -38,3 +38,4 @@ out/
 
 ### 추가
 /src/main/resources/*.yml
+/src/test/resources/*.yml
