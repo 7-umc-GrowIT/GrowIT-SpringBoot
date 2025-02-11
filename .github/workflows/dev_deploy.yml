@@ -40,25 +40,8 @@ jobs:
       - name: Make test application.yml
         run: |
           mkdir -p ./src/test/resources
-          cat << EOF > ./src/test/resources/application.yml
-          spring:
-            datasource:
-              driver-class-name: org.h2.Driver
-              url: jdbc:h2:mem:testdb;MODE=MySQL
-              username: sa
-              password: 
-            jpa:
-              hibernate:
-                ddl-auto: create-drop
-              properties:
-                hibernate:
-                  dialect: org.hibernate.dialect.H2Dialect
-                  format_sql: true
-              show-sql: true
-            jwt:
-              secretKey: ${{ secrets.TEST_APPLICATION_YML }}
-          EOF
-        shell: bash
+          echo "${{ secrets.TEST_APPLICATION_YML }}" > ./src/test/resources/application.yml # 테스트용 application.yml 생성
+      
 
       - name: Grant execute permission for gradlew
         run: chmod +x gradlew
