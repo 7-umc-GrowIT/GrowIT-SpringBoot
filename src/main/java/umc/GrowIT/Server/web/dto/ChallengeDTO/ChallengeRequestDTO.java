@@ -3,11 +3,8 @@ package umc.GrowIT.Server.web.dto.ChallengeDTO;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotNull;
 import lombok.*;
-import org.springframework.lang.Nullable;
-import org.springframework.web.multipart.MultipartFile;
 import umc.GrowIT.Server.domain.enums.UserChallengeType;
 
-import java.time.LocalDate;
 import java.util.List;
 
 public class ChallengeRequestDTO {
@@ -17,9 +14,9 @@ public class ChallengeRequestDTO {
     @NoArgsConstructor
     @AllArgsConstructor
     public static class ProofRequestDTO {
-        @Schema(description = "인증 이미지 파일 (multipart/form-data)", requiredMode = Schema.RequiredMode.REQUIRED)
-        private MultipartFile certificationImage;
-        @Schema(description = "소감 (텍스트)", requiredMode = Schema.RequiredMode.REQUIRED)
+        @Schema(description = "S3 업로드 후 반환된 URL (Presigned URL 사용 시)")
+        private String certificationImageUrl; // Presigned URL 사용 시 S3 URL을 받음
+        @Schema(description = "소감 (텍스트)")
         private String thoughts;
     }
 

@@ -2,26 +2,19 @@ package umc.GrowIT.Server.service.ChallengeService;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.client.RestTemplate;
 import umc.GrowIT.Server.apiPayload.code.status.ErrorStatus;
 import umc.GrowIT.Server.apiPayload.exception.*;
 import umc.GrowIT.Server.converter.ChallengeConverter;
 import umc.GrowIT.Server.domain.*;
 import umc.GrowIT.Server.domain.enums.UserChallengeType;
 import umc.GrowIT.Server.repository.*;
-import umc.GrowIT.Server.repository.diaryRepository.DiaryRepository;
-import umc.GrowIT.Server.service.ImageService.ImageService;
+import umc.GrowIT.Server.service.S3Service.S3Service;
 import umc.GrowIT.Server.web.dto.ChallengeDTO.ChallengeRequestDTO;
 import umc.GrowIT.Server.web.dto.ChallengeDTO.ChallengeResponseDTO;
-import umc.GrowIT.Server.web.dto.OpenAIDTO.ChatGPTRequest;
-import umc.GrowIT.Server.web.dto.OpenAIDTO.ChatGPTResponse;
 
 import java.util.*;
-import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -31,7 +24,7 @@ public class ChallengeCommandServiceImpl implements ChallengeCommandService {
     private final UserRepository userRepository;
     private final UserChallengeRepository userChallengeRepository;
     private final ChallengeRepository challengeRepository;
-    private final ImageService imageService;
+    private final S3Service s3Service;
 
     @Override
     @Transactional
@@ -89,8 +82,6 @@ public class ChallengeCommandServiceImpl implements ChallengeCommandService {
         return ChallengeConverter.toSelectChallengeDTO(savedUserChallenges);
     }
 
-
-
     @Override
     @Transactional
     public ChallengeResponseDTO.ProofDetailsDTO createChallengeProof(Long userId, Long userChallengeId, ChallengeRequestDTO.ProofRequestDTO proofRequest) {
@@ -103,10 +94,7 @@ public class ChallengeCommandServiceImpl implements ChallengeCommandService {
         }
 
         // 이미지 업로드
-        String imageUrl = null;
-        if (proofRequest.getCertificationImage() != null && !proofRequest.getCertificationImage().isEmpty()) {
-            imageUrl = imageService.upload(proofRequest.getCertificationImage());
-        }
+        String imageUrl = proofRequest.getCertificationImageUrl();
 
         userChallenge.verifyUserChallenge(proofRequest, imageUrl);
         userChallengeRepository.save(userChallenge);
@@ -116,6 +104,7 @@ public class ChallengeCommandServiceImpl implements ChallengeCommandService {
     @Override
     @Transactional
     public ChallengeResponseDTO.ModifyProofDTO updateChallengeProof(Long userId, Long userChallengeId, ChallengeRequestDTO.ProofRequestDTO updateRequest) {
+        // 유저 챌린지 조회
         UserChallenge userChallenge = userChallengeRepository.findByIdAndUserId(userChallengeId, userId)
                 .orElseThrow(() -> new ChallengeHandler(ErrorStatus.USER_CHALLENGE_NOT_FOUND));
 
@@ -124,20 +113,13 @@ public class ChallengeCommandServiceImpl implements ChallengeCommandService {
             throw new ChallengeHandler(ErrorStatus.CHALLENGE_NOT_COMPLETED);
         }
 
-        String oldImageUrl = userChallenge.getCertificationImage();
-        String newImageUrl = oldImageUrl;
-
-        // 새 이미지 업로드 (새 이미지가 있을 경우에만)
-        if (updateRequest.getCertificationImage() != null && !updateRequest.getCertificationImage().isEmpty()) {
-            if (oldImageUrl != null) {
-                imageService.delete(oldImageUrl); // 기존 이미지 삭제
-            }
-            newImageUrl = imageService.upload(updateRequest.getCertificationImage());
-            userChallenge.setCertificationImage(newImageUrl); // 이미지 URL 업데이트
+        // 인증 이미지 업데이트
+        if (updateRequest.getCertificationImageUrl() != null && !updateRequest.getCertificationImageUrl().isEmpty()) {
+            userChallenge.setCertificationImage(updateRequest.getCertificationImageUrl()); // 새 이미지 설정
         }
 
-        // 소감 업데이트 (null이 아닌 경우에만 변경)
-        if(updateRequest.getThoughts() != null) {
+        // 소감 업데이트
+        if (updateRequest.getThoughts() != null && !updateRequest.getThoughts().isEmpty()) {
             userChallenge.setThoughts(updateRequest.getThoughts());
         }
 

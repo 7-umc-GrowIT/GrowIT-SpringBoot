@@ -21,9 +21,8 @@ public class KeywordService {
     private final KeywordRepository keywordRepository;
 
     public List<String> getTodayDiaryKeywords(Long userId) {
-        LocalDateTime startOfDay = LocalDate.now().atStartOfDay();
-        LocalDateTime endOfDay = LocalDate.now().atTime(LocalTime.MAX);
-        return diaryRepository.findTodayDiaryByUserId(userId, startOfDay, endOfDay)
+        LocalDate date = LocalDate.now();
+        return diaryRepository.findTodayDiaryByUserId(userId, date)
                 .map(diary -> diary.getDiaryKeywords().stream()
                         .map(diaryKeyword -> diaryKeyword.getKeyword().getName())
                         .limit(3)

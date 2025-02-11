@@ -2,8 +2,8 @@ package umc.GrowIT.Server.apiPayload.exception;
 
 import umc.GrowIT.Server.apiPayload.code.BaseErrorCode;
 
-public class ImageHandler extends GeneralException {
-    public ImageHandler(BaseErrorCode code) {
+public class S3Handler extends GeneralException {
+    public S3Handler(BaseErrorCode code) {
         super(code);
     }
 }

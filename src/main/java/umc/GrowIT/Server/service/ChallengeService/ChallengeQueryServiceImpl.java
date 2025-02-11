@@ -1,6 +1,10 @@
 package umc.GrowIT.Server.service.ChallengeService;
 
+import com.amazonaws.HttpMethod;
+import com.amazonaws.services.s3.AmazonS3;
+import com.amazonaws.services.s3.model.GeneratePresignedUrlRequest;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import umc.GrowIT.Server.apiPayload.code.status.ErrorStatus;
@@ -12,16 +16,20 @@ import umc.GrowIT.Server.repository.ChallengeKeywordRepository;
 import umc.GrowIT.Server.repository.ChallengeRepository;
 import umc.GrowIT.Server.repository.KeywordRepository;
 import umc.GrowIT.Server.repository.UserChallengeRepository;
+import umc.GrowIT.Server.service.S3Service.S3Service;
 import umc.GrowIT.Server.repository.diaryRepository.DiaryRepository;
 import umc.GrowIT.Server.service.KeywordService.KeywordService;
 import umc.GrowIT.Server.web.dto.ChallengeDTO.ChallengeResponseDTO;
 
+import java.net.URL;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.temporal.ChronoUnit;
 import java.util.Collections;
+import java.util.Date;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 @Service
 @RequiredArgsConstructor
@@ -29,10 +37,11 @@ public class ChallengeQueryServiceImpl implements ChallengeQueryService {
 
     private final ChallengeRepository challengeRepository;
     private final UserChallengeRepository userChallengeRepository;
-    private final KeywordRepository keywordRepository;
-    private final ChallengeKeywordRepository challengeKeywordRepository;
+    private final S3Service s3Service;
     private final DiaryRepository diaryRepository;
     private final KeywordService keywordService;
+
+
     @Override
     public int getTotalCredits(Long userId) {
         // TODO: 총 크레딧 수 조회 로직 구현
@@ -120,9 +129,17 @@ public class ChallengeQueryServiceImpl implements ChallengeQueryService {
             throw new ChallengeHandler(ErrorStatus.CHALLENGE_NOT_COMPLETED);
         }
 
-        String imageUrl = userChallenge.getCertificationImage();
-        return ChallengeConverter.toProofDetailsDTO(userChallenge.getChallenge(), userChallenge, imageUrl);
-    }
+        // S3의 인증 이미지 경로 가져오기
+        String imageKey = userChallenge.getCertificationImage();
 
+        String folder = "challenges"; // 폴더 값 설정
+
+        // Presigned URL 생성 (이미지가 존재하는 경우에만)
+        String presignedUrl = (imageKey != null && !imageKey.isEmpty())
+                ? s3Service.generatePresignedUrlForDownload(folder, imageKey)
+                : null; // 이미지가 없으면 null 반환
+
+        return ChallengeConverter.toProofDetailsDTO(userChallenge.getChallenge(), userChallenge, presignedUrl);
+    }
 
 }
