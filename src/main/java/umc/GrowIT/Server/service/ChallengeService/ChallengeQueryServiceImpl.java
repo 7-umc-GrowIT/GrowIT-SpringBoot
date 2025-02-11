@@ -37,15 +37,10 @@ public class ChallengeQueryServiceImpl implements ChallengeQueryService {
 
     private final ChallengeRepository challengeRepository;
     private final UserChallengeRepository userChallengeRepository;
-    private final AmazonS3 amazonS3;
     private final S3Service s3Service;
-    private final KeywordRepository keywordRepository;
-    private final ChallengeKeywordRepository challengeKeywordRepository;
     private final DiaryRepository diaryRepository;
     private final KeywordService keywordService;
 
-    @Value("${aws.s3.bucket}")
-    private String bucketName;
 
     @Override
     public int getTotalCredits(Long userId) {

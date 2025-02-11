@@ -5,12 +5,10 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.multipart.MultipartFile;
 import umc.GrowIT.Server.apiPayload.ApiResponse;
 import umc.GrowIT.Server.domain.enums.UserChallengeType;
 import umc.GrowIT.Server.service.ChallengeService.ChallengeCommandService;
 import umc.GrowIT.Server.service.ChallengeService.ChallengeQueryService;
-import umc.GrowIT.Server.service.ImageService.ImageService;
 import umc.GrowIT.Server.web.controller.specification.ChallengeSpecification;
 import umc.GrowIT.Server.web.dto.ChallengeDTO.ChallengeRequestDTO;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -18,7 +16,6 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import umc.GrowIT.Server.web.dto.ChallengeDTO.ChallengeResponseDTO;
-import umc.GrowIT.Server.web.dto.ImageDTO.UploadImageResponse;
 
 import java.util.List;
 
@@ -30,7 +27,6 @@ public class ChallengeController implements ChallengeSpecification {
 
     private final ChallengeQueryService challengeQueryService;
     private final ChallengeCommandService challengeCommandService;
-    private final ImageService imageService;
 
     @GetMapping("summary")
     public ApiResponse<ChallengeResponseDTO.ChallengeHomeDTO> getChallengeHome() {

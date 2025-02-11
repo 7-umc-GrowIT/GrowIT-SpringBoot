@@ -6,6 +6,8 @@ import com.amazonaws.services.s3.model.GeneratePresignedUrlRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
+import umc.GrowIT.Server.apiPayload.code.status.ErrorStatus;
+import umc.GrowIT.Server.apiPayload.exception.S3Handler;
 
 import java.net.URL;
 import java.util.Date;
@@ -24,12 +26,12 @@ public class S3Service {
     // 🔹 파일 이름 검증
     private void validateFileName(String fileName) {
         if (fileName == null || fileName.isEmpty()) {
-            throw new IllegalArgumentException("파일 이름은 필수입니다.");
+            throw new S3Handler(ErrorStatus.S3_FILE_NAME_REQUIRED);
         }
 
         // 허용된 확장자만 허용 (.jpg, .png, .gif)
         if (!fileName.matches(".*\\.(jpg|jpeg|png|gif)$")) {
-            throw new IllegalArgumentException("허용되지 않는 파일 형식입니다. (jpg, jpeg, png, gif만 허용)");
+            throw new S3Handler(ErrorStatus.S3_BAD_FILE_EXTENSION);
         }
     }
 

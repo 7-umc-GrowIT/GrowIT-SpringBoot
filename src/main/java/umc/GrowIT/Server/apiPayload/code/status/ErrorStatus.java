@@ -104,7 +104,7 @@ public enum ErrorStatus implements BaseErrorCode {
 
     // S3 관련 에러
     S3_BAD_FILE_EXTENSION(HttpStatus.BAD_REQUEST, "S3_4001", "파일 확장자가 잘못되었습니다."),
-    S3_FILE_EMPTY(HttpStatus.BAD_REQUEST, "S3_4002", "파일이 비어 있습니다."),
+    S3_FILE_NAME_REQUIRED(HttpStatus.BAD_REQUEST, "S3_4002", "파일 이름은 필수입니다."),
     S3_FILE_UPLOAD_FAIL(HttpStatus.INTERNAL_SERVER_ERROR, "S3_5001", "파일 업로드에 실패했습니다."),
     S3_FILE_OVER_SIZE(HttpStatus.BAD_REQUEST, "S3_4003", "파일 크기가 10MB를 초과했습니다."),
     S3_FILE_DELETE_FAILED(HttpStatus.BAD_REQUEST, "S3_4004", "파일 삭제에 실패했습니다."),

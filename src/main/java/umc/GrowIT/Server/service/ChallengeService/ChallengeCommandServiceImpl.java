@@ -3,26 +3,19 @@ package umc.GrowIT.Server.service.ChallengeService;
 import com.amazonaws.services.s3.AmazonS3;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.client.RestTemplate;
 import umc.GrowIT.Server.apiPayload.code.status.ErrorStatus;
 import umc.GrowIT.Server.apiPayload.exception.*;
 import umc.GrowIT.Server.converter.ChallengeConverter;
 import umc.GrowIT.Server.domain.*;
 import umc.GrowIT.Server.domain.enums.UserChallengeType;
 import umc.GrowIT.Server.repository.*;
-import umc.GrowIT.Server.repository.diaryRepository.DiaryRepository;
-import umc.GrowIT.Server.service.ImageService.ImageService;
 import umc.GrowIT.Server.web.dto.ChallengeDTO.ChallengeRequestDTO;
 import umc.GrowIT.Server.web.dto.ChallengeDTO.ChallengeResponseDTO;
-import umc.GrowIT.Server.web.dto.OpenAIDTO.ChatGPTRequest;
-import umc.GrowIT.Server.web.dto.OpenAIDTO.ChatGPTResponse;
 
 import java.util.*;
-import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -32,11 +25,12 @@ public class ChallengeCommandServiceImpl implements ChallengeCommandService {
     private final UserRepository userRepository;
     private final UserChallengeRepository userChallengeRepository;
     private final ChallengeRepository challengeRepository;
-    private final ImageService imageService;
     private final AmazonS3 amazonS3;
 
     @Value("${aws.s3.bucket}")
-    private String bucketName;
+    private String bucket;
+    @Value("${aws.s3.base-url}")
+    private String baseUrl;
 
     @Override
     @Transactional
@@ -130,7 +124,7 @@ public class ChallengeCommandServiceImpl implements ChallengeCommandService {
         // 인증 이미지 업데이트
         if (updateRequest.getCertificationImageUrl() != null && !updateRequest.getCertificationImageUrl().isEmpty()) {
             if (userChallenge.getCertificationImage() != null) {
-                imageService.delete(userChallenge.getCertificationImage()); // 기존 이미지 삭제
+                delete(userChallenge.getCertificationImage()); // 기존 이미지 삭제
             }
             userChallenge.setCertificationImage(updateRequest.getCertificationImageUrl()); // 새 이미지 설정
         }
@@ -144,7 +138,18 @@ public class ChallengeCommandServiceImpl implements ChallengeCommandService {
         return ChallengeConverter.toChallengeModifyProofDTO(userChallenge);
     }
 
+    @Override
+    public void delete(String profilePath) {
+        String objectName = getBucketKey(profilePath);
+        amazonS3.deleteObject(bucket, objectName);
+    }
 
+    public String getBucketKey(String profilePath){
+        if(profilePath == null) {
+            throw new S3Handler(ErrorStatus.S3_FILE_DELETE_FAILED);
+        }
+        return profilePath.replace(baseUrl + "/", "");
+    }
 
     // 삭제
     @Override
