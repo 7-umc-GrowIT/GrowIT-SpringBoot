@@ -87,4 +87,8 @@ public class User extends BaseEntity {
         this.password = password;
     }
 
+    // 크레딧 증가 메서드
+    public void addCredit(int credit) {
+        this.totalCredit += credit;
+    }
 }
