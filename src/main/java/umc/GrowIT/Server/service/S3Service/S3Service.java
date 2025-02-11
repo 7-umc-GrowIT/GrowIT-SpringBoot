@@ -22,20 +22,6 @@ public class S3Service {
 
     @Value("${aws.s3.bucket}")
     private String bucketName;
-    @Value("${aws.s3.base-url}")
-    private String baseUrl;
-
-    public void delete(String profilePath) {
-        String objectName = getBucketKey(profilePath);
-        amazonS3.deleteObject(bucketName, objectName);
-    }
-
-    public String getBucketKey(String profilePath){
-        if(profilePath == null) {
-            throw new S3Handler(ErrorStatus.S3_FILE_DELETE_FAILED);
-        }
-        return profilePath.replace(baseUrl + "/", "");
-    }
 
     // 🔹 파일 이름 검증
     private void validateFileName(String fileName) {
@@ -50,11 +36,11 @@ public class S3Service {
     }
 
     // 🔹 Presigned URL 및 파일 URL 생성 메서드 (서비스 내부로 이동)
-    public Map<String, String> generatePresignedUploadUrl(String fileName) {
+    public Map<String, String> generatePresignedUploadUrl(String folder, String fileName) {
         validateFileName(fileName); // 파일 검증
 
-        String presignedUrl = generatePresignedUrlForUpload(fileName);
-        String fileUrl = "https://" + bucketName + ".amazonaws.com/challenges/" + fileName;
+        String presignedUrl = generatePresignedUrlForUpload(folder, fileName);
+        String fileUrl = "https://" + bucketName + ".amazonaws.com/" + folder + "/" + fileName;
         return Map.of(
                 "presignedUrl", presignedUrl,
                 "fileUrl", fileUrl
@@ -62,9 +48,9 @@ public class S3Service {
     }
 
     // Presigned URL 생성 (업로드)
-    public String generatePresignedUrlForUpload(String fileName) {
+    public String generatePresignedUrlForUpload(String folder, String fileName) {
         // 파일 경로에 폴더 추가
-        String objectKey = "challenges/" + fileName;
+        String objectKey = folder + "/" + fileName;
 
         // PreSigned URL 유효 시간 설정 (10분)
         Date expiration = new Date(System.currentTimeMillis() + TimeUnit.MINUTES.toMillis(10));
@@ -78,9 +64,9 @@ public class S3Service {
     }
 
     // Presigned URL 생성 (다운로드)
-    public String generatePresignedUrlForDownload(String fileName) {
+    public String generatePresignedUrlForDownload(String folder, String fileName) {
         // 파일 경로에 폴더 추가
-        String objectKey = "challenges/" + fileName;
+        String objectKey = folder + "/" + fileName;
         // PreSigned URL 유효 시간 설정 (10분)
         Date expiration = new Date(System.currentTimeMillis() + TimeUnit.MINUTES.toMillis(10));
 
@@ -90,6 +76,7 @@ public class S3Service {
 
         URL presignedUrl = amazonS3.generatePresignedUrl(request);
         return presignedUrl.toString();
-    }}
+    }
+}
 
 

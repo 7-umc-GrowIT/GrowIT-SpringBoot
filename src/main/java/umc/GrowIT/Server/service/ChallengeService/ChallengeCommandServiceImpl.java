@@ -115,9 +115,6 @@ public class ChallengeCommandServiceImpl implements ChallengeCommandService {
 
         // 인증 이미지 업데이트
         if (updateRequest.getCertificationImageUrl() != null && !updateRequest.getCertificationImageUrl().isEmpty()) {
-            if (userChallenge.getCertificationImage() != null) {
-                s3Service.delete(userChallenge.getCertificationImage()); // 기존 이미지 삭제
-            }
             userChallenge.setCertificationImage(updateRequest.getCertificationImageUrl()); // 새 이미지 설정
         }
 
