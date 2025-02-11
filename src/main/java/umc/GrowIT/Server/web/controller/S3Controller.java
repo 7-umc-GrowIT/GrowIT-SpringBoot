@@ -29,12 +29,9 @@ public class S3Controller {
             throw new IllegalArgumentException("허용되지 않는 파일 형식입니다. (jpg, jpeg, png, gif만 허용)");
         }
 
-        // 파일 이름에 UUID 추가하여 중복 방지
-        String uniqueFileName = UUID.randomUUID() + "_" + fileName;
-
         // PreSigned URL 생성
-        String presignedUrl = s3Service.generatePresignedUrlForUpload(uniqueFileName);
-        String fileUrl = "https://s3-bucket-url.amazonaws.com/challenges/" + uniqueFileName;
+        String presignedUrl = s3Service.generatePresignedUrlForUpload(fileName);
+        String fileUrl = "https://s3-bucket-url.amazonaws.com/challenges/" + fileName;
 
         Map<String, String> response = Map.of(
                 "presignedUrl", presignedUrl,
