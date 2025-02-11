@@ -22,6 +22,20 @@ public class S3Service {
 
     @Value("${aws.s3.bucket}")
     private String bucketName;
+    @Value("${aws.s3.base-url}")
+    private String baseUrl;
+
+    public void delete(String profilePath) {
+        String objectName = getBucketKey(profilePath);
+        amazonS3.deleteObject(bucketName, objectName);
+    }
+
+    public String getBucketKey(String profilePath){
+        if(profilePath == null) {
+            throw new S3Handler(ErrorStatus.S3_FILE_DELETE_FAILED);
+        }
+        return profilePath.replace(baseUrl + "/", "");
+    }
 
     // 🔹 파일 이름 검증
     private void validateFileName(String fileName) {

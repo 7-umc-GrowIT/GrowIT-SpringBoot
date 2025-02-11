@@ -11,6 +11,5 @@ public interface ChallengeCommandService {
     ChallengeResponseDTO.SelectChallengeDTO selectChallenges(Long userId, List<ChallengeRequestDTO.SelectChallengeRequestDTO> selectRequestList);
     ChallengeResponseDTO.ProofDetailsDTO createChallengeProof(Long userId, Long userChallengeId, ChallengeRequestDTO.ProofRequestDTO proofRequest);
     ChallengeResponseDTO.ModifyProofDTO updateChallengeProof(Long userId, Long userChallengeId, ChallengeRequestDTO.ProofRequestDTO updateRequest);
-    void delete(String profilePath);
     ChallengeResponseDTO.DeleteChallengeResponseDTO delete(Long userChallengeId, Long userId);
 }
