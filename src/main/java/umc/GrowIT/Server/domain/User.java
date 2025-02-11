@@ -77,6 +77,9 @@ public class User extends BaseEntity {
     public void updateCurrentCredit(Integer currentCredit) {
         this.currentCredit = currentCredit;
     }
+    public void updateTotalCredit(Integer totalCredit){
+        this.totalCredit = totalCredit;
+    }
 
     public void deleteRefreshToken() {
         this.refreshToken = null;
