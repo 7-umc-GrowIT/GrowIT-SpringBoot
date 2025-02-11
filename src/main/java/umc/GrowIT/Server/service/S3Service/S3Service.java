@@ -9,6 +9,7 @@ import org.springframework.stereotype.Service;
 
 import java.net.URL;
 import java.util.Date;
+import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
 @Service
@@ -19,6 +20,30 @@ public class S3Service {
 
     @Value("${aws.s3.bucket}")
     private String bucketName;
+
+    // 🔹 파일 이름 검증
+    private void validateFileName(String fileName) {
+        if (fileName == null || fileName.isEmpty()) {
+            throw new IllegalArgumentException("파일 이름은 필수입니다.");
+        }
+
+        // 허용된 확장자만 허용 (.jpg, .png, .gif)
+        if (!fileName.matches(".*\\.(jpg|jpeg|png|gif)$")) {
+            throw new IllegalArgumentException("허용되지 않는 파일 형식입니다. (jpg, jpeg, png, gif만 허용)");
+        }
+    }
+
+    // 🔹 Presigned URL 및 파일 URL 생성 메서드 (서비스 내부로 이동)
+    public Map<String, String> generatePresignedUploadUrl(String fileName) {
+        validateFileName(fileName); // 파일 검증
+
+        String presignedUrl = generatePresignedUrlForUpload(fileName);
+        String fileUrl = "https://" + bucketName + ".amazonaws.com/challenges/" + fileName;
+        return Map.of(
+                "presignedUrl", presignedUrl,
+                "fileUrl", fileUrl
+        );
+    }
 
     // Presigned URL 생성 (업로드)
     public String generatePresignedUrlForUpload(String fileName) {
