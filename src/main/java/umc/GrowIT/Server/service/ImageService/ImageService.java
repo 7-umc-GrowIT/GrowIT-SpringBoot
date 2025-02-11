@@ -1,7 +1,6 @@
 package umc.GrowIT.Server.service.ImageService;
 
 import com.amazonaws.services.s3.AmazonS3;
-import com.amazonaws.services.s3.model.CannedAccessControlList;
 import com.amazonaws.services.s3.model.ObjectMetadata;
 import com.amazonaws.services.s3.model.PutObjectRequest;
 import com.amazonaws.util.IOUtils;
@@ -12,8 +11,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 import umc.GrowIT.Server.apiPayload.code.status.ErrorStatus;
 import umc.GrowIT.Server.apiPayload.exception.ImageHandler;
-import umc.GrowIT.Server.utils.ImageUtils;
-import umc.GrowIT.Server.utils.SecurityUtils;
+import umc.GrowIT.Server.util.ImageUtils;
+import umc.GrowIT.Server.util.SecurityUtils;
 import umc.GrowIT.Server.web.dto.ImageDTO.UploadImageResponse;
 
 import java.io.IOException;

@@ -38,3 +38,6 @@ out/
 
 ### 추가
 /src/main/resources/*.yml
+
+### Mac OS 메타 데이터 ###
+###.DS_Store
