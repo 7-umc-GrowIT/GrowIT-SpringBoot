@@ -134,18 +134,6 @@ public class ChallengeConverter {
                 .build();
     }
 
-    // 챌린지 인증 내역 조회
-    public static ChallengeResponseDTO.ProofDetailsDTO toChallengeProofDetailsDTO(Challenge challenge, UserChallenge userChallenge) {
-        return ChallengeResponseDTO.ProofDetailsDTO.builder()
-                .id(userChallenge.getId())
-                .title(challenge.getTitle())
-                .time(challenge.getTime())
-                .certificationImage(userChallenge.getCertificationImage())
-                .thoughts(userChallenge.getThoughts())
-                .certificationDate(userChallenge.getCreatedAt())
-                .build();
-    }
-
     // 챌린지 삭제
     public static ChallengeResponseDTO.DeleteChallengeResponseDTO toDeletedUserChallenge(UserChallenge userChallenge) {
         return ChallengeResponseDTO.DeleteChallengeResponseDTO.builder()

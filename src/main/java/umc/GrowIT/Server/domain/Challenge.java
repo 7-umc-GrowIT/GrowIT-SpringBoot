@@ -34,21 +34,4 @@ public class Challenge extends BaseEntity {
     @OneToMany(mappedBy = "challenge", cascade = CascadeType.ALL)
     private List<ChallengeKeyword> challengeKeywords;
 
-    public boolean isCompletedByUser(Long userId) {
-        // 연관된 UserChallenge 중에서 특정 유저가 완료한 상태를 확인
-        return userChallenges.stream()
-                .anyMatch(userChallenge -> userChallenge.getUser().getId().equals(userId) && userChallenge.isCompleted());
-    }
-
-    // 유저-챌린지 추가
-    public void addUserChallenge(UserChallenge userChallenge) {
-        this.userChallenges.add(userChallenge);
-        userChallenge.setChallenge(this);
-    }
-
-    // 챌린지-키워드 추가
-    public void addChallengeKeyword(ChallengeKeyword challengeKeyword) {
-        this.challengeKeywords.add(challengeKeyword);
-        challengeKeyword.setChallenge(this);
-    }
 }
