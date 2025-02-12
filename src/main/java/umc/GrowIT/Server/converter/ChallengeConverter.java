@@ -94,7 +94,7 @@ public class ChallengeConverter {
                 .time(challenge.getTime())
                 .certificationImage(imageUrl)
                 .thoughts(userChallenge.getThoughts())
-                .certificationDate(userChallenge.getCreatedAt())
+                .certificationDate(userChallenge.getCertificationDate())
                 .build();
     }
 

@@ -6,6 +6,8 @@ import lombok.*;
 import umc.GrowIT.Server.domain.enums.UserChallengeType;
 import umc.GrowIT.Server.web.dto.ChallengeDTO.ChallengeRequestDTO;
 
+import java.time.LocalDateTime;
+
 @Entity
 @Getter
 @Builder
@@ -38,6 +40,9 @@ public class UserChallenge extends BaseEntity {
     @Column(nullable = false)
     private boolean completed;
 
+    @Column(nullable = false)
+    private LocalDateTime certificationDate = LocalDateTime.now(); // null로 저장되는 문제 방지
+
     public void setChallenge(Challenge challenge) {
         this.challenge = challenge;
     }
@@ -47,9 +52,10 @@ public class UserChallenge extends BaseEntity {
     public void setCertificationImage(String certificationImage) { this.certificationImage = certificationImage; }
     // 인증 작성 (최초 등록 또는 전체 업데이트용)
     public void verifyUserChallenge(ChallengeRequestDTO.ProofRequestDTO proofRequest, String imageUrl){
-        thoughts = proofRequest.getThoughts();
-        certificationImage = imageUrl;
-        completed = true;
+        this.thoughts = proofRequest.getThoughts();
+        this.certificationImage = imageUrl;
+        this.certificationDate = LocalDateTime.now(); // 인증한 날짜 저장
+        this.completed = true;
     }
 
 }
