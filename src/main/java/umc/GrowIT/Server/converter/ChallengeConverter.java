@@ -92,7 +92,7 @@ public class ChallengeConverter {
                 .id(userChallenge.getId())
                 .title(challenge.getTitle())
                 .time(challenge.getTime())
-                .certificationImage(imageUrl)
+                .certificationImage(userChallenge.getCertificationImage())
                 .thoughts(userChallenge.getThoughts())
                 .certificationDate(userChallenge.getCertificationDate())
                 .build();
