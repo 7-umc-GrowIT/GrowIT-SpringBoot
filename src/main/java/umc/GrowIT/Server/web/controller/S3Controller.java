@@ -18,16 +18,16 @@ public class S3Controller {
 
     // S3 파일 업로드용 PreSigned URL 발급
     @PutMapping("upload-url")
-    public ApiResponse<Map<String, String>> getPresignedUploadUrl(@RequestParam String fileName) {
+    public ApiResponse<Map<String, String>> getPresignedUploadUrl(@RequestParam String folder, @RequestParam String fileName) {
 
-        Map<String, String> response = s3Service.generatePresignedUploadUrl(fileName);
+        Map<String, String> response = s3Service.generatePresignedUploadUrl(folder, fileName);
         return ApiResponse.onSuccess(response);
     }
 
     // S3 파일 다운로드용 PreSigned URL 발급
     @GetMapping("download-url")
-    public ApiResponse<String> getPresignedDownloadUrl(@RequestParam String fileName) {
-        String presignedUrl = s3Service.generatePresignedUrlForDownload(fileName);
+    public ApiResponse<String> getPresignedDownloadUrl(@RequestParam String folder, @RequestParam String fileName) {
+        String presignedUrl = s3Service.generatePresignedUrlForDownload(folder, fileName);
         return ApiResponse.onSuccess(presignedUrl);
     }
 

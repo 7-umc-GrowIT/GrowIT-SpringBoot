@@ -34,6 +34,8 @@ public class DiaryCommandServiceImpl implements DiaryCommandService{
     private final ChallengeKeywordRepository challengeKeywordRepository;
     private final KeywordRepository keywordRepository;
     private final ChallengeRepository challengeRepository;
+    //일기 작성 시 추가되는 크레딧 개수
+    private Integer diaryCredit = 2;
 
     @Value("${openai.model1}")
     private String chatModel;
@@ -102,6 +104,11 @@ public class DiaryCommandServiceImpl implements DiaryCommandService{
 
         //일기 저장
         diary = diaryRepository.save(diary);
+
+        //사용자의 크레딧수 증가
+        user.updateCurrentCredit(user.getCurrentCredit() + diaryCredit);
+        user.updateTotalCredit(user.getTotalCredit() + diaryCredit);
+        userRepository.save(user);
 
         return DiaryConverter.toCreateResultDTO(diary);
     }
@@ -204,6 +211,11 @@ public class DiaryCommandServiceImpl implements DiaryCommandService{
 
         //일기 저장
         diary = diaryRepository.save(diary);
+
+        //사용자의 크레딧수 증가
+        user.updateCurrentCredit(user.getCurrentCredit() + diaryCredit);
+        user.updateTotalCredit(user.getTotalCredit() + diaryCredit);
+        userRepository.save(user);
 
         // 대화 기록 삭제
         conversationHistory.remove(userId);

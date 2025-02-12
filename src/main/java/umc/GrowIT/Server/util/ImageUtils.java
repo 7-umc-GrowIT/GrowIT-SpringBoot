@@ -1,4 +1,4 @@
-package umc.GrowIT.Server.utils;
+package umc.GrowIT.Server.util;
 
 public interface ImageUtils {
     void delete(String objectName);

@@ -133,6 +133,7 @@ public class KakaoServiceImpl implements KakaoService {
         else {
             User user = userRepository.findByPrimaryEmail(oAuthUserInfoDTO.getEmail())
                     .orElseThrow(() -> new UserHandler(_BAD_REQUEST));
+            userCommandService.checkUserInactive(user); // 탈퇴한 회원인지 확인
             // 이메일 회원가입은 했지만 카카오 최초 로그인인 경우 OAuthAccount 엔티티 저장
             if (!oAuthAccountRepository.existsByProviderId(oAuthUserInfoDTO.getId())) {
                 OAuthAccount oAuthAccount = toOAuthAccount(oAuthUserInfoDTO, user);
