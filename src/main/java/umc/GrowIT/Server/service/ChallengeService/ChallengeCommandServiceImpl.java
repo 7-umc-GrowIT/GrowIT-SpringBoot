@@ -24,7 +24,7 @@ public class ChallengeCommandServiceImpl implements ChallengeCommandService {
     private final UserRepository userRepository;
     private final UserChallengeRepository userChallengeRepository;
     private final ChallengeRepository challengeRepository;
-    private final S3Service s3Service;
+    private Integer challengeCredit = 1;
 
     @Override
     @Transactional
@@ -100,10 +100,12 @@ public class ChallengeCommandServiceImpl implements ChallengeCommandService {
         String imageUrl = proofRequest.getCertificationImageUrl();
 
         userChallenge.verifyUserChallenge(proofRequest, imageUrl);
-        user.addCredit(userChallenge.getChallenge().getCredit()); // 유저 크레딧 증가
-
         userChallengeRepository.save(userChallenge);
+
+        user.updateCurrentCredit(user.getCurrentCredit() + challengeCredit);
+        user.updateTotalCredit(user.getTotalCredit() + challengeCredit);
         userRepository.save(user);
+
         return ChallengeConverter.toProofDetailsDTO(userChallenge.getChallenge(), userChallenge, imageUrl);
     }
 
