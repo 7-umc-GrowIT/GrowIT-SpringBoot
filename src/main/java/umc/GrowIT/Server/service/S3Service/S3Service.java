@@ -23,7 +23,7 @@ public class S3Service {
     @Value("${aws.s3.bucket}")
     private String bucketName;
 
-    // 🔹 파일 이름 검증
+    // 파일 이름 검증
     private void validateFileName(String fileName) {
         if (fileName == null || fileName.isEmpty()) {
             throw new S3Handler(ErrorStatus.S3_FILE_NAME_REQUIRED);
@@ -35,9 +35,21 @@ public class S3Service {
         }
     }
 
-    // 🔹 Presigned URL 및 파일 URL 생성 메서드 (서비스 내부로 이동)
+    // 폴더 이름 검증
+    private void validateFolderName(String folder) {
+        if(folder == null || folder.isEmpty()) {
+            throw new S3Handler(ErrorStatus.S3_FOLDER_NAME_REQUIRED);
+        }
+        // 폴더명은 영어만 허용 (a-z, A-Z)
+        if (!folder.matches("^[a-zA-Z]+$")) {
+            throw new S3Handler(ErrorStatus.S3_INVALID_FOLDER_NAME);
+        }
+    }
+
+    // Presigned URL 및 파일 URL 생성 메서드
     public Map<String, String> generatePresignedUploadUrl(String folder, String fileName) {
         validateFileName(fileName); // 파일 검증
+        validateFolderName(folder);
 
         String presignedUrl = generatePresignedUrlForUpload(folder, fileName);
         String fileUrl = "https://" + bucketName + ".amazonaws.com/" + folder + "/" + fileName;
@@ -49,11 +61,9 @@ public class S3Service {
 
     // Presigned URL 생성 (업로드)
     public String generatePresignedUrlForUpload(String folder, String fileName) {
-        // 파일 경로에 폴더 추가
-        String objectKey = folder + "/" + fileName;
 
-        // PreSigned URL 유효 시간 설정 (10분)
-        Date expiration = new Date(System.currentTimeMillis() + TimeUnit.MINUTES.toMillis(10));
+        String objectKey = folder + "/" + fileName; // 파일 경로에 폴더 추가
+        Date expiration = new Date(System.currentTimeMillis() + TimeUnit.MINUTES.toMillis(10)); // PreSigned URL 유효 시간 설정 (10분)
 
         GeneratePresignedUrlRequest request = new GeneratePresignedUrlRequest(bucketName, objectKey)
                 .withMethod(HttpMethod.PUT) // 업로드용 (PUT 요청)
@@ -65,10 +75,12 @@ public class S3Service {
 
     // Presigned URL 생성 (다운로드)
     public String generatePresignedUrlForDownload(String folder, String fileName) {
-        // 파일 경로에 폴더 추가
-        String objectKey = folder + "/" + fileName;
-        // PreSigned URL 유효 시간 설정 (10분)
-        Date expiration = new Date(System.currentTimeMillis() + TimeUnit.MINUTES.toMillis(10));
+        validateFileName(fileName);
+        validateFolderName(folder);
+
+        String objectKey = folder + "/" + fileName; // 파일 경로에 폴더 추가
+
+        Date expiration = new Date(System.currentTimeMillis() + TimeUnit.MINUTES.toMillis(10)); // PreSigned URL 유효 시간 설정 (10분)
 
         GeneratePresignedUrlRequest request = new GeneratePresignedUrlRequest(bucketName, objectKey)
                 .withMethod(HttpMethod.GET) // 다운로드용 (GET 요청)

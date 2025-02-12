@@ -59,8 +59,8 @@ public enum ErrorStatus implements BaseErrorCode {
     CHALLENGE_VERIFY_ALREADY_EXISTS(HttpStatus.BAD_REQUEST, "CHALLENGE4004", "이미 완료된 챌린지입니다."),
     CHALLENGE_SAVE_LIMIT(HttpStatus.BAD_REQUEST, "CHALLENGE4005", "챌린지는 3개까지 저장 가능합니다."),
     CHALLENGE_AT_LEAST(HttpStatus.BAD_REQUEST, "CHALLENGE4006", "최소 하나의 챌린지를 선택해야 합니다."),
-    CHALLENGE_DAILY_MAX(HttpStatus.BAD_REQUEST, "CHALLENGE4007", "데일리 챌린지는 최대 2개까지만 저장 가능합니다."),
-    CHALLENGE_RANDOM_MAX(HttpStatus.BAD_REQUEST, "CHALLENGE4008", "랜덤 챌린지는 1개만 저장 가능합니다."),
+    CHALLENGE_DAILY_MAX(HttpStatus.BAD_REQUEST, "CHALLENGE4007", "데일리 챌린지는 최대 2개까지 저장 가능합니다."),
+    CHALLENGE_RANDOM_MAX(HttpStatus.BAD_REQUEST, "CHALLENGE4008", "랜덤 챌린지는 최대 1개만 저장 가능합니다."),
     RELATED_CHALLENGE_NOT_FOUND(HttpStatus.NOT_FOUND, "CHALLENGE5001", "연관된 챌린지가 없습니다."),
 
     //기타 에러
@@ -104,10 +104,9 @@ public enum ErrorStatus implements BaseErrorCode {
 
     // S3 관련 에러
     S3_BAD_FILE_EXTENSION(HttpStatus.BAD_REQUEST, "S3_4001", "파일 확장자가 잘못되었습니다."),
-    S3_FILE_NAME_REQUIRED(HttpStatus.BAD_REQUEST, "S3_4002", "파일 이름은 필수입니다."),
-    S3_FILE_UPLOAD_FAIL(HttpStatus.INTERNAL_SERVER_ERROR, "S3_5001", "파일 업로드에 실패했습니다."),
-    S3_FILE_OVER_SIZE(HttpStatus.BAD_REQUEST, "S3_4003", "파일 크기가 10MB를 초과했습니다."),
-    S3_FILE_DELETE_FAILED(HttpStatus.BAD_REQUEST, "S3_4004", "파일 삭제에 실패했습니다."),
+    S3_FOLDER_NAME_REQUIRED(HttpStatus.BAD_REQUEST, "S3_4002", "폴더 이름은 필수입니다."),
+    S3_INVALID_FOLDER_NAME(HttpStatus.BAD_REQUEST, "S3_4003", "폴더명은 영어로 입력해야 합니다."),
+
 
     // OAuth 관련 에러
     ACCOUNT_ALREADY_EXISTS(HttpStatus.CONFLICT, "OAUTH_4001", "이미 가입한 소셜 계정입니다."),
