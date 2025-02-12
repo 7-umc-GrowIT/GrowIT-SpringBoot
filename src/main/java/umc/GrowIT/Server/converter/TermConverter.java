@@ -9,6 +9,7 @@ public class TermConverter {
 
     public static TermResponseDTO.TermDTO toTermDTO(Term term){
         return TermResponseDTO.TermDTO.builder()
+                .termId(term.getId())
                 .title(term.getTitle())
                 .content(term.getContent())
                 .type(term.getType().name())
