@@ -243,20 +243,11 @@ public class DiaryCommandServiceImpl implements DiaryCommandService{
 
 
         // 3. DB에서 감정들 조회
-//        List<String> emotions = keywordRepository.findAll()
-//                .stream()
-//                .map(emotion -> emotion.getName())
-//                .toList();
-//        log.info(emotions.toString());
-
-        // DB 설정이 제대로 안되었기 때문에 테스트용으로 DB ID 1~5까지의 감정 사용
-        // TODO 이후 위의 코드로 수정 필요
-        List<String> emotions = new ArrayList<>();
-        emotions.add("행복한");
-        emotions.add("슬픈");
-        emotions.add("외로운");
-        emotions.add("불안한");
-        emotions.add("기쁜");
+        List<String> emotions = keywordRepository.findAll()
+                .stream()
+                .map(emotion -> emotion.getName())
+                .toList();
+        log.info("[DB 감정들] : " + emotions.toString());
 
 
         // 4. OpenAI API 호출하여 감정 반환 & 반환받은 감정 체크 (3개인지, 중복안되었는지, DB와동일한지)
@@ -295,14 +286,24 @@ public class DiaryCommandServiceImpl implements DiaryCommandService{
 
         // 프롬프트
         String prompt = String.format("""
-            다음 일기를 분석하여 %s 감정들 중에서 가장 해당되는 감정을 3개 선택해주세요.
-            목록에 없는 감정을 사용하면 안 됩니다.
+            [요청]
+            다음 [일기 내용]을 분석하여, 반드시 [감정 목록]에 명시된 감정 중에서 정확히 3개를 선택하세요.
             
-            일기 내용: %s
+            [일기 내용]
+            %s
             
+            [감정 목록]
+            %s
+            
+            [결과]
             반환 결과는 다른 말 없이 감정들만을 []로 둘러싸서 반환해 주세요.
             ex) [감정1, 감정2, 감정3]
-            """, emotions, diaryContent);
+            
+            [주의사항]
+            반드시 제공된 감정 목록에 포함된 감정만 사용하세요
+            목록에 없는 감정은 절대 포함하지 마세요.
+            감정 목록에 없는 감정을 반환할 경우 시스템 오류가 발생합니다.
+            """, diaryContent, emotions);
 
 
         // API 요청 생성
