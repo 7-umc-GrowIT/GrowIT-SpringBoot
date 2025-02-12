@@ -21,8 +21,6 @@ public interface S3Specification {
             @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "S3_4002", description = "❌ 파일 이름은 필수입니다.", content = @Content(schema = @Schema(implementation = ApiResponse.class))),
             @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "S3_4003", description = "❌ 폴더 이름은 필수입니다.", content = @Content(schema = @Schema(implementation = ApiResponse.class))),
             @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "S3_4004", description = "❌ 폴더명은 영어로 입력해야 합니다.", content = @Content(schema = @Schema(implementation = ApiResponse.class)))
-
-
     })
     ApiResponse<Map<String, String>> getPresignedUploadUrl(@RequestParam String folder, @RequestParam String fileName);
 
