@@ -57,6 +57,12 @@ dependencies {
 	// WebClient
 	implementation 'org.springframework.boot:spring-boot-starter-webflux'
 
+	// Spring Actuator : 모니터링 지표 수집
+	implementation 'org.springframework.boot:spring-boot-starter-actuator'
+
+	// Prometheus
+	implementation 'io.micrometer:micrometer-registry-prometheus'
+
 }
 
 tasks.named('test') {

@@ -5,6 +5,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import umc.GrowIT.Server.apiPayload.ApiResponse;
 import umc.GrowIT.Server.service.S3Service.S3Service;
+import umc.GrowIT.Server.web.controller.specification.ChallengeSpecification;
+import umc.GrowIT.Server.web.controller.specification.S3Specification;
 
 import java.util.Map;
 import java.util.UUID;
@@ -12,7 +14,7 @@ import java.util.UUID;
 @RestController
 @RequestMapping("/s3")
 @RequiredArgsConstructor
-public class S3Controller {
+public class S3Controller implements S3Specification {
 
     private final S3Service s3Service;
 

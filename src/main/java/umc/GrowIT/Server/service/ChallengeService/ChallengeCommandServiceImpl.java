@@ -24,7 +24,7 @@ public class ChallengeCommandServiceImpl implements ChallengeCommandService {
     private final UserRepository userRepository;
     private final UserChallengeRepository userChallengeRepository;
     private final ChallengeRepository challengeRepository;
-    private final S3Service s3Service;
+    private Integer challengeCredit = 1;
 
     @Override
     @Transactional
@@ -93,11 +93,19 @@ public class ChallengeCommandServiceImpl implements ChallengeCommandService {
             throw new ChallengeHandler(ErrorStatus.CHALLENGE_VERIFY_ALREADY_EXISTS);
         }
 
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new UserHandler(ErrorStatus.USER_NOT_FOUND));
+
         // 이미지 업로드
         String imageUrl = proofRequest.getCertificationImageUrl();
 
         userChallenge.verifyUserChallenge(proofRequest, imageUrl);
         userChallengeRepository.save(userChallenge);
+
+        user.updateCurrentCredit(user.getCurrentCredit() + challengeCredit);
+        user.updateTotalCredit(user.getTotalCredit() + challengeCredit);
+        userRepository.save(user);
+
         return ChallengeConverter.toProofDetailsDTO(userChallenge.getChallenge(), userChallenge, imageUrl);
     }
 

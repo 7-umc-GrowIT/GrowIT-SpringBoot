@@ -52,7 +52,7 @@ public interface UserSpecification {
     @Operation(summary = "크레딧 구매", description = "결제를 통해 크레딧을 구매합니다.")
     @ApiResponses({
             @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "COMMON200", description = "⭕ SUCCESS"),
-            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "PAYMENT4001", description = "❌ 결제정보다 정확하지않습니다.", content = @Content(schema = @Schema(implementation = ApiResponse.class)))
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "PAYMENT4001", description = "❌ 결제정보가 정확하지않습니다.", content = @Content(schema = @Schema(implementation = ApiResponse.class)))
     })
     ApiResponse<PaymentResponseDTO> purchaseCredits(@RequestBody PaymentRequestDTO request);
 
