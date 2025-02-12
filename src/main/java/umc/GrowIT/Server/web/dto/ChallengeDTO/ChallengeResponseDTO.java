@@ -1,5 +1,6 @@
 package umc.GrowIT.Server.web.dto.ChallengeDTO;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -86,22 +87,6 @@ public class ChallengeResponseDTO {
         private boolean completed;
     }
 
-    // 챌린지 인증 응답 DTO
-    @Getter
-    @Builder
-    @NoArgsConstructor
-    @AllArgsConstructor
-    public static class AddProofResultDTO {
-        private Long id;
-        private String title;
-        private Integer time;
-        private String certificationImage;
-        private UserChallengeType dtype;
-        private String thoughts;
-        private boolean completed;
-        private LocalDateTime certificationDate;
-    }
-
     // 첼린지 인증 내역
     @Getter
     @Builder
@@ -113,6 +98,7 @@ public class ChallengeResponseDTO {
         private String certificationImage;
         private String thoughts;
         private Integer time;
+        @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss")
         private LocalDateTime certificationDate;
     }
 
