@@ -1,0 +1,54 @@
+spring:
+    datasource:
+        driver-class-name: org.h2.Driver
+        url: jdbc:h2:mem:testdb;MODE=MySQL
+        username: sa
+        password:
+
+    jpa:
+        hibernate:
+            ddl-auto: create-drop
+        properties:
+            hibernate:
+                dialect: org.hibernate.dialect.H2Dialect
+                format_sql: true
+        show-sql: true
+
+    # JWT 설정 (테스트용 간단한 키)
+    jwt:
+        secretKey: testtesttesttesttesttesttesttesttesttesttesttest
+
+    # OAuth2 설정 모의값
+    oauth2:
+        client:
+            ios-kakao:
+                client-id: test-client-id
+                client-secret: test-client-secret
+                redirect-uri: test-redirect-uri
+            server-kakao:
+                client-id: test-client-id
+                client-secret: test-client-secret
+                redirect-uri: test-redirect-uri
+
+    # 메일 설정 모의값
+    mail:
+        host: smtp.test.com
+        port: 587
+        username: test@test.com
+        password: testpassword
+
+# AWS 설정 모의값
+aws:
+    accessKey: test-access-key
+    secretKey: test-secret-key
+    s3:
+        bucket: test-bucket
+        base-url: http://test-bucket.s3.test-region.amazonaws.com/
+
+# OpenAI 설정 모의값
+openai:
+    model1: test-model1
+    model2: test-model2
+    api:
+        key: test-api-key
+        url: http://test-api-url
