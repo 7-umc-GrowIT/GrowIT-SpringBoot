@@ -21,7 +21,7 @@ public class Term extends BaseEntity {
     @Column(nullable = false, length = 50)
     private String title;
 
-    @Column(nullable = false)
+    @Column(nullable = false, columnDefinition = "MEDIUMTEXT")
     private String content;
 
     @Enumerated(EnumType.STRING)
