@@ -22,7 +22,7 @@ public class Scheduler {
     public void deleteExpiredAuthenticationCodes() {
         try {
             // 기준일
-            int expirationDays = 14;
+            int expirationDays = 15;
 
             LocalDateTime threshold = LocalDateTime.now().minusDays(expirationDays);
             int count = authenticationCodeRepository.deleteByExpirationDateBefore(threshold);
