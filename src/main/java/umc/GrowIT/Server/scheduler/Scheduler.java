@@ -26,7 +26,7 @@ public class Scheduler {
 
             LocalDateTime threshold = LocalDateTime.now().minusDays(expirationDays);
             int count = authenticationCodeRepository.deleteByExpirationDateBefore(threshold);
-            log.info("[스케줄러 : 만료시간이" + expirationDays + "일 지난 데이터 삭제");
+            log.info("[스케줄러 : 만료시간이 " + expirationDays + "일 지난 데이터 삭제");
             log.info("[스케줄러] : 삭제된 데이터 개수 : " + count);
         } catch (Exception e) {
             log.error("[스케줄러] : 인증번호 삭제 실패", e);
