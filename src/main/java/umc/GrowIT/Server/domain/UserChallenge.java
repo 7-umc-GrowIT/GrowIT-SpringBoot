@@ -40,8 +40,8 @@ public class UserChallenge extends BaseEntity {
     @Column(nullable = false)
     private boolean completed;
 
-    @Column(nullable = false)
-    private LocalDateTime certificationDate = LocalDateTime.now(); // null로 저장되는 문제 방지
+    @Column(name = "certification_date")
+    private LocalDateTime certificationDate;
 
     public void setChallenge(Challenge challenge) {
         this.challenge = challenge;

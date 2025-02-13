@@ -87,7 +87,7 @@ public class ChallengeConverter {
     }
 
     // 챌린지 인증 작성 결과 반환
-    public static ChallengeResponseDTO.ProofDetailsDTO toProofDetailsDTO(Challenge challenge, UserChallenge userChallenge, String imageurl) {
+    public static ChallengeResponseDTO.ProofDetailsDTO toProofDetailsDTO(Challenge challenge, UserChallenge userChallenge) {
         return ChallengeResponseDTO.ProofDetailsDTO.builder()
                 .id(userChallenge.getId())
                 .title(challenge.getTitle())
