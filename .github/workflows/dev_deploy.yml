@@ -26,14 +26,13 @@ jobs:
           distribution: 'temurin'
           java-version: '17'
 
-
       - name: Setup Gradle Cache
         uses: actions/cache@v3
         with:
           path: |
             ~/.gradle/caches
             ~/.gradle/wrapper
-          key: '${{ runner.os }}-gradle-${{ hashFiles(''**/*.gradle*'', ''**/gradle-wrapper.properties'') }}'
+          key: "${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*', '**/gradle-wrapper.properties') }}"
           restore-keys: |
             ${{ runner.os }}-gradle-
 
@@ -41,8 +40,7 @@ jobs:
       - name: Make test application.yml
         run: |
           mkdir -p ./src/test/resources
-          echo "${{ secrets.TEST_APPLICATION_YML }}" > ./src/test/resources/application.yml # 테스트용 application.yml 생성
-      
+          echo "${{ secrets.TEST_APPLICATION_YML }}" | base64 --decode > ./src/test/resources/application.yml
 
       - name: Grant execute permission for gradlew
         run: chmod +x gradlew
@@ -76,14 +74,14 @@ jobs:
           path: |
             ~/.gradle/caches
             ~/.gradle/wrapper
-          key: '${{ runner.os }}-gradle-${{ hashFiles(''**/*.gradle*'', ''**/gradle-wrapper.properties'') }}'
+          key: "${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*', '**/gradle-wrapper.properties') }}"
           restore-keys: |
             ${{ runner.os }}-gradle-
 
       - name: Make application.yml
         run: |
-          cd ./src/main/resources
-          echo "${{ secrets.APPLICATION_YML }}" > ./application.yml
+          mkdir -p ./src/main/resources
+          echo "${{ secrets.APPLICATION_YML }}" | base64 --decode > ./src/main/resources/application.yml
         shell: bash
 
       - name: Grant execute permission for gradlew
@@ -92,7 +90,7 @@ jobs:
       - name: Build with Gradle
         uses: gradle/gradle-build-action@v2
         with:
-          arguments: build -x test --parallel --build-cache
+          arguments: build -x test --parallel --max-workers=2 --build-cache
 
       - name: Upload build artifact
         uses: actions/upload-artifact@v4
@@ -116,6 +114,10 @@ jobs:
         run: |
           response=$(curl --write-out '%{http_code}' --silent --output /dev/null http://${{ secrets.EC2_HOST }}:8080/health || echo "000")
           echo "Current health status: $response"
+          if [ "$response" != "200" ]; then
+            echo "Health check failed. Aborting deployment."
+            exit 1
+          fi
 
       - name: Deploy to EC2
         env:
@@ -155,6 +157,8 @@ jobs:
               kill -9 $pid
             fi
           fi
+          
+          chmod +x $JAR_PATH
           
           nohup java -jar \
             -Dspring.profiles.active=prod \
