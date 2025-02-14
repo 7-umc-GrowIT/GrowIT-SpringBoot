@@ -39,7 +39,7 @@ jobs:
       # 테스트용 application.yml 생성
       - name: Make application.yml for test
         run: |
-          mkdir -p ./src/test/resources
+          mkdir -p ./src/main/resources
           echo "${{ secrets.APPLICATION_YML }}" > ./src/test/resources/application.yml # 테스트용 application.yml 생성
       
 
