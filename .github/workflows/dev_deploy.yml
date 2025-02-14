@@ -80,8 +80,13 @@ jobs:
 
       - name: Make application.yml
         run: |
-          cd ./src/main/resources
-          echo "${{ secrets.APPLICATION_YML }}" > ./application.yml
+          # main resources 디렉토리 생성 및 파일 복사
+          mkdir -p ./src/main/resources
+          echo "${{ secrets.APPLICATION_YML }}" > ./src/main/resources/application.yml
+
+          # test resources 디렉토리 생성 및 동일한 파일 복사
+          mkdir -p ./src/test/resources
+          echo "${{ secrets.APPLICATION_YML }}" > ./src/test/resources/application.yml
         shell: bash
 
       - name: Grant execute permission for gradlew
