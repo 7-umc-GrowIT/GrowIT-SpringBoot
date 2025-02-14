@@ -36,10 +36,12 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-gradle-
 
-      - name: Make application.yml
+      - name: Make test application.yml
         run: |
-          cd ./src/main/resources
-          echo "${{ secrets.APPLICATION_YML }}" > ./application.yml
+          mkdir -p ./src/test/resources
+          mkdir -p ./src/main/resources
+          echo "${{ secrets.APPLICATION_YML }}" > ./src/test/resources/application.yml
+          echo "${{ secrets.APPLICATION_YML }}" > ./src/main/resources/application.yml
         shell: bash
 
       - name: Grant execute permission for gradlew
@@ -80,13 +82,8 @@ jobs:
 
       - name: Make application.yml
         run: |
-          # main resources 디렉토리 생성 및 파일 복사
-          mkdir -p ./src/main/resources
-          echo "${{ secrets.APPLICATION_YML }}" > ./src/main/resources/application.yml
-
-          # test resources 디렉토리 생성 및 동일한 파일 복사
-          mkdir -p ./src/test/resources
-          echo "${{ secrets.APPLICATION_YML }}" > ./src/test/resources/application.yml
+          cd ./src/main/resources
+          echo "${{ secrets.APPLICATION_YML }}" > ./application.yml
         shell: bash
 
       - name: Grant execute permission for gradlew
@@ -95,7 +92,7 @@ jobs:
       - name: Build with Gradle
         uses: gradle/gradle-build-action@v2
         with:
-          arguments: build --parallel --build-cache
+          arguments: build -x test --parallel --build-cache
 
       - name: Upload build artifact
         uses: actions/upload-artifact@v4
