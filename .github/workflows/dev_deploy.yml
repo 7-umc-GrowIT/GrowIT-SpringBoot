@@ -37,10 +37,13 @@ jobs:
             ${{ runner.os }}-gradle-
 
       # 테스트용 application.yml 생성
-      - name: Make application.yml for test
+      # application.yml 생성 (테스트와 메인 모두를 위한)
+      - name: Make application.yml
         run: |
           mkdir -p ./src/main/resources
-          echo "${{ secrets.APPLICATION_YML }}" > ./src/main/resources/application.yml # 테스트용 application.yml 생성
+          mkdir -p ./src/test/resources
+          echo "${{ secrets.APPLICATION_YML }}" > ./src/main/resources/application.yml
+          echo "${{ secrets.APPLICATION_YML }}" > ./src/test/resources/application.yml
       
 
       - name: Grant execute permission for gradlew
