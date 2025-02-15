@@ -68,7 +68,7 @@ public interface ChallengeSpecification {
 
     @PostMapping("{userChallengeId}/prove")
     @Operation(summary = "챌린지 인증 작성 API", description = "챌린지 인증을 작성하는 API입니다. <br>" +
-            "string 값으로 certificationImageUrl과 thoughts를 넘겨주세요.")
+            "s3에 업로드한 객체 URL을 certificationImageUrl로 넘겨주세요. ")
     @ApiResponses({
             @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "COMMON200", description = "⭕ SUCCESS"),
             @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "USER4002", description = "❌ 이메일 또는 패스워드가 일치하지 않습니다.", content = @Content(schema = @Schema(implementation = ApiResponse.class))),
@@ -88,7 +88,8 @@ public interface ChallengeSpecification {
 
 
     @PatchMapping("{userChallengeId}")
-    @Operation(summary = "챌린지 인증 수정 API", description = "챌린지 인증을 수정하는 API입니다.")
+    @Operation(summary = "챌린지 인증 수정 API", description = "챌린지 인증을 수정하는 API입니다. <br>" +
+            "s3에 업로드한 객체 URL을 certificationImageUrl로 넘겨주세요. ")
     @ApiResponses({
             @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "COMMON200", description = "⭕ SUCCESS"),
             @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "USER4002", description = "❌ 이메일 또는 패스워드가 일치하지 않습니다.", content = @Content(schema = @Schema(implementation = ApiResponse.class))),
