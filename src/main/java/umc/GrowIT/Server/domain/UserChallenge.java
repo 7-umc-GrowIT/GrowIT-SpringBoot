@@ -10,6 +10,7 @@ import java.time.LocalDateTime;
 
 @Entity
 @Getter
+@Setter
 @Builder
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
@@ -30,8 +31,8 @@ public class UserChallenge extends BaseEntity {
     @Column(name = "thoughts", length = 100, nullable = false)
     private String thoughts;
 
-    @Column(name = "certification_image", columnDefinition = "TEXT")
-    private String certificationImage;
+    @Column(name = "certification_imageurl", columnDefinition = "TEXT")
+    private String certificationImageUrl;
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
@@ -43,17 +44,10 @@ public class UserChallenge extends BaseEntity {
     @Column(name = "certification_date")
     private LocalDateTime certificationDate;
 
-    public void setChallenge(Challenge challenge) {
-        this.challenge = challenge;
-    }
-
-    public void setThoughts(String thoughts) { this.thoughts = thoughts; }
-
-    public void setCertificationImage(String certificationImage) { this.certificationImage = certificationImage; }
     // 인증 작성 (최초 등록 또는 전체 업데이트용)
     public void verifyUserChallenge(ChallengeRequestDTO.ProofRequestDTO proofRequest, String imageUrl){
         this.thoughts = proofRequest.getThoughts();
-        this.certificationImage = imageUrl;
+        this.certificationImageUrl = imageUrl;
         this.certificationDate = LocalDateTime.now(); // 인증한 날짜 저장
         this.completed = true;
     }
