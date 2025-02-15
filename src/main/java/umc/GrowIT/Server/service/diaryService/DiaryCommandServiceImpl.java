@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.*;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 import umc.GrowIT.Server.apiPayload.code.status.ErrorStatus;
@@ -342,15 +343,76 @@ public class DiaryCommandServiceImpl implements DiaryCommandService{
             throw new OpenAIHandler(ErrorStatus.EMOTIONS_DUPLICATE);
         }
 
-        // DB에 존재하는 감정인지 체크
-        List<Keyword> emotionKeywords = uniqueEmotions.stream()
-                .map(emotion -> keywordRepository.findByName(emotion)
-                        .orElseThrow(() -> new KeywordHandler(ErrorStatus.KEYWORD_NOT_FOUND)))
-                .toList()
-                ;
+        // DB에 존재하는 감정인지 체크 & 없으면 유사도 검색
+        List<Keyword> emotionKeywords = checkEmotions(uniqueEmotions.stream().toList());
+
+//         테스트용
+//        Set<String> testEmotions = new HashSet<>();
+//        testEmotions.add("흥미로운");
+//        testEmotions.add("설레는");
+//        testEmotions.add("빠져있는");
+//        List<Keyword> emotionKeywords = checkEmotions(testEmotions.stream().toList());
 
         return emotionKeywords;
     }
+
+
+    // DB 감정인지 체크 (없으면 유사도 분석)
+    private List<Keyword> checkEmotions(List<String> inputEmotions) {
+        List<Keyword> result = new ArrayList<>();
+        Set<String> dbEmotions = new HashSet<>();
+        List<String> needAnalysis = new ArrayList<>();
+
+        // 1) DB에 있는지 체크
+        for (String emotion : inputEmotions) {
+            keywordRepository.findByName(emotion).ifPresentOrElse(
+                    keyword -> {
+                        result.add(keyword);
+                        dbEmotions.add(emotion);
+                    },
+                    () -> needAnalysis.add(emotion)
+            );
+        }
+
+        // 2) DB에 없는 감정이 있다면 Flask에 유사도 분석 요청
+        if (!needAnalysis.isEmpty()) {
+            log.info("[DB 없는 감정 존재]");
+
+            Map<String, Object> request = Map.of(
+                    "emotions", needAnalysis,
+                    "existingEmotions", dbEmotions
+            );
+
+            ResponseEntity<Map> response = template.postForEntity(
+                    "http://localhost:5000/analyze_emotions",
+                    request,
+                    Map.class
+            );
+
+            List<Map<String, Object>> analyzedEmotions = (List<Map<String, Object>>) response.getBody().get("analyzedEmotions");
+
+            if (analyzedEmotions != null) {
+                for (Map<String, Object> analysisResult : analyzedEmotions) {
+                    String inputEmotion = (String) analysisResult.get("inputEmotion");
+                    String similarEmotion = (String) analysisResult.get("similarEmotion");
+                    Double similarityScore = (Double) analysisResult.get("similarityScore");
+
+                    // Flask에서 받은 정보 출력
+                    log.info("[Flask 분석 결과] - 입력 감정 : {}, 유사 감정 : {}, 유사도 점수 : {}", inputEmotion, similarEmotion, similarityScore);
+
+                    keywordRepository.findByName(similarEmotion)
+                            .ifPresentOrElse(result::add,
+                                    () -> { throw new KeywordHandler(ErrorStatus.KEYWORD_NOT_FOUND); });
+                }
+            }
+            else {
+                throw new FlaskHandler(ErrorStatus.FLASK_API_CALL_FAILED);
+            }
+        }
+
+        return result;
+    }
+
 
     // 일기와 감정키워드 연관관계 설정
     private void setDiaryKeyword(Diary diary, List<Keyword> analyzedEmotions) {
