@@ -87,7 +87,7 @@ public class ChallengeResponseDTO {
         private boolean completed;
     }
 
-    // 첼린지 인증 내역
+    // 챌린지 인증 내역
     @Getter
     @Builder
     @NoArgsConstructor
@@ -95,7 +95,7 @@ public class ChallengeResponseDTO {
     public static class ProofDetailsDTO {
         private Long id;
         private String title;
-        private String certificationImage;
+        private String certificationImageUrl;
         private String thoughts;
         private Integer time;
         @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss")
@@ -128,7 +128,7 @@ public class ChallengeResponseDTO {
     @NoArgsConstructor
     @AllArgsConstructor
     public static class ModifyProofDTO {
-        private String certificationImage;
+        private String certificationImageUrl;
         private String thoughts;
     }
 
