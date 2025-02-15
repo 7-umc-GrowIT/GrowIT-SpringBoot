@@ -92,7 +92,7 @@ public class ChallengeConverter {
                 .id(userChallenge.getId())
                 .title(challenge.getTitle())
                 .time(challenge.getTime())
-                .certificationImage(userChallenge.getCertificationImage())
+                .certificationImageUrl(userChallenge.getCertificationImage())
                 .thoughts(userChallenge.getThoughts())
                 .certificationDate(userChallenge.getCertificationDate())
                 .build();
@@ -129,7 +129,7 @@ public class ChallengeConverter {
     // 챌린지 수정
     public static ChallengeResponseDTO.ModifyProofDTO toChallengeModifyProofDTO(UserChallenge userChallenge) {
         return ChallengeResponseDTO.ModifyProofDTO.builder()
-                .certificationImage(userChallenge.getCertificationImage())
+                .certificationImageUrl(userChallenge.getCertificationImage())
                 .thoughts(userChallenge.getThoughts())
                 .build();
     }

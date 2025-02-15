@@ -68,7 +68,7 @@ public interface ChallengeSpecification {
 
     @PostMapping("{userChallengeId}/prove")
     @Operation(summary = "챌린지 인증 작성 API", description = "챌린지 인증을 작성하는 API입니다. <br>" +
-            "multipart/form-data 형식의 이미지를 input으로 받습니다. 이때 key 값은 file 입니다.")
+            "string 값으로 certificationImageUrl과 thoughts를 넘겨주세요.")
     @ApiResponses({
             @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "COMMON200", description = "⭕ SUCCESS"),
             @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "USER4002", description = "❌ 이메일 또는 패스워드가 일치하지 않습니다.", content = @Content(schema = @Schema(implementation = ApiResponse.class))),
