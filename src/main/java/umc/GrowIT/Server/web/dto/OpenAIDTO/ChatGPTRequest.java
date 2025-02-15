@@ -19,4 +19,10 @@ public class ChatGPTRequest {
         this.messages =  new ArrayList<>();
         this.messages.add(new Message("user", prompt));
     }
+
+    public ChatGPTRequest(String model, String prompt, Float temperature) {
+        this.model = model;
+        this.messages = new ArrayList<>();
+        this.messages.add(new Message("user", prompt));
+    }
 }
