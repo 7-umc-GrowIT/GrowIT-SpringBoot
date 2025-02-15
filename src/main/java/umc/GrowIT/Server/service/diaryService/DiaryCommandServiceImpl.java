@@ -43,14 +43,17 @@ public class DiaryCommandServiceImpl implements DiaryCommandService{
     @Value("${openai.model2}")
     private String summaryModel;
 
-    @Value("${openai.model2}")
-    private String openAIModel;
+    @Value("${openai.keyword-model}")
+    private String keywordModel;
 
     @Value("${openai.api.url}")
     private String apiURL;
 
     @Autowired
     private RestTemplate template;
+
+    @Autowired
+    private RestTemplate keywordModelTemplate;
 
     //userId-대화내용 저장용 HashMap
     private final Map<Long, List<Message>> conversationHistory = new HashMap<>();
@@ -231,8 +234,8 @@ public class DiaryCommandServiceImpl implements DiaryCommandService{
                 .orElseThrow(() -> new DiaryHandler(ErrorStatus.DIARY_NOT_FOUND));
 
 
-        // 2. 예외 체크
-        // 일기 분석은 1번만 가능
+        //2. 예외 체크
+        //일기 분석은 1번만 가능
         if(diary.getDiaryKeywords() != null && !diary.getDiaryKeywords().isEmpty()) {
             throw new DiaryHandler(ErrorStatus.ANALYZED_DIARY);
         }
@@ -286,37 +289,29 @@ public class DiaryCommandServiceImpl implements DiaryCommandService{
 
         // 프롬프트
         String prompt = String.format("""
-            [요청]
-            다음 [일기 내용]을 분석하여, 반드시 [감정 목록]에 명시된 감정 중에서 정확히 3개를 선택하세요.
+            [작업]
+            [감정 목록]에 있는 범위에 대해 [일기]분석을 진행하여, 감정 목록에 포함된 감정 3개를 응답으로 주세요. 응답은 다음에 제공되는 감정 목록에 있는 것들로 구성되어야 합니다.
             
-            [일기 내용]
-            %s
+            [수행]
+            [감정 목록]: %s
+            [일기]: %s
             
-            [감정 목록]
-            %s
-            
-            [결과]
-            반환 결과는 다른 말 없이 감정들만을 []로 둘러싸서 반환해 주세요.
-            ex) [감정1, 감정2, 감정3]
-            
-            [주의사항]
-            반드시 제공된 감정 목록에 포함된 감정만 사용하세요
-            목록에 없는 감정은 절대 포함하지 마세요.
-            감정 목록에 없는 감정을 반환할 경우 시스템 오류가 발생합니다.
-            """, diaryContent, emotions);
+            [응답 예시]
+            [감정 목록에 포함된 감정1, 감정 목록에 포함된 감정2, 감정 목록에 포함된 감정3]
+            """, emotions, diaryContent);
 
+        Float temperature = 0.0f;
 
         // API 요청 생성
-        ChatGPTRequest gptRequest = new ChatGPTRequest(openAIModel, prompt);
+        ChatGPTRequest gptRequest = new ChatGPTRequest(keywordModel, prompt, temperature);
 
         // API 요청 및 응답 처리
-        ChatGPTResponse chatGPTResponse = template.postForObject(apiURL, gptRequest, ChatGPTResponse.class);
+        ChatGPTResponse chatGPTResponse = keywordModelTemplate.postForObject(apiURL, gptRequest, ChatGPTResponse.class);
         if (chatGPTResponse == null || chatGPTResponse.getChoices().isEmpty()) {
             throw new OpenAIHandler(ErrorStatus.GPT_RESPONSE_EMPTY);
         }
         String result = chatGPTResponse.getChoices().get(0).getMessage().getContent();
         log.info("[GPT 결과] : " + result);
-
 
         // 응답 결과 정리 ([]를 제거하고 각 감정을 분리)
         result = result.replace("[", "").replace("]", "").trim(); // 괄호 제거 후 양 옆 공백 제거
