@@ -243,17 +243,11 @@ public class DiaryCommandServiceImpl implements DiaryCommandService{
         Diary diary = diaryRepository.findById(diaryId)
                 .orElseThrow(() -> new DiaryHandler(ErrorStatus.DIARY_NOT_FOUND));
 
-
         //2. 예외 체크
         //일기 분석은 1번만 가능
         if(diary.getDiaryKeywords() != null && !diary.getDiaryKeywords().isEmpty()) {
             throw new DiaryHandler(ErrorStatus.ANALYZED_DIARY);
         }
-        // 당일의 일기만 분석 가능
-        if (!diary.getDate().isEqual(LocalDate.now())) {
-            throw new DiaryHandler(ErrorStatus.DIARY_NOT_TODAY);
-        }
-
 
         // 3. DB에서 감정들 조회
         List<String> emotions = keywordRepository.findAll()
