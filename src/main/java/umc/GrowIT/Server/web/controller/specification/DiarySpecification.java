@@ -89,7 +89,6 @@ public interface DiarySpecification {
             @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "COMMON200", description = "⭕ SUCCESS"),
             @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "DIARY4001", description = "❌ 존재하지 않는 일기입니다.", content = @Content(schema = @Schema(implementation = ApiResponse.class))),
             @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "DIARY4005", description = "❌ 이미 분석된 일기입니다.", content = @Content(schema = @Schema(implementation = ApiResponse.class))),
-            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "DIARY4006", description = "❌ 오늘의 일기만 분석이 가능합니다.", content = @Content(schema = @Schema(implementation = ApiResponse.class))),
             @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "GPT5001", description = "❌ GPT 응답이 비어있습니다. 다시 시도해 주세요.", content = @Content(schema = @Schema(implementation = ApiResponse.class))),
             @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "GPT5002", description = "❌ GPT 응답에서 감정의 개수는 3개여야 합니다.", content = @Content(schema = @Schema(implementation = ApiResponse.class))),
             @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "GPT5003", description = "❌ GPT 응답에서 중복된 감정이 존재합니다.", content = @Content(schema = @Schema(implementation = ApiResponse.class))),
