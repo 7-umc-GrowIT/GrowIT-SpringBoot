@@ -121,6 +121,9 @@ public enum ErrorStatus implements BaseErrorCode {
     GPT_RESPONSE_EMPTY(HttpStatus.INTERNAL_SERVER_ERROR, "GPT5001", "GPT 응답이 비어있습니다. 다시 시도해 주세요."),
     EMOTIONS_COUNT_INVALID(HttpStatus.INTERNAL_SERVER_ERROR, "GPT5002", "GPT 응답에서 감정의 개수는 3개여야 합니다."),
     EMOTIONS_DUPLICATE(HttpStatus.INTERNAL_SERVER_ERROR, "GPT5003", "GPT 응답에서 중복된 감정이 존재합니다."),
+
+    // 플라스크 관련 에러
+    FLASK_API_CALL_FAILED(HttpStatus.INTERNAL_SERVER_ERROR, "FLASK5001", "Flask API 호출에 실패하였습니다.");
     ;
 
 
