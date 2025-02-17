@@ -43,7 +43,7 @@ jobs:
 
       # Gradle 테스트 실행 시 디버그 로그 활성화
       - name: Run Tests
-        run: ./gradlew test --debug
+        run: ./gradlew test --debug -stacktrace
 
   # --------------------------------------------------- 빌드 작업
   build:
