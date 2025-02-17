@@ -18,8 +18,8 @@ jobs:
       - name: Set up JDK
         uses: actions/setup-java@v3
         with:
-          distribution: ${{ env.DISTRIBUTION }}
-          java-version: ${{ env.JAVA_VERSION }}
+          distribution: 'temurin'    # Eclipse Temurin JDK 사용
+          java-version: '17'         # Java 17 버전 지정
           cache: 'gradle'
 
       - name: Setup Gradle
