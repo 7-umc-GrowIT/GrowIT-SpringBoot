@@ -243,11 +243,13 @@ public class DiaryCommandServiceImpl implements DiaryCommandService{
         Diary diary = diaryRepository.findById(diaryId)
                 .orElseThrow(() -> new DiaryHandler(ErrorStatus.DIARY_NOT_FOUND));
 
+
         //2. 예외 체크
         //일기 분석은 1번만 가능
         if(diary.getDiaryKeywords() != null && !diary.getDiaryKeywords().isEmpty()) {
             throw new DiaryHandler(ErrorStatus.ANALYZED_DIARY);
         }
+
 
         // 3. DB에서 감정들 조회
         List<String> emotions = keywordRepository.findAll()
@@ -338,14 +340,14 @@ public class DiaryCommandServiceImpl implements DiaryCommandService{
         }
 
         // DB에 존재하는 감정인지 체크 & 없으면 유사도 검색
-        List<Keyword> emotionKeywords = checkEmotions(uniqueEmotions.stream().toList());
+//        List<Keyword> emotionKeywords = checkEmotions(uniqueEmotions.stream().toList());
 
 //         테스트용
-//        Set<String> testEmotions = new HashSet<>();
-//        testEmotions.add("흥미로운");
-//        testEmotions.add("설레는");
-//        testEmotions.add("빠져있는");
-//        List<Keyword> emotionKeywords = checkEmotions(testEmotions.stream().toList());
+        Set<String> testEmotions = new HashSet<>();
+        testEmotions.add("분노");
+        testEmotions.add("설레는");
+        testEmotions.add("울적한");
+        List<Keyword> emotionKeywords = checkEmotions(testEmotions.stream().toList());
 
         return emotionKeywords;
     }
@@ -370,7 +372,7 @@ public class DiaryCommandServiceImpl implements DiaryCommandService{
 
         // 2) DB에 없는 감정이 있다면 Flask에 유사도 분석 요청
         if (!needAnalysis.isEmpty()) {
-            log.info("[DB 없는 감정 존재]");
+            log.info("[DB 없는 감정 존재 -> 플라스크 API 요청]");
 
             Map<String, Object> request = Map.of(
                     "emotions", needAnalysis,
