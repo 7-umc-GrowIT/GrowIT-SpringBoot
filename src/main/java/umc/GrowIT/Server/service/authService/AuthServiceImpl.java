@@ -20,6 +20,7 @@ import umc.GrowIT.Server.domain.enums.AuthType;
 import umc.GrowIT.Server.domain.enums.CodeStatus;
 import umc.GrowIT.Server.repository.AuthenticationCodeRepository;
 import umc.GrowIT.Server.repository.UserRepository;
+import umc.GrowIT.Server.service.userService.UserCommandService;
 import umc.GrowIT.Server.web.dto.AuthDTO.AuthRequestDTO;
 import umc.GrowIT.Server.web.dto.AuthDTO.AuthResponseDTO;
 import java.io.UnsupportedEncodingException;
@@ -35,6 +36,7 @@ import static umc.GrowIT.Server.domain.enums.UserStatus.INACTIVE;
 public class AuthServiceImpl implements AuthService {
 
     private final UserRepository userRepository;
+    private final UserCommandService userCommandService;
     private final JavaMailSender javaMailSender;
     private final TemplateEngine templateEngine;
     private final AuthenticationCodeRepository authenticationCodeRepository;
@@ -88,8 +90,7 @@ public class AuthServiceImpl implements AuthService {
             if (user == null) {
                 throw new UserHandler(ErrorStatus.USER_NOT_FOUND);
             }
-            if (user.getStatus() == INACTIVE)
-                throw new UserHandler(ErrorStatus.USER_STATUS_INACTIVE);
+            userCommandService.checkUserInactive(user); // 탈퇴한 회원인지 확인
         } else { //type이 잘못됨
             throw new AuthHandler(ErrorStatus.INVALID_AUTH_TYPE);
         }

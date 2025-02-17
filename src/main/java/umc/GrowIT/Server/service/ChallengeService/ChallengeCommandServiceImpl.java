@@ -1,34 +1,30 @@
 package umc.GrowIT.Server.service.ChallengeService;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import umc.GrowIT.Server.apiPayload.code.status.ErrorStatus;
-import umc.GrowIT.Server.apiPayload.exception.ChallengeHandler;
-import umc.GrowIT.Server.apiPayload.exception.UserHandler;
+import umc.GrowIT.Server.apiPayload.exception.*;
 import umc.GrowIT.Server.converter.ChallengeConverter;
-import umc.GrowIT.Server.domain.Challenge;
-import umc.GrowIT.Server.domain.User;
-import umc.GrowIT.Server.domain.UserChallenge;
+import umc.GrowIT.Server.domain.*;
 import umc.GrowIT.Server.domain.enums.UserChallengeType;
-import umc.GrowIT.Server.repository.ChallengeRepository;
-import umc.GrowIT.Server.repository.UserChallengeRepository;
-import umc.GrowIT.Server.repository.UserRepository;
-import umc.GrowIT.Server.service.ImageService.ImageService;
+import umc.GrowIT.Server.repository.*;
+import umc.GrowIT.Server.service.S3Service.S3Service;
 import umc.GrowIT.Server.web.dto.ChallengeDTO.ChallengeRequestDTO;
 import umc.GrowIT.Server.web.dto.ChallengeDTO.ChallengeResponseDTO;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class ChallengeCommandServiceImpl implements ChallengeCommandService {
 
     private final UserRepository userRepository;
     private final UserChallengeRepository userChallengeRepository;
     private final ChallengeRepository challengeRepository;
-    private final ImageService imageService;
+    private Integer challengeCredit = 1;
 
     @Override
     @Transactional
@@ -46,6 +42,7 @@ public class ChallengeCommandServiceImpl implements ChallengeCommandService {
         for (ChallengeRequestDTO.SelectChallengeRequestDTO selectRequest : selectRequestList) {
             List<Long> challengeIds = selectRequest.getChallengeIds();
             UserChallengeType dtype = selectRequest.getDtype();
+
 
             // 현재 dtype에 따라 저장 가능한 최대 개수 확인
             if (dtype == UserChallengeType.DAILY) {
@@ -85,8 +82,6 @@ public class ChallengeCommandServiceImpl implements ChallengeCommandService {
         return ChallengeConverter.toSelectChallengeDTO(savedUserChallenges);
     }
 
-
-
     @Override
     @Transactional
     public ChallengeResponseDTO.ProofDetailsDTO createChallengeProof(Long userId, Long userChallengeId, ChallengeRequestDTO.ProofRequestDTO proofRequest) {
@@ -98,37 +93,38 @@ public class ChallengeCommandServiceImpl implements ChallengeCommandService {
             throw new ChallengeHandler(ErrorStatus.CHALLENGE_VERIFY_ALREADY_EXISTS);
         }
 
-        // 이미지 업로드
-        String imageUrl = null;
-        if (proofRequest.getCertificationImage() != null && !proofRequest.getCertificationImage().isEmpty()) {
-            imageUrl = imageService.upload(proofRequest.getCertificationImage());
-        }
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new UserHandler(ErrorStatus.USER_NOT_FOUND));
 
-        userChallenge.verifyUserChallenge(proofRequest, imageUrl);
+        userChallenge.verifyUserChallenge(proofRequest, proofRequest.getCertificationImageUrl());
         userChallengeRepository.save(userChallenge);
-        return ChallengeConverter.toProofDetailsDTO(userChallenge.getChallenge(), userChallenge, imageUrl);
+
+        user.updateCurrentCredit(user.getCurrentCredit() + challengeCredit);
+        user.updateTotalCredit(user.getTotalCredit() + challengeCredit);
+        userRepository.save(user);
+
+        return ChallengeConverter.toProofDetailsDTO(userChallenge.getChallenge(), userChallenge);
     }
 
     @Override
     @Transactional
     public ChallengeResponseDTO.ModifyProofDTO updateChallengeProof(Long userId, Long userChallengeId, ChallengeRequestDTO.ProofRequestDTO updateRequest) {
+        // 유저 챌린지 조회
         UserChallenge userChallenge = userChallengeRepository.findByIdAndUserId(userChallengeId, userId)
-                .orElseThrow(() -> new ChallengeHandler(ErrorStatus.CHALLENGE_VERIFY_NOT_EXISTS));
+                .orElseThrow(() -> new ChallengeHandler(ErrorStatus.USER_CHALLENGE_NOT_FOUND));
 
-        String oldImageUrl = userChallenge.getCertificationImage();
-        String newImageUrl = oldImageUrl;
-
-        // 새 이미지 업로드 (새 이미지가 있을 경우에만)
-        if (updateRequest.getCertificationImage() != null && !updateRequest.getCertificationImage().isEmpty()) {
-            if (oldImageUrl != null) {
-                imageService.delete(oldImageUrl); // 기존 이미지 삭제
-            }
-            newImageUrl = imageService.upload(updateRequest.getCertificationImage());
-            userChallenge.setCertificationImage(newImageUrl); // 이미지 URL 업데이트
+        // 인증이 완료되지 않았을 경우 예외 발생
+        if (!userChallenge.isCompleted()) {
+            throw new ChallengeHandler(ErrorStatus.CHALLENGE_NOT_COMPLETED);
         }
 
-        // 소감 업데이트 (null이 아닌 경우에만 변경)
-        if(updateRequest.getThoughts() != null) {
+        // 인증 이미지 업데이트
+        if (updateRequest.getCertificationImageUrl() != null && !updateRequest.getCertificationImageUrl().isEmpty()) {
+            userChallenge.setCertificationImageUrl(updateRequest.getCertificationImageUrl()); // 새 이미지 설정
+        }
+
+        // 소감 업데이트
+        if (updateRequest.getThoughts() != null && !updateRequest.getThoughts().isEmpty()) {
             userChallenge.setThoughts(updateRequest.getThoughts());
         }
 
@@ -136,6 +132,8 @@ public class ChallengeCommandServiceImpl implements ChallengeCommandService {
         return ChallengeConverter.toChallengeModifyProofDTO(userChallenge);
     }
 
+    // 삭제
+    @Override
     public ChallengeResponseDTO.DeleteChallengeResponseDTO delete(Long userChallengeId, Long userId) {
         // 1. userId를 조회하고 없으면 오류
         userRepository.findById(userId)

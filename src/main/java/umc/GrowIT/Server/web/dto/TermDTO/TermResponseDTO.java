@@ -13,6 +13,8 @@ public class TermResponseDTO {
     @AllArgsConstructor
     public static class TermDTO {
 
+        private Long termId;
+
         private String title;
 
         private String content;

@@ -2,8 +2,9 @@ package umc.GrowIT.Server.apiPayload.exception;
 
 import umc.GrowIT.Server.apiPayload.code.BaseErrorCode;
 
-public class ImageHandler extends GeneralException {
-    public ImageHandler(BaseErrorCode code) {
+public class OpenAIHandler extends GeneralException {
+    public OpenAIHandler(BaseErrorCode code) {
         super(code);
     }
+
 }

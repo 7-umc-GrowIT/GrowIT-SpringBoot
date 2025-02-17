@@ -9,6 +9,7 @@ import umc.GrowIT.Server.apiPayload.ApiResponse;
 import umc.GrowIT.Server.service.diaryService.DiaryCommandService;
 import umc.GrowIT.Server.service.diaryService.DiaryQueryService;
 import umc.GrowIT.Server.web.controller.specification.DiarySpecification;
+import umc.GrowIT.Server.web.dto.ChallengeDTO.ChallengeResponseDTO;
 import umc.GrowIT.Server.web.dto.DiaryDTO.DiaryRequestDTO;
 import umc.GrowIT.Server.web.dto.DiaryDTO.DiaryResponseDTO;
 
@@ -91,5 +92,10 @@ public class DiaryController implements DiarySpecification {
         return ApiResponse.onSuccess(diaryCommandService.createDiaryByVoice(request, userId));
     }
 
-
+    @Override
+    @PostMapping("/analyze/{diaryId}")
+    public ApiResponse<DiaryResponseDTO.AnalyzedDiaryResponseDTO> analyzeDiary (@PathVariable("diaryId") Long diaryId) {
+        DiaryResponseDTO.AnalyzedDiaryResponseDTO result = diaryCommandService.analyze(diaryId);
+        return ApiResponse.onSuccess(result);
+    }
 }

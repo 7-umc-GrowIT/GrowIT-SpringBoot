@@ -97,14 +97,14 @@ public class UserCommandServiceImpl implements UserCommandService {
         String email = emailLoginDTO.getEmail(); //사용자가 입력한 email
         String password = emailLoginDTO.getPassword(); //사용자가 입력한 password
 
-        //인증 수행 및 토큰 생성
         try {
             User user = userRepository.findByPrimaryEmail(email)
                     .orElseThrow(() -> new UserHandler(ErrorStatus.USER_NOT_FOUND));
 
-            if (user.getStatus() == INACTIVE)
-                throw new UserHandler(ErrorStatus.USER_STATUS_INACTIVE);
+            // 탈퇴한 사용자인지 확인
+            checkUserInactive(user);
 
+            // 인증 수행 및 토큰 생성 및 저장
             TokenResponseDTO.TokenDTO tokenDTO = performAuthentication(email, password);
             setRefreshToken(tokenDTO.getRefreshToken(), user);
 
@@ -148,9 +148,7 @@ public class UserCommandServiceImpl implements UserCommandService {
                 .orElseThrow(() -> new UserHandler(ErrorStatus.USER_NOT_FOUND));
 
         // 2. soft delete로 진행하기 때문에 status를 inactive로 변경
-        if (deleteUser.getStatus() == INACTIVE) {
-            throw new UserHandler(ErrorStatus.USER_STATUS_INACTIVE);
-        }
+        checkUserInactive(deleteUser); //이미 탈퇴한 회원인지 확인
         deleteUser.deleteAccount();
         userRepository.save(deleteUser);
 
@@ -191,6 +189,12 @@ public class UserCommandServiceImpl implements UserCommandService {
         TokenResponseDTO.TokenDTO tokenDTO = jwtTokenUtil.generateToken((CustomUserDetails) authentication.getPrincipal());
 
         return tokenDTO;
+    }
+
+    @Override
+    public void checkUserInactive(User user){
+        if (user.getStatus() == INACTIVE)
+            throw new UserHandler(ErrorStatus.USER_STATUS_INACTIVE);
     }
 }
 

@@ -49,6 +49,11 @@ public class GroCommandServiceImpl implements GroCommandService{
     @Override
     @Transactional
     public GroResponseDTO.CreateResponseDTO createGro(Long userId, String nickname, String backgroundItem) {
+
+        //사용자의 그로가 이미 존재하는 경우
+        if(groRepository.existsByUserId(userId))
+            throw new GroHandler(ErrorStatus.GRO_ALREADY_EXISTS);
+
         // 닉네임 체크
         checkNickname(nickname);
 
@@ -60,6 +65,12 @@ public class GroCommandServiceImpl implements GroCommandService{
         Item item = itemRepository.findByName(backgroundItem)
                 .orElseThrow(() -> new ItemHandler(ErrorStatus.ITEM_NOT_FOUND));
 
+        //기본 핑크색 PLANT 조회
+        Item basicPlantItem = itemRepository.findByName("핑크 화분")
+                .orElseThrow(() -> new ItemHandler(ErrorStatus.ITEM_NOT_FOUND));
+
+
+
         // Gro 생성 및 저장
         Gro gro = GroConverter.toGro(user, nickname);
         Gro savedGro = groRepository.save(gro);
@@ -68,17 +79,16 @@ public class GroCommandServiceImpl implements GroCommandService{
         UserItem userItem = UserItemConverter.toUserItem(user, item);
         userItemRepository.save(userItem);
 
+        //PLANT 저장
+        userItem = UserItemConverter.toUserItem(user, basicPlantItem);
+        userItemRepository.save(userItem);
+
         return GroConverter.toGroResponseDTO(savedGro);
     }
 
 
     @Transactional(readOnly = true)
     public void checkNickname(String nickname){
-
-//        if (nickname.length() < 2 || nickname.length() > 10) {
-//
-//            throw new GroHandler(ErrorStatus.GRO_NICKNAME_LENGTH_INVALID);
-//        }
 
         Optional<Gro> gro = groRepository.findByName(nickname);
 

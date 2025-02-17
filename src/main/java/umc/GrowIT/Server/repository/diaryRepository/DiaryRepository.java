@@ -8,6 +8,7 @@ import umc.GrowIT.Server.domain.Item;
 import umc.GrowIT.Server.domain.enums.ItemCategory;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -20,4 +21,11 @@ public interface DiaryRepository extends JpaRepository<Diary, Long> {
     Optional<Diary> findByUserIdAndId(Long userId, Long diaryId);
 
     boolean existsByUserIdAndDate(Long userId, LocalDate date);
+
+    @Query("SELECT MAX(d.date) FROM Diary d WHERE d.user.id = :userId") // 마지막 일기 작성 날짜 조회
+    Optional<LocalDate> findLastDiaryDateByUserId(@Param("userId") Long userId);
+
+    // 오늘 작성한 일기 조회
+    @Query("SELECT d FROM Diary d WHERE d.user.id = :userId AND d.date = :date")
+    Optional<Diary> findTodayDiaryByUserId(@Param("userId") Long userId, @Param("date") LocalDate date);
 }

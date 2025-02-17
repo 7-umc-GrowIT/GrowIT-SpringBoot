@@ -1,7 +1,12 @@
 package umc.GrowIT.Server.converter;
 
+import umc.GrowIT.Server.domain.Challenge;
 import umc.GrowIT.Server.domain.Diary;
+import umc.GrowIT.Server.domain.Keyword;
+import umc.GrowIT.Server.domain.enums.UserChallengeType;
+import umc.GrowIT.Server.web.dto.ChallengeDTO.ChallengeResponseDTO;
 import umc.GrowIT.Server.web.dto.DiaryDTO.DiaryResponseDTO;
+import umc.GrowIT.Server.web.dto.KeywordDTO.KeywordResponseDTO;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -82,6 +87,21 @@ public class DiaryConverter {
                 .diaryId(diary.getId())
                 .content(diary.getContent())
                 .date(diary.getDate())
+                .build();
+    }
+
+    // 챌린지 추천
+    public static DiaryResponseDTO.AnalyzedDiaryResponseDTO toAnalyzedDiaryDTO(List<Keyword> analyzedEmotions, List<Challenge> dailyChallenges, Challenge randomChallenge) {
+        // 감정키워드 변환
+        List<KeywordResponseDTO.KeywordDTO> emotionKeywordsDTOs = KeywordConverter.toKeywordsDTO(analyzedEmotions);
+
+        // 챌린지 변환
+        List<ChallengeResponseDTO.ChallengeDTO> recommendedChallenges = ChallengeConverter.toRecommendedChallenges(dailyChallenges, randomChallenge);
+
+        // 최종 response
+        return DiaryResponseDTO.AnalyzedDiaryResponseDTO.builder()
+                .emotionKeywords(emotionKeywordsDTOs)
+                .recommendedChallenges(recommendedChallenges)
                 .build();
     }
 }

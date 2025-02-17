@@ -57,8 +57,11 @@ dependencies {
 	// WebClient
 	implementation 'org.springframework.boot:spring-boot-starter-webflux'
 
-	//테스트용 H2데이터베이스
-	testImplementation 'com.h2database:h2'
+	// Spring Actuator : 모니터링 지표 수집
+	implementation 'org.springframework.boot:spring-boot-starter-actuator'
+
+	// Prometheus
+	implementation 'io.micrometer:micrometer-registry-prometheus'
 
 }
 
