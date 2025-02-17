@@ -12,14 +12,14 @@ jobs:
     steps:
       - uses: actions/checkout@v3
         with:
-          fetch-depth: 0  # 전체 히스토리를 가져와 캐싱 성능 향상
+          fetch-depth: 0
 
       - name: Set up JDK 17
         uses: actions/setup-java@v3
         with:
           distribution: 'temurin'
           java-version: '17'
-          cache: 'gradle'  # Gradle 캐시 활성화
+          cache: 'gradle'
 
       - name: Make application.yml
         run: |
@@ -33,12 +33,7 @@ jobs:
       - name: Build with Gradle
         uses: gradle/gradle-build-action@v2
         with:
-          arguments: |
-            build -x test
-            --parallel
-            --build-cache
-            --no-daemon
-            -Dorg.gradle.jvmargs="-Xmx4g -XX:MaxMetaspaceSize=512m"
+          arguments: build -x test --parallel --build-cache --no-daemon -Dorg.gradle.jvmargs="-Xmx2048m"
 
       - name: Upload build artifact
         uses: actions/upload-artifact@v4
@@ -72,7 +67,7 @@ jobs:
           chmod 600 ~/.ssh/deploy_key
           echo -e "Host ec2\n\tHostName ${{ secrets.EC2_HOST }}\n\tUser ${{ secrets.EC2_USERNAME }}\n\tIdentityFile ~/.ssh/deploy_key\n\tStrictHostKeyChecking no" > ~/.ssh/config
           
-          # 빌드된 JAR 파일 찾기
+          # JAR 파일 찾기
           jar_file=$(find build/libs -name '*.jar' ! -name '*plain.jar' | head -n 1)
           
           # 배포 스크립트 실행
@@ -91,7 +86,6 @@ jobs:
                 fi
                 sleep 5
               done
-              # 60초 후에도 프로세스가 살아있다면 강제 종료
               pgrep java | xargs -r kill -9 2>/dev/null || true
             fi
           "
@@ -99,10 +93,9 @@ jobs:
           # 새로운 JAR 파일 전송
           scp -F ~/.ssh/config "$jar_file" ec2:~/GrowItServer.jar
           
-          # 애플리케이션 실행 및 상태 확인
+          # 애플리케이션 실행
           ssh ec2 "
-            # JVM 옵션 추가하여 실행
-            nohup java -jar -Xmx1g -XX:+HeapDumpOnOutOfMemoryError ~/GrowItServer.jar > app.log 2>&1 &
+            nohup java -jar -Xmx1024m ~/GrowItServer.jar > app.log 2>&1 &
           
             # 실행 확인
             sleep 30
@@ -111,7 +104,7 @@ jobs:
               if [ -f ~/GrowItServer.jar.backup ]; then
                 echo '백업에서 복구 시도'
                 mv ~/GrowItServer.jar.backup ~/GrowItServer.jar
-                nohup java -jar -Xmx1g ~/GrowItServer.jar > app.log 2>&1 &
+                nohup java -jar -Xmx1024m ~/GrowItServer.jar > app.log 2>&1 &
               fi
               exit 1
             fi
