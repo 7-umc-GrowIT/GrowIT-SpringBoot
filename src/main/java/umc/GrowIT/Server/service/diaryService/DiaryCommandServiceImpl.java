@@ -340,14 +340,14 @@ public class DiaryCommandServiceImpl implements DiaryCommandService{
         }
 
         // DB에 존재하는 감정인지 체크 & 없으면 유사도 검색
-//        List<Keyword> emotionKeywords = checkEmotions(uniqueEmotions.stream().toList());
+        List<Keyword> emotionKeywords = checkEmotions(uniqueEmotions.stream().toList());
 
 //         테스트용
-        Set<String> testEmotions = new HashSet<>();
-        testEmotions.add("분노");
-        testEmotions.add("설레는");
-        testEmotions.add("울적한");
-        List<Keyword> emotionKeywords = checkEmotions(testEmotions.stream().toList());
+//        Set<String> testEmotions = new HashSet<>();
+//        testEmotions.add("분노");
+//        testEmotions.add("설레는");
+//        testEmotions.add("울적한");
+//        List<Keyword> emotionKeywords = checkEmotions(testEmotions.stream().toList());
 
         return emotionKeywords;
     }
