@@ -11,6 +11,8 @@ jobs:
   #----------------------------------------------------------------------- 테스트작업
   test:
     runs-on: ubuntu-latest
+    env:
+      OPENAI_API_KEY: "test-key"
 
     steps:
 
@@ -23,6 +25,23 @@ jobs:
         with:
           distribution: 'temurin'    # Eclipse Temurin JDK 사용
           java-version: '17'         # Java 17 버전 지정
+
+
+      - name: Setup Gradle
+        uses: gradle/gradle-build-action@v2
+        with:
+          gradle-version: wrapper
+          cache-read-only: false
+
+        # 테스트용 application.yml 생성
+      - name: Create test application.yml
+        run: |
+          mkdir -p ./src/test/resources
+          echo "${{ secrets.TEST_APPLICATION_YML }}" > ./src/test/resources/application.yml
+        shell: bash
+
+      - name: Grant execute permission for gradlew
+        run: chmod +x gradlew
 
       - name: Run Tests
         run: ./gradlew test
