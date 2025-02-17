@@ -38,6 +38,7 @@ out/
 
 ### 추가
 /src/main/resources/*.yml
+/src/main/resources/keystore.p12
 
 ### Mac OS 메타 데이터 ###
 ###.DS_Store
