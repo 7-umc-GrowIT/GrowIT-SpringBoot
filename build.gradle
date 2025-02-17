@@ -63,7 +63,6 @@ dependencies {
 	// Prometheus
 	implementation 'io.micrometer:micrometer-registry-prometheus'
 
-	testImplementation 'com.h2database:h2'  // H2 데이터베이스 추가
 }
 
 tasks.named('test') {
