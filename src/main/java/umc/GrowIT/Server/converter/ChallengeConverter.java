@@ -8,6 +8,7 @@ import umc.GrowIT.Server.domain.enums.UserChallengeType;
 import umc.GrowIT.Server.web.dto.ChallengeDTO.ChallengeResponseDTO;
 import umc.GrowIT.Server.web.dto.KeywordDTO.KeywordResponseDTO;
 
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -27,28 +28,21 @@ public class ChallengeConverter {
     }
 
     // 추천 챌린지 리스트를 반환
-    public static List<ChallengeResponseDTO.RecommendedChallengeDTO> toRecommendedChallengeListDTO(List<UserChallenge> userChallenges) {
-        // 1. dtype이 "DAILY"인 챌린지 2개 선택
-        List<UserChallenge> dailyChallenges = userChallenges.stream()
-                .filter(userChallenge -> userChallenge.getDtype() == UserChallengeType.DAILY)
-                .limit(2)
-                .toList();
+    public static List<ChallengeResponseDTO.RecommendedChallengeDTO> toRecommendedChallengeListDTO(
+            List<UserChallenge> userChallenges, List<Long> todayDiaryKeywordChallengeIds) {
 
-        // 2. dtype이 "RANDOM"인 챌린지 1개 선택
-        List<UserChallenge> randomChallenge = userChallenges.stream()
-                .filter(userChallenge -> userChallenge.getDtype() == UserChallengeType.RANDOM)
-                .limit(1)
-                .toList();
+        LocalDate today = LocalDate.now();
 
-        // 3. 선택된 챌린지들을 합쳐서 DTO로 변환
-        List<UserChallenge> selectedChallenges = new ArrayList<>();
-        selectedChallenges.addAll(dailyChallenges);
-        selectedChallenges.addAll(randomChallenge);
-
-        return selectedChallenges.stream()
+        return userChallenges.stream()
+                .filter(userChallenge ->
+                        userChallenge.getCreatedAt().toLocalDate().isEqual(today) && // 오늘 저장된 챌린지만 필터링
+                                todayDiaryKeywordChallengeIds.contains(userChallenge.getChallenge().getId()) // 오늘 작성한 일기 분석으로 추천된 챌린지만 포함
+                )
                 .map(ChallengeConverter::toRecommendedChallengeDTO)
                 .collect(Collectors.toList());
     }
+
+
 
 
     // 챌린지 리포트를 ChallengeHome.ChallengeReport로 변환
@@ -62,13 +56,14 @@ public class ChallengeConverter {
 
     // 전체 챌린지 홈 데이터를 ChallengeHomeDTO로 변환
     public static ChallengeResponseDTO.ChallengeHomeDTO toChallengeHomeDTO(List<UserChallenge> userChallenges,
+                                                                        List<Long> todayDiaryKeywordChallengeIds, // 오늘 작성한 일기의 키워드 기반 추천 챌린지
                                                                         int totalCredits,
                                                                         int totalDiaries,
                                                                         String diaryGoal, List<String> keywords) {
 
         return ChallengeResponseDTO.ChallengeHomeDTO.builder()
                 .challengeKeywords(keywords) // 변환된 DTO 적용
-                .recommendedChallenges(toRecommendedChallengeListDTO(userChallenges))
+                .recommendedChallenges(toRecommendedChallengeListDTO(userChallenges, todayDiaryKeywordChallengeIds))
                 .challengeReport(toChallengeReportDTO(totalCredits, totalDiaries, diaryGoal))
                 .build();
     }

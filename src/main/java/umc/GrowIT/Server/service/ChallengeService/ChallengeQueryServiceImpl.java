@@ -10,6 +10,7 @@ import org.springframework.transaction.annotation.Transactional;
 import umc.GrowIT.Server.apiPayload.code.status.ErrorStatus;
 import umc.GrowIT.Server.apiPayload.exception.ChallengeHandler;
 import umc.GrowIT.Server.converter.ChallengeConverter;
+import umc.GrowIT.Server.domain.Diary;
 import umc.GrowIT.Server.domain.UserChallenge;
 import umc.GrowIT.Server.domain.enums.UserChallengeType;
 import umc.GrowIT.Server.repository.ChallengeKeywordRepository;
@@ -26,9 +27,7 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.temporal.ChronoUnit;
-import java.util.Collections;
-import java.util.Date;
-import java.util.List;
+import java.util.*;
 import java.util.concurrent.TimeUnit;
 
 @Service
@@ -40,6 +39,7 @@ public class ChallengeQueryServiceImpl implements ChallengeQueryService {
     private final S3Service s3Service;
     private final DiaryRepository diaryRepository;
     private final KeywordService keywordService;
+    private final ChallengeKeywordRepository challengeKeywordRepository;
 
 
     @Override
@@ -71,26 +71,35 @@ public class ChallengeQueryServiceImpl implements ChallengeQueryService {
     @Override
     @Transactional
     public ChallengeResponseDTO.ChallengeHomeDTO getChallengeHome(Long userId) {
+        LocalDate today = LocalDate.now();
 
-        // 오늘의 시작 시간과 끝 시간 계산
-        LocalDateTime startOfDay = LocalDate.now().atStartOfDay(); // 오늘 자정 00:00:00
-        LocalDateTime endOfDay = LocalDate.now().atTime(LocalTime.MAX); // 오늘 끝 23:59:59
+        // 오늘 날짜의 일기 존재 여부 확인
+        Optional<Diary> todayDiary = diaryRepository.findTodayDiaryByUserId(userId, today);
 
-        // 오늘 저장된 챌린지 조회
-        List<UserChallenge> todayChallenges = userChallengeRepository.findTodayUserChallengesByUserId(userId, startOfDay, endOfDay);
+        // 감정 키워드 조회
+        List<String> keywordNames = todayDiary.isPresent()
+                ? keywordService.getTodayDiaryKeywords(userId)
+                : Collections.emptyList();
 
-        // 감정 키워드 조회 (사용자가 오늘 작성한 일기 기반)
-        List<String> keywordNames = keywordService.getTodayDiaryKeywords(userId);
+        // 사용자가 직접 저장한 챌린지만 가져옴
+        List<UserChallenge> savedChallenges = todayDiary.isPresent()
+                ? userChallengeRepository.findTodayUserChallengesByUserId(userId, today)
+                : Collections.emptyList();
+
+        // 오늘 작성한 일기의 키워드 기반 추천 챌린지 ID 목록 조회
+        List<Long> todayDiaryKeywordChallengeIds = todayDiary.isPresent()
+                ? challengeKeywordRepository.findChallengeIdsByTodayDiaryKeywords(userId, today)
+                : Collections.emptyList();
 
         return ChallengeConverter.toChallengeHomeDTO(
-                todayChallenges,
+                savedChallenges,
+                todayDiaryKeywordChallengeIds,
                 getTotalCredits(userId),
                 getTotalDiaries(userId),
                 getDiaryDate(userId),
                 keywordNames
         );
     }
-
 
 
     @Override
