@@ -72,8 +72,6 @@ public class ChallengeQueryServiceImpl implements ChallengeQueryService {
     @Transactional
     public ChallengeResponseDTO.ChallengeHomeDTO getChallengeHome(Long userId) {
         LocalDate today = LocalDate.now();
-        LocalDateTime startOfDay = today.atStartOfDay();
-        LocalDateTime endOfDay = today.atTime(LocalTime.MAX);
 
         // 오늘 날짜의 일기 존재 여부 확인
         Optional<Diary> todayDiary = diaryRepository.findTodayDiaryByUserId(userId, today);
@@ -85,7 +83,7 @@ public class ChallengeQueryServiceImpl implements ChallengeQueryService {
 
         // 사용자가 직접 저장한 챌린지만 가져옴
         List<UserChallenge> savedChallenges = todayDiary.isPresent()
-                ? userChallengeRepository.findTodayUserChallengesByUserId(userId, startOfDay, endOfDay)
+                ? userChallengeRepository.findTodayUserChallengesByUserId(userId, today)
                 : Collections.emptyList();
 
         // 오늘 작성한 일기의 키워드 기반 추천 챌린지 ID 목록 조회
