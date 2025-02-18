@@ -28,4 +28,5 @@ public interface DiaryRepository extends JpaRepository<Diary, Long> {
     // 오늘 작성한 일기 조회
     @Query("SELECT d FROM Diary d WHERE d.user.id = :userId AND d.date = :date")
     Optional<Diary> findTodayDiaryByUserId(@Param("userId") Long userId, @Param("date") LocalDate date);
+
 }
