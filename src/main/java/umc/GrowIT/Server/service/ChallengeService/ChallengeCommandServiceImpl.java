@@ -14,6 +14,7 @@ import umc.GrowIT.Server.service.S3Service.S3Service;
 import umc.GrowIT.Server.web.dto.ChallengeDTO.ChallengeRequestDTO;
 import umc.GrowIT.Server.web.dto.ChallengeDTO.ChallengeResponseDTO;
 
+import java.time.LocalDate;
 import java.util.*;
 
 @Service
@@ -42,7 +43,7 @@ public class ChallengeCommandServiceImpl implements ChallengeCommandService {
         for (ChallengeRequestDTO.SelectChallengeRequestDTO selectRequest : selectRequestList) {
             List<Long> challengeIds = selectRequest.getChallengeIds();
             UserChallengeType dtype = selectRequest.getDtype();
-
+            LocalDate date = selectRequest.getDate();
 
             // 현재 dtype에 따라 저장 가능한 최대 개수 확인
             if (dtype == UserChallengeType.DAILY) {
@@ -69,7 +70,7 @@ public class ChallengeCommandServiceImpl implements ChallengeCommandService {
                                 .orElseThrow(() -> new ChallengeHandler(ErrorStatus.CHALLENGE_NOT_FOUND));
 
                         // UserChallenge 생성
-                        UserChallenge userChallenge = ChallengeConverter.createUserChallenge(user, challenge, dtype);
+                        UserChallenge userChallenge = ChallengeConverter.createUserChallenge(user, challenge, dtype, date);
                         return userChallengeRepository.save(userChallenge);
                     })
                     .toList();

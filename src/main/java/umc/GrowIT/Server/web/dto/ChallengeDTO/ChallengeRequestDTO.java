@@ -1,10 +1,10 @@
 package umc.GrowIT.Server.web.dto.ChallengeDTO;
 
 import io.swagger.v3.oas.annotations.media.Schema;
-import jakarta.validation.constraints.NotNull;
 import lombok.*;
 import umc.GrowIT.Server.domain.enums.UserChallengeType;
 
+import java.time.LocalDate;
 import java.util.List;
 
 public class ChallengeRequestDTO {
@@ -27,5 +27,6 @@ public class ChallengeRequestDTO {
     public static class SelectChallengeRequestDTO {
         private List<Long> challengeIds;
         private UserChallengeType dtype;
+        private LocalDate date;
     }
 }

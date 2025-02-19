@@ -94,11 +94,12 @@ public class ChallengeConverter {
     }
 
     // UserChallenge 생성
-    public static UserChallenge createUserChallenge(User user, Challenge challenge, UserChallengeType dtype) {
+    public static UserChallenge createUserChallenge(User user, Challenge challenge, UserChallengeType dtype, LocalDate date) {
         return UserChallenge.builder()
                 .user(user)
                 .challenge(challenge)
                 .dtype(dtype)
+                .date(date)
                 .completed(false)
                 .build();
     }
