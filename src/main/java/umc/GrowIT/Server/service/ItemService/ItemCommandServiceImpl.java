@@ -1,6 +1,7 @@
 package umc.GrowIT.Server.service.ItemService;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import umc.GrowIT.Server.apiPayload.code.status.ErrorStatus;
@@ -16,6 +17,7 @@ import umc.GrowIT.Server.repository.UserRepository;
 import umc.GrowIT.Server.web.dto.ItemDTO.ItemResponseDTO;
 import umc.GrowIT.Server.web.dto.ItemEquipDTO.ItemEquipResponseDTO;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 @Transactional
@@ -65,6 +67,8 @@ public class ItemCommandServiceImpl implements ItemCommandService {
 
     @Override
     public ItemEquipResponseDTO updateItemStatus(Long userId, Long itemId, String requestStatus) {
+
+
         UserItem userItem = userItemRepository.findByUserIdAndItemId(userId, itemId)
                 .orElseThrow(() -> new ItemHandler(ErrorStatus.ITEM_NOT_OWNED));
 
@@ -77,8 +81,23 @@ public class ItemCommandServiceImpl implements ItemCommandService {
             }
         }
 
+        // 아이템 착용 요청인 경우, 같은 카테고리의 기존 착용 아이템 해제
+        if (requestStatus.equals("EQUIPPED")) {
+            UserItem equippedItem = userItemRepository.findByUserIdAndItemCategoryAndStatus(
+                    userId,
+                    userItem.getItem().getCategory(),
+                    ItemStatus.EQUIPPED
+            ).orElse(null);
+
+            if (equippedItem != null) {
+                equippedItem.setStatus(ItemStatus.UNEQUIPPED);
+                userItemRepository.save(equippedItem);
+            }
+        }
+
         // 요청된 상태로 직접 변경
         userItem.setStatus(ItemStatus.valueOf(requestStatus));
+        userItemRepository.save(userItem);
 
         return ItemConverter.itemEquipDTO(userItem);
     }
