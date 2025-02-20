@@ -45,7 +45,7 @@ public class UserChallenge extends BaseEntity {
     @Column(name = "certification_date")
     private LocalDateTime certificationDate;
 
-    @Column(nullable = false)
+    @Column(name = "date")
     private LocalDate date;
 
     // 인증 작성 (최초 등록 또는 전체 업데이트용)

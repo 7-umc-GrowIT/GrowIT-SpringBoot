@@ -20,7 +20,7 @@ public interface UserChallengeRepository extends JpaRepository<UserChallenge, Lo
     // 오늘 날짜 기준으로 저장된 챌린지만 필터링
     @Query("SELECT uc FROM UserChallenge uc " +
             "WHERE uc.user.id = :userId " +
-            "AND DATE(uc.createdAt) = :today")
+            "AND uc.date = :today")
     List<UserChallenge> findTodayUserChallengesByUserId(
             @Param("userId") Long userId,
             @Param("today") LocalDate today);
