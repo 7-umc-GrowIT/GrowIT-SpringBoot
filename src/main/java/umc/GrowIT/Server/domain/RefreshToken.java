@@ -3,6 +3,8 @@ package umc.GrowIT.Server.domain;
 
 import jakarta.persistence.*;
 import lombok.*;
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
 import umc.GrowIT.Server.domain.common.BaseEntity;
 
 import java.time.LocalDateTime;

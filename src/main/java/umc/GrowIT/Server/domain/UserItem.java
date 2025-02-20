@@ -3,6 +3,8 @@ package umc.GrowIT.Server.domain;
 
 import jakarta.persistence.*;
 import lombok.*;
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
 import umc.GrowIT.Server.domain.common.BaseEntity;
 import umc.GrowIT.Server.domain.enums.ItemStatus;
 
@@ -19,6 +21,7 @@ public class UserItem extends BaseEntity {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id", nullable = false)
+    @OnDelete(action = OnDeleteAction.CASCADE)
     private User user;
 
     @ManyToOne(fetch = FetchType.LAZY)

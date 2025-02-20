@@ -30,7 +30,6 @@ public class ItemConverter {
                 .price(item.getPrice())
                 .imageUrl(itemUrl)
                 .groImageUrl(groItemUrl)
-                .shopBackgroundColor(item.getShopBackgroundColor())
                 .category(item.getCategory().toString())
                 .status(status != null ? status.toString() : null)
                 .purchased(isPurchased)

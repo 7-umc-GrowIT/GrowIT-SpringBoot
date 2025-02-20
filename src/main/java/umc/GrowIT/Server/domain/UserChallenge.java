@@ -1,5 +1,7 @@
 package umc.GrowIT.Server.domain;
 
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
 import umc.GrowIT.Server.domain.common.BaseEntity;
 import jakarta.persistence.*;
 import lombok.*;
@@ -23,13 +25,14 @@ public class UserChallenge extends BaseEntity {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id", nullable = false)
+    @OnDelete(action = OnDeleteAction.CASCADE)
     private User user;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "challenge_id", nullable = false)
     private Challenge challenge;
 
-    @Column(name = "thoughts", length = 100, nullable = false)
+    @Column(name = "thoughts", length = 100)
     private String thoughts;
 
     @Column(name = "certification_imageurl", columnDefinition = "TEXT")
