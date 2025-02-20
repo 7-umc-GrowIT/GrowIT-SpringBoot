@@ -29,15 +29,12 @@ public class ChallengeConverter {
 
     // 추천 챌린지 리스트를 반환
     public static List<ChallengeResponseDTO.RecommendedChallengeDTO> toRecommendedChallengeListDTO(
-            List<UserChallenge> userChallenges, List<Long> todayDiaryKeywordChallengeIds) {
+            List<UserChallenge> userChallenges) {
 
         LocalDate today = LocalDate.now();
 
         return userChallenges.stream()
-                .filter(userChallenge ->
-                        userChallenge.getCreatedAt().toLocalDate().isEqual(today) && // 오늘 저장된 챌린지만 필터링
-                                todayDiaryKeywordChallengeIds.contains(userChallenge.getChallenge().getId()) // 오늘 작성한 일기 분석으로 추천된 챌린지만 포함
-                )
+                .filter(userChallenge -> userChallenge.getDate().isEqual(today))
                 .map(ChallengeConverter::toRecommendedChallengeDTO)
                 .collect(Collectors.toList());
     }
@@ -56,14 +53,13 @@ public class ChallengeConverter {
 
     // 전체 챌린지 홈 데이터를 ChallengeHomeDTO로 변환
     public static ChallengeResponseDTO.ChallengeHomeDTO toChallengeHomeDTO(List<UserChallenge> userChallenges,
-                                                                        List<Long> todayDiaryKeywordChallengeIds, // 오늘 작성한 일기의 키워드 기반 추천 챌린지
                                                                         int totalCredits,
                                                                         int totalDiaries,
                                                                         String diaryGoal, List<String> keywords) {
 
         return ChallengeResponseDTO.ChallengeHomeDTO.builder()
                 .challengeKeywords(keywords) // 변환된 DTO 적용
-                .recommendedChallenges(toRecommendedChallengeListDTO(userChallenges, todayDiaryKeywordChallengeIds))
+                .recommendedChallenges(toRecommendedChallengeListDTO(userChallenges))
                 .challengeReport(toChallengeReportDTO(totalCredits, totalDiaries, diaryGoal))
                 .build();
     }
@@ -94,11 +90,12 @@ public class ChallengeConverter {
     }
 
     // UserChallenge 생성
-    public static UserChallenge createUserChallenge(User user, Challenge challenge, UserChallengeType dtype) {
+    public static UserChallenge createUserChallenge(User user, Challenge challenge, UserChallengeType dtype, LocalDate date) {
         return UserChallenge.builder()
                 .user(user)
                 .challenge(challenge)
                 .dtype(dtype)
+                .date(date)
                 .completed(false)
                 .build();
     }

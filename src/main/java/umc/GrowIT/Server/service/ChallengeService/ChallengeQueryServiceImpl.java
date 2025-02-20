@@ -86,14 +86,8 @@ public class ChallengeQueryServiceImpl implements ChallengeQueryService {
                 ? userChallengeRepository.findTodayUserChallengesByUserId(userId, today)
                 : Collections.emptyList();
 
-        // 오늘 작성한 일기의 키워드 기반 추천 챌린지 ID 목록 조회
-        List<Long> todayDiaryKeywordChallengeIds = todayDiary.isPresent()
-                ? challengeKeywordRepository.findChallengeIdsByTodayDiaryKeywords(userId, today)
-                : Collections.emptyList();
-
         return ChallengeConverter.toChallengeHomeDTO(
                 savedChallenges,
-                todayDiaryKeywordChallengeIds,
                 getTotalCredits(userId),
                 getTotalDiaries(userId),
                 getDiaryDate(userId),

@@ -8,6 +8,7 @@ import lombok.*;
 import umc.GrowIT.Server.domain.enums.UserChallengeType;
 import umc.GrowIT.Server.web.dto.ChallengeDTO.ChallengeRequestDTO;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 @Entity
@@ -46,6 +47,9 @@ public class UserChallenge extends BaseEntity {
 
     @Column(name = "certification_date")
     private LocalDateTime certificationDate;
+
+    @Column(name = "date")
+    private LocalDate date;
 
     // 인증 작성 (최초 등록 또는 전체 업데이트용)
     public void verifyUserChallenge(ChallengeRequestDTO.ProofRequestDTO proofRequest, String imageUrl){
