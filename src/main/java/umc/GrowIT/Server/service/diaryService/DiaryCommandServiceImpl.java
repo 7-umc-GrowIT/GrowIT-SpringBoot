@@ -11,10 +11,7 @@ import umc.GrowIT.Server.apiPayload.code.status.ErrorStatus;
 import umc.GrowIT.Server.apiPayload.exception.*;
 import umc.GrowIT.Server.converter.DiaryConverter;
 import umc.GrowIT.Server.domain.*;
-import umc.GrowIT.Server.repository.ChallengeKeywordRepository;
-import umc.GrowIT.Server.repository.ChallengeRepository;
-import umc.GrowIT.Server.repository.KeywordRepository;
-import umc.GrowIT.Server.repository.UserRepository;
+import umc.GrowIT.Server.repository.*;
 import umc.GrowIT.Server.repository.diaryRepository.DiaryRepository;
 import umc.GrowIT.Server.web.dto.DiaryDTO.DiaryRequestDTO;
 import umc.GrowIT.Server.web.dto.DiaryDTO.DiaryResponseDTO;
@@ -35,6 +32,7 @@ public class DiaryCommandServiceImpl implements DiaryCommandService{
     private final ChallengeKeywordRepository challengeKeywordRepository;
     private final KeywordRepository keywordRepository;
     private final ChallengeRepository challengeRepository;
+    private final UserChallengeRepository userChallengeRepository;
     //일기 작성 시 추가되는 크레딧 개수
     private Integer diaryCredit = 2;
 
@@ -124,8 +122,17 @@ public class DiaryCommandServiceImpl implements DiaryCommandService{
 
         Optional<Diary> optionalDiary = diaryRepository.findByUserIdAndId(userId, diaryId);
         Diary diary = optionalDiary.orElseThrow(()->new DiaryHandler(ErrorStatus.DIARY_NOT_FOUND));
+        LocalDate targetDate = diary.getDate();
 
+        //일기 삭제
         diaryRepository.delete(diary);
+
+        //UserChallenge 조회
+        List<UserChallenge> targetUserChallenge = userChallengeRepository.findUserChallengesByDateAndUserId(user.getId(), targetDate);
+
+        //UserChallenge 삭제
+        userChallengeRepository.deleteAll(targetUserChallenge);
+
 
         return DiaryConverter.toDeleteResultDTO(diary);
     }

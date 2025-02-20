@@ -43,6 +43,15 @@ public interface UserChallengeRepository extends JpaRepository<UserChallenge, Lo
             @Param("userId") Long userId,
             @Param("dtype") UserChallengeType dtype);
 
+    //userId와 date로 UserChallenge 조회
+    @Query("SELECT uc FROM UserChallenge uc " +
+            "WHERE uc. user.id = :userId " +
+            "AND uc.date = :date ")
+    List<UserChallenge> findUserChallengesByDateAndUserId(
+            @Param("userId") Long userId,
+            @Param("date") LocalDate date
+    );
+
 }
 
 
