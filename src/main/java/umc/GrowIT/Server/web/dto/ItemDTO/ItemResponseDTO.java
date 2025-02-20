@@ -39,9 +39,6 @@ public class ItemResponseDTO {
         @Schema(description = "그로 착용용 이미지 URL")
         String groImageUrl;
 
-        @Schema(description = "상점에서 사용될 경우 배경색")
-        String shopBackgroundColor;
-
         @Schema(description = "아이템 카테고리", allowableValues = {"BACKGROUND", "OBJECT", "PLANT", "HEAD_ACCESSORY"})
         String category;
 

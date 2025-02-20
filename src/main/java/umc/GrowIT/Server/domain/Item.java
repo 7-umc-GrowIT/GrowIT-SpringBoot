@@ -29,9 +29,6 @@ public class Item extends BaseEntity {
     @Column(nullable = false)
     private ItemCategory category;
 
-    @Column(nullable = false)
-    private String shopBackgroundColor;
-
     @Column(nullable = false, columnDefinition = "TEXT")
     private String imageKey;
 

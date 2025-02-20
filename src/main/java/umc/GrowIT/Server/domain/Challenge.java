@@ -28,6 +28,10 @@ public class Challenge extends BaseEntity {
     @ColumnDefault("0")
     private Integer time;
 
+    @Column(nullable = false)
+    @ColumnDefault("0")
+    private Integer credit;
+
     @OneToMany(mappedBy = "challenge", cascade = CascadeType.ALL)
     private List<UserChallenge> userChallenges;
 
