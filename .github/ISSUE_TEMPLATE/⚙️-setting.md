@@ -2,7 +2,7 @@
 name: "⚙️ Setting"
 about: 프로젝트 설정 또는 환경 설정을 수정합니다
 title: "[Setting]"
-labels: "⚙️ setting"
+labels: "\U0001F680 release, ⚙️ setting"
 assignees: ''
 
 ---
