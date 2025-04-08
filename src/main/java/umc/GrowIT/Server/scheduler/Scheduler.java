@@ -44,7 +44,7 @@ public class Scheduler {
     }
 
     // 회원탈퇴 삭제 스케줄러
-    @Scheduled(cron = "0 55 18 * * ?") // 매일 자정 실행
+    @Scheduled(cron = "0 0 0 * * ?") // 매일 자정 실행
     @Transactional
     public void deleteInactiveUsers() {
         try {

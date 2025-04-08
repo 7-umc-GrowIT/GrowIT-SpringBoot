@@ -20,7 +20,7 @@
 # 🔨Architecture Diargram
 
 
-<img src="https://github.com/7-umc-GrowIT/GrowIT-SpringBoot/blob/Santoragi-patch-1/%EA%B7%B8%EB%A1%9C%EC%9A%B0%EC%9E%87%20%EC%95%84%ED%82%A4%ED%85%8D%EC%B2%98%20%EB%8B%A4%EC%9D%B4%EC%96%B4%EA%B7%B8%EB%9E%A8.jpg?raw=true" width="700" />
+<img src="https://github.com/user-attachments/assets/9947beaf-f8ed-4b0e-b9d3-fd021c7a030a" width="700" />
 
 - SpringBoot Version: 3.4.1
 - Java Version: Java17
@@ -45,25 +45,25 @@
 - 아이템샵에서 여러 아이템 구매
 - 구매한 아이템 착용
 
-<img src="https://github.com/7-umc-GrowIT/GrowIT-SpringBoot/blob/Santoragi-patch-1/%EA%B7%B8%EB%A1%9C%EA%BE%B8%EB%AF%B8%EA%B8%B0%ED%99%94%EB%A9%B4.jpg?raw=true" width="200" />
+<img src="https://github.com/user-attachments/assets/7249f455-9391-43cc-9065-7e37698f30d5" width="200" />
 
 ### ️⚡️일기 작성
 - AI와 대화하며 일기 작성하기
 - 직접 작성하기
 - 일기 작성 후 크레딧 획득
 
-<img src="https://github.com/7-umc-GrowIT/GrowIT-SpringBoot/blob/Santoragi-patch-1/AI%EB%8C%80%ED%99%94%ED%99%94%EB%A9%B4.jpg?raw=true" width="200" /><img src="https://github.com/7-umc-GrowIT/GrowIT-SpringBoot/blob/Santoragi-patch-1/%EC%9D%BC%EA%B8%B0%EC%9A%94%EC%95%BD%ED%99%94%EB%A9%B4.jpg?raw=true" width="200" />
+<img src="https://github.com/user-attachments/assets/20002ef7-9bdd-4fd1-962c-c84836d9e595" width="200" /><img src="https://github.com/user-attachments/assets/bef25ac2-440b-4bbb-82d1-6f7f72bc6f24" width="200" />
 
 ### ⚡️일기 분석 및 챌린지 추천
 - 작성한 일기 분석하여 감정 키워드 추출
 - 감정 키워드와 어울리는 마음가짐 챌린지 추천
 
-<img src="https://github.com/7-umc-GrowIT/GrowIT-SpringBoot/blob/Santoragi-patch-1/%EC%B1%8C%EB%A6%B0%EC%A7%80%EC%B6%94%EC%B2%9C%ED%99%94%EB%A9%B4.jpg?raw=true" width="200" />
+<img src="https://github.com/user-attachments/assets/c35ed25f-9d86-48a1-ad73-668306b1e88e" width="200" />
 
 ### ⚡️챌린지 인증
 - 선택한 챌린지를 인증하여 크레딧 획득
 
-<img src="https://github.com/7-umc-GrowIT/GrowIT-SpringBoot/blob/Santoragi-patch-1/%EC%B1%8C%EB%A6%B0%EC%A7%80%EC%9D%B8%EC%A6%9D%ED%99%94%EB%A9%B4.jpg?raw=true" width="500" />
+<img src="https://github.com/user-attachments/assets/4be59c35-8974-4204-965d-89b434cdf1d7" width="500" />
 
   
 
