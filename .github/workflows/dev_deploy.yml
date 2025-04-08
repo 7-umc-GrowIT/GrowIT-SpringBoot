@@ -1,0 +1,117 @@
+name: GrowIt CI/CD Pipeline
+
+on:
+  push:
+    branches: [ develop ]
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+
+      - name: Set up JDK 17
+        uses: actions/setup-java@v3
+        with:
+          distribution: 'temurin'
+          java-version: '17'
+          cache: 'gradle'
+
+      - name: Make application.yml
+        run: |
+          mkdir -p ./src/main/resources
+          echo "${{ secrets.APPLICATION_YML }}" > ./src/main/resources/application.yml
+        shell: bash
+
+      - name: Grant execute permission for gradlew
+        run: chmod +x gradlew
+
+      - name: Build with Gradle
+        uses: gradle/gradle-build-action@v2
+        with:
+          arguments: build -x test --parallel --build-cache --no-daemon -Dorg.gradle.jvmargs="-Xmx2048m"
+
+      - name: Upload build artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: GrowItServer
+          path: build/libs/*.jar
+          retention-days: 1
+          if-no-files-found: error
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment: production
+
+    steps:
+      - name: Download build artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: GrowItServer
+          path: build/libs/
+
+      - name: Deploy to EC2
+        env:
+          EC2_SSH_KEY: ${{ secrets.EC2_SSH_KEY }}
+          EC2_USERNAME: ${{ secrets.EC2_USERNAME }}
+          EC2_HOST: ${{ secrets.EC2_HOST }}
+        run: |
+          # SSH 키 설정
+          mkdir -p ~/.ssh
+          echo "$EC2_SSH_KEY" > ~/.ssh/deploy_key
+          chmod 600 ~/.ssh/deploy_key
+          echo -e "Host ec2\n\tHostName ${{ secrets.EC2_HOST }}\n\tUser ${{ secrets.EC2_USERNAME }}\n\tIdentityFile ~/.ssh/deploy_key\n\tStrictHostKeyChecking no" > ~/.ssh/config
+          
+          # JAR 파일 찾기
+          jar_file=$(find build/libs -name '*.jar' ! -name '*plain.jar' | head -n 1)
+          
+          # 배포 스크립트 실행
+          ssh ec2 "
+            # 기존 JAR 파일 백업
+            if [ -f ~/GrowItServer.jar ]; then
+              mv ~/GrowItServer.jar ~/GrowItServer.jar.backup
+            fi
+          
+            # 실행 중인 프로세스 종료
+            if pgrep java; then
+              pgrep java | xargs -r kill -15
+              for i in {1..12}; do
+                if ! pgrep java > /dev/null; then
+                  break
+                fi
+                sleep 5
+              done
+              pgrep java | xargs -r kill -9 2>/dev/null || true
+            fi
+          "
+          
+          # 새로운 JAR 파일 전송
+          scp -F ~/.ssh/config "$jar_file" ec2:~/GrowItServer.jar
+          
+          # 애플리케이션 실행
+          ssh ec2 "
+            nohup java -jar -Xmx1024m ~/GrowItServer.jar > app.log 2>&1 &
+          
+            # 실행 확인
+            sleep 30
+            if ! pgrep java > /dev/null; then
+              echo '애플리케이션 실행 실패'
+              if [ -f ~/GrowItServer.jar.backup ]; then
+                echo '백업에서 복구 시도'
+                mv ~/GrowItServer.jar.backup ~/GrowItServer.jar
+                nohup java -jar -Xmx1024m ~/GrowItServer.jar > app.log 2>&1 &
+              fi
+              exit 1
+            fi
+          
+            echo '애플리케이션 정상 실행 확인'
+          "
+
+      - name: Cleanup
+        if: always()
+        run: rm -rf ~/.ssh
