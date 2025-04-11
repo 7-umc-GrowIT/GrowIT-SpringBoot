@@ -37,14 +37,14 @@ public class ChallengeController implements ChallengeSpecification {
     }
 
     @GetMapping("/")
-    public ApiResponse<Page<ChallengeResponseDTO.ChallengeStatusDTO>> getChallengeStatus(
+    public ApiResponse<ChallengeResponseDTO.ChallengeStatusPagedResponseDTO> getChallengeStatus(
             @RequestParam(required = false) UserChallengeType dtype,
             @RequestParam Boolean completed,
             @RequestParam Integer page) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         Long userId = (Long) authentication.getPrincipal();
         // 서비스 호출
-        Page<ChallengeResponseDTO.ChallengeStatusDTO> challengeStatusList = challengeQueryService.getChallengeStatus(userId, dtype, completed, page);
+        ChallengeResponseDTO.ChallengeStatusPagedResponseDTO challengeStatusList = challengeQueryService.getChallengeStatus(userId, dtype, completed, page);
 
         // 성공 응답 반환
         return ApiResponse.onSuccess(challengeStatusList);

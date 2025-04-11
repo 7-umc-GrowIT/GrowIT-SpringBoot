@@ -1,5 +1,6 @@
 package umc.GrowIT.Server.converter;
 
+import org.springframework.data.domain.Page;
 import umc.GrowIT.Server.domain.Challenge;
 import umc.GrowIT.Server.domain.Keyword;
 import umc.GrowIT.Server.domain.User;
@@ -75,6 +76,18 @@ public class ChallengeConverter {
                 .build();
     }
 
+    public static ChallengeResponseDTO.ChallengeStatusPagedResponseDTO toChallengeStatusPagedDTO(Page<UserChallenge> userChallenges) {
+        Page<ChallengeResponseDTO.ChallengeStatusDTO> mappedPage = userChallenges.map(ChallengeConverter::toChallengeStatusDTO);
+
+        return ChallengeResponseDTO.ChallengeStatusPagedResponseDTO.builder()
+                .content(mappedPage.getContent())
+                .currentPage(mappedPage.getNumber() + 1)
+                .totalPages(mappedPage.getTotalPages())
+                .totalElements(mappedPage.getTotalElements())
+                .isFirst(mappedPage.isFirst())
+                .isLast(mappedPage.isLast())
+                .build();
+    }
 
     // 챌린지 인증 작성 결과 반환
     public static ChallengeResponseDTO.ProofDetailsDTO toProofDetailsDTO(Challenge challenge, UserChallenge userChallenge) {

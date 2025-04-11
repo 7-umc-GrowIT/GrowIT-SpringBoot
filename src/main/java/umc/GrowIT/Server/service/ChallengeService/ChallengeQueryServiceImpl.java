@@ -99,7 +99,7 @@ public class ChallengeQueryServiceImpl implements ChallengeQueryService {
 
 
     @Override
-    public Page<ChallengeResponseDTO.ChallengeStatusDTO> getChallengeStatus(Long userId, UserChallengeType dtype, Boolean completed, Integer page) {
+    public ChallengeResponseDTO.ChallengeStatusPagedResponseDTO getChallengeStatus(Long userId, UserChallengeType dtype, Boolean completed, Integer page) {
         Page<UserChallenge> userChallenges;
 
         // dtype이 null이면 전체 챌린지 중 완료/미완료만 조회
@@ -115,7 +115,7 @@ public class ChallengeQueryServiceImpl implements ChallengeQueryService {
             userChallenges = Page.empty();
         }
 
-        return userChallenges.map(ChallengeConverter::toChallengeStatusDTO);
+        return ChallengeConverter.toChallengeStatusPagedDTO(userChallenges);
     }
 
     // 챌린지 인증 내역 조회
