@@ -65,17 +65,16 @@ public class ChallengeConverter {
     }
 
     // 챌린지 현황
-    public static List<ChallengeResponseDTO.ChallengeStatusDTO> toChallengeStatusListDTO(List<UserChallenge> userChallenges) {
-        return userChallenges.stream()
-                .map(userChallenge -> ChallengeResponseDTO.ChallengeStatusDTO.builder()
-                        .id(userChallenge.getId())
-                        .title(userChallenge.getChallenge().getTitle())
-                        .dtype(userChallenge.getDtype())
-                        .time(userChallenge.getChallenge().getTime())
-                        .completed(userChallenge.isCompleted())
-                        .build())
-                .collect(Collectors.toList());
+    public static ChallengeResponseDTO.ChallengeStatusDTO toChallengeStatusDTO(UserChallenge userChallenge) {
+        return ChallengeResponseDTO.ChallengeStatusDTO.builder()
+                .id(userChallenge.getId())
+                .title(userChallenge.getChallenge().getTitle())
+                .dtype(userChallenge.getDtype())
+                .time(userChallenge.getChallenge().getTime())
+                .completed(userChallenge.isCompleted())
+                .build();
     }
+
 
     // 챌린지 인증 작성 결과 반환
     public static ChallengeResponseDTO.ProofDetailsDTO toProofDetailsDTO(Challenge challenge, UserChallenge userChallenge) {

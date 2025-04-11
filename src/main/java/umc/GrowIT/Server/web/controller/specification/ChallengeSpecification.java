@@ -5,6 +5,7 @@ import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import org.springframework.data.domain.Page;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import umc.GrowIT.Server.apiPayload.ApiResponse;
@@ -33,9 +34,10 @@ public interface ChallengeSpecification {
             @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "COMMON200", description = "⭕ SUCCESS"),
             @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "COMMON400", description = "❌ BAD, 잘못된 요청", content = @Content(schema = @Schema(implementation = ApiResponse.class)))
     })
-    ApiResponse<ChallengeResponseDTO.ChallengeStatusListDTO> getChallengeStatus(
+    ApiResponse<Page<ChallengeResponseDTO.ChallengeStatusDTO>> getChallengeStatus(
             @RequestParam(required = false) UserChallengeType dtype,
-            @RequestParam(required = false) Boolean completed);
+            @RequestParam(required = false) Boolean completed,
+            @RequestParam Integer page);
 
     @PostMapping("{challengeId}/select")
     @Operation(summary = "선택된 챌린지 저장 API", description = "사용자가 선택한 챌린지를 저장하는 API입니다. <br> " +

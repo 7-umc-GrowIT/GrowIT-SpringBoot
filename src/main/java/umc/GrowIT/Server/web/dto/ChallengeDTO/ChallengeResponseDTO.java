@@ -71,14 +71,6 @@ public class ChallengeResponseDTO {
     @Builder
     @NoArgsConstructor
     @AllArgsConstructor
-    public static class ChallengeStatusListDTO {
-        private List<ChallengeResponseDTO.ChallengeStatusDTO> userChallenges;
-    }
-
-    @Getter
-    @Builder
-    @NoArgsConstructor
-    @AllArgsConstructor
     public static class ChallengeStatusDTO {
         private Long id;
         private String title;
