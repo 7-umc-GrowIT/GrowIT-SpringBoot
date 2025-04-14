@@ -71,20 +71,26 @@ public class ChallengeResponseDTO {
     @Builder
     @NoArgsConstructor
     @AllArgsConstructor
-    public static class ChallengeStatusListDTO {
-        private List<ChallengeResponseDTO.ChallengeStatusDTO> userChallenges;
-    }
-
-    @Getter
-    @Builder
-    @NoArgsConstructor
-    @AllArgsConstructor
     public static class ChallengeStatusDTO {
         private Long id;
         private String title;
         private UserChallengeType dtype;
         private Integer time;
         private boolean completed;
+    }
+
+    // 페이징 적용
+    @Getter
+    @Builder
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class ChallengeStatusPagedResponseDTO  {
+        private List<ChallengeStatusDTO> content;
+        private int currentPage;
+        private int totalPages;
+        private long totalElements;
+        private boolean isFirst;
+        private boolean isLast;
     }
 
     // 챌린지 인증 내역

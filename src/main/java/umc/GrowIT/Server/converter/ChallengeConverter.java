@@ -1,5 +1,6 @@
 package umc.GrowIT.Server.converter;
 
+import org.springframework.data.domain.Page;
 import umc.GrowIT.Server.domain.Challenge;
 import umc.GrowIT.Server.domain.Keyword;
 import umc.GrowIT.Server.domain.User;
@@ -65,16 +66,27 @@ public class ChallengeConverter {
     }
 
     // 챌린지 현황
-    public static List<ChallengeResponseDTO.ChallengeStatusDTO> toChallengeStatusListDTO(List<UserChallenge> userChallenges) {
-        return userChallenges.stream()
-                .map(userChallenge -> ChallengeResponseDTO.ChallengeStatusDTO.builder()
-                        .id(userChallenge.getId())
-                        .title(userChallenge.getChallenge().getTitle())
-                        .dtype(userChallenge.getDtype())
-                        .time(userChallenge.getChallenge().getTime())
-                        .completed(userChallenge.isCompleted())
-                        .build())
-                .collect(Collectors.toList());
+    public static ChallengeResponseDTO.ChallengeStatusDTO toChallengeStatusDTO(UserChallenge userChallenge) {
+        return ChallengeResponseDTO.ChallengeStatusDTO.builder()
+                .id(userChallenge.getId())
+                .title(userChallenge.getChallenge().getTitle())
+                .dtype(userChallenge.getDtype())
+                .time(userChallenge.getChallenge().getTime())
+                .completed(userChallenge.isCompleted())
+                .build();
+    }
+
+    public static ChallengeResponseDTO.ChallengeStatusPagedResponseDTO toChallengeStatusPagedDTO(Page<UserChallenge> userChallenges) {
+        Page<ChallengeResponseDTO.ChallengeStatusDTO> mappedPage = userChallenges.map(ChallengeConverter::toChallengeStatusDTO);
+
+        return ChallengeResponseDTO.ChallengeStatusPagedResponseDTO.builder()
+                .content(mappedPage.getContent())
+                .currentPage(mappedPage.getNumber() + 1)
+                .totalPages(mappedPage.getTotalPages())
+                .totalElements(mappedPage.getTotalElements())
+                .isFirst(mappedPage.isFirst())
+                .isLast(mappedPage.isLast())
+                .build();
     }
 
     // 챌린지 인증 작성 결과 반환

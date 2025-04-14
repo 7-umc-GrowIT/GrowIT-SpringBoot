@@ -5,6 +5,8 @@ import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.model.GeneratePresignedUrlRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import umc.GrowIT.Server.apiPayload.code.status.ErrorStatus;
@@ -97,27 +99,25 @@ public class ChallengeQueryServiceImpl implements ChallengeQueryService {
 
 
     @Override
-    public ChallengeResponseDTO.ChallengeStatusListDTO getChallengeStatus(Long userId, UserChallengeType dtype, Boolean completed) {
-        List<UserChallenge> userChallenges;
+    public ChallengeResponseDTO.ChallengeStatusPagedResponseDTO getChallengeStatus(Long userId, UserChallengeType dtype, Boolean completed, Integer page) {
+        Page<UserChallenge> userChallenges;
 
         // dtype이 null이면 전체 챌린지 중 완료/미완료만 조회
         if (dtype == null) {
-            userChallenges = userChallengeRepository.findChallengesByCompletionStatus(userId, completed);
+            userChallenges = userChallengeRepository.findChallengesByCompletionStatus(userId, completed, PageRequest.of(page-1, 5));
         }
-        // dtype이 RANDOM 또는 DAILY인 경우 미완료 챌린지만 조회 (completed = false 고정)
-        else if (!completed) {
-            userChallenges = userChallengeRepository.findChallengesByDtypeAndCompletionStatus(userId, dtype);
-        }
-        // dtype이 RANDOM 또는 DAILY인데 completed가 true이면 빈 리스트 반환 (잘못된 요청 방지)
         else {
-            userChallenges = Collections.emptyList();
+            if (!completed) {
+                // dtype이 RANDOM 또는 DAILY인 경우 미완료 챌린지만 조회 (completed = false 고정)
+                userChallenges = userChallengeRepository.findChallengesByDtypeAndCompletionStatus(userId, dtype, PageRequest.of(page-1, 5));
+            }
+            else {
+                // 잘못된 요청 방지
+                userChallenges = Page.empty();
+            }
         }
 
-        List<ChallengeResponseDTO.ChallengeStatusDTO> challenges = ChallengeConverter.toChallengeStatusListDTO(userChallenges);
-
-        return ChallengeResponseDTO.ChallengeStatusListDTO.builder()
-                .userChallenges(challenges)
-                .build();
+        return ChallengeConverter.toChallengeStatusPagedDTO(userChallenges);
     }
 
     // 챌린지 인증 내역 조회
