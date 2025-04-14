@@ -106,13 +106,15 @@ public class ChallengeQueryServiceImpl implements ChallengeQueryService {
         if (dtype == null) {
             userChallenges = userChallengeRepository.findChallengesByCompletionStatus(userId, completed, PageRequest.of(page-1, 5));
         }
-        // dtype이 RANDOM 또는 DAILY인 경우 미완료 챌린지만 조회 (completed = false 고정)
-        else if (!completed) {
-            userChallenges = userChallengeRepository.findChallengesByDtypeAndCompletionStatus(userId, dtype, PageRequest.of(page-1, 5));
-        }
-        // 잘못된 요청 방지
         else {
-            userChallenges = Page.empty();
+            if (!completed) {
+                // dtype이 RANDOM 또는 DAILY인 경우 미완료 챌린지만 조회 (completed = false 고정)
+                userChallenges = userChallengeRepository.findChallengesByDtypeAndCompletionStatus(userId, dtype, PageRequest.of(page-1, 5));
+            }
+            else {
+                // 잘못된 요청 방지
+                userChallenges = Page.empty();
+            }
         }
 
         return ChallengeConverter.toChallengeStatusPagedDTO(userChallenges);
