@@ -4,17 +4,20 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.http.*;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 import umc.GrowIT.Server.apiPayload.code.status.ErrorStatus;
 import umc.GrowIT.Server.apiPayload.exception.*;
 import umc.GrowIT.Server.converter.DiaryConverter;
+import umc.GrowIT.Server.converter.FlaskConverter;
 import umc.GrowIT.Server.domain.*;
 import umc.GrowIT.Server.repository.*;
 import umc.GrowIT.Server.repository.diaryRepository.DiaryRepository;
 import umc.GrowIT.Server.web.dto.DiaryDTO.DiaryRequestDTO;
 import umc.GrowIT.Server.web.dto.DiaryDTO.DiaryResponseDTO;
+import umc.GrowIT.Server.web.dto.FlaskDTO.FlaskRequestDTO;
+import umc.GrowIT.Server.web.dto.FlaskDTO.FlaskResponseDTO;
 import umc.GrowIT.Server.web.dto.OpenAIDTO.ChatGPTRequest;
 import umc.GrowIT.Server.web.dto.OpenAIDTO.ChatGPTResponse;
 import umc.GrowIT.Server.web.dto.OpenAIDTO.Message;
@@ -258,16 +261,8 @@ public class DiaryCommandServiceImpl implements DiaryCommandService{
         }
 
 
-        // 3. DB에서 감정들 조회
-        List<String> emotions = keywordRepository.findAll()
-                .stream()
-                .map(emotion -> emotion.getName())
-                .toList();
-        log.info("[DB 감정들] : " + emotions.toString());
-
-
-        // 4. OpenAI API 호출하여 감정 반환 & 반환받은 감정 체크 (3개인지, 중복안되었는지, DB와동일한지)
-        List<Keyword> analyzedEmotions = openAIAnalyzeDiary(diary.getContent(), emotions.toString());
+        // 3. OpenAI API 호출하여 감정 반환 & 반환받은 감정 체크 (3개인지, 중복안되었는지)
+        List<Keyword> analyzedEmotions = openAIAnalyzeDiary(diary.getContent());
         log.info("[최종 분석된 감정] : " + analyzedEmotions.stream().map(Keyword::getName).toList().toString());
 
 
@@ -296,22 +291,19 @@ public class DiaryCommandServiceImpl implements DiaryCommandService{
 
 
     // 일기 분석 (일기 -> 감정)
-    private List<Keyword> openAIAnalyzeDiary(String diaryContent, String emotions) {
-
-        log.info("[프롬프트의 감정들] : " + emotions);
+    private List<Keyword> openAIAnalyzeDiary(String diaryContent) {
 
         // 프롬프트
         String prompt = String.format("""
             [작업]
-            [감정 목록]에 있는 범위에 대해 [일기]분석을 진행하여, 감정 목록에 포함된 감정 3개를 응답으로 주세요. 응답은 다음에 제공되는 감정 목록에 있는 것들로 구성되어야 합니다.
+            [일기]분석을 진행하여, 감정 3개를 응답으로 주세요. 응답은 형용사 형태의 감정들로 구성되어야 합니다.
             
             [수행]
-            [감정 목록]: %s
             [일기]: %s
             
             [응답 예시]
-            [감정 목록에 포함된 감정1, 감정 목록에 포함된 감정2, 감정 목록에 포함된 감정3]
-            """, emotions, diaryContent);
+            [감정1, 감정2, 감정3]
+            """, diaryContent);
 
         Float temperature = 0.0f;
 
@@ -323,6 +315,7 @@ public class DiaryCommandServiceImpl implements DiaryCommandService{
         if (chatGPTResponse == null || chatGPTResponse.getChoices().isEmpty()) {
             throw new OpenAIHandler(ErrorStatus.GPT_RESPONSE_EMPTY);
         }
+
         String result = chatGPTResponse.getChoices().get(0).getMessage().getContent();
         log.info("[GPT 결과] : " + result);
 
@@ -346,71 +339,48 @@ public class DiaryCommandServiceImpl implements DiaryCommandService{
             throw new OpenAIHandler(ErrorStatus.EMOTIONS_DUPLICATE);
         }
 
-        // DB에 존재하는 감정인지 체크 & 없으면 유사도 검색
-        List<Keyword> emotionKeywords = checkEmotions(uniqueEmotions.stream().toList());
-
-//         테스트용
-//        Set<String> testEmotions = new HashSet<>();
-//        testEmotions.add("분노");
-//        testEmotions.add("설레는");
-//        testEmotions.add("울적한");
-//        List<Keyword> emotionKeywords = checkEmotions(testEmotions.stream().toList());
+        // 유사도 분석을 통해 DB의 감정으로 변환
+        List<Keyword> emotionKeywords = computeSimilarity(emotionsList);
 
         return emotionKeywords;
     }
 
 
-    // DB 감정인지 체크 (없으면 유사도 분석)
-    private List<Keyword> checkEmotions(List<String> inputEmotions) {
-        List<Keyword> result = new ArrayList<>();
-        Set<String> dbEmotions = new HashSet<>();
-        List<String> needAnalysis = new ArrayList<>();
+    // 유사도 분석을 통해 DB의 감정으로 변환
+    private List<Keyword> computeSimilarity(List<String> inputEmotions) {
 
-        // 1) DB에 있는지 체크
-        for (String emotion : inputEmotions) {
-            keywordRepository.findByName(emotion).ifPresentOrElse(
-                    keyword -> {
-                        result.add(keyword);
-                        dbEmotions.add(emotion);
-                    },
-                    () -> needAnalysis.add(emotion)
-            );
+        FlaskRequestDTO.EmotionAnalysisRequestDTO request = FlaskConverter.toEmotionAnalysisRequestDTO(inputEmotions);
+        List<Keyword> result = new ArrayList<>();
+
+        // Flask에 모든 감정을 전달하여 유사도 분석 요청
+        log.info("[입력된 감정을 Flask로 전달하여 분석]");
+
+        ResponseEntity<FlaskResponseDTO.EmotionAnalysisResponseDTO> response = template.postForEntity(
+                "http://localhost:5000/analyze_emotions",
+                request,
+                FlaskResponseDTO.EmotionAnalysisResponseDTO.class);
+
+        FlaskResponseDTO.EmotionAnalysisResponseDTO body = response.getBody();
+
+        // 응답 오류체크
+        if (body == null || body.getAnalyzedEmotions() == null || body.getAnalyzedEmotions().isEmpty()) {
+            throw new FlaskHandler(ErrorStatus.FLASK_API_CALL_FAILED);
         }
 
-        // 2) DB에 없는 감정이 있다면 Flask에 유사도 분석 요청
-        if (!needAnalysis.isEmpty()) {
-            log.info("[DB 없는 감정 존재 -> 플라스크 API 요청]");
+        List<FlaskResponseDTO.SimilarityResultDTO> analyzedEmotions = body.getAnalyzedEmotions();
 
-            Map<String, Object> request = Map.of(
-                    "emotions", needAnalysis,
-                    "existingEmotions", dbEmotions
-            );
+        for (FlaskResponseDTO.SimilarityResultDTO analysisResult : analyzedEmotions) {
 
-            ResponseEntity<Map> response = template.postForEntity(
-                    "http://localhost:5000/analyze_emotions",
-                    request,
-                    Map.class
-            );
+            String inputEmotion = analysisResult.getInputEmotion();
+            String similarEmotion = analysisResult.getSimilarEmotion();
+            Double similarityScore = analysisResult.getSimilarityScore();
 
-            List<Map<String, Object>> analyzedEmotions = (List<Map<String, Object>>) response.getBody().get("analyzedEmotions");
+            // Flask에서 받은 정보 출력
+            log.info("[Flask 분석 결과] - 입력 감정 : {}, 유사 감정 : {}, 유사도 점수 : {}", inputEmotion, similarEmotion, similarityScore);
 
-            if (analyzedEmotions != null) {
-                for (Map<String, Object> analysisResult : analyzedEmotions) {
-                    String inputEmotion = (String) analysisResult.get("inputEmotion");
-                    String similarEmotion = (String) analysisResult.get("similarEmotion");
-                    Double similarityScore = (Double) analysisResult.get("similarityScore");
-
-                    // Flask에서 받은 정보 출력
-                    log.info("[Flask 분석 결과] - 입력 감정 : {}, 유사 감정 : {}, 유사도 점수 : {}", inputEmotion, similarEmotion, similarityScore);
-
-                    keywordRepository.findByName(similarEmotion)
-                            .ifPresentOrElse(result::add,
-                                    () -> { throw new KeywordHandler(ErrorStatus.KEYWORD_NOT_FOUND); });
-                }
-            }
-            else {
-                throw new FlaskHandler(ErrorStatus.FLASK_API_CALL_FAILED);
-            }
+            keywordRepository.findByName(similarEmotion)
+                    .ifPresentOrElse(result::add,
+                            () -> { throw new KeywordHandler(ErrorStatus.KEYWORD_NOT_FOUND); });
         }
 
         return result;
