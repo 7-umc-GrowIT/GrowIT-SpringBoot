@@ -52,7 +52,7 @@ public class DiaryCommandServiceImpl implements DiaryCommandService{
     private RestTemplate template;
 
     @Autowired
-    private RestTemplate keywordModelTemplate;
+    private RestTemplate subTemplate;
 
     //userId-대화내용 저장용 HashMap
     private final Map<Long, List<Message>> conversationHistory = new HashMap<>();
@@ -151,7 +151,7 @@ public class DiaryCommandServiceImpl implements DiaryCommandService{
         List<Message> messages = conversationHistory.get(userId);
 
         //처음 대화라면 시스템 프롬프트 추가
-        if(messages.isEmpty()){
+        if (messages.isEmpty()){
             messages.add(new Message("system",
                     "당신은 사용자의 하루 이야기를 공감으로 받아주는 AI입니다.\n\n" +
                             "다음 규칙을 반드시 따르세요:\n" +
@@ -163,7 +163,6 @@ public class DiaryCommandServiceImpl implements DiaryCommandService{
                             "6. 당신은 경청하는 역할이며, 대화 흐름을 주도하지 않습니다.\n" +
                             "사용자 메시지에는 항상 'cnt' 값이 포함되어 있습니다. 반드시 cnt == 3 일 때만, 규칙이 적용되지 않습니다."
             ));
-
         }
 
         long userTurn = messages.stream()
@@ -335,7 +334,7 @@ public class DiaryCommandServiceImpl implements DiaryCommandService{
         ChatGPTRequest gptRequest = new ChatGPTRequest(keywordModel, prompt, temperature);
 
         // API 요청 및 응답 처리
-        ChatGPTResponse chatGPTResponse = keywordModelTemplate.postForObject(apiURL, gptRequest, ChatGPTResponse.class);
+        ChatGPTResponse chatGPTResponse = subTemplate.postForObject(apiURL, gptRequest, ChatGPTResponse.class);
         if (chatGPTResponse == null || chatGPTResponse.getChoices().isEmpty()) {
             throw new OpenAIHandler(ErrorStatus.GPT_RESPONSE_EMPTY);
         }

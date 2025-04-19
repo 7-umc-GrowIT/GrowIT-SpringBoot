@@ -10,8 +10,8 @@ public class OpenAiConfig {
     @Value("${openai.api.key}")
     private String openAiKey;
 
-    @Value("${openai.api.key-100}")
-    private String openAiKey100;
+    @Value("${openai.api.key-sub}")
+    private String subOpenAiKey;
 
     @Bean
     public RestTemplate template(){
@@ -27,10 +27,10 @@ public class OpenAiConfig {
      * 일기-감정키워드 추출하는 모델 API 호출 템플릿
      */
     @Bean
-    public RestTemplate keywordModelTemplate(){
+    public RestTemplate subTemplate(){
         RestTemplate restTemplate = new RestTemplate();
         restTemplate.getInterceptors().add((request, body, execution) -> {
-            request.getHeaders().add("Authorization", "Bearer " + openAiKey100);
+            request.getHeaders().add("Authorization", "Bearer " + subOpenAiKey);
             return execution.execute(request, body);
         });
         return restTemplate;
