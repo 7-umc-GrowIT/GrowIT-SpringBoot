@@ -29,7 +29,8 @@ public interface ChallengeSpecification {
 
     @GetMapping("/")
     @Operation(summary = "챌린지 현황 조회 API", description = "챌린지의 진행 상태(미완료/완료 등)를 조회하는 API입니다. <br> " +
-            "dtype에 값을 주지않으면 전체 완료/미완료 챌린지를 조회할 수 있습니다.")
+            "dtype에 값을 주지 않으면 전체 완료/미완료 챌린지를 조회할 수 있습니다. <br> " +
+            "응답은 슬라이스 기반으로 페이징되며, 현재 페이지, 리스트, 다음 페이지 존재 여부 등의 정보가 포함됩니다.")
     @ApiResponses({
             @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "COMMON200", description = "⭕ SUCCESS"),
             @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "COMMON400", description = "❌ BAD, 잘못된 요청", content = @Content(schema = @Schema(implementation = ApiResponse.class)))

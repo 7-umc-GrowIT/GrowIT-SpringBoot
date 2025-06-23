@@ -14,12 +14,4 @@ public interface ChallengeKeywordRepository extends JpaRepository<ChallengeKeywo
     @Query("SELECT ck FROM ChallengeKeyword ck JOIN FETCH ck.challenge WHERE ck.keyword = :keyword")
     List<ChallengeKeyword> findByKeywordWithChallenge(@Param("keyword") Keyword keyword);
 
-    @Query("SELECT ck.challenge.id FROM ChallengeKeyword ck " +
-            "WHERE ck.keyword.id IN (" +
-            "    SELECT dk.keyword.id FROM DiaryKeyword dk " +
-            "    WHERE dk.diary.user.id = :userId " +
-            "    AND dk.diary.date = :today" +
-            ")")
-    List<Long> findChallengeIdsByTodayDiaryKeywords(@Param("userId") Long userId, @Param("today") LocalDate today);
-
 }
