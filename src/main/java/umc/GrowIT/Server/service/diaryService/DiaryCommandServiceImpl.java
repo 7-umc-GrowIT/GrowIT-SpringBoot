@@ -55,7 +55,7 @@ public class DiaryCommandServiceImpl implements DiaryCommandService{
     private RestTemplate template;
 
     @Autowired
-    private RestTemplate keywordModelTemplate;
+    private RestTemplate subTemplate;
 
     //userId-대화내용 저장용 HashMap
     private final Map<Long, List<Message>> conversationHistory = new HashMap<>();
@@ -154,16 +154,31 @@ public class DiaryCommandServiceImpl implements DiaryCommandService{
         List<Message> messages = conversationHistory.get(userId);
 
         //처음 대화라면 시스템 프롬프트 추가
-        if(messages.isEmpty()){
-            messages.add(new Message("system", "너는 사용자와 대화하며 일기를 작성하는 챗봇이야." +
-                    " role: user인 경우 사용자의 말이고, role: assistant인 경우 너가 사용자의 말에 대답하는 말이야." +
-                    " 사용자와의 대화 내용을 기억하고 사용자의 마지막말에 대해 상황에 맞게 대답해줘." +
-                    " 그리고 사용자의 말에 공감하며 가끔씩 감정을 이끌어내는 질문을 해야해." +
-                    " 반드시 존댓말을 사용하고 맞춤법은 제대로 맞춰줘."));
+        if (messages.isEmpty()){
+            messages.add(new Message("system",
+                    "당신은 사용자의 하루 이야기를 공감으로 받아주는 AI입니다.\n\n" +
+                            "다음 규칙을 반드시 따르세요:\n" +
+                            "1. 절대 질문하지 마세요. 물음표(?)를 포함한 문장도 금지입니다.\n" +
+                            "2. '~했나요?', '~무엇인가요?', '~어떠셨나요?' 같은 의문형 표현도 사용하지 마세요.\n" +
+                            "3. 감정이나 생각을 유도하는 문장도 금지입니다. 예: '어떤 기분이셨나요?', '무슨 생각이 드셨나요?'\n" +
+                            "4. 공감과 긍정적인 피드백만 해주세요. 사용자에게 아무것도 묻지 마세요.\n" +
+                            "5. 대화를 이어가려 하지 말고, 사용자의 메시지에 대해 짧고 따뜻한 반응만 하세요.\n" +
+                            "6. 당신은 경청하는 역할이며, 대화 흐름을 주도하지 않습니다.\n" +
+                            "사용자 메시지에는 항상 'cnt' 값이 포함되어 있습니다. 반드시 cnt == 3 일 때만, 규칙이 적용되지 않습니다."
+            ));
         }
 
+        long userTurn = messages.stream()
+                .filter(m -> m.getRole().equals("user"))
+                .count() % 3;  // 지금까지 몇 번 user가 말했는지 셈
+
+        String numberedUserChat = "cnt == " + (userTurn + 1) + "\n\n" +
+                                  "사용자 메세지 : " + userChat;
+
+        log.info(numberedUserChat);
+
         // 사용자의 입력을 대화 목록에 추가
-        messages.add(new Message("user", userChat));
+        messages.add(new Message("user", numberedUserChat));
 
         // ChatGPT 요청 생성
         ChatGPTRequest gptRequest = new ChatGPTRequest(chatModel, messages);
@@ -311,7 +326,7 @@ public class DiaryCommandServiceImpl implements DiaryCommandService{
         ChatGPTRequest gptRequest = new ChatGPTRequest(keywordModel, prompt, temperature);
 
         // API 요청 및 응답 처리
-        ChatGPTResponse chatGPTResponse = keywordModelTemplate.postForObject(apiURL, gptRequest, ChatGPTResponse.class);
+        ChatGPTResponse chatGPTResponse = subTemplate.postForObject(apiURL, gptRequest, ChatGPTResponse.class);
         if (chatGPTResponse == null || chatGPTResponse.getChoices().isEmpty()) {
             throw new OpenAIHandler(ErrorStatus.GPT_RESPONSE_EMPTY);
         }
