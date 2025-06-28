@@ -14,8 +14,8 @@ import umc.GrowIT.Server.service.userService.UserCommandService;
 import umc.GrowIT.Server.web.controller.specification.UserSpecification;
 import umc.GrowIT.Server.web.dto.CreditDTO.CreditResponseDTO;
 import umc.GrowIT.Server.web.dto.ItemDTO.ItemResponseDTO;
-import umc.GrowIT.Server.web.dto.PaymentDTO.PaymentRequestDTO;
-import umc.GrowIT.Server.web.dto.PaymentDTO.PaymentResponseDTO;
+import umc.GrowIT.Server.web.dto.CreditPaymentDTO.CreditPaymentRequestDTO;
+import umc.GrowIT.Server.web.dto.CreditPaymentDTO.CreditPaymentResponseDTO;
 import umc.GrowIT.Server.web.dto.UserDTO.UserRequestDTO;
 import umc.GrowIT.Server.web.dto.UserDTO.UserResponseDTO;
 
@@ -52,12 +52,6 @@ public class UserController implements UserSpecification {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         Long userId = (Long) authentication.getPrincipal(); //사용자 식별 id
         return ApiResponse.onSuccess(creditQueryService.getTotalCredit(userId));
-    }
-
-    @Override
-    @PostMapping("/credits/payment")
-    public ApiResponse<PaymentResponseDTO> purchaseCredits(PaymentRequestDTO request) {
-        return ApiResponse.onSuccess(null);
     }
 
     @Override
