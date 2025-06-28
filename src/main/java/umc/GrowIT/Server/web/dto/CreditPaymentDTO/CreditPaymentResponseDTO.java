@@ -1,4 +1,4 @@
-package umc.GrowIT.Server.web.dto.PaymentDTO;
+package umc.GrowIT.Server.web.dto.CreditPaymentDTO;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AllArgsConstructor;
@@ -10,7 +10,7 @@ import lombok.NoArgsConstructor;
 @Getter
 @NoArgsConstructor
 @AllArgsConstructor
-public class PaymentResponseDTO {
+public class CreditPaymentResponseDTO {
     @Schema(
             description = "결제 후 현재 크레딧",
             example = "150"  // 기존 50 크레딧에 100 크레딧 추가된 경우
