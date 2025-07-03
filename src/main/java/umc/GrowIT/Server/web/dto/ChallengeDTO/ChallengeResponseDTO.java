@@ -87,8 +87,6 @@ public class ChallengeResponseDTO {
     public static class ChallengeStatusPagedResponseDTO  {
         private List<ChallengeStatusDTO> content;
         private int currentPage;
-        private int totalPages;
-        private long totalElements;
         private boolean isFirst;
         private boolean isLast;
     }

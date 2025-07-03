@@ -1,16 +1,13 @@
 package umc.GrowIT.Server.converter;
 
-import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Slice;
 import umc.GrowIT.Server.domain.Challenge;
-import umc.GrowIT.Server.domain.Keyword;
 import umc.GrowIT.Server.domain.User;
 import umc.GrowIT.Server.domain.UserChallenge;
 import umc.GrowIT.Server.domain.enums.UserChallengeType;
 import umc.GrowIT.Server.web.dto.ChallengeDTO.ChallengeResponseDTO;
-import umc.GrowIT.Server.web.dto.KeywordDTO.KeywordResponseDTO;
 
 import java.time.LocalDate;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -39,9 +36,6 @@ public class ChallengeConverter {
                 .map(ChallengeConverter::toRecommendedChallengeDTO)
                 .collect(Collectors.toList());
     }
-
-
-
 
     // 챌린지 리포트를 ChallengeHome.ChallengeReport로 변환
     public static ChallengeResponseDTO.ChallengeReportDTO toChallengeReportDTO(int totalCredits, int totalDiaries, String diaryDate) {
@@ -76,16 +70,14 @@ public class ChallengeConverter {
                 .build();
     }
 
-    public static ChallengeResponseDTO.ChallengeStatusPagedResponseDTO toChallengeStatusPagedDTO(Page<UserChallenge> userChallenges) {
-        Page<ChallengeResponseDTO.ChallengeStatusDTO> mappedPage = userChallenges.map(ChallengeConverter::toChallengeStatusDTO);
+    public static ChallengeResponseDTO.ChallengeStatusPagedResponseDTO toChallengeStatusPagedDTO(Slice<UserChallenge> userChallenges) {
+        Slice<ChallengeResponseDTO.ChallengeStatusDTO> mappedSlice = userChallenges.map(ChallengeConverter::toChallengeStatusDTO);
 
         return ChallengeResponseDTO.ChallengeStatusPagedResponseDTO.builder()
-                .content(mappedPage.getContent())
-                .currentPage(mappedPage.getNumber() + 1)
-                .totalPages(mappedPage.getTotalPages())
-                .totalElements(mappedPage.getTotalElements())
-                .isFirst(mappedPage.isFirst())
-                .isLast(mappedPage.isLast())
+                .content(mappedSlice.getContent())
+                .currentPage(mappedSlice.getNumber() + 1)
+                .isFirst(mappedSlice.isFirst())
+                .isLast(!mappedSlice.hasNext())
                 .build();
     }
 

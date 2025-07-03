@@ -1,16 +1,14 @@
 package umc.GrowIT.Server.repository;
 
-import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Slice;
 import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import umc.GrowIT.Server.domain.UserChallenge;
 import umc.GrowIT.Server.domain.enums.UserChallengeType;
 
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -27,12 +25,11 @@ public interface UserChallengeRepository extends JpaRepository<UserChallenge, Lo
             @Param("userId") Long userId,
             @Param("today") LocalDate today);
 
-
     // 1. 유저의 완료 또는 미완료 챌린지 조회 (dtype 무시)
     @Query("SELECT uc FROM UserChallenge uc " +
             "WHERE uc.user.id = :userId " +
             "AND uc.completed = :completed")
-    Page<UserChallenge> findChallengesByCompletionStatus(
+    Slice<UserChallenge> findChallengesByCompletionStatus(
             @Param("userId") Long userId,
             @Param("completed") Boolean completed,
             Pageable pageable);
@@ -42,7 +39,7 @@ public interface UserChallengeRepository extends JpaRepository<UserChallenge, Lo
             "WHERE uc.user.id = :userId " +
             "AND uc.dtype = :dtype " +
             "AND uc.completed = false")  // 항상 미완료 챌린지만 조회
-    Page<UserChallenge> findChallengesByDtypeAndCompletionStatus(
+    Slice<UserChallenge> findChallengesByDtypeAndCompletionStatus(
             @Param("userId") Long userId,
             @Param("dtype") UserChallengeType dtype,
             Pageable pageable);
