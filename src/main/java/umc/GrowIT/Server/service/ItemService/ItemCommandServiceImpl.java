@@ -14,6 +14,7 @@ import umc.GrowIT.Server.domain.enums.ItemStatus;
 import umc.GrowIT.Server.repository.ItemRepository.ItemRepository;
 import umc.GrowIT.Server.repository.UserItemRepository;
 import umc.GrowIT.Server.repository.UserRepository;
+import umc.GrowIT.Server.repository.UserSubscriptionRepository;
 import umc.GrowIT.Server.web.dto.ItemDTO.ItemResponseDTO;
 import umc.GrowIT.Server.web.dto.ItemEquipDTO.ItemEquipResponseDTO;
 
@@ -26,6 +27,7 @@ public class ItemCommandServiceImpl implements ItemCommandService {
     private final UserRepository userRepository;
     private final ItemRepository itemRepository;
     private final UserItemRepository userItemRepository;
+    private final UserSubscriptionRepository userSubscriptionRepository;
 
     @Override //아이템 구매 기능
     public ItemResponseDTO.PurchaseItemResponseDTO purchase(Long itemId, Long userId) {
@@ -43,24 +45,30 @@ public class ItemCommandServiceImpl implements ItemCommandService {
                     throw new ItemHandler(ErrorStatus.ITEM_OWNED);
                 });
 
-        // 4. 사용자의 현재 보유 중인 크레딧과 아이템의 가격을 비교
-        // 보유 크레딧 < 아이템 가격 = 오류 발생
-        if(user.getCurrentCredit() < item.getPrice()) {
-            throw new ItemHandler(ErrorStatus.INSUFFICIENT_CREDIT);
+        // 4. 구독 여부 조회
+        boolean isSubscribed = userSubscriptionRepository.isUserActivelySubscribed(userId);
+
+        // 5. 비구독자의 경우에만 크레딧 차감
+        if (!isSubscribed) {
+            // 사용자의 현재 보유 중인 크레딧과 아이템의 가격을 비교
+            // 보유 크레딧 < 아이템 가격 = 오류 발생
+            if(user.getCurrentCredit() < item.getPrice()) {
+                throw new ItemHandler(ErrorStatus.INSUFFICIENT_CREDIT);
+            }
+
+            // 보유 크레딧 >= 아이템 가격 = 아이템 구매
+            // 보유 크레딧 최신화
+            user.updateCurrentCredit(user.getCurrentCredit() - item.getPrice());
+            userRepository.save(user);
         }
 
-        // 보유 크레딧 >= 아이템 가격 = 아이템 구매
-        // 보유 크레딧 최신화
-        user.updateCurrentCredit(user.getCurrentCredit() - item.getPrice());
-        userRepository.save(user);
-
-        // user_item에 저장
-        UserItem newUserItem = ItemConverter.toUserItem();
+        // 6. user_item에 저장 (구매/구독 타입 관리)
+        UserItem newUserItem = ItemConverter.toUserItem(isSubscribed);
         newUserItem.setUser(user);
         newUserItem.setItem(item);
         UserItem savedUserItem = userItemRepository.save(newUserItem);
 
-        // converter 작업
+        // 7. converter 작업
         return ItemConverter.toPurchaseItemResponseDTO(savedUserItem);
     }
 

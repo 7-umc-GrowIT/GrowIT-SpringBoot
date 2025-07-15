@@ -4,6 +4,7 @@ import umc.GrowIT.Server.domain.Item;
 import umc.GrowIT.Server.domain.User;
 import umc.GrowIT.Server.domain.UserItem;
 import umc.GrowIT.Server.domain.enums.ItemStatus;
+import umc.GrowIT.Server.domain.enums.ItemType;
 import umc.GrowIT.Server.repository.ItemRepository.ItemRepository;
 import umc.GrowIT.Server.web.dto.ItemDTO.ItemResponseDTO;
 import umc.GrowIT.Server.web.dto.ItemEquipDTO.ItemEquipResponseDTO;
@@ -42,9 +43,34 @@ public class ItemConverter {
             Map<Long, ItemStatus> itemStatuses,
             Map<Long, Boolean> purchaseStatuses,
             Map<Item, String> itemUrls,
-            Map<Item, String> groItemUrls) {
+            Map<Item, String> groItemUrls,
+            Boolean isSubscribed
+            ) {
 
         return ItemResponseDTO.ItemListDTO.builder()
+                .itemList(itemList.stream()
+                        .map(item -> toItemDTO(
+                                item,
+                                userId,
+                                itemStatuses.get(item.getId()),
+                                purchaseStatuses.get(item.getId()),
+                                itemUrls.get(item),
+                                groItemUrls.get(item)))
+                        .collect(Collectors.toList()))
+                .isSubscribed(isSubscribed)
+                .build();
+    }
+
+    public static ItemResponseDTO.UserItemListDTO toUserItemListDTO(
+            List<Item> itemList,
+            Long userId,
+            Map<Long, ItemStatus> itemStatuses,
+            Map<Long, Boolean> purchaseStatuses,
+            Map<Item, String> itemUrls,
+            Map<Item, String> groItemUrls
+    ) {
+
+        return ItemResponseDTO.UserItemListDTO.builder()
                 .itemList(itemList.stream()
                         .map(item -> toItemDTO(
                                 item,
@@ -57,9 +83,10 @@ public class ItemConverter {
                 .build();
     }
 
-    public static UserItem toUserItem() {
+    public static UserItem toUserItem(boolean isSubscribed) {
         return UserItem.builder()
                 .status(ItemStatus.UNEQUIPPED)
+                .type(isSubscribed? ItemType.SUBSCRIPTION : ItemType.PURCHASE)
                 .build()
                 ;
     }

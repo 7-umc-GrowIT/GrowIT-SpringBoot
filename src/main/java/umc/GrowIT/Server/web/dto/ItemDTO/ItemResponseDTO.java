@@ -17,6 +17,17 @@ public class ItemResponseDTO {
     public static class ItemListDTO {
         @Schema(description = "아이템 목록")
         private List<ItemDTO> itemList;
+
+        boolean isSubscribed;
+    }
+
+    @Builder
+    @Getter
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class UserItemListDTO {
+        @Schema(description = "아이템 목록")
+        private List<ItemDTO> itemList;
     }
 
     @Builder

@@ -31,7 +31,7 @@ public class UserController implements UserSpecification {
 
     @Override
     @GetMapping("/items")
-    public ApiResponse<ItemResponseDTO.ItemListDTO> getUserItemList(ItemCategory category) {
+    public ApiResponse<ItemResponseDTO.UserItemListDTO> getUserItemList(ItemCategory category) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         Long userId = (Long) authentication.getPrincipal(); //사용자 식별 id
 

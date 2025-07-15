@@ -7,6 +7,8 @@ import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
 import umc.GrowIT.Server.domain.common.BaseEntity;
 import umc.GrowIT.Server.domain.enums.ItemStatus;
+import umc.GrowIT.Server.domain.enums.ItemType;
+import umc.GrowIT.Server.domain.enums.SubscriptionStatus;
 
 @Entity
 @Getter
@@ -30,6 +32,10 @@ public class UserItem extends BaseEntity {
 
     @Enumerated(EnumType.STRING)
     private ItemStatus status;
+
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
+    private ItemType type;
 
     public void setUser(User user) {
         this.user = user;

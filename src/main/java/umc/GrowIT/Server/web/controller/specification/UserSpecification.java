@@ -24,7 +24,7 @@ public interface UserSpecification {
     @ApiResponses({
             @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "COMMON200", description = "⭕ SUCCESS")
     })
-    ApiResponse<ItemResponseDTO.ItemListDTO> getUserItemList(
+    ApiResponse<ItemResponseDTO.UserItemListDTO> getUserItemList(
             @Parameter(description = "아이템 카테고리 (카테고리 명으로 전달)",
                     schema = @Schema(allowableValues = {"BACKGROUND", "OBJECT", "PLANT", "HEAD_ACCESSORY"}),
                     example = "BACKGROUND")

@@ -14,6 +14,7 @@ import umc.GrowIT.Server.domain.enums.ItemCategory;
 import umc.GrowIT.Server.domain.enums.ItemStatus;
 import umc.GrowIT.Server.repository.ItemRepository.ItemRepository;
 import umc.GrowIT.Server.repository.UserItemRepository;
+import umc.GrowIT.Server.repository.UserSubscriptionRepository;
 import umc.GrowIT.Server.web.dto.ItemDTO.ItemResponseDTO;
 
 import java.util.Date;
@@ -32,6 +33,7 @@ public class ItemQueryServiceImpl implements ItemQueryService {
     private final AmazonS3 amazonS3;
     private final ItemRepository itemRepository;
     private final UserItemRepository userItemRepository;
+    private final UserSubscriptionRepository userSubscriptionRepository;
 
     @Value("${aws.s3.bucket}")
     private String bucketName;
@@ -39,6 +41,10 @@ public class ItemQueryServiceImpl implements ItemQueryService {
     @Override
     @Transactional(readOnly = true)
     public ItemResponseDTO.ItemListDTO getItemList(ItemCategory category, Long userId) {
+        // 구독 여부
+        Boolean isSubscribed = userSubscriptionRepository.isUserActivelySubscribed(userId);
+
+
         List<Item> itemList = itemRepository.findAllByCategory(category);
 
         // status 조회 - null 처리 추가
@@ -59,12 +65,13 @@ public class ItemQueryServiceImpl implements ItemQueryService {
         Map<Item, String> itemUrls = createItemPreSignedUrl(itemList);
         Map<Item, String> groItemUrls = createGroItemPreSignedUrl(itemList);
 
-        return ItemConverter.toItemListDTO(itemList, userId, itemStatuses, purchaseStatuses, itemUrls, groItemUrls);
+
+        return ItemConverter.toItemListDTO(itemList, userId, itemStatuses, purchaseStatuses, itemUrls, groItemUrls, isSubscribed);
     }
 
     @Override
     @Transactional(readOnly = true)
-    public ItemResponseDTO.ItemListDTO getUserOwnedItemList(ItemCategory category, Long userId) {
+    public ItemResponseDTO.UserItemListDTO getUserOwnedItemList(ItemCategory category, Long userId) {
         // 기존의 잘 작동하던 코드 유지
         List<Item> userItems = itemRepository.findItemsByUserIdAndCategory(userId, category);
 
@@ -87,7 +94,7 @@ public class ItemQueryServiceImpl implements ItemQueryService {
         Map<Item, String> groItemUrls = createGroItemPreSignedUrl(userItems);
 
         // converter에 URL 맵 전달
-        return ItemConverter.toItemListDTO(userItems, userId, itemStatuses, purchaseStatuses, itemUrls, groItemUrls);
+        return ItemConverter.toUserItemListDTO(userItems, userId, itemStatuses, purchaseStatuses, itemUrls, groItemUrls);
     }
 
     // 상점 리스트용 이미지의 Pre-signed URL 생성
