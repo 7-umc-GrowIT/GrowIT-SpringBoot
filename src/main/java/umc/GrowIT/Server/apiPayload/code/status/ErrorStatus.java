@@ -78,7 +78,13 @@ public enum ErrorStatus implements BaseErrorCode {
     EQUIPPED_USER_ITEM_NOT_FOUND(HttpStatus.NOT_FOUND, "UI4002", "착용 중인 사용자 아이템이 존재하지 않습니다."),
 
     //결제 관련 에러
-    PAYMENT_ERROR(HttpStatus.BAD_REQUEST, "PAYMENT4001", "결제정보가 정확하지 않습니다."),
+    PAYMENT_INVALID_REQUEST(HttpStatus.BAD_REQUEST, "PAYMENT4001", "결제 요청 데이터가 유효하지 않습니다."),
+    PAYMENT_DUPLICATE_TRANSACTION(HttpStatus.CONFLICT, "PAYMENT4002", "이미 처리된 거래입니다."),
+    PAYMENT_PROCESSING_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "PAYMENT4003", "결제 처리 중 오류가 발생했습니다."),
+    // 상품 관련 오류
+    PAYMENT_INVALID_PRODUCT(HttpStatus.BAD_REQUEST, "PAYMENT4011", "유효하지 않은 상품 정보입니다."),
+    // 영수증 검증 관련 오류
+    PAYMENT_RECEIPT_VALIDATION_FAILED(HttpStatus.BAD_REQUEST, "PAYMENT4021", "영수증 검증에 실패했습니다."),
 
     // 크레딧 관련 에러
     CREDIT_NOT_FOUND(HttpStatus.BAD_REQUEST, "CREDIT4001", "크레딧 정보를 찾을 수 없습니다."),
