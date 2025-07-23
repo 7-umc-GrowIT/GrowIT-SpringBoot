@@ -6,7 +6,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import umc.GrowIT.Server.domain.User;
 
-public interface CreditRepository extends JpaRepository<User, Long> {
+public interface UserCreditRepository extends JpaRepository<User, Long> {
 
     // 누적 크레딧 조회
 //    public Integer findTotalCreditById(Long id);
