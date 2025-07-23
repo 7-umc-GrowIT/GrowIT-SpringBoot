@@ -6,6 +6,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import umc.GrowIT.Server.domain.common.BaseEntity;
+import umc.GrowIT.Server.domain.enums.PaymentStatus;
 
 import java.time.LocalDateTime;
 
@@ -21,19 +22,19 @@ public class PaymentHistory extends BaseEntity {
     private Long id;
 
     // 기본 정보
-    @Column(name = "user_id", nullable = false)
-    private String userId;
+    @Column(nullable = false)
+    private Long userId;
 
-    @Column(name = "product_id", nullable = false)
+    @Column(nullable = false)
     private String productId;
 
-    @Column(name = "credit_amount", nullable = false)
+    @Column(nullable = false)
     private Integer creditAmount;
 
-    @Column(name = "payment_amount", nullable = false)
+    @Column(nullable = false)
     private Integer paymentAmount;
 
-    @Column(name = "platform", nullable = false)
+    @Column(nullable = false)
     private String platform;
 
     @Column(nullable = false, unique = true)
@@ -66,7 +67,4 @@ public class PaymentHistory extends BaseEntity {
     @Column(nullable = false)
     private PaymentStatus status;
 
-    public enum PaymentStatus {
-        SUCCESS, FAILED, PENDING, CANCELLED, REFUNDED, VALIDATION_FAILED
-    }
 }
