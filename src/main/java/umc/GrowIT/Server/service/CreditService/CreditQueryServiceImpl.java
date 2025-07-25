@@ -4,7 +4,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import umc.GrowIT.Server.converter.CreditConverter;
-import umc.GrowIT.Server.repository.CreditRepository.UserCreditRepository;
+import umc.GrowIT.Server.repository.UserCreditRepository.UserCreditRepository;
 import umc.GrowIT.Server.web.dto.CreditDTO.CreditResponseDTO;
 
 @Service

@@ -9,6 +9,6 @@ import umc.GrowIT.Server.domain.PaymentHistory;
 @Transactional
 public interface PaymentHistoryRepository extends JpaRepository<PaymentHistory, Long>{
 
-    boolean existsPaymentHistoryById(String transactionId);
+    boolean existsByTransactionId(String transactionId);
 
 }
