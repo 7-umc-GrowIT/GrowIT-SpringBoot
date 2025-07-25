@@ -24,12 +24,4 @@ public class CreditPaymentRequestDTO {
     @NotNull
     @Schema(description = "인앱구매 상품 ID", example = "credits_100")
     private String productId;
-
-    @NotNull
-    @Schema(description = "구매한 크레딧 수량", example = "100")
-    private Integer creditAmount;
-
-    @NotNull
-    @Schema(description = "결제 금액 (원)", example = "2500")
-    private Integer amount;
 }
