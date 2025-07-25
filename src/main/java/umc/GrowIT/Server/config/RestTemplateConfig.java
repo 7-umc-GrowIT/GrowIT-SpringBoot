@@ -15,7 +15,7 @@ public class RestTemplateConfig {
         factory.setConnectTimeout(10000); // 연결 타임아웃 10초
         factory.setReadTimeout(30000);    // 일기 타임아웃 30초
 
-        return new RestTemplate();
+        return new RestTemplate(factory); // Rest Api를 호출가능한 설정된 객체 리턴
     }
 
 }
