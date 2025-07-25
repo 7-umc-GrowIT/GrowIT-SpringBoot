@@ -1,9 +1,11 @@
 package umc.GrowIT.Server.converter;
 
+import jakarta.persistence.Converter;
 import umc.GrowIT.Server.domain.PaymentHistory;
 import umc.GrowIT.Server.domain.User;
 import umc.GrowIT.Server.domain.enums.PaymentStatus;
 import umc.GrowIT.Server.service.AppleService.AppleReceiptValidationService;
+import umc.GrowIT.Server.web.dto.AppleValidationDTO.AppleValidationDTO;
 import umc.GrowIT.Server.web.dto.CreditPaymentDTO.CreditPaymentRequestDTO;
 import umc.GrowIT.Server.web.dto.CreditPaymentDTO.CreditPaymentResponseDTO;
 
@@ -11,7 +13,7 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 
 
-
+@Converter
 public class PaymentConverter {
 
     public static final DateTimeFormatter FORMATTER = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss");
@@ -67,12 +69,12 @@ public class PaymentConverter {
 
     // AppStore 검증결과 payMenHistory객체에 저장해서 리턴
     public static PaymentHistory updateWithAppleResponse(PaymentHistory paymentHistory,
-                                                         AppleReceiptValidationService.AppleValidationResponse validationResponse) {
-        paymentHistory.setOriginalTransactionId(validationResponse.getOriginalTransactionId());
-        paymentHistory.setPurchaseDate(parseDateTime(validationResponse.getPurchaseDate()));
-        paymentHistory.setBundleId(validationResponse.getBundleId());
-        paymentHistory.setEnvironment(validationResponse.getEnvironment());
-        paymentHistory.setReceiptValidationResult(validationResponse.getFullResponse());
+                                                         AppleValidationDTO appleValidationDTO) {
+        paymentHistory.setOriginalTransactionId(appleValidationDTO.getOriginalTransactionId());
+        paymentHistory.setPurchaseDate(parseDateTime(appleValidationDTO.getPurchaseDate()));
+        paymentHistory.setBundleId(appleValidationDTO.getBundleId());
+        paymentHistory.setEnvironment(appleValidationDTO.getEnvironment());
+        paymentHistory.setReceiptValidationResult(appleValidationDTO.getFullResponse());
         paymentHistory.setStatus(PaymentStatus.SUCCESS);
         return paymentHistory;
     }
