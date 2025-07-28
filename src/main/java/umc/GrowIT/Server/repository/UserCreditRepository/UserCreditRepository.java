@@ -9,7 +9,6 @@ import umc.GrowIT.Server.domain.User;
 public interface UserCreditRepository extends JpaRepository<User, Long> {
 
     // 누적 크레딧 조회
-//    public Integer findTotalCreditById(Long id);
     @Query("SELECT u.currentCredit FROM User u WHERE u.id = :id")
     Integer findCurrentCreditById(@Param("id") Long id);
 
