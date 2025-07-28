@@ -1,6 +1,7 @@
 package umc.GrowIT.Server.converter;
 
 import jakarta.persistence.Converter;
+import umc.GrowIT.Server.domain.CreditProduct;
 import umc.GrowIT.Server.domain.PaymentHistory;
 import umc.GrowIT.Server.domain.User;
 import umc.GrowIT.Server.domain.enums.PaymentStatus;
@@ -50,15 +51,15 @@ public class PaymentConverter {
 
     // 결제내용 저장에 사용할 형태
     // 결제 요청 데이터 -> PaymentHistory 형태로 저장
-    public static PaymentHistory toPaymentHistory(Long userId, CreditPaymentRequestDTO requestDto){
+    public static PaymentHistory toPaymentHistory(Long userId, CreditPaymentRequestDTO requestDto, CreditProduct product){
 
         PaymentHistory paymentHistory = new PaymentHistory();
 
-        paymentHistory.setUserId(userId);
+        paymentHistory.setUserId(userId);  // Long 타입 그대로 사용
         paymentHistory.setTransactionId(requestDto.getTransactionId());
         paymentHistory.setProductId(requestDto.getProductId());
-        paymentHistory.setCreditAmount(requestDto.getCreditAmount());
-        paymentHistory.setPaymentAmount(requestDto.getAmount());
+        paymentHistory.setCreditAmount(product.getCreditAmount());
+        paymentHistory.setPaymentAmount(product.getPrice());
         paymentHistory.setPlatform("iOS");
         paymentHistory.setReceiptData(requestDto.getReceiptData());
         paymentHistory.setStatus(PaymentStatus.PENDING);
