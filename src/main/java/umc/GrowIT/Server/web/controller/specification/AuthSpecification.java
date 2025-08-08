@@ -11,6 +11,7 @@ import umc.GrowIT.Server.apiPayload.ApiResponse;
 import umc.GrowIT.Server.domain.enums.AuthType;
 import umc.GrowIT.Server.web.dto.AuthDTO.AuthRequestDTO;
 import umc.GrowIT.Server.web.dto.AuthDTO.AuthResponseDTO;
+import umc.GrowIT.Server.web.dto.LogoutDTO.LogoutResponseDTO;
 import umc.GrowIT.Server.web.dto.OAuthDTO.OAuthRequestDTO;
 import umc.GrowIT.Server.web.dto.OAuthDTO.OAuthResponseDTO;
 import umc.GrowIT.Server.web.dto.TokenDTO.TokenRequestDTO;
@@ -100,4 +101,16 @@ public interface AuthSpecification {
             @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "TERM4003", description = "❌ 전체 약관 정보를 주세요.", content = @Content(schema = @Schema(implementation = ApiResponse.class)))
     })
     ApiResponse<TokenResponseDTO.TokenDTO> signupSocial(@RequestBody @Valid OAuthRequestDTO.OAuthUserInfoAndUserTermsDTO oAuthUserInfoAndUserTermsDTO);
+
+    @PostMapping("/logout")
+    @Operation(summary = "로그아웃 API", description = "사용자 로그아웃을 처리하는 API입니다. AccessToken을 무효화하고 RefreshToken을 삭제합니다.")
+    @ApiResponses({
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "COMMON200", description = "⭕ SUCCESS"),
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "USER4002", description = "❌ 이메일 또는 패스워드가 일치하지 않습니다.", content = @Content(schema = @Schema(implementation = ApiResponse.class))),
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "USER4004", description = "❌ 탈퇴한 회원입니다.", content = @Content(schema = @Schema(implementation = ApiResponse.class))),
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "AUTH4011", description = "❌ 유효하지 않은 토큰입니다.", content = @Content(schema = @Schema(implementation = ApiResponse.class))),
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "AUTH4012", description = "❌ 만료된 토큰입니다.", content = @Content(schema = @Schema(implementation = ApiResponse.class))),
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "AUTH4015", description = "❌ 토큰이 제공되지 않았습니다.", content = @Content(schema = @Schema(implementation = ApiResponse.class)))
+    })
+    ApiResponse<LogoutResponseDTO> logout();
 }

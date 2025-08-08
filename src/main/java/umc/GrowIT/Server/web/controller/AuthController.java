@@ -4,6 +4,8 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 import umc.GrowIT.Server.apiPayload.ApiResponse;
 import umc.GrowIT.Server.domain.enums.AuthType;
@@ -15,6 +17,7 @@ import umc.GrowIT.Server.service.refreshTokenService.RefreshTokenCommandService;
 import umc.GrowIT.Server.web.controller.specification.AuthSpecification;
 import umc.GrowIT.Server.web.dto.AuthDTO.AuthRequestDTO;
 import umc.GrowIT.Server.web.dto.AuthDTO.AuthResponseDTO;
+import umc.GrowIT.Server.web.dto.LogoutDTO.LogoutResponseDTO;
 import umc.GrowIT.Server.web.dto.OAuthDTO.OAuthRequestDTO;
 import umc.GrowIT.Server.web.dto.OAuthDTO.OAuthResponseDTO;
 import umc.GrowIT.Server.web.dto.TokenDTO.TokenRequestDTO;
@@ -92,4 +95,17 @@ public class AuthController implements AuthSpecification {
         TokenResponseDTO.TokenDTO tokenDTO = oAuthService.signupSocial(oAuthUserInfoAndUserTermsDTO);
         return ApiResponse.onSuccess(tokenDTO);
     }
+    @Override
+    @PostMapping("/logout")
+    public ApiResponse<LogoutResponseDTO> logout() {
+        // AccessToken에서 userId 추출
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        Long userId = (Long) authentication.getPrincipal();
+
+        // 로그아웃 처리
+        LogoutResponseDTO result = authService.logout(userId);
+
+        return ApiResponse.onSuccess(result);
+    }
+
 }
