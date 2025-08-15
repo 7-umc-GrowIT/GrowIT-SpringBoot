@@ -66,6 +66,14 @@ dependencies {
 	implementation 'io.prometheus:prometheus-metrics-core:1.2.1'
 }
 
+task copyPrivateYml(type: Copy) {
+	copy {
+		from './config'
+		include "*.yml"
+		into 'src/main/resources'
+	}
+}
+
 tasks.named('test') {
 	useJUnitPlatform()
 }

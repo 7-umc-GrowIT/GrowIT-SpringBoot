@@ -10,10 +10,13 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
+      # 1. 코드 + 서브모듈 체크아웃
       - uses: actions/checkout@v3
         with:
           fetch-depth: 0
+          submodules: 'recursive'
 
+      # 2. JDK 17 설정 (Gradle 캐시 포함)
       - name: Set up JDK 17
         uses: actions/setup-java@v3
         with:
@@ -21,20 +24,25 @@ jobs:
           java-version: '17'
           cache: 'gradle'
 
-      - name: Make application.yml
-        run: |
-          mkdir -p ./src/main/resources
-          echo "${{ secrets.APPLICATION_YML }}" > ./src/main/resources/application.yml
-        shell: bash
+      # 3. Gradle 캐시 최적화
+      - name: Set up Gradle
+        uses: gradle/gradle-build-action@v2
+        with:
+          cache-read-only: ${{ github.ref != 'refs/heads/develop' }}
 
+      # 4. gradlew 실행 권한 부여
       - name: Grant execute permission for gradlew
         run: chmod +x gradlew
 
-      - name: Build with Gradle
-        uses: gradle/gradle-build-action@v2
-        with:
-          arguments: build -x test --parallel --build-cache --no-daemon -Dorg.gradle.jvmargs="-Xmx2048m"
+      # 5. 테스트 실행
+      - name: Run tests
+        run: ./gradlew clean test --parallel --build-cache --no-daemon -Dorg.gradle.jvmargs="-Xmx2048m"
 
+      # 6. prod 프로필로 JAR 빌드
+      - name: Build JAR with prod profile
+        run: ./gradlew bootJar -Dspring.profiles.active=prod --parallel --build-cache --no-daemon -Dorg.gradle.jvmargs="-Xmx2048m"
+
+      # 7. 아티팩트 업로드
       - name: Upload build artifact
         uses: actions/upload-artifact@v4
         with:
