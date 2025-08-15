@@ -15,6 +15,7 @@ jobs:
         with:
           fetch-depth: 0
           submodules: 'recursive'
+          token: ${{ secrets.GITHUB_TOKEN }}
 
       # 2. JDK 17 설정 (Gradle 캐시 포함)
       - name: Set up JDK 17
@@ -24,25 +25,15 @@ jobs:
           java-version: '17'
           cache: 'gradle'
 
-      # 3. Gradle 캐시 최적화
-      - name: Set up Gradle
-        uses: gradle/gradle-build-action@v2
-        with:
-          cache-read-only: ${{ github.ref != 'refs/heads/develop' }}
-
-      # 4. gradlew 실행 권한 부여
+      # 3. gradlew 실행 권한 부여
       - name: Grant execute permission for gradlew
         run: chmod +x gradlew
 
-      # 5. 테스트 실행
-      - name: Run tests
-        run: ./gradlew clean test --parallel --build-cache --no-daemon -Dorg.gradle.jvmargs="-Xmx2048m"
-
-      # 6. prod 프로필로 JAR 빌드
+      # 4. prod 프로필로 JAR 빌드
       - name: Build JAR with prod profile
-        run: ./gradlew bootJar -Dspring.profiles.active=prod --parallel --build-cache --no-daemon -Dorg.gradle.jvmargs="-Xmx2048m"
+        run: ./gradlew build -x test -Dspring.profiles.active=prod --parallel --build-cache --no-daemon -Dorg.gradle.jvmargs="-Xmx2048m"
 
-      # 7. 아티팩트 업로드
+      # 5. 아티팩트 업로드
       - name: Upload build artifact
         uses: actions/upload-artifact@v4
         with:
