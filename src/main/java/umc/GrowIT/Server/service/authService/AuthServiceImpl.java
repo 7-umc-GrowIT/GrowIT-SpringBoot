@@ -31,9 +31,6 @@ import java.time.LocalDateTime;
 
 
 import org.springframework.beans.factory.annotation.Value;
-import umc.GrowIT.Server.web.dto.LogoutDTO.LogoutResponseDTO;
-
-import static umc.GrowIT.Server.domain.enums.UserStatus.INACTIVE;
 
 @Service
 @RequiredArgsConstructor
@@ -157,7 +154,7 @@ public class AuthServiceImpl implements AuthService {
 
     @Override
     @Transactional
-    public LogoutResponseDTO logout(Long userId){
+    public AuthResponseDTO.LogoutResponseDTO logout(Long userId){
 
         // 1. 사용자 조회
         User user = userRepository.findById(userId)
@@ -178,7 +175,7 @@ public class AuthServiceImpl implements AuthService {
         }
 
         // 4. 성공 응답 반환 (이미 로그아웃된 상태여도 성공으로 처리)
-        return LogoutResponseDTO.builder()
+        return AuthResponseDTO.LogoutResponseDTO.builder()
                 .message("로그아웃이 완료되었습니다.")
                 .build();
 
