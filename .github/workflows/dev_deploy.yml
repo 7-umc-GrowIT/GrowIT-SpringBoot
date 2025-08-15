@@ -31,8 +31,10 @@ jobs:
         run: chmod +x gradlew
 
       # 4. prod 프로필로 JAR 빌드
-      - name: Build JAR with prod profile
-        run: ./gradlew clean bootJar -Dspring.profiles.active=prod
+      - name: Build JAR with Gradle
+        uses: gradle/gradle-build-action@v2
+        with:
+          arguments: clean bootJar -x test --parallel --build-cache --no-daemon -Dorg.gradle.jvmargs="-Xmx2048m"
 
       # 5. 아티팩트 업로드
       - name: Upload build artifact
@@ -95,7 +97,7 @@ jobs:
           
           # 애플리케이션 실행
           ssh ec2 "
-            nohup java -jar -Xmx1024m ~/GrowItServer.jar > app.log 2>&1 &
+            nohup java -Dspring.profiles.active=prod -jar -Xmx1024m ~/GrowItServer.jar > app.log 2>&1 &
           
             # 실행 확인
             sleep 30
