@@ -15,7 +15,7 @@ jobs:
         with:
           fetch-depth: 0
           submodules: 'recursive'
-          token: ${{ secrets.GITHUB_TOKEN }}
+          token: ${{ secrets.ACCESS_TOKEN }}
 
       # 2. JDK 17 설정 (Gradle 캐시 포함)
       - name: Set up JDK 17
