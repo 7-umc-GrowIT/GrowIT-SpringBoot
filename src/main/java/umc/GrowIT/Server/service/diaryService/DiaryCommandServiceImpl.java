@@ -153,32 +153,30 @@ public class DiaryCommandServiceImpl implements DiaryCommandService{
         // 기존 대화 목록 가져오기
         List<Message> messages = conversationHistory.get(userId);
 
-        //처음 대화라면 시스템 프롬프트 추가
+        // 처음 대화라면 시스템 프롬프트 추가
         if (messages.isEmpty()){
-            messages.add(new Message("system",
-                    "당신은 사용자의 하루 이야기를 공감으로 받아주는 AI입니다.\n\n" +
-                            "다음 규칙을 반드시 따르세요:\n" +
-                            "1. 절대 질문하지 마세요. 물음표(?)를 포함한 문장도 금지입니다.\n" +
-                            "2. '~했나요?', '~무엇인가요?', '~어떠셨나요?' 같은 의문형 표현도 사용하지 마세요.\n" +
-                            "3. 감정이나 생각을 유도하는 문장도 금지입니다. 예: '어떤 기분이셨나요?', '무슨 생각이 드셨나요?'\n" +
-                            "4. 공감과 긍정적인 피드백만 해주세요. 사용자에게 아무것도 묻지 마세요.\n" +
-                            "5. 대화를 이어가려 하지 말고, 사용자의 메시지에 대해 짧고 따뜻한 반응만 하세요.\n" +
-                            "6. 당신은 경청하는 역할이며, 대화 흐름을 주도하지 않습니다.\n" +
-                            "사용자 메시지에는 항상 'cnt' 값이 포함되어 있습니다. 반드시 cnt == 3 일 때만, 규칙이 적용되지 않습니다."
-            ));
+            messages.add(
+                    new Message(
+                            "system",
+                            "너는 사용자의 하루 이야기를 들어주는 따뜻한 대화 파트너야.\n\n" +
+
+                                    "[규칙]\n" +
+                                    "사용자가 오늘 하루 있었던 일을 이야기하면\n" +
+                                    "- 친구처럼 편안하고 부드러운 대화하기\n" +
+                                    "- 짧고 따뜻하게 공감하거나 리액션하기\n" +
+                                    "- 꼬리질문이나 대화 유도하지 않기\n" +
+                                    "- 오직 사용자가 실제로 말한 표현만 활용하기\n" +
+
+                                    "[출력 형식]\n" +
+                                    "- 1~2문장으로 답변하기\n" +
+                                    "- 사용자가 아무 말도 안 하면, 작은 일이라도 떠올리도록 가볍게 유도하기\n" +
+                                    "- 한국어로 자연스럽게 대화하기"
+                    )
+            );
         }
 
-        long userTurn = messages.stream()
-                .filter(m -> m.getRole().equals("user"))
-                .count() % 3;  // 지금까지 몇 번 user가 말했는지 셈
-
-        String numberedUserChat = "cnt == " + (userTurn + 1) + "\n\n" +
-                                  "사용자 메세지 : " + userChat;
-
-        log.info(numberedUserChat);
-
         // 사용자의 입력을 대화 목록에 추가
-        messages.add(new Message("user", numberedUserChat));
+        messages.add(new Message("user", userChat));
 
         // ChatGPT 요청 생성
         ChatGPTRequest gptRequest = new ChatGPTRequest(chatModel, messages);
