@@ -10,31 +10,33 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - uses: actions/checkout@v3
+      # 1. 코드 + 서브모듈 체크아웃
+      - name: Checkout With Submodules
+        uses: actions/checkout@v4
         with:
           fetch-depth: 0
+          submodules: 'recursive'
+          token: ${{ secrets.ACCESS_TOKEN }}
 
+      # 2. JDK 17 설정 (Gradle 캐시 포함)
       - name: Set up JDK 17
-        uses: actions/setup-java@v3
+        uses: actions/setup-java@v4
         with:
           distribution: 'temurin'
           java-version: '17'
           cache: 'gradle'
 
-      - name: Make application.yml
-        run: |
-          mkdir -p ./src/main/resources
-          echo "${{ secrets.APPLICATION_YML }}" > ./src/main/resources/application.yml
-        shell: bash
-
+      # 3. gradlew 실행 권한 부여
       - name: Grant execute permission for gradlew
         run: chmod +x gradlew
 
-      - name: Build with Gradle
+      # 4. prod 프로필로 JAR 빌드
+      - name: Build JAR with Gradle
         uses: gradle/gradle-build-action@v2
         with:
-          arguments: build -x test --parallel --build-cache --no-daemon -Dorg.gradle.jvmargs="-Xmx2048m"
+          arguments: clean bootJar -x test --parallel --build-cache --no-daemon -Dorg.gradle.jvmargs="-Xmx2048m"
 
+      # 5. 아티팩트 업로드
       - name: Upload build artifact
         uses: actions/upload-artifact@v4
         with:
@@ -95,7 +97,7 @@ jobs:
           
           # 애플리케이션 실행
           ssh ec2 "
-            nohup java -jar -Xmx1024m ~/GrowItServer.jar > app.log 2>&1 &
+            nohup java -Dspring.profiles.active=prod -jar -Xmx1024m ~/GrowItServer.jar > app.log 2>&1 &
           
             # 실행 확인
             sleep 30
