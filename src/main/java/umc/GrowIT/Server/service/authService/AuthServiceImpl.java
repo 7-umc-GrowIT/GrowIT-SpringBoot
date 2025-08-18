@@ -15,6 +15,7 @@ import umc.GrowIT.Server.apiPayload.code.status.ErrorStatus;
 import umc.GrowIT.Server.apiPayload.exception.AuthHandler;
 import umc.GrowIT.Server.apiPayload.exception.UserHandler;
 import umc.GrowIT.Server.converter.AuthenticationCodeConverter;
+import umc.GrowIT.Server.converter.UserConverter;
 import umc.GrowIT.Server.domain.AuthenticationCode;
 import umc.GrowIT.Server.domain.RefreshToken;
 import umc.GrowIT.Server.domain.User;
@@ -172,9 +173,7 @@ public class AuthServiceImpl implements AuthService {
         }
 
         // 3. 성공 응답 반환 (이미 로그아웃된 상태여도 성공으로 처리)
-        return AuthResponseDTO.LogoutResponseDTO.builder()
-                .message("로그아웃이 완료되었습니다.")
-                .build();
+        return UserConverter.toLogoutDTO();
 
 
     }
