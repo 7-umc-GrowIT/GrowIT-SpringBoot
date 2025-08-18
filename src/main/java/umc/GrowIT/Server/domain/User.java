@@ -4,10 +4,10 @@ import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.ColumnDefault;
 import umc.GrowIT.Server.domain.common.BaseEntity;
-import umc.GrowIT.Server.domain.enums.Provider;
 import umc.GrowIT.Server.domain.enums.Role;
 import umc.GrowIT.Server.domain.enums.UserStatus;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import static umc.GrowIT.Server.domain.enums.UserStatus.ACTIVE;
@@ -15,8 +15,8 @@ import static umc.GrowIT.Server.domain.enums.UserStatus.ACTIVE;
 @Entity
 @Getter
 @Builder
-@NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class User extends BaseEntity {
 
     @Id
@@ -26,6 +26,7 @@ public class User extends BaseEntity {
     @Column(unique = true, length = 50)
     private String primaryEmail;
 
+    @Column(nullable = false, length = 30)
     private String password;
 
     @Column(nullable = false, length = 20)
@@ -44,25 +45,31 @@ public class User extends BaseEntity {
     private Integer totalCredit;
 
     @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
     private Role role;
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<UserChallenge> userChallenges;
+    private List<UserChallenge> userChallenges = new ArrayList<>();
 
     @Setter
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
-    private List<UserTerm> userTerms;
+    private List<UserTerm> userTerms = new ArrayList<>();
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
-    private List<Diary> diaries;
+    private List<Diary> diaries = new ArrayList<>();
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
-    private List<OAuthAccount> oAuthAccounts;
+    private List<OAuthAccount> oAuthAccounts = new ArrayList<>();
 
     @Setter
     @OneToOne(fetch = FetchType.LAZY, orphanRemoval = true)
-    @JoinColumn(name = "refresh_token_id")
+    @JoinColumn(name = "refresh_token_id", nullable = false)
     private RefreshToken refreshToken;
+
+//    @OneToOne(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+//    private RefreshToken refreshToken;
+
+
 
     public void encodePassword(String password) {
         this.password = password;

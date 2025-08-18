@@ -6,13 +6,14 @@ import lombok.*;
 import umc.GrowIT.Server.domain.common.BaseEntity;
 import umc.GrowIT.Server.domain.enums.ItemCategory;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Entity
 @Getter
 @Builder
-@NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Item extends BaseEntity {
 
     @Id
@@ -35,6 +36,6 @@ public class Item extends BaseEntity {
     @Column(nullable = false, columnDefinition = "TEXT")
     private String groImageKey;
 
-    @OneToMany(mappedBy = "item")
-    private List<UserItem> userItems;
+    @OneToMany(mappedBy = "item", cascade = CascadeType.ALL)
+    private List<UserItem> userItems = new ArrayList<>();
 }

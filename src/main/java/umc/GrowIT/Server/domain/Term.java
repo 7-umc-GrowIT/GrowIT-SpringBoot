@@ -5,13 +5,14 @@ import lombok.*;
 import umc.GrowIT.Server.domain.common.BaseEntity;
 import umc.GrowIT.Server.domain.enums.TermType;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Entity
 @Getter
 @Builder
-@NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Term extends BaseEntity {
 
     @Id
@@ -29,6 +30,5 @@ public class Term extends BaseEntity {
     private TermType type;
 
     @OneToMany(mappedBy = "term", cascade = CascadeType.ALL)
-    private List<UserTerm> userTerm;
-
+    private List<UserTerm> userTerm = new ArrayList<>();
 }

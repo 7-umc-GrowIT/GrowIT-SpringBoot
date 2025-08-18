@@ -5,20 +5,21 @@ import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.ColumnDefault;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Entity
 @Getter
 @Builder
-@NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Challenge extends BaseEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(length = 50, nullable = false)
+    @Column(nullable = false, length = 50)
     private String title;
 
     @Column(nullable = false)
@@ -33,9 +34,8 @@ public class Challenge extends BaseEntity {
     private Integer credit;
 
     @OneToMany(mappedBy = "challenge", cascade = CascadeType.ALL)
-    private List<UserChallenge> userChallenges;
+    private List<UserChallenge> userChallenges = new ArrayList<>();
 
     @OneToMany(mappedBy = "challenge", cascade = CascadeType.ALL)
-    private List<ChallengeKeyword> challengeKeywords;
-
+    private List<ChallengeKeyword> challengeKeywords = new ArrayList<>();
 }

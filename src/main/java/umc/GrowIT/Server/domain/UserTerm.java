@@ -9,8 +9,8 @@ import umc.GrowIT.Server.domain.common.BaseEntity;
 @Entity
 @Getter
 @Builder
-@NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class UserTerm extends BaseEntity {
 
     @Id
@@ -21,12 +21,12 @@ public class UserTerm extends BaseEntity {
     private Boolean agreed;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "user_id")
-    @OnDelete(action = OnDeleteAction.CASCADE)
+    @JoinColumn(name = "user_id", nullable = false)
+//    @OnDelete(action = OnDeleteAction.CASCADE)
     private User user;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "term_id")
+    @JoinColumn(name = "term_id", nullable = false)
     private Term term;
 
     public void updateAgreed(boolean agreed){

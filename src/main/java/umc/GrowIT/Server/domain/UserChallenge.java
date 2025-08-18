@@ -15,27 +15,18 @@ import java.time.LocalDateTime;
 @Getter
 @Setter
 @Builder
-@NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class UserChallenge extends BaseEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "user_id", nullable = false)
-    @OnDelete(action = OnDeleteAction.CASCADE)
-    private User user;
-
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "challenge_id", nullable = false)
-    private Challenge challenge;
-
-    @Column(name = "thoughts", length = 100)
+    @Column(length = 100)
     private String thoughts;
 
-    @Column(name = "certification_imageurl", columnDefinition = "TEXT")
+    @Column(columnDefinition = "TEXT")
     private String certificationImageUrl;
 
     @Enumerated(EnumType.STRING)
@@ -45,11 +36,22 @@ public class UserChallenge extends BaseEntity {
     @Column(nullable = false)
     private boolean completed;
 
-    @Column(name = "certification_date")
+    @Column(nullable = false)
     private LocalDateTime certificationDate;
 
-    @Column(name = "date")
+    @Column(nullable = false)
     private LocalDate date;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_id", nullable = false)
+//    @OnDelete(action = OnDeleteAction.CASCADE)
+    private User user;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "challenge_id", nullable = false)
+    private Challenge challenge;
+
+
 
     // 인증 작성 (최초 등록 또는 전체 업데이트용)
     public void verifyUserChallenge(ChallengeRequestDTO.ProofRequestDTO proofRequest, String imageUrl){
@@ -58,5 +60,4 @@ public class UserChallenge extends BaseEntity {
         this.certificationDate = LocalDateTime.now(); // 인증한 날짜 저장
         this.completed = true;
     }
-
 }

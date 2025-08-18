@@ -9,8 +9,8 @@ import umc.GrowIT.Server.domain.common.BaseEntity;
 @Entity
 @Getter
 @Builder
-@NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class DiaryKeyword extends BaseEntity {
 
     @Id
@@ -18,12 +18,11 @@ public class DiaryKeyword extends BaseEntity {
     private Long id;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "diary_id")
-    @OnDelete(action = OnDeleteAction.CASCADE)
+    @JoinColumn(name = "diary_id", nullable = false)
+//    @OnDelete(action = OnDeleteAction.CASCADE)
     private Diary diary;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "keyword_id")
+    @JoinColumn(name = "keyword_id", nullable = false)
     private Keyword keyword;
-
 }

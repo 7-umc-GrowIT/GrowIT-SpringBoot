@@ -8,8 +8,8 @@ import lombok.*;
 @Entity
 @Getter
 @Builder
-@NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class ChallengeKeyword extends BaseEntity {
 
     @Id
@@ -24,7 +24,9 @@ public class ChallengeKeyword extends BaseEntity {
     @JoinColumn(name = "keyword_id", nullable = false)
     private Keyword keyword;
 
-    public void setChallenge(Challenge challenge) {
-        this.challenge = challenge;
-    }
+
+
+//    public void setChallenge(Challenge challenge) {
+//        this.challenge = challenge;
+//    }
 }
