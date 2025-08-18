@@ -194,6 +194,24 @@ public class GroCommandServiceImpl implements GroCommandService {
                 ));
     }
 
+    @Transactional(readOnly = true)
+    public String validateNickname(String raw) {
+        if (raw == null) {
+            throw new GroHandler(ErrorStatus.GRO_NICKNAME_LENGTH_INVALID);
+        }
+        final String name = raw.trim(); // 공백 제거
+        if (name.isEmpty()) {
+            throw new GroHandler(ErrorStatus.GRO_NICKNAME_LENGTH_INVALID);
+        }
+
+        // 닉네임 길이 체크: 2~8자
+        final int len = name.codePointCount(0, name.length());
+        if (len < 2 || len > 8) {
+            throw new GroHandler(ErrorStatus.GRO_NICKNAME_LENGTH_INVALID);
+        }
+        return name;
+    }
+
     // 그로 닉네임 변경
     @Override
     @Transactional
@@ -222,23 +240,5 @@ public class GroCommandServiceImpl implements GroCommandService {
         groRepository.save(gro);
 
         return GroConverter.toUpdateResponseDTO(gro);
-    }
-
-    @Transactional(readOnly = true)
-    public String validateNickname(String raw) {
-        if (raw == null) {
-            throw new GroHandler(ErrorStatus.GRO_NICKNAME_LENGTH_INVALID);
-        }
-        final String name = raw.trim(); // 공백 제거
-        if (name.isEmpty()) {
-            throw new GroHandler(ErrorStatus.GRO_NICKNAME_LENGTH_INVALID);
-        }
-
-        // 닉네임 길이 체크: 2~8자
-        final int len = name.codePointCount(0, name.length());
-        if (len < 2 || len > 8) {
-            throw new GroHandler(ErrorStatus.GRO_NICKNAME_LENGTH_INVALID);
-        }
-        return name;
     }
 }
