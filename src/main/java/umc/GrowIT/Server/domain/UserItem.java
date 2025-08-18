@@ -17,12 +17,12 @@ public class UserItem extends BaseEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    // 아이템 착용 여부
     @Enumerated(EnumType.STRING)
     private ItemStatus status;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id", nullable = false)
-//    @OnDelete(action = OnDeleteAction.CASCADE)
     private User user;
 
     @ManyToOne(fetch = FetchType.LAZY)
@@ -39,15 +39,4 @@ public class UserItem extends BaseEntity {
     }
 
     public void setStatus(ItemStatus status) { this.status = status; }
-
-    // 착용상태(status)를 바꾸는 메서드
-    public void toggleStatus() {
-        System.out.println("변경전 상태 : " + this.status);
-        if (this.status == ItemStatus.EQUIPPED) {
-            this.status = ItemStatus.UNEQUIPPED;
-        } else {
-            this.status = ItemStatus.EQUIPPED;
-        }
-        System.out.println("변경후 상태 : " + this.status);
-    }
 }

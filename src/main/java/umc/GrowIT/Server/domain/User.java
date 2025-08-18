@@ -23,35 +23,41 @@ public class User extends BaseEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    // 메인이메일
     @Column(unique = true, length = 50)
     private String primaryEmail;
 
+    // 비밀번호
     @Column(nullable = false, length = 30)
     private String password;
 
+    // 사용자 이름
     @Column(nullable = false, length = 20)
     private String name;
 
+    // 사용자 활성화 여부
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private UserStatus status;
 
+    // 사용자 현재 크레딧
     @Column(nullable = false)
     @ColumnDefault("0")
     private Integer currentCredit;
 
+    // 사용자 총 크레딧
     @Column(nullable = false)
     @ColumnDefault("0")
     private Integer totalCredit;
 
+    // 사용자 권한
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private Role role;
 
-    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
     private List<UserChallenge> userChallenges = new ArrayList<>();
 
-    @Setter
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
     private List<UserTerm> userTerms = new ArrayList<>();
 
@@ -61,14 +67,12 @@ public class User extends BaseEntity {
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
     private List<OAuthAccount> oAuthAccounts = new ArrayList<>();
 
-    @Setter
-    @OneToOne(fetch = FetchType.LAZY, orphanRemoval = true)
+    @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "refresh_token_id", nullable = false)
     private RefreshToken refreshToken;
 
 //    @OneToOne(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
 //    private RefreshToken refreshToken;
-
 
 
     public void encodePassword(String password) {
@@ -84,7 +88,8 @@ public class User extends BaseEntity {
     public void updateCurrentCredit(Integer currentCredit) {
         this.currentCredit = currentCredit;
     }
-    public void updateTotalCredit(Integer totalCredit){
+
+    public void updateTotalCredit(Integer totalCredit) {
         this.totalCredit = totalCredit;
     }
 
@@ -97,4 +102,11 @@ public class User extends BaseEntity {
         this.password = password;
     }
 
+    public void setUserTerms(List<UserTerm> userTerms) {
+        this.userTerms = userTerms;
+    }
+
+    public void setRefreshToken(RefreshToken refreshTokenEntity) {
+        this.refreshToken = refreshTokenEntity;
+    }
 }

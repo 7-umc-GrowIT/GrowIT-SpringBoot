@@ -18,6 +18,7 @@ public class Keyword extends BaseEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    // 감정 키워드명
     @Column(nullable = false, length = 20)
     private String name;
 

@@ -7,8 +7,8 @@ import umc.GrowIT.Server.domain.common.BaseEntity;
 @Entity
 @Getter
 @Builder
-@NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class WithdrawalReason extends BaseEntity {
 
     @Id

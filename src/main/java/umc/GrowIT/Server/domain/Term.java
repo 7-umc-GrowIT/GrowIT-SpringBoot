@@ -19,12 +19,15 @@ public class Term extends BaseEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    // 약관 제목
     @Column(nullable = false, length = 50)
     private String title;
 
+    // 약관 내용
     @Column(nullable = false, columnDefinition = "TEXT")
     private String content;
 
+    // 약관 타입 (필수 or 선택)
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private TermType type;

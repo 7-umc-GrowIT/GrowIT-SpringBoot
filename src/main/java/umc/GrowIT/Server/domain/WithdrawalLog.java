@@ -17,9 +17,11 @@ public class WithdrawalLog extends BaseEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    // 가입일
     @Column(nullable = false)
     private LocalDateTime joinedAt;
 
+    // 탈퇴일
     @Column(nullable = false)
     private LocalDateTime withdrawalAt;
 

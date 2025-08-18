@@ -2,8 +2,6 @@ package umc.GrowIT.Server.domain;
 
 import jakarta.persistence.*;
 import lombok.*;
-import org.hibernate.annotations.OnDelete;
-import org.hibernate.annotations.OnDeleteAction;
 import umc.GrowIT.Server.domain.common.BaseEntity;
 import umc.GrowIT.Server.domain.enums.Provider;
 
@@ -18,17 +16,19 @@ public class OAuthAccount extends BaseEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    // 소셜 고유ID
     private Long providerId;
 
+    // 소셜로그인 종류
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private Provider provider;
 
+    // 이메일
     @Column(nullable = false)
     private String email;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id", nullable = false)
-//    @OnDelete(action = OnDeleteAction.CASCADE)
     private User user;
 }

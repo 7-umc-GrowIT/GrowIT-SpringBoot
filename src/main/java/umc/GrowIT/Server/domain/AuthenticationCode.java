@@ -19,7 +19,7 @@ public class AuthenticationCode extends BaseEntity {
     private Long id;
 
     // 이메일
-    @Column(length = 50, nullable = false)
+    @Column(nullable = false, length = 50)
     private String email;
 
     // 인증 코드

@@ -18,9 +18,11 @@ public class RefreshToken extends BaseEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    // RT값
     @Column(nullable = false, length = 512)
     private String refreshToken;
 
+    // 만료일
     @Column(nullable = false)
     private LocalDateTime expiryDate;
 
