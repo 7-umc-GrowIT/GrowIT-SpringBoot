@@ -91,9 +91,6 @@ public class GroCommandServiceImpl implements GroCommandService {
         }
     }
 
-
-
-
     @Transactional(readOnly = true)
     public String validateNickname(String raw) {
         if (raw == null) {
