@@ -6,7 +6,5 @@ import umc.GrowIT.Server.web.dto.GroDTO.GroResponseDTO;
 public interface GroCommandService {
     GroResponseDTO.CreateResponseDTO createGro(Long userId, String nickname, String backgroundItem);
 
-    GroResponseDTO.GroAndEquippedItemsDTO getGroAndEquippedItems(Long userId);
-
     GroResponseDTO.NicknameResponseDTO updateNickname(Long userId, GroRequestDTO.NicknameRequestDTO nicknameDTO);
 }
