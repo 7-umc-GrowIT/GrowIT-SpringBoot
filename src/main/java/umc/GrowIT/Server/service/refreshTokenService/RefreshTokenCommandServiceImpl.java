@@ -66,4 +66,9 @@ public class RefreshTokenCommandServiceImpl implements RefreshTokenCommandServic
 
     }
 
+    @Override
+    @Transactional
+    public void deleteRefreshToken(RefreshToken refreshToken) {
+        refreshTokenRepository.delete(refreshToken);
+    }
 }

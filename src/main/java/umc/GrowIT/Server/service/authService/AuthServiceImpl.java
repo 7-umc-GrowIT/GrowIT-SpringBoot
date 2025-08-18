@@ -8,18 +8,22 @@ import lombok.RequiredArgsConstructor;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.thymeleaf.TemplateEngine;
 import org.thymeleaf.context.Context;
 import umc.GrowIT.Server.apiPayload.code.status.ErrorStatus;
 import umc.GrowIT.Server.apiPayload.exception.AuthHandler;
 import umc.GrowIT.Server.apiPayload.exception.UserHandler;
 import umc.GrowIT.Server.converter.AuthenticationCodeConverter;
+import umc.GrowIT.Server.converter.UserConverter;
 import umc.GrowIT.Server.domain.AuthenticationCode;
+import umc.GrowIT.Server.domain.RefreshToken;
 import umc.GrowIT.Server.domain.User;
 import umc.GrowIT.Server.domain.enums.AuthType;
 import umc.GrowIT.Server.domain.enums.CodeStatus;
 import umc.GrowIT.Server.repository.AuthenticationCodeRepository;
 import umc.GrowIT.Server.repository.UserRepository;
+import umc.GrowIT.Server.service.refreshTokenService.RefreshTokenCommandService;
 import umc.GrowIT.Server.service.userService.UserCommandService;
 import umc.GrowIT.Server.web.dto.AuthDTO.AuthRequestDTO;
 import umc.GrowIT.Server.web.dto.AuthDTO.AuthResponseDTO;
@@ -28,8 +32,6 @@ import java.time.LocalDateTime;
 
 
 import org.springframework.beans.factory.annotation.Value;
-
-import static umc.GrowIT.Server.domain.enums.UserStatus.INACTIVE;
 
 @Service
 @RequiredArgsConstructor
@@ -40,6 +42,7 @@ public class AuthServiceImpl implements AuthService {
     private final JavaMailSender javaMailSender;
     private final TemplateEngine templateEngine;
     private final AuthenticationCodeRepository authenticationCodeRepository;
+    private final RefreshTokenCommandService refreshTokenCommandService;
 
     @Value("${spring.mail.username}")
     private String fromEmail;
@@ -149,4 +152,30 @@ public class AuthServiceImpl implements AuthService {
         AuthenticationCode newAuthenticationCode = AuthenticationCodeConverter.toAuthenticationCode(email, authenticationCode);
         return authenticationCodeRepository.save(newAuthenticationCode);
     }
+
+    @Override
+    @Transactional
+    public AuthResponseDTO.LogoutResponseDTO logout(Long userId){
+
+        // 1. 사용자 조회
+        User user = userRepository.findById(userId)
+                .orElseThrow(()-> new UserHandler(ErrorStatus.USER_NOT_FOUND));
+
+        // 2. RefreshToken이 있는 경우에만 삭제 처리
+        if (user.getRefreshToken() != null) {
+            // RefreshToken DB에서 삭제
+            RefreshToken refreshToken = user.getRefreshToken();
+            user.deleteRefreshToken(); // User 엔티티의 refreshToken 필드를 null로 설정
+            userRepository.save(user);
+
+            // RefreshToken 엔티티 삭제
+            refreshTokenCommandService.deleteRefreshToken(refreshToken);
+        }
+
+        // 3. 성공 응답 반환 (이미 로그아웃된 상태여도 성공으로 처리)
+        return UserConverter.toLogoutDTO();
+
+
+    }
+
 }
