@@ -13,5 +13,5 @@ public interface RefreshTokenCommandService {
 
     TokenResponseDTO.AccessTokenDTO reissueToken(TokenRequestDTO.ReissueDTO reissueDTO);
 
-
+    void deleteRefreshToken(RefreshToken refreshToken);
 }

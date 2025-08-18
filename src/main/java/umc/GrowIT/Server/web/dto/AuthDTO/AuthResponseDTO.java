@@ -31,4 +31,12 @@ public class AuthResponseDTO {
         // TODO 디테일하게 결정 필요
         private String message; // ex) 인증이 완료되었습니다, 인증번호가 올바르지 않습니다
     }
+
+    @Getter
+    @Builder
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class LogoutResponseDTO {
+        private String message; // "로그아웃이 완료되었습니다."
+    }
 }
