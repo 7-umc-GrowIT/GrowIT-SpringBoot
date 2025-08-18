@@ -160,9 +160,6 @@ public class AuthServiceImpl implements AuthService {
         User user = userRepository.findById(userId)
                 .orElseThrow(()-> new UserHandler(ErrorStatus.USER_NOT_FOUND));
 
-        // 2. 이미 탈퇴한 회원인지 확인
-        userCommandService.checkUserInactive(user);
-
         // 3. RefreshToken이 있는 경우에만 삭제 처리
         if (user.getRefreshToken() != null) {
             // RefreshToken DB에서 삭제
