@@ -160,7 +160,7 @@ public class AuthServiceImpl implements AuthService {
         User user = userRepository.findById(userId)
                 .orElseThrow(()-> new UserHandler(ErrorStatus.USER_NOT_FOUND));
 
-        // 3. RefreshToken이 있는 경우에만 삭제 처리
+        // 2. RefreshToken이 있는 경우에만 삭제 처리
         if (user.getRefreshToken() != null) {
             // RefreshToken DB에서 삭제
             RefreshToken refreshToken = user.getRefreshToken();
@@ -171,7 +171,7 @@ public class AuthServiceImpl implements AuthService {
             refreshTokenCommandService.deleteRefreshToken(refreshToken);
         }
 
-        // 4. 성공 응답 반환 (이미 로그아웃된 상태여도 성공으로 처리)
+        // 3. 성공 응답 반환 (이미 로그아웃된 상태여도 성공으로 처리)
         return AuthResponseDTO.LogoutResponseDTO.builder()
                 .message("로그아웃이 완료되었습니다.")
                 .build();
