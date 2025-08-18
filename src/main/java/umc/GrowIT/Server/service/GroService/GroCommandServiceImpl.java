@@ -112,7 +112,7 @@ public class GroCommandServiceImpl implements GroCommandService {
     // 그로 닉네임 변경
     @Override
     @Transactional
-    public GroResponseDTO.NicknameResponseDTO updateNickname(Long userId, GroRequestDTO.NicknameRequestDTO nicknameDTO) {
+    public void updateNickname(Long userId, String nickname) {
         // 사용자 조회하고 없으면 에러 발생
         userRepository.findById(userId)
                 .orElseThrow(() -> new UserHandler(ErrorStatus.USER_NOT_FOUND));
@@ -122,11 +122,11 @@ public class GroCommandServiceImpl implements GroCommandService {
                 .orElseThrow(() -> new GroHandler(ErrorStatus.GRO_NOT_FOUND));
 
         // 닉네임 형식/길이 검증
-        final String newName = validateNickname(nicknameDTO.getName());
+        final String newName = validateNickname(nickname);
 
         // 닉네임에 변경사항 없는 경우 바로 반환
         if (newName.equals(gro.getName())) {
-            return GroConverter.toUpdateResponseDTO(gro);
+            return;
         }
 
         // 본인 제외 중복 검사
@@ -135,7 +135,5 @@ public class GroCommandServiceImpl implements GroCommandService {
         // 수정된 닉네임 저장
         gro.setName(newName);
         groRepository.save(gro);
-
-        return GroConverter.toUpdateResponseDTO(gro);
     }
 }

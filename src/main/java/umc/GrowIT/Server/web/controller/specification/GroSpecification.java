@@ -60,5 +60,5 @@ public interface GroSpecification {
             @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "GRO4001", description = "❌ 이미 사용 중인 닉네임입니다.", content = @Content(schema = @Schema(implementation = ApiResponse.class))),
             @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "GRO4002", description = "❌ 닉네임은 2자에서 8자 사이여야 합니다.", content = @Content(schema = @Schema(implementation = ApiResponse.class))),
     })
-    ApiResponse<GroResponseDTO.NicknameResponseDTO> updateNickname(@RequestBody GroRequestDTO.NicknameRequestDTO request);
+    ApiResponse<Void> updateNickname(@RequestBody GroRequestDTO.NicknameRequestDTO request);
 }

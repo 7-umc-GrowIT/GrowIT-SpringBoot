@@ -54,10 +54,4 @@ public class GroConverter {
                 .equippedItems(equippedItems)
                 .build();
     }
-
-    public static GroResponseDTO.NicknameResponseDTO toUpdateResponseDTO(Gro gro) {
-        return GroResponseDTO.NicknameResponseDTO.builder()
-                .name(gro.getName())
-                .build();
-    }
 }

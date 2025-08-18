@@ -48,12 +48,12 @@ public class GroController implements GroSpecification {
 
     @Override
     @PatchMapping("")
-    public ApiResponse<GroResponseDTO.NicknameResponseDTO> updateNickname(@RequestBody GroRequestDTO.NicknameRequestDTO nicknameDTO) {
+    public ApiResponse<Void> updateNickname(@RequestBody GroRequestDTO.NicknameRequestDTO nicknameDTO) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         Long userId = (Long) authentication.getPrincipal();
 
-        GroResponseDTO.NicknameResponseDTO result = groCommandService.updateNickname(userId, nicknameDTO);
+        groCommandService.updateNickname(userId, nicknameDTO.getName());
 
-        return ApiResponse.onSuccess(result);
+        return ApiResponse.onSuccess();
     }
 }
