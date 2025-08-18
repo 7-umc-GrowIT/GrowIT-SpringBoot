@@ -1,6 +1,8 @@
 package umc.GrowIT.Server.web.dto.GroDTO;
 
 import io.swagger.v3.oas.annotations.media.Schema;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -60,5 +62,13 @@ public class GroResponseDTO {
         private String name; // 아이템 이름
         private ItemCategory category; // 아이템 이름
         private String itemImageUrl; // 아이템 이미지 URL
+    }
+
+    @Builder
+    @Getter
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class NicknameResponseDTO {
+        private String name; // 수정된 그로의 닉네임
     }
 }

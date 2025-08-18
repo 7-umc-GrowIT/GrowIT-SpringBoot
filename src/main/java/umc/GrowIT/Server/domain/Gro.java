@@ -9,6 +9,7 @@ import org.hibernate.annotations.OnDeleteAction;
 import umc.GrowIT.Server.domain.common.BaseEntity;
 
 @Entity
+@Setter
 @Getter
 @Builder
 @NoArgsConstructor(access = AccessLevel.PROTECTED)

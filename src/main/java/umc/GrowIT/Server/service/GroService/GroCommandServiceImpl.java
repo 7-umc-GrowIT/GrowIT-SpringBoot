@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import umc.GrowIT.Server.apiPayload.code.status.ErrorStatus;
+import umc.GrowIT.Server.apiPayload.exception.ChallengeHandler;
 import umc.GrowIT.Server.apiPayload.exception.GroHandler;
 import umc.GrowIT.Server.apiPayload.exception.ItemHandler;
 import umc.GrowIT.Server.apiPayload.exception.UserHandler;
@@ -23,7 +24,9 @@ import umc.GrowIT.Server.repository.GroRepository.GroRepository;
 import umc.GrowIT.Server.repository.ItemRepository.ItemRepository;
 import umc.GrowIT.Server.repository.UserItemRepository;
 import umc.GrowIT.Server.repository.UserRepository;
+import umc.GrowIT.Server.web.dto.GroDTO.GroRequestDTO;
 import umc.GrowIT.Server.web.dto.GroDTO.GroResponseDTO;
+import umc.GrowIT.Server.web.dto.UserDTO.UserRequestDTO;
 
 import java.util.Date;
 import java.util.List;
@@ -32,10 +35,12 @@ import java.util.Optional;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
+import static umc.GrowIT.Server.domain.enums.UserStatus.INACTIVE;
+
 @Service
 @RequiredArgsConstructor
 @Slf4j
-public class GroCommandServiceImpl implements GroCommandService{
+public class GroCommandServiceImpl implements GroCommandService {
 
     private final AmazonS3 amazonS3;
     private final GroRepository groRepository;
@@ -51,11 +56,11 @@ public class GroCommandServiceImpl implements GroCommandService{
     public GroResponseDTO.CreateResponseDTO createGro(Long userId, String nickname, String backgroundItem) {
 
         //사용자의 그로가 이미 존재하는 경우
-        if(groRepository.existsByUserId(userId))
+        if (groRepository.existsByUserId(userId))
             throw new GroHandler(ErrorStatus.GRO_ALREADY_EXISTS);
 
         // 닉네임 체크
-        checkNickname(nickname);
+        checkNickname(nickname, userId);
 
         // 유저 조회
         User user = userRepository.findById(userId)
@@ -68,7 +73,6 @@ public class GroCommandServiceImpl implements GroCommandService{
         //기본 핑크색 PLANT 조회
         Item basicPlantItem = itemRepository.findByName("핑크 화분")
                 .orElseThrow(() -> new ItemHandler(ErrorStatus.ITEM_NOT_FOUND));
-
 
 
         // Gro 생성 및 저장
@@ -88,12 +92,20 @@ public class GroCommandServiceImpl implements GroCommandService{
 
 
     @Transactional(readOnly = true)
-    public void checkNickname(String nickname){
+    public void checkNickname(String nickname, Long excludeUserId) {
 
         Optional<Gro> gro = groRepository.findByName(nickname);
 
-        if (gro.isPresent()){
-            throw new GroHandler(ErrorStatus.GRO_NICKNAME_ALREADY_EXISTS);
+        if (gro.isPresent()) {
+            if (excludeUserId == null) {
+                // 생성 시 -> 중복 검사
+                throw new GroHandler(ErrorStatus.GRO_NICKNAME_ALREADY_EXISTS);
+            }
+            // 수정 시 -> 본인의 그로 닉네임을 제외한 중복 검사
+            Long ownerId = gro.get().getUser().getId();
+            if (!ownerId.equals(excludeUserId)) {
+                throw new GroHandler(ErrorStatus.GRO_NICKNAME_ALREADY_EXISTS);
+            }
         }
     }
 
@@ -180,5 +192,53 @@ public class GroCommandServiceImpl implements GroCommandService{
                             return amazonS3.generatePresignedUrl(generatePresignedUrlRequest).toString();
                         }
                 ));
+    }
+
+    // 그로 닉네임 변경
+    @Override
+    @Transactional
+    public GroResponseDTO.NicknameResponseDTO updateNickname(Long userId, GroRequestDTO.NicknameRequestDTO nicknameDTO) {
+        // 사용자 조회하고 없으면 에러 발생
+        userRepository.findById(userId)
+                .orElseThrow(() -> new UserHandler(ErrorStatus.USER_NOT_FOUND));
+
+        //  그로 조회하고 없으면 에러 발생
+        Gro gro = groRepository.findByUserId(userId)
+                .orElseThrow(() -> new GroHandler(ErrorStatus.GRO_NOT_FOUND));
+
+        // 닉네임 형식/길이 검증
+        final String newName = validateNickname(nicknameDTO.getName());
+
+        // 닉네임에 변경사항 없는 경우 바로 반환
+        if (newName.equals(gro.getName())) {
+            return GroConverter.toUpdateResponseDTO(gro);
+        }
+
+        // 본인 제외 중복 검사
+        checkNickname(newName, userId);
+
+        // 수정된 닉네임 저장
+        gro.setName(newName);
+        groRepository.save(gro);
+
+        return GroConverter.toUpdateResponseDTO(gro);
+    }
+
+    @Transactional(readOnly = true)
+    public String validateNickname(String raw) {
+        if (raw == null) {
+            throw new GroHandler(ErrorStatus.GRO_NICKNAME_LENGTH_INVALID);
+        }
+        final String name = raw.trim(); // 공백 제거
+        if (name.isEmpty()) {
+            throw new GroHandler(ErrorStatus.GRO_NICKNAME_LENGTH_INVALID);
+        }
+
+        // 닉네임 길이 체크: 2~8자
+        final int len = name.codePointCount(0, name.length());
+        if (len < 2 || len > 8) {
+            throw new GroHandler(ErrorStatus.GRO_NICKNAME_LENGTH_INVALID);
+        }
+        return name;
     }
 }

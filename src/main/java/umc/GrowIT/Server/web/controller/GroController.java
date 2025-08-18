@@ -26,7 +26,7 @@ import umc.GrowIT.Server.web.dto.GroDTO.GroResponseDTO;
 public class GroController implements GroSpecification {
     private final GroCommandService groCommandService;
 
-    public ApiResponse<GroResponseDTO.CreateResponseDTO> createGro(@Valid @RequestBody GroRequestDTO request) {
+    public ApiResponse<GroResponseDTO.CreateResponseDTO> createGro(@Valid @RequestBody GroRequestDTO.CreateRequestDTO request) {
 
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         Long userId = (Long) authentication.getPrincipal(); //사용자 식별 id
@@ -51,4 +51,14 @@ public class GroController implements GroSpecification {
         return ApiResponse.onSuccess(result);
     }
 
+    @Override
+    @PatchMapping("")
+    public ApiResponse<GroResponseDTO.NicknameResponseDTO> updateNickname(@RequestBody GroRequestDTO.NicknameRequestDTO nicknameDTO) {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        Long userId = (Long) authentication.getPrincipal();
+
+        GroResponseDTO.NicknameResponseDTO result = groCommandService.updateNickname(userId, nicknameDTO);
+
+        return ApiResponse.onSuccess(result);
+    }
 }

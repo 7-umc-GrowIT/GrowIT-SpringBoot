@@ -90,7 +90,7 @@ public enum ErrorStatus implements BaseErrorCode {
 
     //그로 관련
     GRO_NICKNAME_ALREADY_EXISTS(HttpStatus.CONFLICT, "GRO4001", "이미 사용 중인 닉네임입니다."),
-    GRO_NICKNAME_LENGTH_INVALID(HttpStatus.BAD_REQUEST, "Gro4002", "닉네임은 2글자에서 20글자 사이여야 합니다."),
+    GRO_NICKNAME_LENGTH_INVALID(HttpStatus.BAD_REQUEST, "GRO4002", "닉네임은 2글자에서 20글자 사이여야 합니다."),
     GRO_NOT_FOUND(HttpStatus.NOT_FOUND, "GRO4003", "그로에 대한 정보가 존재하지 않습니다."),
     GRO_ALREADY_EXISTS(HttpStatus.CONFLICT, "GRO4001", "사용자의 그로가 이미 존재합니다."),
     GRO_LEVEL_INVALID(HttpStatus.INTERNAL_SERVER_ERROR, "GRO5001", "그로 레벨이 유효하지 않습니다."),
