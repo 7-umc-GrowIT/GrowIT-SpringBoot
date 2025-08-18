@@ -1,4 +1,4 @@
-package umc.GrowIT.Server.service.ItemService;
+package umc.GrowIT.Server.service.itemService;
 
 import com.amazonaws.HttpMethod;
 import com.amazonaws.services.s3.AmazonS3;
@@ -12,7 +12,7 @@ import umc.GrowIT.Server.converter.ItemConverter;
 import umc.GrowIT.Server.domain.Item;
 import umc.GrowIT.Server.domain.enums.ItemCategory;
 import umc.GrowIT.Server.domain.enums.ItemStatus;
-import umc.GrowIT.Server.repository.ItemRepository.ItemRepository;
+import umc.GrowIT.Server.repository.ItemRepository;
 import umc.GrowIT.Server.repository.UserItemRepository;
 import umc.GrowIT.Server.web.dto.ItemDTO.ItemResponseDTO;
 

@@ -1,10 +1,8 @@
 package umc.GrowIT.Server.converter;
 
 import umc.GrowIT.Server.domain.Item;
-import umc.GrowIT.Server.domain.User;
 import umc.GrowIT.Server.domain.UserItem;
 import umc.GrowIT.Server.domain.enums.ItemStatus;
-import umc.GrowIT.Server.repository.ItemRepository.ItemRepository;
 import umc.GrowIT.Server.web.dto.ItemDTO.ItemResponseDTO;
 import umc.GrowIT.Server.web.dto.ItemEquipDTO.ItemEquipResponseDTO;
 

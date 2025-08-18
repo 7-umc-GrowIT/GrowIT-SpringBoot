@@ -1,4 +1,4 @@
-package umc.GrowIT.Server.service.GroService;
+package umc.GrowIT.Server.service.groService;
 
 import umc.GrowIT.Server.web.dto.GroDTO.GroResponseDTO;
 

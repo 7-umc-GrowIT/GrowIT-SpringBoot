@@ -1,14 +1,11 @@
-package umc.GrowIT.Server.repository.diaryRepository;
+package umc.GrowIT.Server.repository;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import umc.GrowIT.Server.domain.Diary;
-import umc.GrowIT.Server.domain.Item;
-import umc.GrowIT.Server.domain.enums.ItemCategory;
 
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 

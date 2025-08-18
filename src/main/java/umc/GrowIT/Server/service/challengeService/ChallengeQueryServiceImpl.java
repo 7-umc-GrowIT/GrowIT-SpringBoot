@@ -1,4 +1,4 @@
-package umc.GrowIT.Server.service.ChallengeService;
+package umc.GrowIT.Server.service.challengeService;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -12,12 +12,10 @@ import umc.GrowIT.Server.converter.ChallengeConverter;
 import umc.GrowIT.Server.domain.Diary;
 import umc.GrowIT.Server.domain.UserChallenge;
 import umc.GrowIT.Server.domain.enums.UserChallengeType;
-import umc.GrowIT.Server.repository.ChallengeKeywordRepository;
 import umc.GrowIT.Server.repository.ChallengeRepository;
 import umc.GrowIT.Server.repository.UserChallengeRepository;
-import umc.GrowIT.Server.service.S3Service.S3Service;
-import umc.GrowIT.Server.repository.diaryRepository.DiaryRepository;
-import umc.GrowIT.Server.service.KeywordService.KeywordService;
+import umc.GrowIT.Server.repository.DiaryRepository;
+import umc.GrowIT.Server.service.keywordService.KeywordService;
 import umc.GrowIT.Server.web.dto.ChallengeDTO.ChallengeResponseDTO;
 
 import java.time.LocalDate;

@@ -28,7 +28,7 @@ public class User extends BaseEntity {
     private String primaryEmail;
 
     // 비밀번호
-    @Column(nullable = false, length = 30)
+    @Column(nullable = false, length = 100)
     private String password;
 
     // 사용자 이름

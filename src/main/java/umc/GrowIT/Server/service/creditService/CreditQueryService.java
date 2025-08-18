@@ -1,4 +1,4 @@
-package umc.GrowIT.Server.service.CreditService;
+package umc.GrowIT.Server.service.creditService;
 
 import umc.GrowIT.Server.web.dto.CreditDTO.CreditResponseDTO;
 

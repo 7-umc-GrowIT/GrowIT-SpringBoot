@@ -1,4 +1,4 @@
-package umc.GrowIT.Server.service.ChallengeService;
+package umc.GrowIT.Server.service.challengeService;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -10,7 +10,6 @@ import umc.GrowIT.Server.converter.ChallengeConverter;
 import umc.GrowIT.Server.domain.*;
 import umc.GrowIT.Server.domain.enums.UserChallengeType;
 import umc.GrowIT.Server.repository.*;
-import umc.GrowIT.Server.service.S3Service.S3Service;
 import umc.GrowIT.Server.web.dto.ChallengeDTO.ChallengeRequestDTO;
 import umc.GrowIT.Server.web.dto.ChallengeDTO.ChallengeResponseDTO;
 

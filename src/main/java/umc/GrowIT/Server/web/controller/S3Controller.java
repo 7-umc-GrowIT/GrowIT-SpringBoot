@@ -2,15 +2,12 @@ package umc.GrowIT.Server.web.controller;
 
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import umc.GrowIT.Server.apiPayload.ApiResponse;
-import umc.GrowIT.Server.service.S3Service.S3Service;
-import umc.GrowIT.Server.web.controller.specification.ChallengeSpecification;
+import umc.GrowIT.Server.service.s3Service.S3Service;
 import umc.GrowIT.Server.web.controller.specification.S3Specification;
 
 import java.util.Map;
-import java.util.UUID;
 
 @Tag(name="S3", description = "S3 관련 API")
 @RestController
