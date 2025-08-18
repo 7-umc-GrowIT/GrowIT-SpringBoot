@@ -18,8 +18,10 @@ import umc.GrowIT.Server.web.dto.DiaryDTO.DiaryResponseDTO;
 @RequiredArgsConstructor
 @RequestMapping("/diaries")
 public class DiaryController implements DiarySpecification {
+
     private final DiaryQueryService diaryQueryService;
     private final DiaryCommandService diaryCommandService;
+
     @GetMapping("/dates")
     public ApiResponse<DiaryResponseDTO.DiaryDateListDTO> getDiaryDate(@RequestParam Integer year,
                                                                        @RequestParam Integer month){

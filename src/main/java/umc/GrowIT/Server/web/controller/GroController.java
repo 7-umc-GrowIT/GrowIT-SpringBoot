@@ -24,6 +24,7 @@ import umc.GrowIT.Server.web.dto.GroDTO.GroResponseDTO;
 @RequiredArgsConstructor
 @RequestMapping("/characters")
 public class GroController implements GroSpecification {
+
     private final GroCommandService groCommandService;
 
     public ApiResponse<GroResponseDTO.CreateResponseDTO> createGro(@Valid @RequestBody GroRequestDTO request) {

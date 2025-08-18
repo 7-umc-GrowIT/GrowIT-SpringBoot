@@ -1,5 +1,6 @@
 package umc.GrowIT.Server.web.controller;
 
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -11,9 +12,10 @@ import umc.GrowIT.Server.web.controller.specification.S3Specification;
 import java.util.Map;
 import java.util.UUID;
 
+@Tag(name="S3", description = "S3 관련 API")
 @RestController
-@RequestMapping("/s3")
 @RequiredArgsConstructor
+@RequestMapping("/s3")
 public class S3Controller implements S3Specification {
 
     private final S3Service s3Service;
@@ -32,6 +34,5 @@ public class S3Controller implements S3Specification {
         String presignedUrl = s3Service.generatePresignedUrlForDownload(folder, fileName);
         return ApiResponse.onSuccess(presignedUrl);
     }
-
 }
 
