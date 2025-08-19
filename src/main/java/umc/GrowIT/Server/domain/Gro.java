@@ -9,7 +9,6 @@ import org.hibernate.annotations.OnDeleteAction;
 import umc.GrowIT.Server.domain.common.BaseEntity;
 
 @Entity
-@Setter
 @Getter
 @Builder
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
@@ -31,4 +30,6 @@ public class Gro extends BaseEntity {
     @Column(nullable = false)
     @ColumnDefault("1")
     private Integer level;
+
+    public void setName(String name) { this.name = name; }
 }
