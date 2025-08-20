@@ -63,12 +63,4 @@ public class GroResponseDTO {
         private ItemCategory category; // 아이템 이름
         private String itemImageUrl; // 아이템 이미지 URL
     }
-
-    @Builder
-    @Getter
-    @NoArgsConstructor
-    @AllArgsConstructor
-    public static class NicknameResponseDTO {
-        private String name; // 수정된 그로의 닉네임
-    }
 }

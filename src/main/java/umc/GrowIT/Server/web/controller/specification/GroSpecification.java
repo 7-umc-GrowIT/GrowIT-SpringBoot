@@ -54,11 +54,12 @@ public interface GroSpecification {
     ApiResponse<GroResponseDTO.GroAndEquippedItemsDTO> getGroAndEquippedItems();
 
     @PatchMapping("")
-    @Operation(summary = "그로 닉네임 변경", description = "그로의 닉네임을 변경합니다.")
+    @Operation(summary = "그로 닉네임 변경", description = "그로의 닉네임을 변경합니다. 닉네임을 2~8자 사이로 입력해주세요!")
     @ApiResponses({
             @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "COMMON200", description = "⭕ SUCCESS"),
             @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "GRO4001", description = "❌ 이미 사용 중인 닉네임입니다.", content = @Content(schema = @Schema(implementation = ApiResponse.class))),
             @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "GRO4002", description = "❌ 닉네임은 2자에서 8자 사이여야 합니다.", content = @Content(schema = @Schema(implementation = ApiResponse.class))),
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "COMMON400", description = "❌ BAD, 잘못된 요청", content = @Content(schema = @Schema(implementation = ApiResponse.class)))
     })
-    ApiResponse<Void> updateNickname(@RequestBody GroRequestDTO.NicknameRequestDTO request);
+    ApiResponse<Void> updateNickname(@Valid @RequestBody GroRequestDTO.NicknameRequestDTO request);
 }

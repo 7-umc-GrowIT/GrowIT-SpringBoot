@@ -18,7 +18,6 @@ import umc.GrowIT.Server.repository.GroRepository.GroRepository;
 import umc.GrowIT.Server.repository.ItemRepository.ItemRepository;
 import umc.GrowIT.Server.repository.UserItemRepository;
 import umc.GrowIT.Server.repository.UserRepository;
-import umc.GrowIT.Server.web.dto.GroDTO.GroRequestDTO;
 import umc.GrowIT.Server.web.dto.GroDTO.GroResponseDTO;
 
 import java.util.Optional;
@@ -42,7 +41,7 @@ public class GroCommandServiceImpl implements GroCommandService {
             throw new GroHandler(ErrorStatus.GRO_ALREADY_EXISTS);
 
         // 닉네임 체크
-        checkNickname(nickname, userId);
+        checkNickname(nickname);
 
         // 유저 조회
         User user = userRepository.findById(userId)
@@ -72,68 +71,36 @@ public class GroCommandServiceImpl implements GroCommandService {
         return GroConverter.toGroResponseDTO(savedGro);
     }
 
-
-    @Transactional(readOnly = true)
-    public void checkNickname(String nickname, Long excludeUserId) {
+    public void checkNickname(String nickname){
 
         Optional<Gro> gro = groRepository.findByName(nickname);
 
-        if (gro.isPresent()) {
-            if (excludeUserId == null) {
-                // 생성 시 -> 중복 검사
-                throw new GroHandler(ErrorStatus.GRO_NICKNAME_ALREADY_EXISTS);
-            }
-            // 수정 시 -> 본인의 그로 닉네임을 제외한 중복 검사
-            Long ownerId = gro.get().getUser().getId();
-            if (!ownerId.equals(excludeUserId)) {
-                throw new GroHandler(ErrorStatus.GRO_NICKNAME_ALREADY_EXISTS);
-            }
+        if (gro.isPresent()){
+            throw new GroHandler(ErrorStatus.GRO_NICKNAME_ALREADY_EXISTS);
         }
-    }
-
-    @Transactional(readOnly = true)
-    public String validateNickname(String raw) {
-        if (raw == null) {
-            throw new GroHandler(ErrorStatus.GRO_NICKNAME_LENGTH_INVALID);
-        }
-        final String name = raw.trim(); // 공백 제거
-        if (name.isEmpty()) {
-            throw new GroHandler(ErrorStatus.GRO_NICKNAME_LENGTH_INVALID);
-        }
-
-        // 닉네임 길이 체크: 2~8자
-        final int len = name.codePointCount(0, name.length());
-        if (len < 2 || len > 8) {
-            throw new GroHandler(ErrorStatus.GRO_NICKNAME_LENGTH_INVALID);
-        }
-        return name;
     }
 
     // 그로 닉네임 변경
     @Override
     @Transactional
     public void updateNickname(Long userId, String nickname) {
-        // 사용자 조회하고 없으면 에러 발생
+        // 사용자가 존재하지 않으면 에러 발생
         userRepository.findById(userId)
                 .orElseThrow(() -> new UserHandler(ErrorStatus.USER_NOT_FOUND));
 
-        //  그로 조회하고 없으면 에러 발생
+        //  그로가 존재하지 않으면 에러 발생
         Gro gro = groRepository.findByUserId(userId)
                 .orElseThrow(() -> new GroHandler(ErrorStatus.GRO_NOT_FOUND));
 
-        // 닉네임 형식/길이 검증
-        final String newName = validateNickname(nickname);
-
         // 닉네임에 변경사항 없는 경우 바로 반환
-        if (newName.equals(gro.getName())) {
+        if (nickname.equals(gro.getName())) {
             return;
         }
 
         // 본인 제외 중복 검사
-        checkNickname(newName, userId);
+        checkNickname(nickname);
 
         // 수정된 닉네임 저장
-        gro.setName(newName);
-        groRepository.save(gro);
+        gro.setName(nickname);
     }
 }
