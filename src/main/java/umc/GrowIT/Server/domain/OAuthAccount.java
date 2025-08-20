@@ -17,6 +17,7 @@ public class OAuthAccount extends BaseEntity {
     private Long id;
 
     // 소셜 고유ID
+    @Column(nullable = false)
     private Long providerId;
 
     // 소셜로그인 종류

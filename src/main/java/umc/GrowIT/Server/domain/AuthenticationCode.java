@@ -32,6 +32,7 @@ public class AuthenticationCode extends BaseEntity {
 
     // 사용 가능 여부
     @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
     private CodeStatus status;
 
     // 인증 유효기간

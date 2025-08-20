@@ -42,7 +42,7 @@ public class UserChallenge extends BaseEntity {
     @Column(nullable = false)
     private LocalDateTime certificationDate;
 
-    // 날짜(?)
+    // 연관된 일기의 날짜 (작성날짜 X)
     @Column(nullable = false)
     private LocalDate date;
 
