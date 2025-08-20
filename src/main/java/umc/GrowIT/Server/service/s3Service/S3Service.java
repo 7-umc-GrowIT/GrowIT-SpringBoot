@@ -1,4 +1,4 @@
-package umc.GrowIT.Server.service.S3Service;
+package umc.GrowIT.Server.service.s3Service;
 
 import com.amazonaws.HttpMethod;
 import com.amazonaws.services.s3.AmazonS3;

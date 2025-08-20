@@ -1,4 +1,4 @@
-package umc.GrowIT.Server.service.ItemService;
+package umc.GrowIT.Server.service.itemService;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -11,7 +11,7 @@ import umc.GrowIT.Server.domain.Item;
 import umc.GrowIT.Server.domain.User;
 import umc.GrowIT.Server.domain.UserItem;
 import umc.GrowIT.Server.domain.enums.ItemStatus;
-import umc.GrowIT.Server.repository.ItemRepository.ItemRepository;
+import umc.GrowIT.Server.repository.ItemRepository;
 import umc.GrowIT.Server.repository.UserItemRepository;
 import umc.GrowIT.Server.repository.UserRepository;
 import umc.GrowIT.Server.web.dto.ItemDTO.ItemResponseDTO;

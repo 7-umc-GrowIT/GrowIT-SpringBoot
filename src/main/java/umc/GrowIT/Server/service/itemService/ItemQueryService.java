@@ -1,4 +1,4 @@
-package umc.GrowIT.Server.service.ItemService;
+package umc.GrowIT.Server.service.itemService;
 
 import umc.GrowIT.Server.domain.enums.ItemCategory;
 import umc.GrowIT.Server.web.dto.ItemDTO.ItemResponseDTO;

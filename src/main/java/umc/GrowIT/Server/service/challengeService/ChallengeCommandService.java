@@ -1,6 +1,5 @@
-package umc.GrowIT.Server.service.ChallengeService;
+package umc.GrowIT.Server.service.challengeService;
 
-import umc.GrowIT.Server.domain.enums.UserChallengeType;
 import umc.GrowIT.Server.web.dto.ChallengeDTO.ChallengeRequestDTO;
 import umc.GrowIT.Server.web.dto.ChallengeDTO.ChallengeResponseDTO;
 

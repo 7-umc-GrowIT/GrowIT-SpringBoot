@@ -1,6 +1,5 @@
-package umc.GrowIT.Server.service.ItemService;
+package umc.GrowIT.Server.service.itemService;
 
-import umc.GrowIT.Server.domain.enums.ItemStatus;
 import umc.GrowIT.Server.web.dto.ItemDTO.ItemResponseDTO;
 import umc.GrowIT.Server.web.dto.ItemEquipDTO.ItemEquipResponseDTO;
 

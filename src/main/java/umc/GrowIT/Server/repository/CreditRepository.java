@@ -1,4 +1,4 @@
-package umc.GrowIT.Server.repository.CreditRepository;
+package umc.GrowIT.Server.repository;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;

@@ -5,16 +5,13 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import umc.GrowIT.Server.apiPayload.code.status.ErrorStatus;
 import umc.GrowIT.Server.apiPayload.exception.DiaryHandler;
-import umc.GrowIT.Server.apiPayload.exception.GeneralException;
 import umc.GrowIT.Server.converter.DiaryConverter;
 import umc.GrowIT.Server.domain.Diary;
-import umc.GrowIT.Server.repository.ItemRepository.ItemRepository;
-import umc.GrowIT.Server.repository.diaryRepository.DiaryRepository;
+import umc.GrowIT.Server.repository.DiaryRepository;
 import umc.GrowIT.Server.web.dto.DiaryDTO.DiaryResponseDTO;
 
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor

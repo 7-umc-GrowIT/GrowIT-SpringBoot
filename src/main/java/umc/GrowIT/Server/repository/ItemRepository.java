@@ -1,15 +1,12 @@
-package umc.GrowIT.Server.repository.ItemRepository;
+package umc.GrowIT.Server.repository;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
-import org.springframework.data.repository.query.Param;
 import umc.GrowIT.Server.domain.Item;
-import umc.GrowIT.Server.domain.UserItem;
 import umc.GrowIT.Server.domain.enums.ItemCategory;
 import umc.GrowIT.Server.domain.enums.ItemStatus;
 
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
 
 public interface ItemRepository extends JpaRepository<Item, Long> {

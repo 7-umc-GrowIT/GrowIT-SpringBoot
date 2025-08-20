@@ -1,15 +1,11 @@
-package umc.GrowIT.Server.service.KeywordService;
+package umc.GrowIT.Server.service.keywordService;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import umc.GrowIT.Server.repository.KeywordRepository;
-import umc.GrowIT.Server.repository.diaryRepository.DiaryRepository;
-import umc.GrowIT.Server.domain.Keyword;
+import umc.GrowIT.Server.repository.DiaryRepository;
 
 import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.time.LocalTime;
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
