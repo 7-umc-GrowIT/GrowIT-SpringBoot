@@ -1,6 +1,13 @@
 package umc.GrowIT.Server.web.controller;
 
+
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
 import org.springframework.web.bind.annotation.*;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -8,7 +15,6 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import umc.GrowIT.Server.apiPayload.ApiResponse;
 import umc.GrowIT.Server.service.GroService.GroCommandService;
-import umc.GrowIT.Server.service.GroService.GroQueryService;
 import umc.GrowIT.Server.web.controller.specification.GroSpecification;
 import umc.GrowIT.Server.web.dto.GroDTO.GroRequestDTO;
 import umc.GrowIT.Server.web.dto.GroDTO.GroResponseDTO;
@@ -19,9 +25,8 @@ import umc.GrowIT.Server.web.dto.GroDTO.GroResponseDTO;
 @RequestMapping("/characters")
 public class GroController implements GroSpecification {
     private final GroCommandService groCommandService;
-    private final GroQueryService groQueryService;
 
-    public ApiResponse<GroResponseDTO.CreateResponseDTO> createGro(@Valid @RequestBody GroRequestDTO.CreateRequestDTO request) {
+    public ApiResponse<GroResponseDTO.CreateResponseDTO> createGro(@Valid @RequestBody GroRequestDTO request) {
 
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         Long userId = (Long) authentication.getPrincipal(); //사용자 식별 id
@@ -41,18 +46,9 @@ public class GroController implements GroSpecification {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         Long userId = (Long) authentication.getPrincipal();
 
-        GroResponseDTO.GroAndEquippedItemsDTO result = groQueryService.getGroAndEquippedItems(userId);
+        GroResponseDTO.GroAndEquippedItemsDTO result = groCommandService.getGroAndEquippedItems(userId);
 
         return ApiResponse.onSuccess(result);
     }
 
-    @Override
-    @PatchMapping("")
-    public ApiResponse<Void> updateNickname(@Valid @RequestBody GroRequestDTO.NicknameRequestDTO nicknameDTO) {
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        Long userId = (Long) authentication.getPrincipal();
-
-        groCommandService.updateNickname(userId, nicknameDTO.getName());
-        return ApiResponse.onSuccess();
-    }
 }
