@@ -10,8 +10,8 @@ import java.time.LocalDateTime;
 @Entity
 @Getter
 @Builder
-@NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class AuthenticationCode extends BaseEntity {
 
     @Id
@@ -19,7 +19,7 @@ public class AuthenticationCode extends BaseEntity {
     private Long id;
 
     // 이메일
-    @Column(length = 50, nullable = false)
+    @Column(nullable = false, length = 50)
     private String email;
 
     // 인증 코드
@@ -37,6 +37,8 @@ public class AuthenticationCode extends BaseEntity {
     // 인증 유효기간
     @Column(nullable = false)
     private LocalDateTime expirationDate;
+
+
 
     public void updateStatus(CodeStatus status) {
         this.status = status;

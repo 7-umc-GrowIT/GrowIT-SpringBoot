@@ -9,17 +9,13 @@ import umc.GrowIT.Server.domain.common.BaseEntity;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class DiaryKeyword extends BaseEntity {
+public class WithdrawalReason extends BaseEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "diary_id", nullable = false)
-    private Diary diary;
-
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "keyword_id", nullable = false)
-    private Keyword keyword;
+    // 이유
+    @Column(nullable = false, length = 80)
+    private String reason;
 }

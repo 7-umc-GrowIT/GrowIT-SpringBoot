@@ -13,7 +13,7 @@ import umc.GrowIT.Server.converter.DiaryConverter;
 import umc.GrowIT.Server.converter.FlaskConverter;
 import umc.GrowIT.Server.domain.*;
 import umc.GrowIT.Server.repository.*;
-import umc.GrowIT.Server.repository.diaryRepository.DiaryRepository;
+import umc.GrowIT.Server.repository.DiaryRepository;
 import umc.GrowIT.Server.web.dto.DiaryDTO.DiaryRequestDTO;
 import umc.GrowIT.Server.web.dto.DiaryDTO.DiaryResponseDTO;
 import umc.GrowIT.Server.web.dto.FlaskDTO.FlaskRequestDTO;
@@ -73,7 +73,7 @@ public class DiaryCommandServiceImpl implements DiaryCommandService{
             throw new DiaryHandler(ErrorStatus.DIARY_SAME_CONTENT);
         }
 
-        diary.setContent(request.getContent());
+        diary.updateContent(request.getContent());
 
         diaryRepository.save(diary);
         return DiaryConverter.toModifyResultDTO(diary);
@@ -426,11 +426,6 @@ public class DiaryCommandServiceImpl implements DiaryCommandService{
 
     // 일기와 감정키워드 연관관계 설정
     private void setDiaryKeyword(Diary diary, List<Keyword> analyzedEmotions) {
-        // Diary의 diaryKeywords 리스트가 null이라면 초기화
-        if (diary.getDiaryKeywords() == null) {
-            diary.setDiaryKeywords(new ArrayList<>());
-        }
-
         // 각 Keyword에 대해 DiaryKeyword 추가
         for (Keyword keyword : analyzedEmotions) {
             DiaryKeyword diaryKeyword = DiaryKeyword.builder()

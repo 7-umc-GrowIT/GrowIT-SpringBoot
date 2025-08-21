@@ -2,14 +2,13 @@ package umc.GrowIT.Server.web.controller;
 
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.Page;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 import umc.GrowIT.Server.apiPayload.ApiResponse;
 import umc.GrowIT.Server.domain.enums.UserChallengeType;
-import umc.GrowIT.Server.service.ChallengeService.ChallengeCommandService;
-import umc.GrowIT.Server.service.ChallengeService.ChallengeQueryService;
+import umc.GrowIT.Server.service.challengeService.ChallengeCommandService;
+import umc.GrowIT.Server.service.challengeService.ChallengeQueryService;
 import umc.GrowIT.Server.web.controller.specification.ChallengeSpecification;
 import umc.GrowIT.Server.web.dto.ChallengeDTO.ChallengeRequestDTO;
 import org.springframework.web.bind.annotation.DeleteMapping;
