@@ -11,6 +11,7 @@ import umc.GrowIT.Server.domain.enums.ItemCategory;
 import umc.GrowIT.Server.service.creditService.CreditQueryServiceImpl;
 import umc.GrowIT.Server.service.itemService.ItemQueryServiceImpl;
 import umc.GrowIT.Server.service.userService.UserCommandService;
+import umc.GrowIT.Server.service.userService.UserQueryService;
 import umc.GrowIT.Server.web.controller.specification.UserSpecification;
 import umc.GrowIT.Server.web.dto.CreditDTO.CreditResponseDTO;
 import umc.GrowIT.Server.web.dto.ItemDTO.ItemResponseDTO;
@@ -27,6 +28,7 @@ public class UserController implements UserSpecification {
 
     private final CreditQueryServiceImpl creditQueryService;
     private final UserCommandService userCommandService;
+    private final UserQueryService userQueryService;
     private final ItemQueryServiceImpl itemQueryServiceImpl;
 
     @Override
@@ -75,5 +77,15 @@ public class UserController implements UserSpecification {
 
         UserResponseDTO.DeleteUserResponseDTO deleteUser = userCommandService.delete(userId);
         return ApiResponse.onSuccess(deleteUser);
+    }
+
+    @Override
+    @GetMapping("")
+    public ApiResponse<UserResponseDTO.MyPageDTO> getMyPage() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        Long userId = (Long) authentication.getPrincipal();
+
+        UserResponseDTO.MyPageDTO result = userQueryService.getMyPage(userId);
+        return ApiResponse.onSuccess(result);
     }
 }
