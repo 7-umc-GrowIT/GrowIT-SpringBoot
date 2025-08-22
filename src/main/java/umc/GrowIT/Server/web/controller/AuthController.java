@@ -1,39 +1,46 @@
 package umc.GrowIT.Server.web.controller;
 
+import static umc.GrowIT.Server.apiPayload.code.status.SuccessStatus.NEED_TO_ACCEPT_TERMS;
+
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
+
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.web.bind.annotation.*;
 import umc.GrowIT.Server.apiPayload.ApiResponse;
 import umc.GrowIT.Server.domain.enums.AuthType;
 import umc.GrowIT.Server.service.authService.AuthService;
 import umc.GrowIT.Server.service.oAuthService.OAuthCommandService;
+import umc.GrowIT.Server.service.oAuthService.appleService.AppleService;
 import umc.GrowIT.Server.service.oAuthService.kakaoService.KakaoService;
 import umc.GrowIT.Server.service.refreshTokenService.RefreshTokenCommandService;
 import umc.GrowIT.Server.service.userService.UserCommandService;
 import umc.GrowIT.Server.web.controller.specification.AuthSpecification;
 import umc.GrowIT.Server.web.dto.AuthDTO.AuthRequestDTO;
 import umc.GrowIT.Server.web.dto.AuthDTO.AuthResponseDTO;
+import umc.GrowIT.Server.web.dto.OAuthDTO.OAuthApiResponseDTO;
 import umc.GrowIT.Server.web.dto.OAuthDTO.OAuthRequestDTO;
 import umc.GrowIT.Server.web.dto.OAuthDTO.OAuthResponseDTO;
 import umc.GrowIT.Server.web.dto.TokenDTO.TokenRequestDTO;
 import umc.GrowIT.Server.web.dto.TokenDTO.TokenResponseDTO;
 import umc.GrowIT.Server.web.dto.UserDTO.UserRequestDTO;
 
-import static umc.GrowIT.Server.apiPayload.code.status.SuccessStatus.NEED_TO_ACCEPT_TERMS;
-
 @Tag(name = "Auth", description = "인증 관련 API")
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/auth")
 public class AuthController implements AuthSpecification {
-
     private final UserCommandService userCommandService;
     private final AuthService authService;
     private final RefreshTokenCommandService refreshTokenCommandService;
     private final KakaoService kakaoService;
+    private final AppleService appleService;
     private final OAuthCommandService oAuthService;
 
     @Override
@@ -78,11 +85,18 @@ public class AuthController implements AuthSpecification {
 
     @Override
     @PostMapping("/login/kakao")
-    public ApiResponse<OAuthResponseDTO.KakaoLoginDTO> loginKakao(@RequestParam(value = "code") String code) {
-        OAuthResponseDTO.KakaoLoginDTO kakaoLoginDTO = kakaoService.loginKakao(code);
+    public ApiResponse<OAuthResponseDTO.KakaoLoginDTO> loginKakao(@RequestBody @Valid OAuthRequestDTO.SocialLoginDTO socialLoginDTO) {
+        OAuthResponseDTO.KakaoLoginDTO kakaoLoginDTO = kakaoService.loginKakao(socialLoginDTO);
         if (kakaoLoginDTO.getSignupRequired())
             return ApiResponse.onSuccess(NEED_TO_ACCEPT_TERMS, kakaoLoginDTO);
         return ApiResponse.onSuccess(kakaoLoginDTO);
+    }
+
+    @Override
+    @PostMapping("/login/apple")
+    public ApiResponse<OAuthApiResponseDTO.AppleTokenResponseDTO> loginApple(@RequestBody @Valid OAuthRequestDTO.SocialLoginDTO socialLoginDTO) {
+        OAuthApiResponseDTO.AppleTokenResponseDTO appleTokenResponseDTO = appleService.socialLogin(socialLoginDTO);
+        return ApiResponse.onSuccess(appleTokenResponseDTO);
     }
 
     @Override

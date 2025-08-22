@@ -23,4 +23,18 @@ public class OAuthResponseDTO {
 
         private TokenResponseDTO.TokenDTO tokens;
     }
+
+    @Getter
+    @Builder
+    @NoArgsConstructor
+    @AllArgsConstructor
+    @JsonInclude(NON_NULL)
+    public static class AppleLoginDTO {
+
+        private Boolean signupRequired;
+
+        private OAuthApiResponseDTO.OAuthUserInfoDTO oAuthUserInfo;
+
+        private TokenResponseDTO.TokenDTO tokens;
+    }
 }

@@ -38,7 +38,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                 throw new JwtAuthenticationException(MISSING_TOKEN);
             }
 
-            //토큰에서 사용자 정보 읽어서 탈퇴한 회원인지 확인
+            // 토큰에서 사용자 정보 읽어서 탈퇴한 회원인지 확인
             if (jwtTokenUtil.isUserInactive(token))
                 throw new JwtAuthenticationException(USER_STATUS_INACTIVE);
 

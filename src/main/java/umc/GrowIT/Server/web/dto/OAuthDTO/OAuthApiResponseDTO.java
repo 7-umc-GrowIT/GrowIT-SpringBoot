@@ -13,7 +13,6 @@ public class OAuthApiResponseDTO {
     @NoArgsConstructor
     @AllArgsConstructor
     public static class KakaoTokenResponseDTO {
-
         private String token_type;
         private String access_token;
         private String id_token;
@@ -44,5 +43,17 @@ public class OAuthApiResponseDTO {
         @NotNull
         private String email;
         private String name;
+    }
+
+    @Getter
+    @Builder
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class AppleTokenResponseDTO {
+        private String token_type;
+        private String access_token;
+        private String id_token;
+        private Integer expires_in;
+        private String refresh_token;
     }
 }
