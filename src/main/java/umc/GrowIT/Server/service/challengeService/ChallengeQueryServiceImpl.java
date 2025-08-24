@@ -119,7 +119,7 @@ public class ChallengeQueryServiceImpl implements ChallengeQueryService {
             throw new ChallengeHandler(ErrorStatus.CHALLENGE_NOT_COMPLETED);
         }
 
-        return ChallengeConverter.toProofDetailsDTO(userChallenge.getChallenge(), userChallenge);
+        return ChallengeConverter.toProofDetailsDTO(userChallenge);
     }
 
 }

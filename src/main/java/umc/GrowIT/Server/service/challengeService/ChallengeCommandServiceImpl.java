@@ -10,6 +10,7 @@ import umc.GrowIT.Server.converter.ChallengeConverter;
 import umc.GrowIT.Server.domain.*;
 import umc.GrowIT.Server.domain.enums.UserChallengeType;
 import umc.GrowIT.Server.repository.*;
+import umc.GrowIT.Server.util.S3Util;
 import umc.GrowIT.Server.web.dto.ChallengeDTO.ChallengeRequestDTO;
 import umc.GrowIT.Server.web.dto.ChallengeDTO.ChallengeResponseDTO;
 
@@ -24,6 +25,7 @@ public class ChallengeCommandServiceImpl implements ChallengeCommandService {
     private final UserRepository userRepository;
     private final UserChallengeRepository userChallengeRepository;
     private final ChallengeRepository challengeRepository;
+    private final S3Util s3Util;
     private Integer challengeCredit = 1;
 
     @Override
@@ -82,6 +84,44 @@ public class ChallengeCommandServiceImpl implements ChallengeCommandService {
         return ChallengeConverter.toSelectChallengeDTO(savedUserChallenges);
     }
 
+    // 챌린지 인증 이미지 업로드용 Presigned URL 생성
+    @Override
+    @Transactional
+    public ChallengeResponseDTO.ProofPresignedUrlResponseDTO generateChallengePresignedUrl(Long userId, ChallengeRequestDTO.ProofRequestPresignedUrlDTO request) {
+
+        // contentType 검증
+        String contentType = request.getContentType();
+        if (contentType == null || contentType.isBlank()) {
+            throw new S3Handler(ErrorStatus.S3_FILE_NAME_REQUIRED);
+        }
+
+        // 허용하는 확장자 매핑
+        String ext;
+        switch (contentType.toLowerCase()) {
+            case "image/jpeg":
+            case "image/jpg":
+                ext = "jpg";
+                break;
+            case "image/png":
+                ext = "png";
+                break;
+            case "image/gif":
+                ext = "gif";
+                break;
+            default:
+                throw new S3Handler(ErrorStatus.S3_BAD_FILE_EXTENSION);
+        }
+
+        String folder = "challenges/";
+        s3Util.validateFolderPath(folder);
+
+        String fileName = UUID.randomUUID() + "." + ext;
+
+        String presignedUrl = s3Util.generatePresignedUrlForUpload(folder, fileName);
+
+        return ChallengeConverter.proofPresignedUrlDTO(presignedUrl, fileName);
+    }
+
     @Override
     @Transactional
     public ChallengeResponseDTO.ProofDetailsDTO createChallengeProof(Long userId, Long userChallengeId, ChallengeRequestDTO.ProofRequestDTO proofRequest) {
@@ -96,14 +136,14 @@ public class ChallengeCommandServiceImpl implements ChallengeCommandService {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new UserHandler(ErrorStatus.USER_NOT_FOUND));
 
-        userChallenge.verifyUserChallenge(proofRequest, proofRequest.getCertificationImageUrl());
+        userChallenge.verifyUserChallenge(proofRequest, proofRequest.getCertificationImage());
         userChallengeRepository.save(userChallenge);
 
         user.updateCurrentCredit(user.getCurrentCredit() + challengeCredit);
         user.updateTotalCredit(user.getTotalCredit() + challengeCredit);
         userRepository.save(user);
 
-        return ChallengeConverter.toProofDetailsDTO(userChallenge.getChallenge(), userChallenge);
+        return ChallengeConverter.toProofDetailsDTO(userChallenge);
     }
 
     @Override
@@ -119,8 +159,8 @@ public class ChallengeCommandServiceImpl implements ChallengeCommandService {
         }
 
         // 인증 이미지 업데이트
-        if (updateRequest.getCertificationImageUrl() != null && !updateRequest.getCertificationImageUrl().isEmpty()) {
-            userChallenge.setCertificationImageUrl(updateRequest.getCertificationImageUrl()); // 새 이미지 설정
+        if (updateRequest.getCertificationImage() != null && !updateRequest.getCertificationImage().isEmpty()) {
+            userChallenge.setCertificationImage(updateRequest.getCertificationImage()); // 새 이미지 설정
         }
 
         // 소감 업데이트

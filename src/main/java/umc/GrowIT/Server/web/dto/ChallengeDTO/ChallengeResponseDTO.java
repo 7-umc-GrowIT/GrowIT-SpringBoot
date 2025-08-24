@@ -1,6 +1,7 @@
 package umc.GrowIT.Server.web.dto.ChallengeDTO;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -91,6 +92,18 @@ public class ChallengeResponseDTO {
         private boolean isLast;
     }
 
+    @Getter
+    @Builder
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class ProofPresignedUrlResponseDTO {
+        @Schema(description = "S3 업로드용 Presigned URL")
+        private String presignedUrl;
+
+        @Schema(description = "업로드 완료 후 접근 URL")
+        private String fileUrl;
+    }
+
     // 챌린지 인증 내역
     @Getter
     @Builder
@@ -99,7 +112,7 @@ public class ChallengeResponseDTO {
     public static class ProofDetailsDTO {
         private Long id;
         private String title;
-        private String certificationImageUrl;
+        private String certificationImage;
         private String thoughts;
         private Integer time;
         @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss")

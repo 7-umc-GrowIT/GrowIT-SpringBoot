@@ -27,7 +27,7 @@ public class UserChallenge extends BaseEntity {
 
     // 인증사진
     @Column(columnDefinition = "TEXT")
-    private String certificationImageUrl;
+    private String certificationImage;
 
     // 챌린지 타입 (랜덤 or 데일리)
     @Enumerated(EnumType.STRING)
@@ -59,7 +59,7 @@ public class UserChallenge extends BaseEntity {
     // 인증 작성 (최초 등록 또는 전체 업데이트용)
     public void verifyUserChallenge(ChallengeRequestDTO.ProofRequestDTO proofRequest, String imageUrl){
         this.thoughts = proofRequest.getThoughts();
-        this.certificationImageUrl = imageUrl;
+        this.certificationImage = imageUrl;
         this.certificationDate = LocalDateTime.now(); // 인증한 날짜 저장
         this.completed = true;
     }

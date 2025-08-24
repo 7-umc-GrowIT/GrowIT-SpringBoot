@@ -1,6 +1,7 @@
 package umc.GrowIT.Server.web.controller;
 
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -18,6 +19,7 @@ import org.springframework.web.bind.annotation.RestController;
 import umc.GrowIT.Server.web.dto.ChallengeDTO.ChallengeResponseDTO;
 
 import java.util.List;
+import java.util.Map;
 
 @Tag(name = "Challenge", description = "챌린지 관련 API")
 @RestController
@@ -56,6 +58,17 @@ public class ChallengeController implements ChallengeSpecification {
 
         ChallengeResponseDTO.SelectChallengeDTO response = challengeCommandService.selectChallenges(userId, selectRequestList);
         return ApiResponse.onSuccess(response);
+    }
+
+    @PostMapping("prove/presigned-url")
+    public ApiResponse<ChallengeResponseDTO.ProofPresignedUrlResponseDTO> getProofPresignedUrl(@Valid @RequestBody ChallengeRequestDTO.ProofRequestPresignedUrlDTO request) {
+
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        Long userId = (Long) authentication.getPrincipal();
+
+        ChallengeResponseDTO.ProofPresignedUrlResponseDTO result = challengeCommandService.generateChallengePresignedUrl(userId, request);
+
+        return ApiResponse.onSuccess(result);
     }
 
     @PostMapping("{userChallengeId}/prove")

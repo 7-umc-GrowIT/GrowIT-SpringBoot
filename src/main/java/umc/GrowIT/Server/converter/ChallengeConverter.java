@@ -81,13 +81,21 @@ public class ChallengeConverter {
                 .build();
     }
 
+    // 챌린지 인증 이미지 - 프리사인드 URL
+    public static ChallengeResponseDTO.ProofPresignedUrlResponseDTO proofPresignedUrlDTO(String presignedUrl, String fileUrl) {
+        return ChallengeResponseDTO.ProofPresignedUrlResponseDTO.builder()
+                .presignedUrl(presignedUrl)
+                .fileUrl(fileUrl)
+                .build();
+    }
+
     // 챌린지 인증 작성 결과 반환
-    public static ChallengeResponseDTO.ProofDetailsDTO toProofDetailsDTO(Challenge challenge, UserChallenge userChallenge) {
+    public static ChallengeResponseDTO.ProofDetailsDTO toProofDetailsDTO(UserChallenge userChallenge) {
         return ChallengeResponseDTO.ProofDetailsDTO.builder()
                 .id(userChallenge.getId())
-                .title(challenge.getTitle())
-                .time(challenge.getTime())
-                .certificationImageUrl(userChallenge.getCertificationImageUrl())
+                .title(userChallenge.getChallenge().getTitle())
+                .time(userChallenge.getChallenge().getTime())
+                .certificationImage(userChallenge.getCertificationImage())
                 .thoughts(userChallenge.getThoughts())
                 .certificationDate(userChallenge.getCertificationDate())
                 .build();
@@ -125,7 +133,7 @@ public class ChallengeConverter {
     // 챌린지 수정
     public static ChallengeResponseDTO.ModifyProofDTO toChallengeModifyProofDTO(UserChallenge userChallenge) {
         return ChallengeResponseDTO.ModifyProofDTO.builder()
-                .certificationImageUrl(userChallenge.getCertificationImageUrl())
+                .certificationImageUrl(userChallenge.getCertificationImage())
                 .thoughts(userChallenge.getThoughts())
                 .build();
     }
