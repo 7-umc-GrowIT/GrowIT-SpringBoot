@@ -28,7 +28,7 @@ public interface GroSpecification {
                     content = @Content(schema = @Schema(implementation = ApiResponse.class))
             ),
             @io.swagger.v3.oas.annotations.responses.ApiResponse(
-                    responseCode = "GRO4002",
+                    responseCode = "COMMON400",
                     description = "❌ 닉네임은 2~8자 이내로 작성해야 합니다.",
                     content = @Content(schema = @Schema(implementation = ApiResponse.class))
             ),
@@ -58,8 +58,7 @@ public interface GroSpecification {
     @ApiResponses({
             @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "COMMON200", description = "⭕ SUCCESS"),
             @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "GRO4001", description = "❌ 다른 닉네임과 중복되는 닉네임입니다.", content = @Content(schema = @Schema(implementation = ApiResponse.class))),
-            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "GRO4002", description = "❌ 닉네임은 2~8자 이내로 작성해야 합니다.", content = @Content(schema = @Schema(implementation = ApiResponse.class))),
-            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "COMMON400", description = "❌ BAD, 잘못된 요청", content = @Content(schema = @Schema(implementation = ApiResponse.class)))
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "COMMON400", description = "❌ 닉네임은 2~8자 이내로 작성해야 합니다.", content = @Content(schema = @Schema(implementation = ApiResponse.class)))
     })
     ApiResponse<Void> updateNickname(@Valid @RequestBody GroRequestDTO.NicknameRequestDTO request);
 }
