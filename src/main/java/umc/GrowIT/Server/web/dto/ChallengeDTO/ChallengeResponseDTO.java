@@ -99,7 +99,6 @@ public class ChallengeResponseDTO {
     public static class ProofPresignedUrlResponseDTO {
         @Schema(description = "S3 업로드용 Presigned URL")
         private String presignedUrl;
-
         @Schema(description = "업로드 완료 후 접근 URL")
         private String fileUrl;
     }
@@ -110,11 +109,17 @@ public class ChallengeResponseDTO {
     @NoArgsConstructor
     @AllArgsConstructor
     public static class ProofDetailsDTO {
+        @Schema(description = "챌린지 인증 내역 id")
         private Long id;
+        @Schema(description = "챌린지 인증 내역 제목")
         private String title;
+        @Schema(description = "챌린지 인증 이미지")
         private String certificationImage;
+        @Schema(description = "챌린지 인증 소감")
         private String thoughts;
+        @Schema(description = "챌린지 소요 시간")
         private Integer time;
+        @Schema(description = "챌린지 인증 날짜")
         @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss")
         private LocalDateTime certificationDate;
     }
