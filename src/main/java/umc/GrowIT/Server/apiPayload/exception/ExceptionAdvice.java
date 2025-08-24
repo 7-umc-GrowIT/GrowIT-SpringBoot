@@ -2,6 +2,7 @@ package umc.GrowIT.Server.apiPayload.exception;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.ConstraintViolationException;
+import jakarta.validation.constraints.Null;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
@@ -61,12 +62,36 @@ public class ExceptionAdvice extends ResponseEntityExceptionHandler {
     public ResponseEntity<Object> exception(Exception e, WebRequest request) {
         e.printStackTrace();
 
+        if (request instanceof ServletWebRequest) {
+            ServletWebRequest servletWebRequest = (ServletWebRequest) request;
+            HttpServletRequest httpRequest = servletWebRequest.getRequest();  // HTTP 요청 정보를 얻기 위해 HttpServletRequest 객체로 변환
+
+            discordNotificationService.sendErrorNotification(
+                    e.getMessage() != null ? e.getMessage() : "내부 서버 에러 발생",
+                    httpRequest.getRequestURI(),                // 요청 URI
+                    httpRequest.getMethod(),                    //HTTP 메서드 (GET, POST 등)
+                    httpRequest.getHeader("User-Agent"),     //User-Agent 객체
+                    e                                           //Exception 객체
+            );
+        }
+
         return handleExceptionInternalFalse(e, ErrorStatus._INTERNAL_SERVER_ERROR, HttpHeaders.EMPTY, ErrorStatus._INTERNAL_SERVER_ERROR.getHttpStatus(),request, e.getMessage());
     }
 
     @ExceptionHandler(value = GeneralException.class)
     public ResponseEntity onThrowException(GeneralException generalException, HttpServletRequest request) {
         ErrorReasonDTO errorReasonHttpStatus = generalException.getErrorReasonHttpStatus();
+
+        if (errorReasonHttpStatus.getHttpStatus().is5xxServerError()) { //500번대 에러인지 감지
+            discordNotificationService.sendErrorNotification(
+                    errorReasonHttpStatus.getMessage(),  // 커스텀 에러 메시지
+                    request.getRequestURI(),            // 요청 URI
+                    request.getMethod(),                // HTTP 메서드
+                    request.getHeader("User-Agent"),    // User-Agent
+                    generalException                    // GeneralException 객체
+            );
+        }
+
         return handleExceptionInternal(generalException,errorReasonHttpStatus,null,request);
     }
 
