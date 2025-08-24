@@ -29,4 +29,6 @@ public class Gro extends BaseEntity {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
+
+    public void setName(String name) { this.name = name; }
 }
