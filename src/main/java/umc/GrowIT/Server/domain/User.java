@@ -55,6 +55,10 @@ public class User extends BaseEntity {
     @Column(nullable = false)
     private Role role;
 
+//    // 사용자 구독여부
+//    @Column(name = "is_subscribed", nullable = false)
+//    private Boolean isSubscribed = false;
+
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
     private List<UserChallenge> userChallenges = new ArrayList<>();
 
@@ -70,10 +74,6 @@ public class User extends BaseEntity {
     @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "refresh_token_id", nullable = false)
     private RefreshToken refreshToken;
-
-//    @OneToOne(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
-//    private RefreshToken refreshToken;
-
 
     public void encodePassword(String password) {
         this.password = password;
