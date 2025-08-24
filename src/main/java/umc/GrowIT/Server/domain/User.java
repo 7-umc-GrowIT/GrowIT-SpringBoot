@@ -55,6 +55,10 @@ public class User extends BaseEntity {
     @Column(nullable = false)
     private Role role;
 
+    // 사용자의 그로
+    @OneToOne(mappedBy = "user", cascade = CascadeType.ALL)
+    private Gro gro;
+
 //    // 사용자 구독여부
 //    @Column(name = "is_subscribed", nullable = false)
 //    private Boolean isSubscribed = false;

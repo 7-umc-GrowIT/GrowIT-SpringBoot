@@ -60,10 +60,10 @@ public class UserConverter {
                 .build();
     }
 
-    public static UserResponseDTO.MyPageDTO toMyPageDTO(User user, Gro gro){
+    public static UserResponseDTO.MyPageDTO toMyPageDTO(User user){
         return UserResponseDTO.MyPageDTO.builder()
                 .userId(user.getId())
-                .name(gro.getName())
+                .name(user.getGro().getName())
                 .build();
     }
 }

@@ -34,9 +34,6 @@ public class UserQueryServiceImpl implements UserQueryService {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new UserHandler(ErrorStatus.USER_NOT_FOUND));
 
-        Gro gro = groRepository.findByUserId(userId)
-                .orElseThrow(() -> new GroHandler(ErrorStatus.GRO_NOT_FOUND));
-
-        return UserConverter.toMyPageDTO(user, gro);
+        return UserConverter.toMyPageDTO(user);
     }
 }
