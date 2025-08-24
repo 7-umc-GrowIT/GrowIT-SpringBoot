@@ -3,6 +3,7 @@ package umc.GrowIT.Server.apiPayload.exception;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.ConstraintViolationException;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.HttpStatusCode;
@@ -17,6 +18,7 @@ import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExcep
 import umc.GrowIT.Server.apiPayload.ApiResponse;
 import umc.GrowIT.Server.apiPayload.code.ErrorReasonDTO;
 import umc.GrowIT.Server.apiPayload.code.status.ErrorStatus;
+import umc.GrowIT.Server.service.discordService.DiscordNotificationService;
 
 import java.util.HashMap;
 import java.util.LinkedHashMap;
@@ -27,6 +29,8 @@ import java.util.Optional;
 @RestControllerAdvice(annotations = {RestController.class})
 public class ExceptionAdvice extends ResponseEntityExceptionHandler {
 
+    @Autowired
+    private DiscordNotificationService discordNotificationService;
 
     @ExceptionHandler
     public ResponseEntity<Object> validation(ConstraintViolationException e, WebRequest request) {
