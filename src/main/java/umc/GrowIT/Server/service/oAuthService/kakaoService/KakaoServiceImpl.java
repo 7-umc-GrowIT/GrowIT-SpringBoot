@@ -25,7 +25,6 @@ import umc.GrowIT.Server.util.JwtTokenUtil;
 import umc.GrowIT.Server.web.dto.OAuthDTO.OAuthApiResponseDTO;
 import umc.GrowIT.Server.web.dto.OAuthDTO.OAuthResponseDTO;
 import umc.GrowIT.Server.web.dto.TokenDTO.TokenResponseDTO;
-import umc.GrowIT.Server.web.dto.UserDTO.UserResponseDTO;
 
 import static umc.GrowIT.Server.apiPayload.code.status.ErrorStatus.KAKAO_AUTH_CODE_ERROR;
 import static umc.GrowIT.Server.apiPayload.code.status.ErrorStatus._BAD_REQUEST;

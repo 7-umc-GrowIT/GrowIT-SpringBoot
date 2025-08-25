@@ -6,7 +6,6 @@ import umc.GrowIT.Server.web.dto.OAuthDTO.OAuthApiResponseDTO;
 import umc.GrowIT.Server.web.dto.OAuthDTO.OAuthResponseDTO;
 import umc.GrowIT.Server.web.dto.TokenDTO.TokenResponseDTO;
 import umc.GrowIT.Server.web.dto.UserDTO.UserRequestDTO;
-import umc.GrowIT.Server.web.dto.UserDTO.UserResponseDTO;
 
 import static umc.GrowIT.Server.domain.enums.Role.USER;
 import static umc.GrowIT.Server.domain.enums.UserStatus.ACTIVE;
@@ -34,13 +33,6 @@ public class UserConverter {
                 .totalCredit(0)
                 .role(USER)
                 .status(ACTIVE)
-                .build();
-    }
-
-    public static UserResponseDTO.DeleteUserResponseDTO toDeletedUser(User deleteUser) {
-        return UserResponseDTO.DeleteUserResponseDTO.builder()
-                .name(deleteUser.getName())
-                .message("회원탈퇴가 완료되었어요")
                 .build();
     }
 

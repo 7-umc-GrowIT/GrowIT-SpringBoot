@@ -1,6 +1,7 @@
 package umc.GrowIT.Server.repository;
 
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import umc.GrowIT.Server.domain.ChallengeKeyword;
@@ -14,4 +15,11 @@ public interface ChallengeKeywordRepository extends JpaRepository<ChallengeKeywo
     @Query("SELECT ck FROM ChallengeKeyword ck JOIN FETCH ck.challenge WHERE ck.keyword = :keyword")
     List<ChallengeKeyword> findByKeywordWithChallenge(@Param("keyword") Keyword keyword);
 
+    @Modifying
+    @Query(value = """
+        DELETE ck FROM challenge_keyword ck 
+        INNER JOIN user_challenge uc ON ck.challenge_id = uc.challenge_id 
+        WHERE uc.user_id = :userId
+        """, nativeQuery = true)
+    void deleteByUserIdNative(@Param("userId") Long userId);
 }

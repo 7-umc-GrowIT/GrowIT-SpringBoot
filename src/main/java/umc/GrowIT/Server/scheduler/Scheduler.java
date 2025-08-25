@@ -21,8 +21,8 @@ import java.util.List;
 public class Scheduler {
 
     private final AuthenticationCodeRepository authenticationCodeRepository;
-    private final UserRepository userRepository;
-    private final RefreshTokenRepository refreshTokenRepository;
+//    private final UserRepository userRepository;
+//    private final RefreshTokenRepository refreshTokenRepository;
 
     // 인증번호 삭제 스케줄러
     @Scheduled(cron = "0 0 0 * * ?") // 매일 자정 실행

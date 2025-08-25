@@ -2,6 +2,7 @@ package umc.GrowIT.Server.repository;
 
 import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import umc.GrowIT.Server.domain.OAuthAccount;
@@ -24,4 +25,7 @@ public interface OAuthAccountRepository extends JpaRepository<OAuthAccount, Long
     List<OAuthAccount> findOAuthAccountsByUserId(@Param("userId") Long userId);
 
 
+    @Modifying
+    @Query(value = "DELETE FROM oauth_account WHERE user_id = :userId", nativeQuery = true)
+    void deleteByUserIdNative(@Param("userId") Long userId);
 }

@@ -3,6 +3,7 @@ package umc.GrowIT.Server.repository;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import umc.GrowIT.Server.domain.UserChallenge;
@@ -53,6 +54,9 @@ public interface UserChallengeRepository extends JpaRepository<UserChallenge, Lo
             @Param("date") LocalDate date
     );
 
+    @Modifying
+    @Query(value = "DELETE FROM user_challenge WHERE user_id = :userId", nativeQuery = true)
+    void deleteByUserIdNative(@Param("userId") Long userId);
 }
 
 

@@ -20,11 +20,17 @@ public interface UserRepository extends JpaRepository<User, Long>  {
     @Query("SELECT user.password FROM User user WHERE user.primaryEmail = :primaryEmail")
     String findPasswordByPrimaryEmail(@Param("primaryEmail") String primaryEmail);
 
-    // status가 inactive이고, updated_at이 30일 지난 사용자 삭제
     @Modifying
-    @Query("DELETE FROM User u WHERE u.status = 'inactive' AND u.updatedAt <= :threshold")
-    int deleteByStatusAndUpdatedAtBefore(@Param("threshold") LocalDateTime threshold);
+    @Query(value = "DELETE FROM user WHERE id = :userId", nativeQuery = true)
+    void deleteByIdNative(@Param("userId") Long userId);
 
-    @Query("SELECT u.refreshToken.id FROM User u WHERE u.status = 'INACTIVE' AND u.updatedAt < :threshold")
-    List<Long> findRefreshTokenIdsForInactiveUsers(@Param("threshold") LocalDateTime threshold);
+
+    // TODO soft delete 방식일 때, 스케줄러에서 사용하던 코드로 추후 확인 필요
+//    // status가 inactive이고, updated_at이 30일 지난 사용자 삭제
+//    @Modifying
+//    @Query("DELETE FROM User u WHERE u.status = 'inactive' AND u.updatedAt <= :threshold")
+//    int deleteByStatusAndUpdatedAtBefore(@Param("threshold") LocalDateTime threshold);
+//
+//    @Query("SELECT u.refreshToken.id FROM User u WHERE u.status = 'INACTIVE' AND u.updatedAt < :threshold")
+//    List<Long> findRefreshTokenIdsForInactiveUsers(@Param("threshold") LocalDateTime threshold);
 }

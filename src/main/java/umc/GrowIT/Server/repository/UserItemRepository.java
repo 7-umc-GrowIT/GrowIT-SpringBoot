@@ -1,6 +1,7 @@
 package umc.GrowIT.Server.repository;
 
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
@@ -37,4 +38,8 @@ public interface UserItemRepository extends JpaRepository<UserItem, Long>  {
             @Param("category") ItemCategory category,
             @Param("status") ItemStatus status
     );
+
+    @Modifying
+    @Query(value = "DELETE FROM user_item WHERE user_id = :userId", nativeQuery = true)
+    void deleteByUserIdNative(@Param("userId") Long userId);
 }
