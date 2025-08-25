@@ -9,6 +9,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import umc.GrowIT.Server.apiPayload.ApiResponse;
 import umc.GrowIT.Server.service.groService.GroCommandService;
+import umc.GrowIT.Server.service.groService.GroQueryService;
 import umc.GrowIT.Server.web.controller.specification.GroSpecification;
 import umc.GrowIT.Server.web.dto.GroDTO.GroRequestDTO;
 import umc.GrowIT.Server.web.dto.GroDTO.GroResponseDTO;
@@ -20,8 +21,9 @@ import umc.GrowIT.Server.web.dto.GroDTO.GroResponseDTO;
 public class GroController implements GroSpecification {
 
     private final GroCommandService groCommandService;
+    private final GroQueryService groQueryService;
 
-    public ApiResponse<GroResponseDTO.CreateResponseDTO> createGro(@Valid @RequestBody GroRequestDTO request) {
+    public ApiResponse<GroResponseDTO.CreateResponseDTO> createGro(@Valid @RequestBody GroRequestDTO.CreateRequestDTO request) {
 
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         Long userId = (Long) authentication.getPrincipal(); //사용자 식별 id
@@ -41,9 +43,19 @@ public class GroController implements GroSpecification {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         Long userId = (Long) authentication.getPrincipal();
 
-        GroResponseDTO.GroAndEquippedItemsDTO result = groCommandService.getGroAndEquippedItems(userId);
+        GroResponseDTO.GroAndEquippedItemsDTO result = groQueryService.getGroAndEquippedItems(userId);
 
         return ApiResponse.onSuccess(result);
+    }
+
+    @Override
+    @PatchMapping("")
+    public ApiResponse<Void> updateNickname(@Valid @RequestBody GroRequestDTO.NicknameRequestDTO nicknameDTO) {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        Long userId = (Long) authentication.getPrincipal();
+
+        groCommandService.updateNickname(userId, nicknameDTO.getName());
+        return ApiResponse.onSuccess();
     }
 
 }

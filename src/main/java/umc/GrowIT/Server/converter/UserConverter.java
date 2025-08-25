@@ -1,5 +1,6 @@
 package umc.GrowIT.Server.converter;
 
+import umc.GrowIT.Server.domain.Gro;
 import umc.GrowIT.Server.domain.User;
 import umc.GrowIT.Server.web.dto.AuthDTO.AuthResponseDTO;
 import umc.GrowIT.Server.web.dto.OAuthDTO.OAuthApiResponseDTO;
@@ -48,6 +49,13 @@ public class UserConverter {
 
         return AuthResponseDTO.LogoutResponseDTO.builder()
                 .message("로그아웃이 완료되었습니다.")
+                .build();
+    }
+
+    public static UserResponseDTO.MyPageDTO toMyPageDTO(User user){
+        return UserResponseDTO.MyPageDTO.builder()
+                .userId(user.getId())
+                .name(user.getGro().getName())
                 .build();
     }
 }
