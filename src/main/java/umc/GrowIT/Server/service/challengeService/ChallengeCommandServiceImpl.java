@@ -14,6 +14,7 @@ import umc.GrowIT.Server.util.S3Util;
 import umc.GrowIT.Server.web.dto.ChallengeDTO.ChallengeRequestDTO;
 import umc.GrowIT.Server.web.dto.ChallengeDTO.ChallengeResponseDTO;
 
+import java.time.Duration;
 import java.time.LocalDate;
 import java.util.*;
 
@@ -90,34 +91,19 @@ public class ChallengeCommandServiceImpl implements ChallengeCommandService {
     public ChallengeResponseDTO.ProofPresignedUrlResponseDTO generateChallengePresignedUrl(Long userId, ChallengeRequestDTO.ProofRequestPresignedUrlDTO request) {
 
         // contentType 검증
-        String contentType = request.getContentType();
-        if (contentType == null || contentType.isBlank()) {
-            throw new S3Handler(ErrorStatus.S3_FILE_NAME_REQUIRED);
-        }
+        String contentType = request.getContentType().toLowerCase();
 
         // 허용하는 확장자 매핑
-        String ext;
-        switch (contentType.toLowerCase()) {
-            case "image/jpeg":
-            case "image/jpg":
-                ext = "jpg";
-                break;
-            case "image/png":
-                ext = "png";
-                break;
-            case "image/gif":
-                ext = "gif";
-                break;
-            default:
-                throw new S3Handler(ErrorStatus.S3_BAD_FILE_EXTENSION);
-        }
-
-        String folder = "challenges/";
-        s3Util.validateFolderPath(folder);
+        String ext = switch (contentType) {
+            case "image/jpeg", "image/jpg" -> "jpg";
+            case "image/png" -> "png";
+            case "image/svg" -> "svg";
+            default -> throw new S3Handler(ErrorStatus.S3_BAD_FILE_EXTENSION);
+        };
 
         String fileName = UUID.randomUUID() + "." + ext;
-
-        String presignedUrl = s3Util.generatePresignedUrlForUpload(folder, fileName);
+        String key = "challenges/" + fileName;
+        String presignedUrl = s3Util.toCreatePresignedUrl(key, contentType);
 
         return ChallengeConverter.proofPresignedUrlDTO(presignedUrl, fileName);
     }

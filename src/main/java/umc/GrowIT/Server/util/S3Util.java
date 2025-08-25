@@ -1,76 +1,61 @@
 package umc.GrowIT.Server.util;
 
-import com.amazonaws.HttpMethod;
-import com.amazonaws.services.s3.AmazonS3;
-import com.amazonaws.services.s3.model.GeneratePresignedUrlRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
-import umc.GrowIT.Server.apiPayload.code.status.ErrorStatus;
-import umc.GrowIT.Server.apiPayload.exception.S3Handler;
-
-import java.net.URL;
-import java.util.Date;
-import java.util.Map;
-import java.util.concurrent.TimeUnit;
+import software.amazon.awssdk.services.s3.model.GetObjectRequest;
+import software.amazon.awssdk.services.s3.model.PutObjectRequest;
+import software.amazon.awssdk.services.s3.presigner.S3Presigner;
+import software.amazon.awssdk.services.s3.presigner.model.GetObjectPresignRequest;
+import software.amazon.awssdk.services.s3.presigner.model.PutObjectPresignRequest;
+import java.time.Duration;
 
 @Service
 @RequiredArgsConstructor
 public class S3Util {
 
-    private final AmazonS3 amazonS3;
-
     @Value("${aws.s3.bucket}")
     private String bucketName;
 
-    // 파일 이름 검증
-    public void validateFileName(String fileName) {
-        if (fileName == null || fileName.isEmpty()) {
-            throw new S3Handler(ErrorStatus.S3_FILE_NAME_REQUIRED);
+    private final S3Presigner s3Presigner;
+
+    // presigned url 생성 (PUT)
+    public String toCreatePresignedUrl(String key, String contentType) {
+        if (key == null || key.isBlank()) {
+            return null;
         }
 
-        // 허용된 확장자만 허용 (.jpg, .png, .gif)
-        if (!fileName.matches(".*\\.(jpg|jpeg|png|gif)$")) {
-            throw new S3Handler(ErrorStatus.S3_BAD_FILE_EXTENSION);
-        }
+        PutObjectRequest putObjectRequest = PutObjectRequest.builder()
+                .bucket(bucketName)
+                .key(key)
+                .contentType(contentType)
+                .build();
+
+        PutObjectPresignRequest putObjectPresignRequest = PutObjectPresignRequest.builder()
+                .signatureDuration(Duration.ofMinutes(30))
+                .putObjectRequest(putObjectRequest)
+                .build();
+
+        return s3Presigner.presignPutObject(putObjectPresignRequest).url().toString();
     }
 
-    // 폴더 이름 검증
-    public void validateFolderPath(String folderPath) {
-        if (folderPath == null || folderPath.isEmpty()) {
-            throw new S3Handler(ErrorStatus.S3_FOLDER_NAME_REQUIRED);
+    // presigned url 생성 (GET)
+    public String toGetPresignedUrl(String key, Duration duration) {
+        if (key == null || key.isBlank()) {
+            return null;
         }
-        // 폴더 경로: 영문/숫자/슬래시/언더스코어/하이픈 허용
-        if (!folderPath.matches("^[a-zA-Z0-9/_-]+$")) {
-            throw new S3Handler(ErrorStatus.S3_INVALID_FOLDER_NAME);
-        }
-    }
 
-//    // Presigned URL 및 파일 URL 생성 메서드
-//    public Map<String, String> generatePresignedUploadUrl(String folder, String fileName) {
-//        validateFileName(fileName); // 파일 검증
-//        validateFolderPath(folder);
-//
-//        String presignedUrl = generatePresignedUrlForUpload(folder, fileName);
-//        String fileUrl = amazonS3.getUrl(bucketName, folder + "/" + fileName).toString();
-//        return Map.of(
-//                "presignedUrl", presignedUrl,
-//                "fileUrl", fileUrl
-//        );
-//    }
+        GetObjectRequest getObjectRequest = GetObjectRequest.builder()
+                .bucket(bucketName)
+                .key(key)
+                .build();
 
-    // Presigned URL 생성 (업로드)
-    public String generatePresignedUrlForUpload(String folder, String fileName) {
+        GetObjectPresignRequest getObjectPresignRequest = GetObjectPresignRequest.builder()
+                .signatureDuration(duration)
+                .getObjectRequest(getObjectRequest)
+                .build();
 
-        String objectKey = folder + "/" + fileName; // 파일 경로에 폴더 추가
-        Date expiration = new Date(System.currentTimeMillis() + TimeUnit.MINUTES.toMillis(10)); // PreSigned URL 유효 시간 설정 (10분)
-
-        GeneratePresignedUrlRequest request = new GeneratePresignedUrlRequest(bucketName, objectKey)
-                .withMethod(HttpMethod.PUT) // 업로드용 (PUT 요청)
-                .withExpiration(expiration);
-
-        URL presignedUrl = amazonS3.generatePresignedUrl(request);
-        return presignedUrl.toString();
+        return s3Presigner.presignGetObject(getObjectPresignRequest).url().toString();
     }
 }
 
