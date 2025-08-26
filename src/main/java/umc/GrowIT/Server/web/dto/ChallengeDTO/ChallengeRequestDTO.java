@@ -2,6 +2,7 @@ package umc.GrowIT.Server.web.dto.ChallengeDTO;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Size;
 import lombok.*;
 import umc.GrowIT.Server.domain.enums.UserChallengeType;
 
@@ -16,8 +17,8 @@ public class ChallengeRequestDTO {
     @AllArgsConstructor
     @Schema(title = "presigned url 생성 request")
     public static class ProofRequestPresignedUrlDTO {
-        @NotBlank(message = "파일의 MIME 타입은 필수 입력입니다.")
         @Schema(description = "업로드할 파일의 MIME 타입", example = "image/png")
+        @NotBlank(message = "파일의 MIME 타입은 필수 입력입니다.")
         private String contentType;
     }
 
@@ -28,8 +29,11 @@ public class ChallengeRequestDTO {
     @Schema(title = "챌린지 인증 작성/수정 request")
     public static class ProofRequestDTO {
         @Schema(description = "업로드할 파일의 이름", example = "3c99605a8e01.png")
+        @NotBlank(message = "이미지는 필수 입력입니다.")
         private String certificationImage;
         @Schema(description = "소감(텍스트)", example = "오늘은 ~")
+        @NotBlank(message = "챌린지 한줄소감은 필수로 입력해야 합니다.")
+        @Size(min = 50, max = 100, message = "챌린지 한줄소감은 50자~100자 이내로 입력해야 합니다.")
         private String thoughts;
     }
 

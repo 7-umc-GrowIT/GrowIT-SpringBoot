@@ -53,8 +53,10 @@ public class UserChallenge extends BaseEntity {
     @JoinColumn(name = "challenge_id", nullable = false)
     private Challenge challenge;
 
-    public void updateCertificationImage(String certificationImage) { this.certificationImage = certificationImage; }
-    public void updateThoughts(String thoughts) { this.thoughts = thoughts; }
+    public void updateProof(ChallengeRequestDTO.ProofRequestDTO proofRequestDTO) {
+        this.certificationImage = proofRequestDTO.getCertificationImage();
+        this.thoughts = proofRequestDTO.getThoughts();
+    }
 
     // 인증 작성 (최초 등록 또는 전체 업데이트용)
     public void verifyUserChallenge(ChallengeRequestDTO.ProofRequestDTO proofRequest, String imageUrl){
