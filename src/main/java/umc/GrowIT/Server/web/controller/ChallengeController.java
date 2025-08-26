@@ -37,7 +37,7 @@ public class ChallengeController implements ChallengeSpecification {
         return ApiResponse.onSuccess(challengeQueryService.getChallengeHome(userId));
     }
 
-    @GetMapping("/")
+    @GetMapping("")
     public ApiResponse<ChallengeResponseDTO.ChallengeStatusPagedResponseDTO> getChallengeStatus(
             @RequestParam(required = false) UserChallengeType dtype,
             @RequestParam Boolean completed,
