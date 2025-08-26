@@ -18,6 +18,7 @@ import umc.GrowIT.Server.web.dto.ItemDTO.ItemResponseDTO;
 import umc.GrowIT.Server.web.dto.PaymentDTO.PaymentRequestDTO;
 import umc.GrowIT.Server.web.dto.PaymentDTO.PaymentResponseDTO;
 import umc.GrowIT.Server.web.dto.UserDTO.UserRequestDTO;
+import umc.GrowIT.Server.web.dto.UserDTO.UserResponseDTO;
 
 @Tag(name = "User", description = "사용자 관련 API")
 @RestController

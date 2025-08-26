@@ -21,22 +21,22 @@ public class UserWithdrawalServiceImpl implements UserWithdrawalService {
     @Override
     public void deleteUserRelatedData(Long userId, Long refreshTokenId) {
         // 1. 매핑 테이블들 삭제 (user랑 직접 연결 X)
-        diaryKeywordRepository.deleteByUserIdNative(userId);
+        diaryKeywordRepository.deleteByUserId(userId);
 
         // 2. 매핑 테이블들 삭제 (user랑 직접 연결 O)
-        userChallengeRepository.deleteByUserIdNative(userId);
-        userTermRepository.deleteByUserIdNative(userId);
-        userItemRepository.deleteByUserIdNative(userId);
+        userChallengeRepository.deleteByUserId(userId);
+        userTermRepository.deleteByUserId(userId);
+        userItemRepository.deleteByUserId(userId);
 
         // 3. 연관 테이블들 삭제
-        diaryRepository.deleteByUserIdNative(userId);
-        groRepository.deleteByUserIdNative(userId);
-        oAuthAccountRepository.deleteByUserIdNative(userId);
+        diaryRepository.deleteByUserId(userId);
+        groRepository.deleteByUserId(userId);
+        oAuthAccountRepository.deleteByUserId(userId);
 
         // 4. User 삭제
-        userRepository.deleteByIdNative(userId);
+        userRepository.deleteById(userId);
 
         // 5. RefreshToken 삭제 (FK 참조가 없어진 후)
-        refreshTokenRepository.deleteByIdNative(refreshTokenId);
+        refreshTokenRepository.deleteById(refreshTokenId);
     }
 }

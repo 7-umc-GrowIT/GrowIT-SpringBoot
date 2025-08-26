@@ -13,8 +13,13 @@ public interface RefreshTokenRepository extends JpaRepository<RefreshToken, Long
     Optional<RefreshToken> findByRefreshToken(String refreshToken);
 
     @Modifying
-    @Query(value = "DELETE FROM refresh_token WHERE id = :refreshTokenId", nativeQuery = true)
-    void deleteByIdNative(@Param("refreshTokenId") Long refreshTokenId);
+    @Query("DELETE FROM RefreshToken rt WHERE rt.id = :refreshTokenId")
+    void deleteById(@Param("refreshTokenId") Long refreshTokenId);
+
+    // TODO 회원탈퇴 API 네이티브 삭제 메소드 - 추후 확인 필요
+//    @Modifying
+//    @Query(value = "DELETE FROM refresh_token WHERE id = :refreshTokenId", nativeQuery = true)
+//    void deleteByIdNative(@Param("refreshTokenId") Long refreshTokenId);
 
     // TODO soft delete 방식일 때, 스케줄러에서 사용하던 코드로 추후 확인 필요
 //    @Modifying

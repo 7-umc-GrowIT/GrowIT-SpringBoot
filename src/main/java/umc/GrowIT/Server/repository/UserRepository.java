@@ -21,9 +21,14 @@ public interface UserRepository extends JpaRepository<User, Long>  {
     String findPasswordByPrimaryEmail(@Param("primaryEmail") String primaryEmail);
 
     @Modifying
-    @Query(value = "DELETE FROM user WHERE id = :userId", nativeQuery = true)
-    void deleteByIdNative(@Param("userId") Long userId);
+    @Query("DELETE FROM User u WHERE u.id = :userId")
+    void deleteById(@Param("userId") Long userId);
 
+
+    // TODO 회원탈퇴 API 네이티브 삭제 메소드 - 추후 확인 필요
+//    @Modifying
+//    @Query(value = "DELETE FROM user WHERE id = :userId", nativeQuery = true)
+//    void deleteByIdNative(@Param("userId") Long userId);
 
     // TODO soft delete 방식일 때, 스케줄러에서 사용하던 코드로 추후 확인 필요
 //    // status가 inactive이고, updated_at이 30일 지난 사용자 삭제

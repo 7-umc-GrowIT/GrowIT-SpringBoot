@@ -39,7 +39,13 @@ public interface UserItemRepository extends JpaRepository<UserItem, Long>  {
             @Param("status") ItemStatus status
     );
 
+
     @Modifying
-    @Query(value = "DELETE FROM user_item WHERE user_id = :userId", nativeQuery = true)
-    void deleteByUserIdNative(@Param("userId") Long userId);
+    @Query("DELETE FROM UserItem ui WHERE ui.user.id = :userId")
+    void deleteByUserId(@Param("userId") Long userId);
+
+    // TODO 회원탈퇴 API 네이티브 삭제 메소드 - 추후 확인 필요
+//    @Modifying
+//    @Query(value = "DELETE FROM user_item WHERE user_id = :userId", nativeQuery = true)
+//    void deleteByUserIdNative(@Param("userId") Long userId);
 }

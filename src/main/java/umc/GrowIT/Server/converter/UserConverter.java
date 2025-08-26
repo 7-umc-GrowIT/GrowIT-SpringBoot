@@ -1,12 +1,12 @@
 package umc.GrowIT.Server.converter;
 
-import umc.GrowIT.Server.domain.Gro;
 import umc.GrowIT.Server.domain.User;
 import umc.GrowIT.Server.web.dto.AuthDTO.AuthResponseDTO;
 import umc.GrowIT.Server.web.dto.OAuthDTO.OAuthApiResponseDTO;
 import umc.GrowIT.Server.web.dto.OAuthDTO.OAuthResponseDTO;
 import umc.GrowIT.Server.web.dto.TokenDTO.TokenResponseDTO;
 import umc.GrowIT.Server.web.dto.UserDTO.UserRequestDTO;
+import umc.GrowIT.Server.web.dto.UserDTO.UserResponseDTO;
 
 import static umc.GrowIT.Server.domain.enums.Role.USER;
 import static umc.GrowIT.Server.domain.enums.UserStatus.ACTIVE;
