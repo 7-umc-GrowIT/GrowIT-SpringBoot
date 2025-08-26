@@ -90,12 +90,12 @@ public class ChallengeConverter {
     }
 
     // 챌린지 인증 작성 결과 반환
-    public static ChallengeResponseDTO.ProofDetailsDTO toProofDetailsDTO(UserChallenge userChallenge) {
+    public static ChallengeResponseDTO.ProofDetailsDTO toProofDetailsDTO(UserChallenge userChallenge, String certificationImageUrl) {
         return ChallengeResponseDTO.ProofDetailsDTO.builder()
                 .id(userChallenge.getId())
                 .title(userChallenge.getChallenge().getTitle())
                 .time(userChallenge.getChallenge().getTime())
-                .certificationImage(userChallenge.getCertificationImage())
+                .certificationImage(certificationImageUrl)
                 .thoughts(userChallenge.getThoughts())
                 .certificationDate(userChallenge.getCertificationDate())
                 .build();

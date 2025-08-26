@@ -16,8 +16,10 @@ import umc.GrowIT.Server.repository.ChallengeRepository;
 import umc.GrowIT.Server.repository.UserChallengeRepository;
 import umc.GrowIT.Server.repository.DiaryRepository;
 import umc.GrowIT.Server.service.keywordService.KeywordService;
+import umc.GrowIT.Server.util.S3Util;
 import umc.GrowIT.Server.web.dto.ChallengeDTO.ChallengeResponseDTO;
 
+import java.time.Duration;
 import java.time.LocalDate;
 import java.time.temporal.ChronoUnit;
 import java.util.*;
@@ -30,6 +32,7 @@ public class ChallengeQueryServiceImpl implements ChallengeQueryService {
     private final UserChallengeRepository userChallengeRepository;
     private final DiaryRepository diaryRepository;
     private final KeywordService keywordService;
+    private final S3Util s3Util;
 
     @Override
     public int getTotalCredits(Long userId) {
@@ -119,7 +122,8 @@ public class ChallengeQueryServiceImpl implements ChallengeQueryService {
             throw new ChallengeHandler(ErrorStatus.CHALLENGE_NOT_COMPLETED);
         }
 
-        return ChallengeConverter.toProofDetailsDTO(userChallenge);
+        String certificationImageUrl = s3Util.toGetPresignedUrl("challenges/" + userChallenge.getCertificationImage(), Duration.ofMinutes(30));
+        return ChallengeConverter.toProofDetailsDTO(userChallenge, certificationImageUrl);
     }
 
 }

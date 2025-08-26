@@ -98,6 +98,7 @@ public class ChallengeCommandServiceImpl implements ChallengeCommandService {
             case "image/jpeg", "image/jpg" -> "jpg";
             case "image/png" -> "png";
             case "image/svg" -> "svg";
+            case "image/webp" -> "webp";
             default -> throw new S3Handler(ErrorStatus.S3_BAD_FILE_EXTENSION);
         };
 
@@ -129,7 +130,7 @@ public class ChallengeCommandServiceImpl implements ChallengeCommandService {
         user.updateTotalCredit(user.getTotalCredit() + challengeCredit);
         userRepository.save(user);
 
-        return ChallengeConverter.toProofDetailsDTO(userChallenge);
+        return ChallengeConverter.toProofDetailsDTO(userChallenge, proofRequest.getCertificationImage());
     }
 
     @Override
