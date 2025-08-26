@@ -25,8 +25,8 @@ public class UserChallenge extends BaseEntity {
     private String thoughts;
 
     // 인증사진
-    @Column(columnDefinition = "TEXT")
-    private String certificationImage;
+    @Column
+    private String certificationImageName;
 
     // 챌린지 타입 (랜덤 or 데일리)
     @Enumerated(EnumType.STRING)
@@ -53,16 +53,16 @@ public class UserChallenge extends BaseEntity {
     @JoinColumn(name = "challenge_id", nullable = false)
     private Challenge challenge;
 
-    public void updateProof(ChallengeRequestDTO.ProofRequestDTO proofRequestDTO) {
-        this.certificationImage = proofRequestDTO.getCertificationImage();
-        this.thoughts = proofRequestDTO.getThoughts();
-    }
-
-    // 인증 작성 (최초 등록 또는 전체 업데이트용)
-    public void verifyUserChallenge(ChallengeRequestDTO.ProofRequestDTO proofRequest, String imageUrl){
+    // 인증 작성 (최초 인증 용도)
+    public void verifyUserChallenge(ChallengeRequestDTO.ProofRequestDTO proofRequest){
         this.thoughts = proofRequest.getThoughts();
-        this.certificationImage = imageUrl;
+        this.certificationImageName = proofRequest.getCertificationImageName();
         this.certificationDate = LocalDateTime.now(); // 인증한 날짜 저장
         this.completed = true;
+    }
+
+    public void updateProof(ChallengeRequestDTO.ProofRequestDTO proofRequest) {
+        this.certificationImageName = proofRequest.getCertificationImageName();
+        this.thoughts = proofRequest.getThoughts();
     }
 }

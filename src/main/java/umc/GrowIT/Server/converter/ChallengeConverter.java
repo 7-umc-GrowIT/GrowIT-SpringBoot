@@ -92,7 +92,7 @@ public class ChallengeConverter {
                 .id(userChallenge.getId())
                 .title(userChallenge.getChallenge().getTitle())
                 .time(userChallenge.getChallenge().getTime())
-                .certificationImage(certificationImageUrl)
+                .certificationImageName(certificationImageUrl)
                 .thoughts(userChallenge.getThoughts())
                 .certificationDate(userChallenge.getCertificationDate())
                 .build();
@@ -106,23 +106,6 @@ public class ChallengeConverter {
                 .dtype(dtype)
                 .date(date)
                 .completed(false)
-                .build();
-    }
-
-    // 선택한 챌린지 저장
-    public static ChallengeResponseDTO.SelectChallengeDTO toSelectChallengeDTO(List<UserChallenge> userChallenges) {
-        List<ChallengeResponseDTO.SelectedChallengesInfo> selectedChallenges = userChallenges.stream()
-                .map(userChallenge -> ChallengeResponseDTO.SelectedChallengesInfo.builder()
-                        .id(userChallenge.getId())
-                        .dtype(userChallenge.getDtype())
-                        .title(userChallenge.getChallenge().getTitle())
-                        .content(userChallenge.getChallenge().getContent())
-                        .time(userChallenge.getChallenge().getTime())
-                        .build())
-                .toList();
-
-        return ChallengeResponseDTO.SelectChallengeDTO.builder()
-                .selectedChallenges(selectedChallenges) // 여러 개의 챌린지 리스트 반환
                 .build();
     }
 

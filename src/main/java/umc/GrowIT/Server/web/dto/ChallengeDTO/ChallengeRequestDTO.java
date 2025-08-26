@@ -30,7 +30,7 @@ public class ChallengeRequestDTO {
     public static class ProofRequestDTO {
         @Schema(description = "업로드할 파일의 이름", example = "3c99605a8e01.png")
         @NotBlank(message = "이미지는 필수 입력입니다.")
-        private String certificationImage;
+        private String certificationImageName;
         @Schema(description = "소감(텍스트)", example = "오늘은 ~")
         @NotBlank(message = "챌린지 한줄소감은 필수로 입력해야 합니다.")
         @Size(min = 50, max = 100, message = "챌린지 한줄소감은 50자~100자 이내로 입력해야 합니다.")

@@ -29,7 +29,7 @@ public class ChallengeCommandServiceImpl implements ChallengeCommandService {
 
     @Override
     @Transactional
-    public ChallengeResponseDTO.SelectChallengeDTO selectChallenges(Long userId, List<ChallengeRequestDTO.SelectChallengeRequestDTO> selectRequestList) {
+    public void selectChallenges(Long userId, List<ChallengeRequestDTO.SelectChallengeRequestDTO> selectRequestList) {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new ChallengeHandler(ErrorStatus.USER_NOT_FOUND));
 
@@ -77,10 +77,6 @@ public class ChallengeCommandServiceImpl implements ChallengeCommandService {
 
             savedUserChallenges.addAll(userChallenges);
         }
-
-
-        // DTO 변환 및 반환
-        return ChallengeConverter.toSelectChallengeDTO(savedUserChallenges);
     }
 
     // 챌린지 인증 이미지 업로드용 Presigned URL 생성
@@ -109,7 +105,7 @@ public class ChallengeCommandServiceImpl implements ChallengeCommandService {
 
     @Override
     @Transactional
-    public ChallengeResponseDTO.ProofDetailsDTO createChallengeProof(Long userId, Long userChallengeId, ChallengeRequestDTO.ProofRequestDTO proofRequest) {
+    public void createChallengeProof(Long userId, Long userChallengeId, ChallengeRequestDTO.ProofRequestDTO proofRequest) {
 
         UserChallenge userChallenge = userChallengeRepository.findByIdAndUserId(userChallengeId, userId)
                 .orElseThrow(() -> new ChallengeHandler(ErrorStatus.USER_CHALLENGE_NOT_FOUND));
@@ -121,12 +117,10 @@ public class ChallengeCommandServiceImpl implements ChallengeCommandService {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new UserHandler(ErrorStatus.USER_NOT_FOUND));
 
-        userChallenge.verifyUserChallenge(proofRequest, proofRequest.getCertificationImage());
+        userChallenge.verifyUserChallenge(proofRequest);
 
         user.updateCurrentCredit(user.getCurrentCredit() + challengeCredit);
         user.updateTotalCredit(user.getTotalCredit() + challengeCredit);
-
-        return ChallengeConverter.toProofDetailsDTO(userChallenge, proofRequest.getCertificationImage());
     }
 
     @Override
@@ -142,7 +136,7 @@ public class ChallengeCommandServiceImpl implements ChallengeCommandService {
         }
 
         // 수정사항 체크
-        boolean sameImage = Objects.equals(updateRequest.getCertificationImage(), userChallenge.getCertificationImage());
+        boolean sameImage = Objects.equals(updateRequest.getCertificationImageName(), userChallenge.getCertificationImageName());
         boolean sameThoughts = Objects.equals(updateRequest.getThoughts(), userChallenge.getThoughts());
 
         // 인증 내역에 수정사항 없는 경우 에러 처리
