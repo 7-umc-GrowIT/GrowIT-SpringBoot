@@ -37,9 +37,6 @@ public class ChallengeCommandServiceImpl implements ChallengeCommandService {
         int dailyChallengeCount = 0;
         int randomChallengeCount = 0;
 
-        // 선택한 UserChallenge 저장
-        List<UserChallenge> savedUserChallenges = new ArrayList<>();
-
         for (ChallengeRequestDTO.SelectChallengeRequestDTO selectRequest : selectRequestList) {
             List<Long> challengeIds = selectRequest.getChallengeIds();
             UserChallengeType dtype = selectRequest.getDtype();
@@ -68,14 +65,11 @@ public class ChallengeCommandServiceImpl implements ChallengeCommandService {
                     .map(challengeId -> {
                         Challenge challenge = challengeRepository.findById(challengeId)
                                 .orElseThrow(() -> new ChallengeHandler(ErrorStatus.CHALLENGE_NOT_FOUND));
-
-                        // UserChallenge 생성
-                        UserChallenge userChallenge = ChallengeConverter.createUserChallenge(user, challenge, dtype, date);
-                        return userChallengeRepository.save(userChallenge);
+                        return ChallengeConverter.createUserChallenge(user, challenge, dtype, date);
                     })
                     .toList();
 
-            savedUserChallenges.addAll(userChallenges);
+            userChallengeRepository.saveAll(userChallenges);
         }
     }
 

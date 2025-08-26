@@ -72,7 +72,7 @@ public class ChallengeController implements ChallengeSpecification {
     }
 
     @PostMapping("{userChallengeId}")
-    public ApiResponse<Void> createChallengeProof(@PathVariable Long userChallengeId, @RequestBody ChallengeRequestDTO.ProofRequestDTO proofRequest) {
+    public ApiResponse<Void> createChallengeProof(@PathVariable Long userChallengeId, @Valid @RequestBody ChallengeRequestDTO.ProofRequestDTO proofRequest) {
 
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         Long userId = (Long) authentication.getPrincipal();
@@ -90,7 +90,7 @@ public class ChallengeController implements ChallengeSpecification {
     }
 
     @PatchMapping("{userChallengeId}")
-    public ApiResponse<Void> updateChallengeProof(@PathVariable("userChallengeId") Long userChallengeId, @RequestBody(required = false) ChallengeRequestDTO.ProofRequestDTO updateRequest) {
+    public ApiResponse<Void> updateChallengeProof(@PathVariable("userChallengeId") Long userChallengeId, @Valid @RequestBody(required = false) ChallengeRequestDTO.ProofRequestDTO updateRequest) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         Long userId = (Long) authentication.getPrincipal();
         challengeCommandService.updateChallengeProof(userId, userChallengeId, updateRequest);
