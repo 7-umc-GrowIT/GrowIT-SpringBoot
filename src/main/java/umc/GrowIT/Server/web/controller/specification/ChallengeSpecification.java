@@ -71,7 +71,7 @@ public interface ChallengeSpecification {
     })
     ApiResponse<ChallengeResponseDTO.SelectChallengeDTO> selectChallenges(@RequestBody List<ChallengeRequestDTO.SelectChallengeRequestDTO> selectRequestList);
 
-    @PostMapping("prove/presigned-url")
+    @PostMapping("presigned-url")
     @Operation(summary = "챌린지 인증 이미지 업로드용 presigned url 생성 API", description = "챌린지 인증 이미지를 S3에 직접 업로드할 수 있는 presigned url을 생성합니다.")
     @ApiResponses({
             @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "COMMON200", description = "⭕ SUCCESS"),
@@ -79,7 +79,7 @@ public interface ChallengeSpecification {
     })
     ApiResponse<ChallengeResponseDTO.ProofPresignedUrlResponseDTO> getProofPresignedUrl(@Valid @RequestBody ChallengeRequestDTO.ProofRequestPresignedUrlDTO request);
 
-    @PostMapping("{userChallengeId}/prove")
+    @PostMapping("{userChallengeId}")
     @Operation(summary = "챌린지 인증 작성 API", description = "챌린지 인증을 작성하는 API입니다. <br>" +
             "presigned url 생성 시 반환된 파일명을 certificationImage로 넘겨주세요. ")
     @ApiResponses({

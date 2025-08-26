@@ -60,7 +60,7 @@ public class ChallengeController implements ChallengeSpecification {
         return ApiResponse.onSuccess(response);
     }
 
-    @PostMapping("prove/presigned-url")
+    @PostMapping("presigned-url")
     public ApiResponse<ChallengeResponseDTO.ProofPresignedUrlResponseDTO> getProofPresignedUrl(@Valid @RequestBody ChallengeRequestDTO.ProofRequestPresignedUrlDTO request) {
 
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
@@ -71,7 +71,7 @@ public class ChallengeController implements ChallengeSpecification {
         return ApiResponse.onSuccess(result);
     }
 
-    @PostMapping("{userChallengeId}/prove")
+    @PostMapping("{userChallengeId}")
     public ApiResponse<ChallengeResponseDTO.ProofDetailsDTO> createChallengeProof(@PathVariable Long userChallengeId, @RequestBody ChallengeRequestDTO.ProofRequestDTO proofRequest) {
 
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
