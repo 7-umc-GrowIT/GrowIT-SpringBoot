@@ -29,10 +29,7 @@ public class ChallengeConverter {
     public static List<ChallengeResponseDTO.RecommendedChallengeDTO> toRecommendedChallengeListDTO(
             List<UserChallenge> userChallenges) {
 
-        LocalDate today = LocalDate.now();
-
         return userChallenges.stream()
-                .filter(userChallenge -> userChallenge.getDate().isEqual(today))
                 .map(ChallengeConverter::toRecommendedChallengeDTO)
                 .collect(Collectors.toList());
     }
