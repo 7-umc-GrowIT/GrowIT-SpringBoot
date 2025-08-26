@@ -75,7 +75,7 @@ public interface ChallengeSpecification {
     @Operation(summary = "챌린지 인증 이미지 업로드용 presigned url 생성 API", description = "챌린지 인증 이미지를 S3에 직접 업로드할 수 있는 presigned url을 생성합니다.")
     @ApiResponses({
             @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "COMMON200", description = "⭕ SUCCESS"),
-            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "S3_4001", description = "❌ 파일 확장자가 잘못되었습니다.", content = @Content(schema = @Schema(implementation = ApiResponse.class))),
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "S34001", description = "❌ 파일 확장자가 잘못되었습니다.", content = @Content(schema = @Schema(implementation = ApiResponse.class))),
     })
     ApiResponse<ChallengeResponseDTO.ProofPresignedUrlResponseDTO> getProofPresignedUrl(@Valid @RequestBody ChallengeRequestDTO.ProofRequestPresignedUrlDTO request);
 
