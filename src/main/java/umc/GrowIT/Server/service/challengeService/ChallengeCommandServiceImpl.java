@@ -1,7 +1,7 @@
 package umc.GrowIT.Server.service.challengeService;
 
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
+
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import umc.GrowIT.Server.apiPayload.code.status.ErrorStatus;
@@ -14,13 +14,11 @@ import umc.GrowIT.Server.util.S3Util;
 import umc.GrowIT.Server.web.dto.ChallengeDTO.ChallengeRequestDTO;
 import umc.GrowIT.Server.web.dto.ChallengeDTO.ChallengeResponseDTO;
 
-import java.time.Duration;
 import java.time.LocalDate;
 import java.util.*;
 
 @Service
 @RequiredArgsConstructor
-@Slf4j
 public class ChallengeCommandServiceImpl implements ChallengeCommandService {
 
     private final UserRepository userRepository;
@@ -88,7 +86,7 @@ public class ChallengeCommandServiceImpl implements ChallengeCommandService {
     // 챌린지 인증 이미지 업로드용 Presigned URL 생성
     @Override
     @Transactional
-    public ChallengeResponseDTO.ProofPresignedUrlResponseDTO generateChallengePresignedUrl(Long userId, ChallengeRequestDTO.ProofRequestPresignedUrlDTO request) {
+    public ChallengeResponseDTO.ProofPresignedUrlResponseDTO createChallengePresignedUrl(Long userId, ChallengeRequestDTO.ProofRequestPresignedUrlDTO request) {
 
         // contentType 검증
         String contentType = request.getContentType().toLowerCase();

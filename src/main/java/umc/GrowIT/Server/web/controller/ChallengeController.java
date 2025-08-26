@@ -66,7 +66,7 @@ public class ChallengeController implements ChallengeSpecification {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         Long userId = (Long) authentication.getPrincipal();
 
-        ChallengeResponseDTO.ProofPresignedUrlResponseDTO result = challengeCommandService.generateChallengePresignedUrl(userId, request);
+        ChallengeResponseDTO.ProofPresignedUrlResponseDTO result = challengeCommandService.createChallengePresignedUrl(userId, request);
 
         return ApiResponse.onSuccess(result);
     }
