@@ -14,6 +14,7 @@ public class ChallengeRequestDTO {
     @Builder
     @NoArgsConstructor
     @AllArgsConstructor
+    @Schema(title = "presigned url 생성 request")
     public static class ProofRequestPresignedUrlDTO {
         @NotBlank(message = "파일의 MIME 타입은 필수 입력입니다.")
         @Schema(description = "업로드할 파일의 MIME 타입", example = "image/png")
@@ -24,6 +25,7 @@ public class ChallengeRequestDTO {
     @Builder
     @NoArgsConstructor
     @AllArgsConstructor
+    @Schema(title = "챌린지 인증 작성/수정 request")
     public static class ProofRequestDTO {
         @Schema(description = "업로드할 파일의 이름", example = "3c99605a8e01.png")
         private String certificationImage;
@@ -31,10 +33,11 @@ public class ChallengeRequestDTO {
         private String thoughts;
     }
 
-    @Data
+    @Getter
     @Builder
     @NoArgsConstructor
     @AllArgsConstructor
+    @Schema(title = "챌린지 선택 후 저장 request")
     public static class SelectChallengeRequestDTO {
         @Schema(description = "저장할 챌린지 아이디(리스트)", example = "[1, 2]")
         private List<Long> challengeIds;

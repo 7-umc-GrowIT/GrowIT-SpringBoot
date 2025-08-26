@@ -12,11 +12,11 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 public class ChallengeResponseDTO {
-    // 챌린지 홈 응답 DTO
     @Getter
     @Builder
     @NoArgsConstructor
     @AllArgsConstructor
+    @Schema(title = "챌린지 홈 response")
     public static class ChallengeHomeDTO {
         @Schema(description = "챌린지 키워드(리스트)", example = "즐거운, 차분한, 새로운")
         private List<String> challengeKeywords;
@@ -26,11 +26,11 @@ public class ChallengeResponseDTO {
         private ChallengeReportDTO challengeReport;
     }
 
-    // 챌린지 추천
     @Getter
     @Builder
     @NoArgsConstructor
     @AllArgsConstructor
+    @Schema(title = "챌린치 추천 response")
     public static class RecommendedChallengeDTO {
         @Schema(description = "추천 챌린지 id", example = "1")
         private Long id;
@@ -46,11 +46,11 @@ public class ChallengeResponseDTO {
         private boolean completed;
     }
 
-    // 챌린지 리포트
     @Getter
     @Builder
     @NoArgsConstructor
     @AllArgsConstructor
+    @Schema(title = "챌린지 리포트 response")
     public static class ChallengeReportDTO {
         @Schema(description = "총 크레딧 수", example = "1200")
         private int totalCredits;
@@ -60,11 +60,11 @@ public class ChallengeResponseDTO {
         private String diaryDate;
     }
 
-    // 챌린지 상태별 응답 DTO
     @Getter
     @Builder
     @NoArgsConstructor
     @AllArgsConstructor
+    @Schema(title = "챌린지 조회 response")
     public static class ChallengeStatusDTO {
         @Schema(description = "챌린지 id", example = "1")
         private Long id;
@@ -82,6 +82,7 @@ public class ChallengeResponseDTO {
     @Builder
     @NoArgsConstructor
     @AllArgsConstructor
+    @Schema(title = "챌린지 현황 조회 response")
     public static class ChallengeStatusPagedResponseDTO  {
         @Schema(description = "챌린지 목록")
         private List<ChallengeStatusDTO> content;
@@ -97,6 +98,7 @@ public class ChallengeResponseDTO {
     @Builder
     @NoArgsConstructor
     @AllArgsConstructor
+    @Schema(title = "presigned url 생성 response")
     public static class ProofPresignedUrlResponseDTO {
         @Schema(description = "S3 업로드용 Presigned URL", example = "https://growit-server-bucket.s3.ap-northeast-2.amazonaws.com/challenges/1842f2aa-40d0-4ae3~")
         private String presignedUrl;
@@ -104,11 +106,11 @@ public class ChallengeResponseDTO {
         private String fileName;
     }
 
-    // 챌린지 인증 내역
     @Getter
     @Builder
     @NoArgsConstructor
     @AllArgsConstructor
+    @Schema(title = "챌린지 인증 내역 response")
     public static class ProofDetailsDTO {
         @Schema(description = "챌린지 인증 내역 id", example = "1")
         private Long id;
@@ -129,6 +131,7 @@ public class ChallengeResponseDTO {
     @Builder
     @NoArgsConstructor
     @AllArgsConstructor
+    @Schema(title = "챌린지 선택 후 저장 response")
     public static class SelectChallengeDTO {
         @Schema(description = "선택하여 저장한 챌린지(리스트)")
         private List<SelectedChallengesInfo> selectedChallenges;
@@ -138,6 +141,7 @@ public class ChallengeResponseDTO {
     @Builder
     @NoArgsConstructor
     @AllArgsConstructor
+    @Schema(title = "저장한 챌린지 조회 response")
     public static class SelectedChallengesInfo {
         @Schema(description = "챌린지 id", example = "1")
         private Long id;
