@@ -115,7 +115,7 @@ public class ChallengeCommandServiceImpl implements ChallengeCommandService {
                 .orElseThrow(() -> new ChallengeHandler(ErrorStatus.USER_CHALLENGE_NOT_FOUND));
 
         if (userChallenge.isCompleted()) {
-            throw new ChallengeHandler(ErrorStatus.CHALLENGE_VERIFY_ALREADY_EXISTS);
+            throw new ChallengeHandler(ErrorStatus.USER_CHALLENGE_ALREADY_PROVED);
         }
 
         User user = userRepository.findById(userId)
@@ -140,7 +140,7 @@ public class ChallengeCommandServiceImpl implements ChallengeCommandService {
 
         // 인증이 완료되지 않았을 경우 예외 발생
         if (!userChallenge.isCompleted()) {
-            throw new ChallengeHandler(ErrorStatus.CHALLENGE_NOT_COMPLETED);
+            throw new ChallengeHandler(ErrorStatus.USER_CHALLENGE_NOT_PROVED);
         }
 
         // 인증 이미지 업데이트

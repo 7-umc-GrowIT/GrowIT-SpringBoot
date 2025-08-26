@@ -119,7 +119,7 @@ public class ChallengeQueryServiceImpl implements ChallengeQueryService {
                 .orElseThrow(() -> new ChallengeHandler(ErrorStatus.USER_CHALLENGE_NOT_FOUND));
 
         if (!userChallenge.isCompleted()) {
-            throw new ChallengeHandler(ErrorStatus.CHALLENGE_NOT_COMPLETED);
+            throw new ChallengeHandler(ErrorStatus.USER_CHALLENGE_NOT_PROVED);
         }
 
         String certificationImageUrl = s3Util.toGetPresignedUrl("challenges/" + userChallenge.getCertificationImage(), Duration.ofMinutes(30));

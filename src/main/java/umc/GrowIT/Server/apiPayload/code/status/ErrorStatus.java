@@ -25,6 +25,8 @@ public enum ErrorStatus implements BaseErrorCode {
     //사용자 챌린지 관련 에러
     USER_CHALLENGE_NOT_FOUND(HttpStatus.NOT_FOUND, "UC4001", "사용자 챌린지가 존재하지 않습니다"),
     USER_CHALLENGE_COMPLETE(HttpStatus.BAD_REQUEST, "UC4002", "완료된 챌린지는 삭제가 불가합니다"),
+    USER_CHALLENGE_ALREADY_PROVED(HttpStatus.BAD_REQUEST, "UC4003", "이미 완료된 챌린지입니다."),
+    USER_CHALLENGE_NOT_PROVED(HttpStatus.BAD_REQUEST, "UC4004", "챌린지 인증이 완료되지 않았습니다."),
 
     //약관 관련 에러
     TERM_NOT_FOUND(HttpStatus.NOT_FOUND, "TERM4001", "존재하지 않는 약관을 요청했습니다."),
@@ -54,13 +56,11 @@ public enum ErrorStatus implements BaseErrorCode {
 
     // 챌린지 관련 에러
     CHALLENGE_NOT_FOUND(HttpStatus.NOT_FOUND, "CHALLENGE4001", "챌린지를 찾을 수 없습니다."),
-    CHALLENGE_NOT_COMPLETED(HttpStatus.BAD_REQUEST, "CHALLENGE4002", "챌린지 인증이 완료되지 않았습니다."),
-    CHALLENGE_ALREADY_SAVED(HttpStatus.BAD_REQUEST, "CHALLENGE4003", "오늘 이미 챌린지를 저장하였습니다. 추가 저장은 불가능합니다."),
-    CHALLENGE_VERIFY_ALREADY_EXISTS(HttpStatus.BAD_REQUEST, "CHALLENGE4004", "이미 완료된 챌린지입니다."),
-    CHALLENGE_SAVE_LIMIT(HttpStatus.BAD_REQUEST, "CHALLENGE4005", "챌린지는 3개까지 저장 가능합니다."),
-    CHALLENGE_AT_LEAST(HttpStatus.BAD_REQUEST, "CHALLENGE4006", "최소 하나의 챌린지를 선택해야 합니다."),
-    CHALLENGE_DAILY_MAX(HttpStatus.BAD_REQUEST, "CHALLENGE4007", "데일리 챌린지는 최대 2개까지 저장 가능합니다."),
-    CHALLENGE_RANDOM_MAX(HttpStatus.BAD_REQUEST, "CHALLENGE4008", "랜덤 챌린지는 최대 1개만 저장 가능합니다."),
+    CHALLENGE_ALREADY_SAVED(HttpStatus.BAD_REQUEST, "CHALLENGE4002", "오늘 이미 챌린지를 저장하였습니다. 추가 저장은 불가능합니다."),
+    CHALLENGE_SAVE_LIMIT(HttpStatus.BAD_REQUEST, "CHALLENGE4003", "챌린지는 3개까지 저장 가능합니다."),
+    CHALLENGE_AT_LEAST(HttpStatus.BAD_REQUEST, "CHALLENGE4004", "최소 하나의 챌린지를 선택해야 합니다."),
+    CHALLENGE_DAILY_MAX(HttpStatus.BAD_REQUEST, "CHALLENGE4005", "데일리 챌린지는 최대 2개까지 저장 가능합니다."),
+    CHALLENGE_RANDOM_MAX(HttpStatus.BAD_REQUEST, "CHALLENGE4006", "랜덤 챌린지는 최대 1개만 저장 가능합니다."),
     RELATED_CHALLENGE_NOT_FOUND(HttpStatus.NOT_FOUND, "CHALLENGE5001", "연관된 챌린지가 없습니다."),
 
     //기타 에러
