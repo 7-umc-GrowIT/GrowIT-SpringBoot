@@ -72,19 +72,16 @@ public interface ChallengeSpecification {
     ApiResponse<ChallengeResponseDTO.SelectChallengeDTO> selectChallenges(@RequestBody List<ChallengeRequestDTO.SelectChallengeRequestDTO> selectRequestList);
 
     @PostMapping("prove/presigned-url")
-    @Operation(summary = "챌린지 인증 이미지 업로드용 presigned url", description = "챌린지 인증 이미지를 S3에 직접 업로드할 수 있는 Presigned URL을 발급합니다.")
+    @Operation(summary = "챌린지 인증 이미지 업로드용 presigned url 생성 API", description = "챌린지 인증 이미지를 S3에 직접 업로드할 수 있는 presigned url을 생성합니다.")
     @ApiResponses({
             @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "COMMON200", description = "⭕ SUCCESS"),
             @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "S3_4001", description = "❌ 파일 확장자가 잘못되었습니다.", content = @Content(schema = @Schema(implementation = ApiResponse.class))),
-            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "S3_4002", description = "❌ 파일 이름은 필수입니다.", content = @Content(schema = @Schema(implementation = ApiResponse.class))),
-            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "S3_4003", description = "❌ 폴더 이름은 필수입니다.", content = @Content(schema = @Schema(implementation = ApiResponse.class))),
-            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "S3_4004", description = "❌ 폴더명은 영어로 입력해야 합니다.", content = @Content(schema = @Schema(implementation = ApiResponse.class)))
     })
     ApiResponse<ChallengeResponseDTO.ProofPresignedUrlResponseDTO> getProofPresignedUrl(@Valid @RequestBody ChallengeRequestDTO.ProofRequestPresignedUrlDTO request);
 
     @PostMapping("{userChallengeId}/prove")
     @Operation(summary = "챌린지 인증 작성 API", description = "챌린지 인증을 작성하는 API입니다. <br>" +
-            "s3에 업로드한 객체 URL을 certificationImageUrl로 넘겨주세요. ")
+            "presigned url 생성 시 반환된 파일명을 certificationImage로 넘겨주세요. ")
     @ApiResponses({
             @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "COMMON200", description = "⭕ SUCCESS"),
             @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "USER4002", description = "❌ 이메일 또는 패스워드가 일치하지 않습니다.", content = @Content(schema = @Schema(implementation = ApiResponse.class))),

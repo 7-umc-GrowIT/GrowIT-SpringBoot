@@ -82,10 +82,10 @@ public class ChallengeConverter {
     }
 
     // 챌린지 인증 이미지 - 프리사인드 URL
-    public static ChallengeResponseDTO.ProofPresignedUrlResponseDTO proofPresignedUrlDTO(String presignedUrl, String fileUrl) {
+    public static ChallengeResponseDTO.ProofPresignedUrlResponseDTO proofPresignedUrlDTO(String presignedUrl, String fileName) {
         return ChallengeResponseDTO.ProofPresignedUrlResponseDTO.builder()
                 .presignedUrl(presignedUrl)
-                .fileUrl(fileUrl)
+                .fileName(fileName)
                 .build();
     }
 

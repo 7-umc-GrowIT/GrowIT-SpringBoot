@@ -100,8 +100,8 @@ public class ChallengeResponseDTO {
     public static class ProofPresignedUrlResponseDTO {
         @Schema(description = "S3 업로드용 Presigned URL", example = "https://growit-server-bucket.s3.ap-northeast-2.amazonaws.com/challenges/1842f2aa-40d0-4ae3~")
         private String presignedUrl;
-        @Schema(description = "업로드 완료 후 접근 URL", example = "3c99605a8e01.png")
-        private String fileUrl;
+        @Schema(description = "접근 파일명", example = "3c99605a8e01.png")
+        private String fileName;
     }
 
     // 챌린지 인증 내역
