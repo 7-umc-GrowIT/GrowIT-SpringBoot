@@ -51,7 +51,7 @@ public class ChallengeController implements ChallengeSpecification {
         return ApiResponse.onSuccess(challengeStatusList);
     }
 
-    @PostMapping("/{challengeId}/select")
+    @PostMapping("select")
     public ApiResponse<ChallengeResponseDTO.SelectChallengeDTO> selectChallenges(@RequestBody List<ChallengeRequestDTO.SelectChallengeRequestDTO> selectRequestList) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         Long userId = (Long) authentication.getPrincipal();

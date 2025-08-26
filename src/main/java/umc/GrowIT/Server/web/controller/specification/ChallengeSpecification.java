@@ -42,7 +42,7 @@ public interface ChallengeSpecification {
             @RequestParam(required = false) Boolean completed,
             @RequestParam Integer page);
 
-    @PostMapping("{challengeId}/select")
+    @PostMapping("select")
     @Operation(summary = "선택된 챌린지 저장 API", description = "사용자가 선택한 챌린지를 저장하는 API입니다. <br> " +
             "DAILY와 RANDOM에 각각 저장하고 싶은 챌린지 아이디를 입력하여 리스트 형태로 보내주세요. <br> " +
             "데일리챌린지는 최대 2개까지 저장할 수 있으며, 랜덤챌린지는 최대 1개까지 저장할 수 있습니다. <br> " +
