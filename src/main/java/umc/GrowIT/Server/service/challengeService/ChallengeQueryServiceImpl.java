@@ -34,16 +34,16 @@ public class ChallengeQueryServiceImpl implements ChallengeQueryService {
     private final KeywordService keywordService;
     private final S3Util s3Util;
 
+    // 총 크레딧 수 조회
     @Override
     public int getTotalCredits(Long userId) {
-        // TODO: 총 크레딧 수 조회 로직 구현
         Integer credits = challengeRepository.getTotalCreditsByUserId(userId);
         return (credits != null) ? credits : 0;
     }
 
+    // 작성한 총 일기 수 조회
     @Override
     public int getTotalDiaries(Long userId) {
-        // TODO: 작성된 일기 수 조회 로직 구현
         return challengeRepository.getTotalDiariesByUserId(userId);
     }
 
@@ -59,7 +59,7 @@ public class ChallengeQueryServiceImpl implements ChallengeQueryService {
         return "D+" + days;
     }
 
-
+    // 챌린지 홈 조회
     @Override
     @Transactional
     public ChallengeResponseDTO.ChallengeHomeDTO getChallengeHome(Long userId) {
@@ -87,7 +87,7 @@ public class ChallengeQueryServiceImpl implements ChallengeQueryService {
         );
     }
 
-
+    // 챌린지 현황 조회
     @Override
     public ChallengeResponseDTO.ChallengeStatusPagedResponseDTO getChallengeStatus(Long userId, UserChallengeType dtype, Boolean completed, Integer page) {
         Slice<UserChallenge> userChallenges;
