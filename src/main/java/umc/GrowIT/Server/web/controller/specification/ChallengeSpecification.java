@@ -45,22 +45,7 @@ public interface ChallengeSpecification {
     @PostMapping("select")
     @Operation(summary = "선택한 챌린지 저장 API", description = "사용자가 선택한 챌린지를 저장하는 API입니다. <br> " +
             "DAILY와 RANDOM에 각각 저장하고 싶은 챌린지 아이디를 입력하여 리스트 형태로 보내주세요. <br> " +
-            "데일리챌린지는 최대 2개까지 저장할 수 있으며, 랜덤챌린지는 최대 1개까지 저장할 수 있습니다. <br> " +
-            "ex) [\n" +
-            "  {\n" +
-            "    \"challengeIds\": [\n" +
-            "      1,2\n" +
-            "    ],\n" +
-            "    \"dtype\": \"DAILY\"\n" +
-            "  },\n" +
-            "  {\n" +
-            "    \"challengeIds\": [\n" +
-            "      3\n" +
-            "    ],\n" +
-            "    \"dtype\": \"RANDOM\"\n" +
-            "  }\n" +
-            "]"
-    )
+            "데일리챌린지는 최대 2개까지 저장할 수 있으며, 랜덤챌린지는 최대 1개까지 저장할 수 있습니다. <br> ")
     @ApiResponses({
             @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "COMMON200", description = "⭕ SUCCESS"),
             @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "USER4002", description = "❌ 이메일 또는 패스워드가 일치하지 않습니다.", content = @Content(schema = @Schema(implementation = ApiResponse.class))),
@@ -102,7 +87,7 @@ public interface ChallengeSpecification {
 
     @PatchMapping("{userChallengeId}")
     @Operation(summary = "챌린지 인증 수정 API", description = "챌린지 인증을 수정하는 API입니다. <br>" +
-            "s3에 업로드한 객체 URL을 certificationImageUrl로 넘겨주세요. ")
+            "presigned url 생성 시 반환된 파일명을 certificationImage로 넘겨주세요. ")
     @ApiResponses({
             @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "COMMON200", description = "⭕ SUCCESS"),
             @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "USER4002", description = "❌ 이메일 또는 패스워드가 일치하지 않습니다.", content = @Content(schema = @Schema(implementation = ApiResponse.class))),

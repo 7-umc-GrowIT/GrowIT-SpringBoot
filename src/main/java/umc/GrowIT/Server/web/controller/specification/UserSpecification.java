@@ -78,7 +78,7 @@ public interface UserSpecification {
     })
     ApiResponse<UserResponseDTO.DeleteUserResponseDTO> deleteUser();
 
-    @GetMapping("")
+    @GetMapping("/mypage")
     @Operation(summary = "마이페이지 조회 API", description = "마이페이지에서 사용자의 정보를 조회합니다.")
     @ApiResponses({
             @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "COMMON200", description = "⭕ SUCCESS"),

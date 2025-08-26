@@ -80,7 +80,7 @@ public class UserController implements UserSpecification {
     }
 
     @Override
-    @GetMapping("")
+    @GetMapping("/mypage")
     public ApiResponse<UserResponseDTO.MyPageDTO> getMyPage() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         Long userId = (Long) authentication.getPrincipal();

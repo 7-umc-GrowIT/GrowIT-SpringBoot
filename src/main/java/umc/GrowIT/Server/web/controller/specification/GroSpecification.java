@@ -53,7 +53,7 @@ public interface GroSpecification {
     })
     ApiResponse<GroResponseDTO.GroAndEquippedItemsDTO> getGroAndEquippedItems();
 
-    @PatchMapping("")
+    @PatchMapping("/nickname")
     @Operation(summary = "그로 닉네임 변경", description = "그로의 닉네임을 변경합니다. 닉네임을 2~8자 사이로 입력해주세요.")
     @ApiResponses({
             @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "COMMON200", description = "⭕ SUCCESS"),
