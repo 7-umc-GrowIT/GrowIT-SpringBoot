@@ -27,6 +27,7 @@ public enum ErrorStatus implements BaseErrorCode {
     USER_CHALLENGE_COMPLETE(HttpStatus.BAD_REQUEST, "UC4002", "완료된 챌린지는 삭제가 불가합니다"),
     USER_CHALLENGE_ALREADY_PROVED(HttpStatus.BAD_REQUEST, "UC4003", "이미 완료된 챌린지입니다."),
     USER_CHALLENGE_NOT_PROVED(HttpStatus.BAD_REQUEST, "UC4004", "챌린지 인증이 완료되지 않았습니다."),
+    USER_CHALLENGE_UPDATE_NO_CHANGES(HttpStatus.BAD_REQUEST, "UC4005", "챌린지 인증 내역에 수정사항이 없습니다."),
 
     //약관 관련 에러
     TERM_NOT_FOUND(HttpStatus.NOT_FOUND, "TERM4001", "존재하지 않는 약관을 요청했습니다."),
@@ -93,6 +94,7 @@ public enum ErrorStatus implements BaseErrorCode {
     GRO_NICKNAME_LENGTH_INVALID(HttpStatus.BAD_REQUEST, "GRO4002", "닉네임은 2~8자 이내로 작성해야 합니다."),
     GRO_NOT_FOUND(HttpStatus.NOT_FOUND, "GRO4003", "그로에 대한 정보가 존재하지 않습니다."),
     GRO_ALREADY_EXISTS(HttpStatus.CONFLICT, "GRO4001", "사용자의 그로가 이미 존재합니다."),
+    GRO_NICKNAME_UPDATE_NO_CHANGE(HttpStatus.BAD_REQUEST, "GRO4004", "그로의 닉네임에 수정사항이 없습니다."),
     GRO_LEVEL_INVALID(HttpStatus.INTERNAL_SERVER_ERROR, "GRO5001", "그로 레벨이 유효하지 않습니다."),
 
     //일기 관련 에러
@@ -104,10 +106,6 @@ public enum ErrorStatus implements BaseErrorCode {
 
     // S3 관련 에러
     S3_BAD_FILE_EXTENSION(HttpStatus.BAD_REQUEST, "S34001", "파일 확장자가 잘못되었습니다."),
-    S3_FILE_NAME_REQUIRED(HttpStatus.BAD_REQUEST, "S34002", "파일 이름은 필수입니다."),
-    S3_FOLDER_NAME_REQUIRED(HttpStatus.BAD_REQUEST, "S34003", "폴더 이름은 필수입니다."),
-    S3_INVALID_FOLDER_NAME(HttpStatus.BAD_REQUEST, "S34004", "폴더명은 영어로 입력해야 합니다."),
-
 
     // OAuth 관련 에러
     ACCOUNT_ALREADY_EXISTS(HttpStatus.CONFLICT, "OAUTH_4001", "이미 가입한 소셜 계정입니다."),

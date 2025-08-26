@@ -122,11 +122,9 @@ public class ChallengeCommandServiceImpl implements ChallengeCommandService {
                 .orElseThrow(() -> new UserHandler(ErrorStatus.USER_NOT_FOUND));
 
         userChallenge.verifyUserChallenge(proofRequest, proofRequest.getCertificationImage());
-        userChallengeRepository.save(userChallenge);
 
         user.updateCurrentCredit(user.getCurrentCredit() + challengeCredit);
         user.updateTotalCredit(user.getTotalCredit() + challengeCredit);
-        userRepository.save(user);
 
         return ChallengeConverter.toProofDetailsDTO(userChallenge, proofRequest.getCertificationImage());
     }
@@ -143,9 +141,17 @@ public class ChallengeCommandServiceImpl implements ChallengeCommandService {
             throw new ChallengeHandler(ErrorStatus.USER_CHALLENGE_NOT_PROVED);
         }
 
+        // 수정사항 체크
+        boolean sameImage = Objects.equals(updateRequest.getCertificationImage(), userChallenge.getCertificationImage());
+        boolean sameThoughts = Objects.equals(updateRequest.getThoughts(), userChallenge.getThoughts());
+
+        // 인증 내역에 수정사항 없는 경우 에러 처리
+        if (sameImage && sameThoughts) {
+            throw new ChallengeHandler(ErrorStatus.USER_CHALLENGE_UPDATE_NO_CHANGES);
+        }
+
         // 인증 이미지 + 소감 업데이트
         userChallenge.updateProof(updateRequest);
-        userChallengeRepository.save(userChallenge);
     }
 
     // 삭제

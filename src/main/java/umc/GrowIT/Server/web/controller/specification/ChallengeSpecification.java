@@ -108,6 +108,7 @@ public interface ChallengeSpecification {
             @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "USER4002", description = "❌ 이메일 또는 패스워드가 일치하지 않습니다.", content = @Content(schema = @Schema(implementation = ApiResponse.class))),
             @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "UC4001", description = "❌ 사용자 챌린지를 찾을 수 없습니다.", content = @Content(schema = @Schema(implementation = ApiResponse.class))),
             @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "UC4004", description = "❌ 챌린지 인증이 완료되지 않았습니다.", content = @Content(schema = @Schema(implementation = ApiResponse.class))),
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "UC4005", description = "❌ 챌린지 인증 내역에 수정사항이 없습니다.", content = @Content(schema = @Schema(implementation = ApiResponse.class)))
     })
 
     ApiResponse<Void> updateChallengeProof(@PathVariable Long userChallengeId, @Valid @RequestBody(required = false) ChallengeRequestDTO.ProofRequestDTO updateRequest);

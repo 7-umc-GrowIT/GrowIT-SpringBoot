@@ -54,11 +54,12 @@ public interface GroSpecification {
     ApiResponse<GroResponseDTO.GroAndEquippedItemsDTO> getGroAndEquippedItems();
 
     @PatchMapping("")
-    @Operation(summary = "그로 닉네임 변경", description = "그로의 닉네임을 변경합니다. 닉네임을 2~8자 사이로 입력해주세요!")
+    @Operation(summary = "그로 닉네임 변경", description = "그로의 닉네임을 변경합니다. 닉네임을 2~8자 사이로 입력해주세요.")
     @ApiResponses({
             @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "COMMON200", description = "⭕ SUCCESS"),
             @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "GRO4001", description = "❌ 다른 닉네임과 중복되는 닉네임입니다.", content = @Content(schema = @Schema(implementation = ApiResponse.class))),
-            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "COMMON400", description = "❌ 닉네임은 2~8자 이내로 작성해야 합니다.", content = @Content(schema = @Schema(implementation = ApiResponse.class)))
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "COMMON400", description = "❌ 닉네임은 2~8자 이내로 작성해야 합니다.", content = @Content(schema = @Schema(implementation = ApiResponse.class))),
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "GRO4004", description = "❌ 그로의 닉네임에 수정사항이 없습니다.", content = @Content(schema = @Schema(implementation = ApiResponse.class)))
     })
     ApiResponse<Void> updateNickname(@Valid @RequestBody GroRequestDTO.NicknameRequestDTO request);
 }

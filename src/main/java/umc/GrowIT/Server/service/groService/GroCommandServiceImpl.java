@@ -90,12 +90,12 @@ public class GroCommandServiceImpl implements GroCommandService{
         Gro gro = groRepository.findByUserId(userId)
                 .orElseThrow(() -> new GroHandler(ErrorStatus.GRO_NOT_FOUND));
 
-        // 닉네임에 변경사항 없는 경우 바로 반환
+        // 그로의 닉네임에 변경사항 없는 경우 에러 처리
         if (nickname.equals(gro.getName())) {
-            return;
+            throw new GroHandler(ErrorStatus.GRO_NICKNAME_UPDATE_NO_CHANGE);
         }
 
-        // 본인 제외 중복 검사
+        // 중복 검사
         checkNickname(nickname);
 
         // 수정된 닉네임 저장
