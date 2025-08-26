@@ -11,7 +11,6 @@ import java.time.LocalDateTime;
 
 @Entity
 @Getter
-@Setter
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
@@ -54,7 +53,8 @@ public class UserChallenge extends BaseEntity {
     @JoinColumn(name = "challenge_id", nullable = false)
     private Challenge challenge;
 
-
+    public void updateCertificationImage(String certificationImage) { this.certificationImage = certificationImage; }
+    public void updateThoughts(String thoughts) { this.thoughts = thoughts; }
 
     // 인증 작성 (최초 등록 또는 전체 업데이트용)
     public void verifyUserChallenge(ChallengeRequestDTO.ProofRequestDTO proofRequest, String imageUrl){

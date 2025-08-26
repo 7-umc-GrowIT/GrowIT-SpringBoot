@@ -99,6 +99,6 @@ public class GroCommandServiceImpl implements GroCommandService{
         checkNickname(nickname);
 
         // 수정된 닉네임 저장
-        gro.setName(nickname);
+        gro.updateName(nickname);
     }
 }

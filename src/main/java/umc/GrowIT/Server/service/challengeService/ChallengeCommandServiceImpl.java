@@ -145,12 +145,12 @@ public class ChallengeCommandServiceImpl implements ChallengeCommandService {
 
         // 인증 이미지 업데이트
         if (updateRequest.getCertificationImage() != null && !updateRequest.getCertificationImage().isEmpty()) {
-            userChallenge.setCertificationImage(updateRequest.getCertificationImage()); // 새 이미지 설정
+            userChallenge.updateCertificationImage(updateRequest.getCertificationImage()); // 새 이미지 설정
         }
 
         // 소감 업데이트
         if (updateRequest.getThoughts() != null && !updateRequest.getThoughts().isEmpty()) {
-            userChallenge.setThoughts(updateRequest.getThoughts());
+            userChallenge.updateThoughts(updateRequest.getThoughts());
         }
 
         userChallengeRepository.save(userChallenge);
