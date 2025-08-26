@@ -15,7 +15,7 @@ public class ChallengeRequestDTO {
     @NoArgsConstructor
     @AllArgsConstructor
     public static class ProofRequestPresignedUrlDTO {
-        @NotBlank(message = "파일의 MIME 타입은 필수 입력입니다")
+        @NotBlank(message = "파일의 MIME 타입은 필수 입력입니다.")
         @Schema(description = "업로드할 파일의 MIME 타입", example = "image/png")
         private String contentType;
     }
@@ -25,9 +25,9 @@ public class ChallengeRequestDTO {
     @NoArgsConstructor
     @AllArgsConstructor
     public static class ProofRequestDTO {
-        @Schema(description = "S3 업로드 후 반환된 URL (Presigned URL 사용 시)")
-        private String certificationImage; // Presigned URL 사용 시 S3 URL을 받음
-        @Schema(description = "소감 (텍스트)")
+        @Schema(description = "업로드할 파일의 이름", example = "3c99605a8e01.png")
+        private String certificationImage;
+        @Schema(description = "소감(텍스트)", example = "오늘은 ~")
         private String thoughts;
     }
 
@@ -36,8 +36,11 @@ public class ChallengeRequestDTO {
     @NoArgsConstructor
     @AllArgsConstructor
     public static class SelectChallengeRequestDTO {
+        @Schema(description = "저장할 챌린지 아이디(리스트)", example = "[1, 2]")
         private List<Long> challengeIds;
+        @Schema(description = "저장할 챌린지의 타입", example = "DAILY")
         private UserChallengeType dtype;
+        @Schema(description = "챌린지를 저장하는 날짜(오늘 날짜가 기본값)", example = "2025-08-26")
         private LocalDate date;
     }
 }

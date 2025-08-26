@@ -7,7 +7,6 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import umc.GrowIT.Server.domain.enums.UserChallengeType;
-import umc.GrowIT.Server.web.dto.KeywordDTO.KeywordResponseDTO;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -19,29 +18,31 @@ public class ChallengeResponseDTO {
     @NoArgsConstructor
     @AllArgsConstructor
     public static class ChallengeHomeDTO {
+        @Schema(description = "챌린지 키워드(리스트)", example = "즐거운, 차분한, 새로운")
         private List<String> challengeKeywords;
-        private List<RecommendedChallengeDTO> recommendedChallenges; // 오늘의 챌린지 추천
-        private ChallengeReportDTO challengeReport; // 챌린지 리포트
+        @Schema(description = "오늘의 추천 챌린지(리스트)", example = "좋아하는 책 독서하기")
+        private List<RecommendedChallengeDTO> recommendedChallenges;
+        @Schema(description = "챌린지 리포트")
+        private ChallengeReportDTO challengeReport;
     }
 
-    @Getter
-    @Builder
-    @NoArgsConstructor
-    @AllArgsConstructor
-    public static class KeywordDTO {
-        private String name;
-    }
     // 챌린지 추천
     @Getter
     @Builder
     @NoArgsConstructor
     @AllArgsConstructor
     public static class RecommendedChallengeDTO {
+        @Schema(description = "추천 챌린지 id", example = "1")
         private Long id;
+        @Schema(description = "추천 챌린지 제목", example = "좋아하는 책 독서하기")
         private String title;
+        @Schema(description = "추천 챌린지 내용", example = "좋아하는 책을 골라서 한 번 읽어 보세요!")
         private String content;
+        @Schema(description = "챌린지 타입(DAILY or RANDOM)", example = "DAILY")
         private UserChallengeType dtype;
+        @Schema(description = "챌린지 소요 시간", example = "1")
         private Integer time;
+        @Schema(description = "챌린지 완료(인증) 여부", example = "false")
         private boolean completed;
     }
 
@@ -51,20 +52,12 @@ public class ChallengeResponseDTO {
     @NoArgsConstructor
     @AllArgsConstructor
     public static class ChallengeReportDTO {
+        @Schema(description = "총 크레딧 수", example = "1200")
         private int totalCredits;
+        @Schema(description = "작성한 일기 수", example = "16")
         private int totalDiaries;
+        @Schema(description = "일기를 작성해온 기간", example = "D+15")
         private String diaryDate;
-    }
-
-    @Getter
-    @Builder
-    @NoArgsConstructor
-    @AllArgsConstructor
-    public static class ChallengeSummaryDTO {
-        private Long id;
-        private String title;
-        private String status;
-        private boolean completed;
     }
 
     // 챌린지 상태별 응답 DTO
@@ -73,22 +66,30 @@ public class ChallengeResponseDTO {
     @NoArgsConstructor
     @AllArgsConstructor
     public static class ChallengeStatusDTO {
+        @Schema(description = "챌린지 id", example = "1")
         private Long id;
+        @Schema(description = "챌린지 제목", example = "좋아하는 책 독서하기")
         private String title;
+        @Schema(description = "챌린지 타입(DAILY or RANDOM)", example = "DAILY")
         private UserChallengeType dtype;
+        @Schema(description = "챌린지 소요 시간", example = "1")
         private Integer time;
+        @Schema(description = "챌린지 완료(인증) 여부", example = "false")
         private boolean completed;
     }
 
-    // 페이징 적용
     @Getter
     @Builder
     @NoArgsConstructor
     @AllArgsConstructor
     public static class ChallengeStatusPagedResponseDTO  {
+        @Schema(description = "챌린지 목록")
         private List<ChallengeStatusDTO> content;
+        @Schema(description = "현재 페이지", example = "1")
         private int currentPage;
+        @Schema(description = "첫번째 페이지인지", example = "true")
         private boolean isFirst;
+        @Schema(description = "마지막 페이지인지", example = "true")
         private boolean isLast;
     }
 
@@ -97,9 +98,9 @@ public class ChallengeResponseDTO {
     @NoArgsConstructor
     @AllArgsConstructor
     public static class ProofPresignedUrlResponseDTO {
-        @Schema(description = "S3 업로드용 Presigned URL")
+        @Schema(description = "S3 업로드용 Presigned URL", example = "https://growit-server-bucket.s3.ap-northeast-2.amazonaws.com/challenges/1842f2aa-40d0-4ae3~")
         private String presignedUrl;
-        @Schema(description = "업로드 완료 후 접근 URL")
+        @Schema(description = "업로드 완료 후 접근 URL", example = "3c99605a8e01.png")
         private String fileUrl;
     }
 
@@ -109,17 +110,17 @@ public class ChallengeResponseDTO {
     @NoArgsConstructor
     @AllArgsConstructor
     public static class ProofDetailsDTO {
-        @Schema(description = "챌린지 인증 내역 id")
+        @Schema(description = "챌린지 인증 내역 id", example = "1")
         private Long id;
-        @Schema(description = "챌린지 인증 내역 제목")
+        @Schema(description = "챌린지 제목", example = "학교 도서관에서 독서하기")
         private String title;
-        @Schema(description = "챌린지 인증 이미지")
+        @Schema(description = "챌린지 인증 이미지", example = "https://growit-server-bucket.s3.ap-northeast-2.amazonaws.com/challenges/1842f2aa-40d0-4ae3~")
         private String certificationImage;
-        @Schema(description = "챌린지 인증 소감")
+        @Schema(description = "챌린지 인증 소감", example = "오늘은 우주공강에 학교 도서관에 가서~")
         private String thoughts;
-        @Schema(description = "챌린지 소요 시간")
+        @Schema(description = "챌린지 소요 시간", example = "1")
         private Integer time;
-        @Schema(description = "챌린지 인증 날짜")
+        @Schema(description = "챌린지 인증 날짜", example ="2025-08-26T01:11:50")
         @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss")
         private LocalDateTime certificationDate;
     }
@@ -129,6 +130,7 @@ public class ChallengeResponseDTO {
     @NoArgsConstructor
     @AllArgsConstructor
     public static class SelectChallengeDTO {
+        @Schema(description = "선택하여 저장한 챌린지(리스트)")
         private List<SelectedChallengesInfo> selectedChallenges;
     }
 
@@ -137,10 +139,15 @@ public class ChallengeResponseDTO {
     @NoArgsConstructor
     @AllArgsConstructor
     public static class SelectedChallengesInfo {
+        @Schema(description = "챌린지 id", example = "1")
         private Long id;
+        @Schema(description = "챌린지 타입(DAILY or RANDOM)", example = "DAILY")
         private UserChallengeType dtype;
+        @Schema(description = "챌린지 제목", example = "좋아하는 책 독서하기")
         private String title;
+        @Schema(description = "챌린지 내용", example = "좋아하는 책을 골라서 한 번 읽어 보세요!")
         private String content;
+        @Schema(description = "챌린지 소요 시간", example = "1")
         private Integer time;
     }
 
@@ -150,7 +157,9 @@ public class ChallengeResponseDTO {
     @NoArgsConstructor
     @AllArgsConstructor
     public static class ModifyProofDTO {
-        private String certificationImageUrl;
+        @Schema(description = "챌린지 인증 이미지", example = "3c99605a8e01.png")
+        private String certificationImage;
+        @Schema(description = "챌린지 인증 소감", example = "오늘은 우주공강에 학교 도서관에 가서~")
         private String thoughts;
     }
 
