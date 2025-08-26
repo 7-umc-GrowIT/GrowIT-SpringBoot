@@ -64,6 +64,7 @@ public class SecurityConfig {
                         .requestMatchers("/swagger-ui/**", "/v3/api-docs/**").permitAll() //인증 없이 접근 가능
                         .requestMatchers("/actuator/**").permitAll() //인증 없이 접근 가능
                         .requestMatchers("/auth/**", "/users/password", "/terms").permitAll() //인증 없이 접근 가능
+                        .requestMatchers("/apple/oauth/login").permitAll() // 테스트용
                         .anyRequest().authenticated() //나머지 요청은 인증 필요
                 );
 
