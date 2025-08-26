@@ -151,18 +151,6 @@ public class ChallengeResponseDTO {
         private Integer time;
     }
 
-    // 챌린지 수정
-    @Getter
-    @Builder
-    @NoArgsConstructor
-    @AllArgsConstructor
-    public static class ModifyProofDTO {
-        @Schema(description = "챌린지 인증 이미지", example = "3c99605a8e01.png")
-        private String certificationImage;
-        @Schema(description = "챌린지 인증 소감", example = "오늘은 우주공강에 학교 도서관에 가서~")
-        private String thoughts;
-    }
-
     // 챌린지 삭제 응답 DTO
     @Getter
     @Builder
