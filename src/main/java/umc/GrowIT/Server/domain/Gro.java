@@ -30,5 +30,5 @@ public class Gro extends BaseEntity {
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
 
-    public void setName(String name) { this.name = name; }
+    public void updateName(String name) { this.name = name; }
 }

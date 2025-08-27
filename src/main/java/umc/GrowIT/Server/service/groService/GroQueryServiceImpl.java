@@ -1,4 +1,4 @@
-package umc.GrowIT.Server.service.GroService;
+package umc.GrowIT.Server.service.groService;
 
 import com.amazonaws.HttpMethod;
 import com.amazonaws.services.s3.AmazonS3;

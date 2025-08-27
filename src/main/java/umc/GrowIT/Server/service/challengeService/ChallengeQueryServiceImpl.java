@@ -16,8 +16,10 @@ import umc.GrowIT.Server.repository.ChallengeRepository;
 import umc.GrowIT.Server.repository.UserChallengeRepository;
 import umc.GrowIT.Server.repository.DiaryRepository;
 import umc.GrowIT.Server.service.keywordService.KeywordService;
+import umc.GrowIT.Server.util.S3Util;
 import umc.GrowIT.Server.web.dto.ChallengeDTO.ChallengeResponseDTO;
 
+import java.time.Duration;
 import java.time.LocalDate;
 import java.time.temporal.ChronoUnit;
 import java.util.*;
@@ -30,17 +32,18 @@ public class ChallengeQueryServiceImpl implements ChallengeQueryService {
     private final UserChallengeRepository userChallengeRepository;
     private final DiaryRepository diaryRepository;
     private final KeywordService keywordService;
+    private final S3Util s3Util;
 
+    // 총 크레딧 수 조회
     @Override
     public int getTotalCredits(Long userId) {
-        // TODO: 총 크레딧 수 조회 로직 구현
         Integer credits = challengeRepository.getTotalCreditsByUserId(userId);
         return (credits != null) ? credits : 0;
     }
 
+    // 작성한 총 일기 수 조회
     @Override
     public int getTotalDiaries(Long userId) {
-        // TODO: 작성된 일기 수 조회 로직 구현
         return challengeRepository.getTotalDiariesByUserId(userId);
     }
 
@@ -56,7 +59,7 @@ public class ChallengeQueryServiceImpl implements ChallengeQueryService {
         return "D+" + days;
     }
 
-
+    // 챌린지 홈 조회
     @Override
     @Transactional
     public ChallengeResponseDTO.ChallengeHomeDTO getChallengeHome(Long userId) {
@@ -84,19 +87,19 @@ public class ChallengeQueryServiceImpl implements ChallengeQueryService {
         );
     }
 
-
+    // 챌린지 현황 조회
     @Override
-    public ChallengeResponseDTO.ChallengeStatusPagedResponseDTO getChallengeStatus(Long userId, UserChallengeType dtype, Boolean completed, Integer page) {
+    public ChallengeResponseDTO.ChallengeStatusPagedResponseDTO getChallengeStatus(Long userId, UserChallengeType challengeType, Boolean completed, Integer page) {
         Slice<UserChallenge> userChallenges;
 
-        // dtype이 null이면 전체 챌린지 중 완료/미완료만 조회
-        if (dtype == null) {
+        // challengeType이 null이면 전체 챌린지 중 완료/미완료만 조회
+        if (challengeType == null) {
             userChallenges = userChallengeRepository.findChallengesByCompletionStatus(userId, completed, PageRequest.of(page-1, 5));
         }
         else {
             if (!completed) {
-                // dtype이 RANDOM 또는 DAILY인 경우 미완료 챌린지만 조회 (completed = false 고정)
-                userChallenges = userChallengeRepository.findChallengesByDtypeAndCompletionStatus(userId, dtype, PageRequest.of(page-1, 5));
+                // challengeType이 RANDOM 또는 DAILY인 경우 미완료 챌린지만 조회 (completed = false 고정)
+                userChallenges = userChallengeRepository.findChallengesByChallengeTypeAndCompletionStatus(userId, challengeType, PageRequest.of(page-1, 5));
             }
             else {
                 // 잘못된 요청 방지
@@ -116,10 +119,11 @@ public class ChallengeQueryServiceImpl implements ChallengeQueryService {
                 .orElseThrow(() -> new ChallengeHandler(ErrorStatus.USER_CHALLENGE_NOT_FOUND));
 
         if (!userChallenge.isCompleted()) {
-            throw new ChallengeHandler(ErrorStatus.CHALLENGE_NOT_COMPLETED);
+            throw new ChallengeHandler(ErrorStatus.USER_CHALLENGE_NOT_PROVED);
         }
 
-        return ChallengeConverter.toProofDetailsDTO(userChallenge.getChallenge(), userChallenge);
+        String certificationImageUrl = s3Util.toGetPresignedUrl("challenges/" + userChallenge.getCertificationImageName(), Duration.ofMinutes(30));
+        return ChallengeConverter.toProofDetailsDTO(userChallenge, certificationImageUrl);
     }
 
 }
