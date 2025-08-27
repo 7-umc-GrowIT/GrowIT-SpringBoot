@@ -116,8 +116,8 @@ public class ChallengeResponseDTO {
         private Long id;
         @Schema(description = "챌린지 제목", example = "학교 도서관에서 독서하기")
         private String title;
-        @Schema(description = "챌린지 인증 이미지", example = "https://growit-server-bucket.s3.ap-northeast-2.amazonaws.com/challenges/1842f2aa-40d0-4ae3~")
-        private String certificationImageName;
+        @Schema(description = "챌린지 인증 이미지 url", example = "https://growit-server-bucket.s3.ap-northeast-2.amazonaws.com/challenges/1842f2aa-40d0-4ae3~")
+        private String certificationImageUrl;
         @Schema(description = "챌린지 인증 소감", example = "오늘은 우주공강에 학교 도서관에 가서~")
         private String thoughts;
         @Schema(description = "챌린지 소요 시간", example = "1")
@@ -147,6 +147,6 @@ public class ChallengeResponseDTO {
         private String title; //챌린지 제목
         private String content; //챌린지 내용
         private Integer time; //챌린지 소요시간
-        private UserChallengeType type; //추천 타입 (Daily or Random)
+        private UserChallengeType challengeType; //추천 타입 (Daily or Random)
     }
 }

@@ -92,7 +92,7 @@ public class ChallengeConverter {
                 .id(userChallenge.getId())
                 .title(userChallenge.getChallenge().getTitle())
                 .time(userChallenge.getChallenge().getTime())
-                .certificationImageName(certificationImageUrl)
+                .certificationImageUrl(certificationImageUrl)
                 .thoughts(userChallenge.getThoughts())
                 .certificationDate(userChallenge.getCertificationDate())
                 .build();
@@ -125,7 +125,7 @@ public class ChallengeConverter {
                         .title(challenge.getTitle())
                         .content(challenge.getContent())
                         .time(challenge.getTime())
-                        .type(UserChallengeType.DAILY)
+                        .challengeType(UserChallengeType.DAILY)
                         .build())
                 .collect(Collectors.toList());
 
@@ -136,7 +136,7 @@ public class ChallengeConverter {
                         .title(randomChallenge.getTitle())
                         .content(randomChallenge.getContent())
                         .time(randomChallenge.getTime())
-                        .type(UserChallengeType.RANDOM)
+                        .challengeType(UserChallengeType.RANDOM)
                         .build()
         );
 

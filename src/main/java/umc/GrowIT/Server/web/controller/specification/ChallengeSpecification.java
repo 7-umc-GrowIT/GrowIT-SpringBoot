@@ -88,7 +88,7 @@ public interface ChallengeSpecification {
             @Valid @RequestBody ChallengeRequestDTO.ProofRequestDTO proofRequest);
 
     @GetMapping("{userChallengeId}")
-    @Operation(summary = "사용자 챌린지 인증 내역 조회 API", description = "사용자의 특정 챌린지 인증내역을 조회하는 API입니다.<br>" +
+    @Operation(summary = "사용자 챌린지 인증 내역 조회 API", description = "사용자의 특정 챌린지 인증 내역을 조회하는 API입니다.<br>" +
             "사용자 챌린지 ID를 path variable로 전달받아 해당 사용자 챌린지의 인증 내역을 조회합니다.")
     @ApiResponses({
             @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "COMMON200", description = "⭕ SUCCESS"),
@@ -101,7 +101,7 @@ public interface ChallengeSpecification {
 
 
     @PatchMapping("{userChallengeId}")
-    @Operation(summary = "사용자 챌린지 인증 수정 API", description = "챌린지 인증을 수정하는 API입니다. <br>" +
+    @Operation(summary = "사용자 챌린지 인증 내역 수정 API", description = "챌린지 인증 내역을 수정하는 API입니다. <br>" +
             "presigned url 생성 시 반환된 파일명을 certificationImage로 넘겨주세요. ")
     @ApiResponses({
             @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "COMMON200", description = "⭕ SUCCESS"),
