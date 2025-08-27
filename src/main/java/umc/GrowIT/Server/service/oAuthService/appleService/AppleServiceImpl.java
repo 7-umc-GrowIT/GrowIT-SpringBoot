@@ -5,11 +5,16 @@ import static umc.GrowIT.Server.apiPayload.code.status.ErrorStatus.INVALID_APPLE
 import static umc.GrowIT.Server.apiPayload.code.status.ErrorStatus.INVALID_APPLE_ID_TOKEN;
 import static umc.GrowIT.Server.apiPayload.code.status.ErrorStatus.INVALID_AUTHORIZATION_CODE;
 import static umc.GrowIT.Server.apiPayload.code.status.ErrorStatus._INTERNAL_SERVER_ERROR;
+import static umc.GrowIT.Server.converter.OAuthAccountConverter.toOAuthAccount;
+import static umc.GrowIT.Server.converter.OAuthConverter.toOAuthLoginDTO;
+import static umc.GrowIT.Server.converter.OAuthConverter.toOAuthUserInfoDTO;
 
 import java.security.interfaces.RSAPublicKey;
 import java.text.ParseException;
 import java.util.Date;
+import java.util.Optional;
 
+import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatusCode;
 import org.springframework.http.MediaType;
@@ -30,13 +35,28 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import reactor.core.publisher.Mono;
 import umc.GrowIT.Server.apiPayload.exception.OAuthHandler;
+import umc.GrowIT.Server.domain.OAuthAccount;
+import umc.GrowIT.Server.domain.OAuthAccount;
+import umc.GrowIT.Server.domain.User;
+import umc.GrowIT.Server.repository.OAuthAccountRepository;
+import umc.GrowIT.Server.repository.UserRepository;
+import umc.GrowIT.Server.service.userService.CustomUserDetailsService;
+import umc.GrowIT.Server.service.userService.UserCommandService;
+import umc.GrowIT.Server.util.JwtTokenUtil;
 import umc.GrowIT.Server.web.dto.OAuthDTO.OAuthApiResponseDTO;
 import umc.GrowIT.Server.web.dto.OAuthDTO.OAuthRequestDTO;
+import umc.GrowIT.Server.web.dto.OAuthDTO.OAuthResponseDTO;
+import umc.GrowIT.Server.web.dto.TokenDTO.TokenResponseDTO;
 
 @RequiredArgsConstructor
 @Slf4j
 @Service
 public class AppleServiceImpl implements AppleService {
+    private final OAuthAccountRepository oAuthAccountRepository;
+    private final UserRepository userRepository;
+    private final UserCommandService userCommandService;
+    private final JwtTokenUtil jwtTokenUtil;
+    private final CustomUserDetailsService customUserDetailsService;
 
     private final WebClient appleAuthWebClient;
     @Value("${spring.oauth2.client.ios-apple.client-id}")
@@ -82,7 +102,7 @@ public class AppleServiceImpl implements AppleService {
     }
 
     @Override
-    public void verifyToken(String idToken) {
+    public OAuthApiResponseDTO.OAuthUserInfoDTO verifyToken(String idToken) {
         try {
             // 토큰 파싱
             SignedJWT idTokenJwt = SignedJWT.parse(idToken);
@@ -113,6 +133,7 @@ public class AppleServiceImpl implements AppleService {
             } else if (!claims.getExpirationTime().after(new Date())) {
                 throw new OAuthHandler(INVALID_APPLE_ID_TOKEN);
             }
+            return toOAuthUserInfoDTO(claims.getSubject(), claims.getStringClaim("email"));
 
         } catch (ParseException parseException) {
             log.error("Failed to parse Apple ID Token or JWKs", parseException);
@@ -128,13 +149,40 @@ public class AppleServiceImpl implements AppleService {
         }
     }
 
-    public OAuthApiResponseDTO.AppleTokenResponseDTO socialLogin (OAuthRequestDTO.SocialLoginDTO socialLoginDTO) {
+    @Transactional
+    public OAuthResponseDTO.OAuthLoginDTO socialLogin(OAuthRequestDTO.SocialLoginDTO socialLoginDTO) {
         // ID Token 발급 및 토큰 검증
         String idToken = requestToken(socialLoginDTO);
-        verifyToken(idToken);
+        OAuthApiResponseDTO.OAuthUserInfoDTO oAuthUserInfoDTO = verifyToken(idToken);
 
-        socialLoginDTO.getNickname();
-        
-        return null;
-    }
+        String email = oAuthUserInfoDTO.getEmail();
+        String socialId = oAuthUserInfoDTO.getSocialId();
+        String name = socialLoginDTO.getName();
+
+        Optional<OAuthAccount> oAuthAccount = oAuthAccountRepository.findBySocialId(socialId);
+        Optional<User> user = userRepository.findByPrimaryEmail(email);
+
+        User existingUser = null;
+        if (user.isPresent()) existingUser = user.get();
+
+        // 애플 이메일로 이메일 회원가입이 되어있지 않고 애플 로그인 기록이 없는 경우
+        // 회원 약관 정보가 없기 때문에 회원가입 처리
+        if (user.isEmpty() && oAuthAccount.isEmpty()) {
+            oAuthUserInfoDTO.setName(name);
+            return toOAuthLoginDTO(true, oAuthUserInfoDTO, null);
+        // 애플 이메일로 이메일 회원가입이 되어있고 애플 로그인 기록이 없는 경우
+        // OAuthAccount 저장 및 기존 계정으로 로그인 처리
+        } else if (user.isPresent() && oAuthAccount.isEmpty()) {
+            userCommandService.checkUserInactive(existingUser); // 탈퇴한 회원인지 확인
+
+            OAuthAccount newOAuthAccount = toOAuthAccount(oAuthUserInfoDTO, existingUser);
+            oAuthAccountRepository.save(newOAuthAccount);
+        }
+        // 애플 로그인 기록 있는 경우 또는 OAuthAccount 저장 후 AT, RT 토큰 발급 및 RT DB 저장
+        TokenResponseDTO.TokenDTO tokenDTO = jwtTokenUtil.generateToken(
+                customUserDetailsService.loadUserByUsername(existingUser.getPrimaryEmail())
+        );
+        userCommandService.setRefreshToken(tokenDTO.getRefreshToken(), existingUser);
+        return toOAuthLoginDTO(false, null, tokenDTO); // 로그인 처리
+        }
 }

@@ -116,6 +116,7 @@ public enum ErrorStatus implements BaseErrorCode {
     INVALID_APPLE_CLIENT_SETTING(HttpStatus.INTERNAL_SERVER_ERROR, "AUTH5002", "Apple Client 설정값이 유효하지 않습니다."),
     INVALID_APPLE_ID_TOKEN(HttpStatus.BAD_REQUEST, "AUTH4032", "유효하지 않은 Apple ID Token 입니다."),
     APPLE_PARSE_FAILED(HttpStatus.INTERNAL_SERVER_ERROR, "AUTH5001", "ID Token 또는 JWKs 파싱에 실패했습니다."),
+    INVALID_PROVIDER(HttpStatus.BAD_REQUEST, "AUTH4033", "유효하지 않은 소셜 로그인 제공자입니다."),
 
     // 감정 관련 에러
     KEYWORD_NOT_FOUND(HttpStatus.NOT_FOUND, "KEYWORD5001", "감정키워드가 존재하지 않습니다."),

@@ -30,6 +30,6 @@ public class OAuthRequestDTO {
     public static class SocialLoginDTO {
         @NotNull
         private String code;
-        private String nickname;
+        private String name;
     }
 }

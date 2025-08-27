@@ -31,8 +31,8 @@ import umc.GrowIT.Server.web.dto.UserDTO.UserResponseDTO;
 
 import static umc.GrowIT.Server.apiPayload.code.status.ErrorStatus.*;
 import static umc.GrowIT.Server.converter.OAuthAccountConverter.toOAuthAccount;
+import static umc.GrowIT.Server.converter.OAuthConverter.toOAuthLoginDTO;
 import static umc.GrowIT.Server.converter.OAuthConverter.toOAuthUserInfoDTO;
-import static umc.GrowIT.Server.converter.UserConverter.toKakaoLoginDTO;
 
 @Service
 @RequiredArgsConstructor
@@ -121,7 +121,7 @@ public class KakaoServiceImpl implements KakaoService {
      * @return 회원가입 필요 여부, AT/RT
      */
     @Transactional
-    public OAuthResponseDTO.KakaoLoginDTO loginKakao(OAuthRequestDTO.SocialLoginDTO socialLoginDTO) {
+    public OAuthResponseDTO.OAuthLoginDTO loginKakao(OAuthRequestDTO.SocialLoginDTO socialLoginDTO) {
         // 사용자 정보 얻어옴
         OAuthApiResponseDTO.KakaoUserInfoResponseDTO kakaoUserInfoResponse = saveKakaoUserInfo(socialLoginDTO);
 
@@ -130,13 +130,13 @@ public class KakaoServiceImpl implements KakaoService {
         // DB에 카카오 이메일과 일치하는 이메일 있는지 확인 (일부 연동)
         // TODO: 카카오에서 얻어온 사용자 본인 인증 정보와 DB 의 본인 인증 정보 일치 확인 추가 (연동)
         if (!userRepository.existsByPrimaryEmail(oAuthUserInfoDTO.getEmail()))
-            return toKakaoLoginDTO(true, oAuthUserInfoDTO, null); // 최초 회원가입 요청
+            return toOAuthLoginDTO(true, oAuthUserInfoDTO, null); // 최초 회원가입 요청
         else {
             User user = userRepository.findByPrimaryEmail(oAuthUserInfoDTO.getEmail())
                     .orElseThrow(() -> new UserHandler(_BAD_REQUEST));
             userCommandService.checkUserInactive(user); // 탈퇴한 회원인지 확인
             // 이메일 회원가입은 했지만 카카오 최초 로그인인 경우 OAuthAccount 엔티티 저장
-            if (!oAuthAccountRepository.existsByProviderId(oAuthUserInfoDTO.getId())) {
+            if (!oAuthAccountRepository.existsBySocialId(String.valueOf(oAuthUserInfoDTO.getSocialId()))) {
                 OAuthAccount oAuthAccount = toOAuthAccount(oAuthUserInfoDTO, user);
                 oAuthAccountRepository.save(oAuthAccount);
             }
@@ -144,7 +144,7 @@ public class KakaoServiceImpl implements KakaoService {
             TokenResponseDTO.TokenDTO tokenDTO = jwtTokenUtil.generateToken(
                     customUserDetailsService.loadUserByUsername(user.getPrimaryEmail()));
             userCommandService.setRefreshToken(tokenDTO.getRefreshToken(), user);
-            return toKakaoLoginDTO(false, null, tokenDTO); // 로그인 처리
+            return toOAuthLoginDTO(false, null, tokenDTO); // 로그인 처리
         }
     }
 }

@@ -1,10 +1,7 @@
 package umc.GrowIT.Server.web.dto.OAuthDTO;
 
 import jakarta.validation.constraints.NotNull;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 public class OAuthApiResponseDTO {
 
@@ -27,22 +24,22 @@ public class OAuthApiResponseDTO {
     @NoArgsConstructor
     @AllArgsConstructor
     public static class KakaoUserInfoResponseDTO {
-
         private Long id;
         private KakaoDTO.KakaoAccount kakao_account;
     }
 
     @Getter
+    @Setter
     @Builder
     @NoArgsConstructor
     @AllArgsConstructor
     public static class OAuthUserInfoDTO {
-
         @NotNull
-        private Long id;
+        private String socialId;
         @NotNull
         private String email;
         private String name;
+        private String provider;
     }
 
     @Getter

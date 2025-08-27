@@ -84,22 +84,22 @@ public interface AuthSpecification {
     ApiResponse<AuthResponseDTO.VerifyAuthCodeResponseDTO> verifyAuthCode(@RequestBody @Valid AuthRequestDTO.VerifyAuthCodeRequestDTO request);
 
     @PostMapping("/login/kakao")
-    @Operation(summary = "카카오 소셜 로그인", description = "카카오 소셜 로그인 API 입니다. 인가 코드를 Query String 에 담아 요청해주세요.", security = @SecurityRequirement(name = ""))
+    @Operation(summary = "카카오 소셜 로그인", description = "카카오 소셜 로그인 API 입니다.", security = @SecurityRequirement(name = ""))
     @ApiResponses({
             @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "COMMON200", description = "⭕ SUCCESS"),
-            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "AUTH4030", description = "❌ 인가 코드가 유효한지 확인하세요. (동일한 인가 코드 재요청 불가, 인가 코드 발급 후 10분 이내 요청)", content = @Content(schema = @Schema(implementation = ApiResponse.class))),
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "AUTH4030", description = "❌ 인가 코드가 유효한지 확인하세요.", content = @Content(schema = @Schema(implementation = ApiResponse.class))),
             @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "USER4004", description = "❌ 탈퇴한 회원입니다.", content = @Content(schema = @Schema(implementation = ApiResponse.class)))
     })
-    ApiResponse<OAuthResponseDTO.KakaoLoginDTO> loginKakao(OAuthRequestDTO.SocialLoginDTO socialLoginDTO);
+    ApiResponse<OAuthResponseDTO.OAuthLoginDTO> loginKakao(OAuthRequestDTO.SocialLoginDTO socialLoginDTO);
 
     @PostMapping("/login/apple")
-    @Operation(summary = "애플 소셜 로그인", description = "애플 소셜 로그인 API 입니다. 인가 코드를 Query String 에 담아 요청해주세요.", security = @SecurityRequirement(name = ""))
+    @Operation(summary = "애플 소셜 로그인", description = "애플 소셜 로그인 API 입니다.", security = @SecurityRequirement(name = ""))
     @ApiResponses({
             @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "COMMON200", description = "⭕ SUCCESS"),
-            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "AUTH4031", description = "❌ 인가 코드가 유효한지 확인하세요. (동일한 인가 코드 재요청 불가, 인가 코드 발급 후 10분 이내 요청)", content = @Content(schema = @Schema(implementation = ApiResponse.class))),
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "AUTH4031", description = "❌ 인가 코드가 유효한지 확인하세요.", content = @Content(schema = @Schema(implementation = ApiResponse.class))),
             @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "USER4004", description = "❌ 탈퇴한 회원입니다.", content = @Content(schema = @Schema(implementation = ApiResponse.class)))
     })
-    ApiResponse<OAuthApiResponseDTO.AppleTokenResponseDTO> loginApple(OAuthRequestDTO.SocialLoginDTO socialLoginDTO);
+    ApiResponse<OAuthResponseDTO.OAuthLoginDTO> loginApple(OAuthRequestDTO.SocialLoginDTO socialLoginDTO);
 
     @PostMapping("/signup/social")
     @Operation(summary = "소셜 간편 가입", description = "소셜 로그인 시 계정이 존재하지 않을 때 약관 목록으로 간편 가입을 진행하는 API 입니다. (termId 1~4는 필수 동의 항목입니다.)")

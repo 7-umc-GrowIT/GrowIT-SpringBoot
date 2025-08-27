@@ -2,6 +2,7 @@ package umc.GrowIT.Server.web.controller;
 
 import static umc.GrowIT.Server.apiPayload.code.status.SuccessStatus.NEED_TO_ACCEPT_TERMS;
 
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -35,6 +36,7 @@ import umc.GrowIT.Server.web.dto.UserDTO.UserRequestDTO;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/auth")
+@Slf4j
 public class AuthController implements AuthSpecification {
     private final UserCommandService userCommandService;
     private final AuthService authService;
@@ -85,8 +87,8 @@ public class AuthController implements AuthSpecification {
 
     @Override
     @PostMapping("/login/kakao")
-    public ApiResponse<OAuthResponseDTO.KakaoLoginDTO> loginKakao(@RequestBody @Valid OAuthRequestDTO.SocialLoginDTO socialLoginDTO) {
-        OAuthResponseDTO.KakaoLoginDTO kakaoLoginDTO = kakaoService.loginKakao(socialLoginDTO);
+    public ApiResponse<OAuthResponseDTO.OAuthLoginDTO> loginKakao(@RequestBody @Valid OAuthRequestDTO.SocialLoginDTO socialLoginDTO) {
+        OAuthResponseDTO.OAuthLoginDTO kakaoLoginDTO = kakaoService.loginKakao(socialLoginDTO);
         if (kakaoLoginDTO.getSignupRequired())
             return ApiResponse.onSuccess(NEED_TO_ACCEPT_TERMS, kakaoLoginDTO);
         return ApiResponse.onSuccess(kakaoLoginDTO);
@@ -94,8 +96,8 @@ public class AuthController implements AuthSpecification {
 
     @Override
     @PostMapping("/login/apple")
-    public ApiResponse<OAuthApiResponseDTO.AppleTokenResponseDTO> loginApple(@RequestBody @Valid OAuthRequestDTO.SocialLoginDTO socialLoginDTO) {
-        OAuthApiResponseDTO.AppleTokenResponseDTO appleTokenResponseDTO = appleService.socialLogin(socialLoginDTO);
+    public ApiResponse<OAuthResponseDTO.OAuthLoginDTO> loginApple(@RequestBody @Valid OAuthRequestDTO.SocialLoginDTO socialLoginDTO) {
+        OAuthResponseDTO.OAuthLoginDTO appleTokenResponseDTO = appleService.socialLogin(socialLoginDTO);
         return ApiResponse.onSuccess(appleTokenResponseDTO);
     }
 
@@ -105,6 +107,7 @@ public class AuthController implements AuthSpecification {
         TokenResponseDTO.TokenDTO tokenDTO = oAuthService.signupSocial(oAuthUserInfoAndUserTermsDTO);
         return ApiResponse.onSuccess(tokenDTO);
     }
+
     @Override
     @PostMapping("/logout")
     public ApiResponse<AuthResponseDTO.LogoutResponseDTO> logout() {

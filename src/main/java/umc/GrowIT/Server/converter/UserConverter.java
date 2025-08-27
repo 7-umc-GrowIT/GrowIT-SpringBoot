@@ -44,14 +44,6 @@ public class UserConverter {
                 .build();
     }
 
-    public static OAuthResponseDTO.KakaoLoginDTO toKakaoLoginDTO(Boolean signupRequired, OAuthApiResponseDTO.OAuthUserInfoDTO oAuthUserInfo, TokenResponseDTO.TokenDTO tokens) {
-        return OAuthResponseDTO.KakaoLoginDTO.builder()
-                .signupRequired(signupRequired)
-                .oAuthUserInfo(oAuthUserInfo)
-                .tokens(tokens)
-                .build();
-    }
-
     public static AuthResponseDTO.LogoutResponseDTO toLogoutDTO(){
 
         return AuthResponseDTO.LogoutResponseDTO.builder()

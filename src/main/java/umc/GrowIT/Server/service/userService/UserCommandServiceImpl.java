@@ -1,42 +1,37 @@
 package umc.GrowIT.Server.service.userService;
 
-import lombok.RequiredArgsConstructor;
+import static umc.GrowIT.Server.apiPayload.code.status.ErrorStatus._BAD_REQUEST;
+import static umc.GrowIT.Server.domain.enums.UserStatus.INACTIVE;
+
+import java.util.List;
+import java.util.Optional;
+
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
+
+import lombok.RequiredArgsConstructor;
 import umc.GrowIT.Server.apiPayload.code.status.ErrorStatus;
-import umc.GrowIT.Server.apiPayload.exception.TermHandler;
 import umc.GrowIT.Server.apiPayload.exception.UserHandler;
-import umc.GrowIT.Server.converter.TermConverter;
 import umc.GrowIT.Server.converter.UserConverter;
-import umc.GrowIT.Server.domain.*;
-import umc.GrowIT.Server.domain.enums.TermType;
 import umc.GrowIT.Server.domain.CustomUserDetails;
-import umc.GrowIT.Server.repository.OAuthAccountRepository;
+import umc.GrowIT.Server.domain.RefreshToken;
+import umc.GrowIT.Server.domain.User;
+import umc.GrowIT.Server.domain.UserTerm;
+import umc.GrowIT.Server.repository.UserRepository;
 import umc.GrowIT.Server.service.refreshTokenService.RefreshTokenCommandService;
 import umc.GrowIT.Server.service.termService.TermCommandService;
 import umc.GrowIT.Server.service.termService.TermQueryService;
-import umc.GrowIT.Server.web.dto.TermDTO.TermRequestDTO;
+import umc.GrowIT.Server.util.JwtTokenUtil;
 import umc.GrowIT.Server.web.dto.TokenDTO.TokenResponseDTO;
 import umc.GrowIT.Server.web.dto.UserDTO.UserRequestDTO;
 import umc.GrowIT.Server.web.dto.UserDTO.UserResponseDTO;
-import umc.GrowIT.Server.repository.TermRepository;
-import umc.GrowIT.Server.repository.UserRepository;
-import umc.GrowIT.Server.util.JwtTokenUtil;
-
-import java.util.Collections;
-import java.util.List;
-import java.util.Optional;
-import java.util.stream.Collectors;
-
-import static umc.GrowIT.Server.apiPayload.code.status.ErrorStatus._BAD_REQUEST;
-import static umc.GrowIT.Server.domain.enums.UserStatus.INACTIVE;
 
 
 @Service
@@ -160,9 +155,11 @@ public class UserCommandServiceImpl implements UserCommandService {
      * AT/RT 발급 및 RT DB 저장
      */
     @Override
+    @Transactional(propagation = Propagation.REQUIRED)
     public TokenResponseDTO.TokenDTO issueTokenAndSetRefreshToken(User user) {
         TokenResponseDTO.TokenDTO tokenDTO = jwtTokenUtil.generateToken(
-                customUserDetailsService.loadUserByUsername(user.getPrimaryEmail()));
+                customUserDetailsService.loadUserByUsername(user.getPrimaryEmail())
+        );
 
         RefreshToken refreshTokenEntity = refreshTokenCommandService.createRefreshToken(tokenDTO.getRefreshToken(), user);
         user.setRefreshToken(refreshTokenEntity);
