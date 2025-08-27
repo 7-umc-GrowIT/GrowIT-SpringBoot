@@ -46,7 +46,7 @@ public class ChallengeRequestDTO {
         @Schema(description = "저장할 챌린지 아이디(리스트)", example = "[1, 2]")
         private List<Long> challengeIds;
         @Schema(description = "저장할 챌린지의 타입", example = "DAILY")
-        private UserChallengeType dtype;
+        private UserChallengeType challengeType;
         @Schema(description = "챌린지를 저장하는 날짜(오늘 날짜가 기본값)", example = "2025-08-26")
         private LocalDate date;
     }

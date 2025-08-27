@@ -19,7 +19,7 @@ public class ChallengeConverter {
                 .id(userChallenge.getId())
                 .title(userChallenge.getChallenge().getTitle())
                 .content(userChallenge.getChallenge().getContent())
-                .dtype(userChallenge.getDtype())
+                .challengeType(userChallenge.getChallengeType())
                 .time(userChallenge.getChallenge().getTime())
                 .completed(userChallenge.isCompleted())
                 .build();
@@ -61,7 +61,7 @@ public class ChallengeConverter {
         return ChallengeResponseDTO.ChallengeStatusDTO.builder()
                 .id(userChallenge.getId())
                 .title(userChallenge.getChallenge().getTitle())
-                .dtype(userChallenge.getDtype())
+                .challengeType(userChallenge.getChallengeType())
                 .time(userChallenge.getChallenge().getTime())
                 .completed(userChallenge.isCompleted())
                 .build();
@@ -99,11 +99,11 @@ public class ChallengeConverter {
     }
 
     // UserChallenge 생성
-    public static UserChallenge createUserChallenge(User user, Challenge challenge, UserChallengeType dtype, LocalDate date) {
+    public static UserChallenge createUserChallenge(User user, Challenge challenge, UserChallengeType challengeType, LocalDate date) {
         return UserChallenge.builder()
                 .user(user)
                 .challenge(challenge)
-                .dtype(dtype)
+                .challengeType(challengeType)
                 .date(date)
                 .completed(false)
                 .build();

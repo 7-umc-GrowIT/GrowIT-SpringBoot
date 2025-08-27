@@ -39,7 +39,7 @@ public class ChallengeResponseDTO {
         @Schema(description = "추천 챌린지 내용", example = "좋아하는 책을 골라서 한 번 읽어 보세요!")
         private String content;
         @Schema(description = "챌린지 타입(DAILY or RANDOM)", example = "DAILY")
-        private UserChallengeType dtype;
+        private UserChallengeType challengeType;
         @Schema(description = "챌린지 소요 시간", example = "1")
         private Integer time;
         @Schema(description = "챌린지 완료(인증) 여부", example = "false")
@@ -71,7 +71,7 @@ public class ChallengeResponseDTO {
         @Schema(description = "챌린지 제목", example = "좋아하는 책 독서하기")
         private String title;
         @Schema(description = "챌린지 타입(DAILY or RANDOM)", example = "DAILY")
-        private UserChallengeType dtype;
+        private UserChallengeType challengeType;
         @Schema(description = "챌린지 소요 시간", example = "1")
         private Integer time;
         @Schema(description = "챌린지 완료(인증) 여부", example = "false")
@@ -125,34 +125,6 @@ public class ChallengeResponseDTO {
         @Schema(description = "챌린지 인증 날짜", example ="2025-08-26T01:11:50")
         @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss")
         private LocalDateTime certificationDate;
-    }
-
-    @Getter
-    @Builder
-    @NoArgsConstructor
-    @AllArgsConstructor
-    @Schema(title = "챌린지 선택 후 저장 response")
-    public static class SelectChallengeDTO {
-        @Schema(description = "선택하여 저장한 챌린지(리스트)")
-        private List<SelectedChallengesInfo> selectedChallenges;
-    }
-
-    @Getter
-    @Builder
-    @NoArgsConstructor
-    @AllArgsConstructor
-    @Schema(title = "저장한 챌린지 조회 response")
-    public static class SelectedChallengesInfo {
-        @Schema(description = "챌린지 id", example = "1")
-        private Long id;
-        @Schema(description = "챌린지 타입(DAILY or RANDOM)", example = "DAILY")
-        private UserChallengeType dtype;
-        @Schema(description = "챌린지 제목", example = "좋아하는 책 독서하기")
-        private String title;
-        @Schema(description = "챌린지 내용", example = "좋아하는 책을 골라서 한 번 읽어 보세요!")
-        private String content;
-        @Schema(description = "챌린지 소요 시간", example = "1")
-        private Integer time;
     }
 
     // 챌린지 삭제 응답 DTO

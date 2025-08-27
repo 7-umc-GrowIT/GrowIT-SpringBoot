@@ -31,7 +31,7 @@ public class UserChallenge extends BaseEntity {
     // 챌린지 타입 (랜덤 or 데일리)
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
-    private UserChallengeType dtype;
+    private UserChallengeType challengeType;
 
     // 완료여부
     @Column(nullable = false)

@@ -39,16 +39,16 @@ public class ChallengeCommandServiceImpl implements ChallengeCommandService {
 
         for (ChallengeRequestDTO.SelectChallengeRequestDTO selectRequest : selectRequestList) {
             List<Long> challengeIds = selectRequest.getChallengeIds();
-            UserChallengeType dtype = selectRequest.getDtype();
+            UserChallengeType challengeType = selectRequest.getChallengeType();
             LocalDate date = selectRequest.getDate();
 
-            // 현재 dtype에 따라 저장 가능한 최대 개수 확인
-            if (dtype == UserChallengeType.DAILY) {
+            // 현재 challengeType에 따라 저장 가능한 최대 개수 확인
+            if (challengeType == UserChallengeType.DAILY) {
                 dailyChallengeCount += challengeIds.size();
                 if (dailyChallengeCount > 2) {
                     throw new ChallengeHandler(ErrorStatus.CHALLENGE_DAILY_MAX);
                 }
-            } else if (dtype == UserChallengeType.RANDOM) {
+            } else if (challengeType == UserChallengeType.RANDOM) {
                 randomChallengeCount += challengeIds.size();
                 if (randomChallengeCount > 1) {
                     throw new ChallengeHandler(ErrorStatus.CHALLENGE_RANDOM_MAX);
@@ -65,7 +65,7 @@ public class ChallengeCommandServiceImpl implements ChallengeCommandService {
                     .map(challengeId -> {
                         Challenge challenge = challengeRepository.findById(challengeId)
                                 .orElseThrow(() -> new ChallengeHandler(ErrorStatus.CHALLENGE_NOT_FOUND));
-                        return ChallengeConverter.createUserChallenge(user, challenge, dtype, date);
+                        return ChallengeConverter.createUserChallenge(user, challenge, challengeType, date);
                     })
                     .toList();
 

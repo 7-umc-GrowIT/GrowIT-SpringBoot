@@ -25,7 +25,7 @@ public interface UserChallengeRepository extends JpaRepository<UserChallenge, Lo
             @Param("userId") Long userId,
             @Param("today") LocalDate today);
 
-    // 1. 유저의 완료 또는 미완료 챌린지 조회 (dtype 무시)
+    // 1. 유저의 완료 또는 미완료 챌린지 조회 (challengeType 무시)
     @Query("SELECT uc FROM UserChallenge uc " +
             "WHERE uc.user.id = :userId " +
             "AND uc.completed = :completed")
@@ -34,14 +34,14 @@ public interface UserChallengeRepository extends JpaRepository<UserChallenge, Lo
             @Param("completed") Boolean completed,
             Pageable pageable);
 
-    // 2. 특정 dtype에 대해 미완료 챌린지 조회 (completed가 true인 챌린지는 제외)
+    // 2. 특정 challengeType에 대해 미완료 챌린지 조회 (completed가 true인 챌린지는 제외)
     @Query("SELECT uc FROM UserChallenge uc " +
             "WHERE uc.user.id = :userId " +
-            "AND uc.dtype = :dtype " +
+            "AND uc.challengeType = :challengeType " +
             "AND uc.completed = false")  // 항상 미완료 챌린지만 조회
-    Slice<UserChallenge> findChallengesByDtypeAndCompletionStatus(
+    Slice<UserChallenge> findChallengesByChallengeTypeAndCompletionStatus(
             @Param("userId") Long userId,
-            @Param("dtype") UserChallengeType dtype,
+            @Param("challengeType") UserChallengeType challengeType,
             Pageable pageable);
 
     //userId와 date로 UserChallenge 조회
