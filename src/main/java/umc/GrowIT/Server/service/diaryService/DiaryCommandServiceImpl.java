@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.client.RestTemplate;
 import umc.GrowIT.Server.apiPayload.code.status.ErrorStatus;
 import umc.GrowIT.Server.apiPayload.exception.*;
@@ -59,7 +60,9 @@ public class DiaryCommandServiceImpl implements DiaryCommandService{
 
     //userId-대화내용 저장용 HashMap
     private final Map<Long, List<Message>> conversationHistory = new HashMap<>();
+
     @Override
+    @Transactional
     public DiaryResponseDTO.ModifyDiaryResultDTO modifyDiary(DiaryRequestDTO.ModifyDiaryDTO request, Long diaryId, Long userId) {
 
         //유저 조회
@@ -74,26 +77,18 @@ public class DiaryCommandServiceImpl implements DiaryCommandService{
         }
 
         diary.updateContent(request.getContent());
-
-        diaryRepository.save(diary);
         return DiaryConverter.toModifyResultDTO(diary);
     }
 
     @Override
+    @Transactional
     public DiaryResponseDTO.CreateDiaryResultDTO createDiary(DiaryRequestDTO.CreateDiaryDTO request, Long userId) {
 
         //유저 조회
         User user = userRepository.findById(userId).orElseThrow(() -> new UserHandler(ErrorStatus.USER_NOT_FOUND));
 
-        //날짜 검사(오늘 이후의 날짜 x)
-        if (request.getDate().isAfter(LocalDate.now())) {
-            throw new DiaryHandler(ErrorStatus.DATE_IS_AFTER);
-        }
-
-        //날짜 검사(이미 해당 날짜에 작성된 일기가 존재)
-        if(diaryRepository.existsByUserIdAndDate(userId, request.getDate())){
-            throw new DiaryHandler(ErrorStatus.DIARY_ALREADY_EXISTS);
-        }
+        // 일기 날짜 유효성 검사
+        validateDiaryDate(userId, request.getDate());
 
         //일기 생성
         Diary diary = Diary.builder()
@@ -108,7 +103,6 @@ public class DiaryCommandServiceImpl implements DiaryCommandService{
         //사용자의 크레딧수 증가
         user.updateCurrentCredit(user.getCurrentCredit() + diaryCredit);
         user.updateTotalCredit(user.getTotalCredit() + diaryCredit);
-        userRepository.save(user);
 
         return DiaryConverter.toCreateResultDTO(diary);
     }
@@ -130,7 +124,6 @@ public class DiaryCommandServiceImpl implements DiaryCommandService{
 
         //UserChallenge 삭제
         userChallengeRepository.deleteAll(targetUserChallenge);
-
 
         return DiaryConverter.toDeleteResultDTO(diary);
     }
@@ -195,20 +188,13 @@ public class DiaryCommandServiceImpl implements DiaryCommandService{
     }
 
     @Override
+    @Transactional
     public DiaryResponseDTO.SummaryResultDTO createDiaryByVoice(DiaryRequestDTO.SummaryDTO request, Long userId) {
 
-        //유저 조회
+        // 유저 조회
         User user = userRepository.findById(userId).orElseThrow(() -> new UserHandler(ErrorStatus.USER_NOT_FOUND));
-
-        //날짜 검사(오늘 이후의 날짜 x)
-        if (request.getDate().isAfter(LocalDate.now())) {
-            throw new DiaryHandler(ErrorStatus.DATE_IS_AFTER);
-        }
-
-        //날짜 검사(이미 해당 날짜에 작성된 일기가 존재)
-        if(diaryRepository.existsByUserIdAndDate(userId, request.getDate())){
-            throw new DiaryHandler(ErrorStatus.DIARY_ALREADY_EXISTS);
-        }
+        // 일기 날짜 유효성 검사
+        validateDiaryDate(userId, request.getDate());
 
         // 기존 대화 목록 가져오기
 //        List<Message> messages = conversationHistory.get(userId);
@@ -270,12 +256,22 @@ public class DiaryCommandServiceImpl implements DiaryCommandService{
         //사용자의 크레딧수 증가
         user.updateCurrentCredit(user.getCurrentCredit() + diaryCredit);
         user.updateTotalCredit(user.getTotalCredit() + diaryCredit);
-        userRepository.save(user);
 
         // 대화 기록 삭제
         conversationHistory.remove(userId);
 
         return DiaryConverter.toSummaryResultDTO(diary);
+    }
+
+    private void validateDiaryDate(Long userId, LocalDate date) {
+        //날짜 검사(오늘 이후의 날짜 x)
+        if (date.isAfter(LocalDate.now())) {
+            throw new DiaryHandler(ErrorStatus.DATE_IS_AFTER);
+        }
+        //날짜 검사(이미 해당 날짜에 작성된 일기가 존재)
+        if (diaryRepository.existsByUserIdAndDate(userId, date)) {
+            throw new DiaryHandler(ErrorStatus.DIARY_ALREADY_EXISTS);
+        }
     }
 
     // 일기 분석

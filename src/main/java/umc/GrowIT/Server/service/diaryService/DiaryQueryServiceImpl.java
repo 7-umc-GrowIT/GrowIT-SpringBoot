@@ -19,6 +19,7 @@ import java.util.Optional;
 public class DiaryQueryServiceImpl implements DiaryQueryService{
 
     private final DiaryRepository diaryRepository;
+
     @Override
     public DiaryResponseDTO.DiaryDateListDTO getDiaryDate(Integer year, Integer month, Long userId) {
         // Diary 리스트를 year와 month를 기준으로 필터링
@@ -38,9 +39,9 @@ public class DiaryQueryServiceImpl implements DiaryQueryService{
     }
 
     @Override
+    @Transactional(readOnly = true)
     public DiaryResponseDTO.DiaryDTO getDiary(Long diaryId, Long userId){
         Optional<Diary> diary = diaryRepository.findByUserIdAndId(userId, diaryId);
-
 
         return diary.map(DiaryConverter::toDiaryDTO)
                 .orElseThrow(() -> new DiaryHandler(ErrorStatus.DIARY_NOT_FOUND));
