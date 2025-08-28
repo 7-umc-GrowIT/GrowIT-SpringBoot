@@ -87,7 +87,7 @@ public class DiaryCommandServiceImpl implements DiaryCommandService{
         User user = userRepository.findById(userId).orElseThrow(() -> new UserHandler(ErrorStatus.USER_NOT_FOUND));
 
         // 일기 날짜 검사
-        validateDiaryDate(userId, request.getDate());
+        checkDiaryDate(userId, request.getDate());
 
         //일기 생성
         Diary diary = Diary.builder()
@@ -191,8 +191,9 @@ public class DiaryCommandServiceImpl implements DiaryCommandService{
 
         // 유저 조회
         User user = userRepository.findById(userId).orElseThrow(() -> new UserHandler(ErrorStatus.USER_NOT_FOUND));
+
         // 일기 날짜 검사
-        validateDiaryDate(userId, request.getDate());
+        checkDiaryDate(userId, request.getDate());
 
         // 기존 대화 목록 가져오기
 //        List<Message> messages = conversationHistory.get(userId);
@@ -261,7 +262,7 @@ public class DiaryCommandServiceImpl implements DiaryCommandService{
         return DiaryConverter.toSummaryResultDTO(diary);
     }
 
-    private void validateDiaryDate(Long userId, LocalDate date) {
+    private void checkDiaryDate(Long userId, LocalDate date) {
         // 오늘 이후의 날짜를 선택한 경우
         if (date.isAfter(LocalDate.now())) {
             throw new DiaryHandler(ErrorStatus.DATE_IS_AFTER);
