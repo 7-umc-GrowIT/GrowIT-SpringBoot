@@ -85,11 +85,6 @@ public class DiaryCommandServiceImpl implements DiaryCommandService{
         //유저 조회
         User user = userRepository.findById(userId).orElseThrow(() -> new UserHandler(ErrorStatus.USER_NOT_FOUND));
 
-        //일기 내용이 100자 이상인지 검사
-        if(request.getContent().length()<100){
-            throw new DiaryHandler(ErrorStatus.DIARY_CHARACTER_LIMIT);
-        }
-
         //날짜 검사(오늘 이후의 날짜 x)
         if (request.getDate().isAfter(LocalDate.now())) {
             throw new DiaryHandler(ErrorStatus.DATE_IS_AFTER);
