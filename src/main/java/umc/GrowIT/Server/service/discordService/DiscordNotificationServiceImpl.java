@@ -30,7 +30,7 @@ public class DiscordNotificationServiceImpl implements DiscordNotificationServic
     }
 
     @Override
-    @Async
+    @Async("discordNotificationExecutor")
     public void sendErrorNotification(String errorMessage, String requestUri, String method, String userAgent, Exception exception) {
         if (!notificationEnabled || webhookUrl.isEmpty()) {
             log.warn("Discord 알림이 비활성화되어 있거나 Webhook URL이 설정되지 않았습니다.");
