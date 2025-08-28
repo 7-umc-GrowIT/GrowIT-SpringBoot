@@ -31,7 +31,7 @@ public class DiaryResponseDTO {
     public static class DiaryDateListDTO{
         @Schema(description = "일기 작성 날짜들의 리스트")
         List<DiaryDateDTO> diaryDateList;
-        @Schema(description = "리스트 사이즈")
+        @Schema(description = "리스트 사이즈", example = "1")
         Integer listSize;
     }
     @Builder
@@ -55,7 +55,7 @@ public class DiaryResponseDTO {
     public static class DiaryListDTO {
         @Schema(description = "일기 리스트")
         List<DiaryDTO> diaryList;
-        @Schema(description = "리스트 사이즈")
+        @Schema(description = "리스트 사이즈", example = "1")
         Integer listSize;
     }
     @Builder
