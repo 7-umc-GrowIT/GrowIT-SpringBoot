@@ -3,6 +3,8 @@ package umc.GrowIT.Server.converter;
 import umc.GrowIT.Server.web.dto.DiscordDTO.DiscordRequestDTO;
 
 import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Arrays;
 import java.util.List;
@@ -39,13 +41,13 @@ public class DiscordConverter {
 
         DiscordRequestDTO.EmbedDTO embed = DiscordRequestDTO.EmbedDTO.builder()
                 .title("🚨 GrowIT 서버 에러 발생")
-                .description("**500번대 에러가 발생했습니다!**")
+                .description("**500번대 에러가 발생했습니다. \n 서버 관리자들은 즉각 확인바랍니다.**")
                 .color("15158332") // 빨간색
                 .fields(fields)
                 .footer(DiscordRequestDTO.FooterDTO.builder()
                         .text("GrowIT Server Error Alert")
                         .build())
-                .timestamp(LocalDateTime.now().format(DateTimeFormatter.ISO_LOCAL_DATE_TIME) + "Z")
+                .timestamp(ZonedDateTime.now(ZoneId.of("Asia/Seoul")).format(DateTimeFormatter.ISO_OFFSET_DATE_TIME))
                 .build();
 
         return DiscordRequestDTO.WebhookRequestDTO.builder()
