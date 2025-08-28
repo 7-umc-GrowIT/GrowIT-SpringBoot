@@ -39,7 +39,6 @@ public class DiaryQueryServiceImpl implements DiaryQueryService{
     }
 
     @Override
-    @Transactional(readOnly = true)
     public DiaryResponseDTO.DiaryDTO getDiary(Long diaryId, Long userId){
         Optional<Diary> diary = diaryRepository.findByUserIdAndId(userId, diaryId);
 

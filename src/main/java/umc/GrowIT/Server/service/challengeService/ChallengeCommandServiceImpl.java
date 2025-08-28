@@ -25,7 +25,6 @@ public class ChallengeCommandServiceImpl implements ChallengeCommandService {
     private final UserChallengeRepository userChallengeRepository;
     private final ChallengeRepository challengeRepository;
     private final S3Util s3Util;
-    private Integer challengeCredit = 1;
 
     @Override
     @Transactional
@@ -113,6 +112,7 @@ public class ChallengeCommandServiceImpl implements ChallengeCommandService {
 
         userChallenge.verifyUserChallenge(proofRequest);
 
+        Integer challengeCredit = 1;
         user.updateCurrentCredit(user.getCurrentCredit() + challengeCredit);
         user.updateTotalCredit(user.getTotalCredit() + challengeCredit);
     }

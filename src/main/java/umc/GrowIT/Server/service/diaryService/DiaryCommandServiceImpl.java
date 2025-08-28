@@ -37,8 +37,9 @@ public class DiaryCommandServiceImpl implements DiaryCommandService{
     private final KeywordRepository keywordRepository;
     private final ChallengeRepository challengeRepository;
     private final UserChallengeRepository userChallengeRepository;
+
     //일기 작성 시 추가되는 크레딧 개수
-    private Integer diaryCredit = 2;
+    private final Integer diaryCredit = 2;
 
     @Value("${openai.model1}")
     private String chatModel;
@@ -62,7 +63,6 @@ public class DiaryCommandServiceImpl implements DiaryCommandService{
     private final Map<Long, List<Message>> conversationHistory = new HashMap<>();
 
     @Override
-    @Transactional
     public DiaryResponseDTO.ModifyDiaryResultDTO modifyDiary(DiaryRequestDTO.ModifyDiaryDTO request, Long diaryId, Long userId) {
 
         //유저 조회
@@ -81,13 +81,12 @@ public class DiaryCommandServiceImpl implements DiaryCommandService{
     }
 
     @Override
-    @Transactional
     public DiaryResponseDTO.CreateDiaryResultDTO createDiary(DiaryRequestDTO.CreateDiaryDTO request, Long userId) {
 
         //유저 조회
         User user = userRepository.findById(userId).orElseThrow(() -> new UserHandler(ErrorStatus.USER_NOT_FOUND));
 
-        // 일기 날짜 유효성 검사
+        // 일기 날짜 검사
         validateDiaryDate(userId, request.getDate());
 
         //일기 생성
@@ -166,17 +165,17 @@ public class DiaryCommandServiceImpl implements DiaryCommandService{
         // 사용자의 입력을 대화 목록에 추가
         messages.add(new Message("user", userChat));
 
-        // ChatGPT 요청 생성
-        ChatGPTRequest gptRequest = new ChatGPTRequest(chatModel, messages);
+//        // ChatGPT 요청 생성
+//        ChatGPTRequest gptRequest = new ChatGPTRequest(chatModel, messages);
+//
+//        // API 요청 및 응답 처리
+//        ChatGPTResponse chatGPTResponse = template.postForObject(apiURL, gptRequest, ChatGPTResponse.class);
+//
+//        if (chatGPTResponse.getChoices().isEmpty()) {
+//            throw new OpenAIHandler(ErrorStatus.GPT_RESPONSE_EMPTY);
+//        }
 
-        // API 요청 및 응답 처리
-        ChatGPTResponse chatGPTResponse = template.postForObject(apiURL, gptRequest, ChatGPTResponse.class);
-
-        if (chatGPTResponse == null || chatGPTResponse.getChoices().isEmpty()) {
-            throw new OpenAIHandler(ErrorStatus.GPT_RESPONSE_EMPTY);
-        }
-
-        String aiChat = chatGPTResponse.getChoices().get(0).getMessage().getContent();
+        String aiChat = requestGptChat(chatModel, messages);
 
         // ai의 답변을 대화 목록에 추가
         messages.add(new Message("assistant", aiChat));
@@ -188,12 +187,11 @@ public class DiaryCommandServiceImpl implements DiaryCommandService{
     }
 
     @Override
-    @Transactional
     public DiaryResponseDTO.SummaryResultDTO createDiaryByVoice(DiaryRequestDTO.SummaryDTO request, Long userId) {
 
         // 유저 조회
         User user = userRepository.findById(userId).orElseThrow(() -> new UserHandler(ErrorStatus.USER_NOT_FOUND));
-        // 일기 날짜 유효성 검사
+        // 일기 날짜 검사
         validateDiaryDate(userId, request.getDate());
 
         // 기존 대화 목록 가져오기
@@ -231,17 +229,17 @@ public class DiaryCommandServiceImpl implements DiaryCommandService{
                 " 사용자의 감정이 자연스럽게 드러나도록 작성하되, 실제 대화 내용에만 기반해줘." +
                 " 일기에서 AI와 대화했다는 사실이 드러나지 않도록 하고, 날짜는 적지 말아줘."));
 
-        // ChatGPT 요청 생성
-        ChatGPTRequest gptRequest = new ChatGPTRequest(summaryModel, messages);
+//        // ChatGPT 요청 생성
+//        ChatGPTRequest gptRequest = new ChatGPTRequest(summaryModel, messages);
+//
+//        // API 요청 및 응답 처리
+//        ChatGPTResponse chatGPTResponse = template.postForObject(apiURL, gptRequest, ChatGPTResponse.class);
+//
+//        if (chatGPTResponse.getChoices().isEmpty()) {
+//            throw new OpenAIHandler(ErrorStatus.GPT_RESPONSE_EMPTY);
+//        }
 
-        // API 요청 및 응답 처리
-        ChatGPTResponse chatGPTResponse = template.postForObject(apiURL, gptRequest, ChatGPTResponse.class);
-
-        if (chatGPTResponse == null || chatGPTResponse.getChoices().isEmpty()) {
-            throw new OpenAIHandler(ErrorStatus.GPT_RESPONSE_EMPTY);
-        }
-
-        String aiChat = chatGPTResponse.getChoices().get(0).getMessage().getContent();
+        String aiChat = requestGptChat(summaryModel, messages);
 
         //일기 생성
         Diary diary = Diary.builder()
@@ -253,7 +251,7 @@ public class DiaryCommandServiceImpl implements DiaryCommandService{
         //일기 저장
         diary = diaryRepository.save(diary);
 
-        //사용자의 크레딧수 증가
+        //사용자의 크레딧 수 증가
         user.updateCurrentCredit(user.getCurrentCredit() + diaryCredit);
         user.updateTotalCredit(user.getTotalCredit() + diaryCredit);
 
@@ -264,14 +262,29 @@ public class DiaryCommandServiceImpl implements DiaryCommandService{
     }
 
     private void validateDiaryDate(Long userId, LocalDate date) {
-        //날짜 검사(오늘 이후의 날짜 x)
+        // 오늘 이후의 날짜를 선택한 경우
         if (date.isAfter(LocalDate.now())) {
             throw new DiaryHandler(ErrorStatus.DATE_IS_AFTER);
         }
-        //날짜 검사(이미 해당 날짜에 작성된 일기가 존재)
+        // 이미 해당 날짜에 작성된 일기가 존재하는 경우
         if (diaryRepository.existsByUserIdAndDate(userId, date)) {
             throw new DiaryHandler(ErrorStatus.DIARY_ALREADY_EXISTS);
         }
+    }
+
+    // ‼️ 정상적으로 테스트되는지 확인 필요
+    private String requestGptChat(String model, List<Message> messages) {
+        // ChatGPT 요청 생성
+        ChatGPTRequest gptRequest = new ChatGPTRequest(model, messages);
+
+        // API 요청 및 응답 처리
+        ChatGPTResponse res = template.postForObject(apiURL, gptRequest, ChatGPTResponse.class);
+
+        if (res.getChoices() == null || res.getChoices().isEmpty() || res.getChoices().get(0) == null || res.getChoices().get(0).getMessage() == null) {
+            throw new OpenAIHandler(ErrorStatus.GPT_RESPONSE_EMPTY);
+        }
+
+        return res.getChoices().get(0).getMessage().getContent();
     }
 
     // 일기 분석
@@ -340,7 +353,7 @@ public class DiaryCommandServiceImpl implements DiaryCommandService{
 
         // API 요청 및 응답 처리
         ChatGPTResponse chatGPTResponse = subTemplate.postForObject(apiURL, gptRequest, ChatGPTResponse.class);
-        if (chatGPTResponse == null || chatGPTResponse.getChoices().isEmpty()) {
+        if (chatGPTResponse.getChoices().isEmpty()) {
             throw new OpenAIHandler(ErrorStatus.GPT_RESPONSE_EMPTY);
         }
 
@@ -367,10 +380,8 @@ public class DiaryCommandServiceImpl implements DiaryCommandService{
             throw new OpenAIHandler(ErrorStatus.EMOTIONS_DUPLICATE);
         }
 
-        // 유사도 분석을 통해 DB의 감정으로 변환
-        List<Keyword> emotionKeywords = computeSimilarity(emotionsList);
-
-        return emotionKeywords;
+        // 유사도 분석을 통해 DB의 감정으로 변환 후 반환
+        return computeSimilarity(emotionsList);
     }
 
 
@@ -391,7 +402,7 @@ public class DiaryCommandServiceImpl implements DiaryCommandService{
         FlaskResponseDTO.EmotionAnalysisResponseDTO body = response.getBody();
 
         // 응답 오류체크
-        if (body == null || body.getAnalyzedEmotions() == null || body.getAnalyzedEmotions().isEmpty()) {
+        if (body.getAnalyzedEmotions() == null || body.getAnalyzedEmotions().isEmpty()) {
             throw new FlaskHandler(ErrorStatus.FLASK_API_CALL_FAILED);
         }
 
