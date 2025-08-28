@@ -7,19 +7,22 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import org.springframework.web.bind.annotation.*;
 import umc.GrowIT.Server.apiPayload.ApiResponse;
-import umc.GrowIT.Server.web.dto.ChallengeDTO.ChallengeResponseDTO;
 import umc.GrowIT.Server.web.dto.DiaryDTO.DiaryRequestDTO;
 import umc.GrowIT.Server.web.dto.DiaryDTO.DiaryResponseDTO;
 
 public interface DiarySpecification {
     @GetMapping("/dates")
     @Operation(summary = "일기 작성 날짜 조회 API",description = "특정 사용자의 일기 메인 화면에서 사용할 월별 일기 기록한 날짜를 보여주기 위한 API입니다. Query String으로 year와 month를 주세요." +
-            "ex)2024년 12월을 넘겨주면 해당 월에 기록한 일기들의 날짜 정보와 해당 일기의 id를 보내줍니다.")
+            "ex)2025년 9월을 넘겨주면 해당 월에 기록한 일기들의 날짜 정보와 해당 일기의 id를 보내줍니다.")
     @ApiResponses({
             @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "COMMON200", description = "OK, 성공"),
             @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "DATE4001", description = "유효하지 않은 날짜입니다.",content = @Content(schema = @Schema(implementation = ApiResponse.class)))
     })
-    ApiResponse<DiaryResponseDTO.DiaryDateListDTO> getDiaryDate(@RequestParam Integer year, @RequestParam Integer month);
+    ApiResponse<DiaryResponseDTO.DiaryDateListDTO> getDiaryDate(
+            @Parameter(description = "일기 작성 연도",
+                    example = "2025")@RequestParam Integer year,
+            @Parameter(description = "일기 작성 월",
+                    example = "9")@RequestParam Integer month);
 
     @GetMapping("/")
     @Operation(summary = "일기 모아보기 API",description = "특정 사용자가 작성한 일기를 모아보는 API입니다. query string으로 year와 month를 넘겨주면 해당 월에 작성한 일기들의 리스트, 작성한 일기 수를 보내줍니다.")
@@ -27,7 +30,11 @@ public interface DiarySpecification {
             @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "COMMON200", description = "OK, 성공"),
             @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "DATE4001", description = "유효하지 않은 날짜입니다.",content = @Content(schema = @Schema(implementation = ApiResponse.class)))
     })
-    ApiResponse<DiaryResponseDTO.DiaryListDTO> getDiaryList(@RequestParam Integer year, @RequestParam Integer month);
+    ApiResponse<DiaryResponseDTO.DiaryListDTO> getDiaryList(
+            @Parameter(description = "일기 작성 연도",
+                    example = "2025")@RequestParam Integer year,
+            @Parameter(description = "일기 작성 월",
+                    example = "9")@RequestParam Integer month);
 
     @GetMapping("/{diaryId}")
     @Operation(summary = "특정 일기 조회 API",description = "특정 사용자가 작성한 특정 일기를 조회하는 API입니다. path variable로 일기의 id를 넘겨주면 해당 일기의 세부적인 내용을 보내줍니다.")
@@ -35,6 +42,7 @@ public interface DiarySpecification {
             @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "COMMON200", description = "OK, 성공"),
             @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "DIARY4001", description = "존재하지 않는 일기입니다.",content = @Content(schema = @Schema(implementation = ApiResponse.class)))
     })
+    @Parameter(name = "diaryId", description = "조회할 일기의 ID", example = "1")
     ApiResponse<DiaryResponseDTO.DiaryDTO> getDiary(@PathVariable("diaryId") Long diaryId);
 
     @PatchMapping("/{diaryId}")
@@ -44,8 +52,8 @@ public interface DiarySpecification {
             @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "DIARY4001", description = "존재하지 않는 일기입니다.",content = @Content(schema = @Schema(implementation = ApiResponse.class))),
             @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "DIARY4004",description = "기존 일기와 동일한 내용입니다.",content = @Content(schema = @Schema(implementation = ApiResponse.class)))
     })
-    public ApiResponse<DiaryResponseDTO.ModifyDiaryResultDTO> modifyDiary(@PathVariable("diaryId") Long diaryId,
-                                                                          @RequestBody DiaryRequestDTO.ModifyDiaryDTO request);
+    @Parameter(name = "diaryId", description = "수정할 일기의 ID", example = "1")
+    ApiResponse<DiaryResponseDTO.ModifyDiaryResultDTO> modifyDiary(@PathVariable("diaryId") Long diaryId, @RequestBody DiaryRequestDTO.ModifyDiaryDTO request);
 
     @DeleteMapping("/{diaryId}")
     @Operation(summary = "일기 삭제하기 API",description = "특정 사용자가 작성한 일기를 삭제하는 API입니다. path variable로 일기의 id를 보내주세요")
@@ -53,6 +61,7 @@ public interface DiarySpecification {
             @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "COMMON200", description = "OK, 성공"),
             @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "DIARY4001", description = "존재하지 않는 일기입니다.",content = @Content(schema = @Schema(implementation = ApiResponse.class)))
     })
+    @Parameter(name = "diaryId", description = "삭제할 일기의 ID", example = "1")
     ApiResponse<DiaryResponseDTO.DeleteDiaryResultDTO> deleteDiary(@PathVariable("diaryId") Long diaryId);
 
     @PostMapping("/text")
@@ -96,8 +105,7 @@ public interface DiarySpecification {
             @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "KEYWORD5001", description = "❌ 감정키워드가 존재하지 않습니다.", content = @Content(schema = @Schema(implementation = ApiResponse.class))),
             @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "CHALLENGE5001", description = "❌ 연관된 챌린지가 없습니다.", content = @Content(schema = @Schema(implementation = ApiResponse.class))),
             @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "COMMON400", description = "❌ BAD, 잘못된 요청", content = @Content(schema = @Schema(implementation = ApiResponse.class)))
-
     })
-    @Parameter(name = "diaryId", description = "분석할 일기의 ID", required = true)
-    ApiResponse<DiaryResponseDTO.AnalyzedDiaryResponseDTO> analyzeDiary (@PathVariable("diaryId") Long diaryId);
+    @Parameter(name = "diaryId", description = "분석할 일기의 ID", example = "1")
+    ApiResponse<DiaryResponseDTO.AnalyzedDiaryResponseDTO> analyzeDiary(@PathVariable("diaryId") Long diaryId);
 }
