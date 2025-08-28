@@ -3,7 +3,6 @@ package umc.GrowIT.Server.service.challengeService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Slice;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import umc.GrowIT.Server.apiPayload.code.status.ErrorStatus;
@@ -90,7 +89,7 @@ public class ChallengeQueryServiceImpl implements ChallengeQueryService {
     // 챌린지 현황 조회
     @Override
     public ChallengeResponseDTO.ChallengeStatusPagedResponseDTO getChallengeStatus(Long userId, UserChallengeType challengeType, Boolean completed, Integer page) {
-        Slice<UserChallenge> userChallenges;
+        Page<UserChallenge> userChallenges;
 
         // challengeType이 null이면 전체 챌린지 중 완료/미완료만 조회
         if (challengeType == null) {

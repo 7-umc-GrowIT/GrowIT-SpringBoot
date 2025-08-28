@@ -1,6 +1,6 @@
 package umc.GrowIT.Server.converter;
 
-import org.springframework.data.domain.Slice;
+import org.springframework.data.domain.Page;
 import umc.GrowIT.Server.domain.Challenge;
 import umc.GrowIT.Server.domain.User;
 import umc.GrowIT.Server.domain.UserChallenge;
@@ -67,14 +67,16 @@ public class ChallengeConverter {
                 .build();
     }
 
-    public static ChallengeResponseDTO.ChallengeStatusPagedResponseDTO toChallengeStatusPagedDTO(Slice<UserChallenge> userChallenges) {
-        Slice<ChallengeResponseDTO.ChallengeStatusDTO> mappedSlice = userChallenges.map(ChallengeConverter::toChallengeStatusDTO);
+    public static ChallengeResponseDTO.ChallengeStatusPagedResponseDTO toChallengeStatusPagedDTO(Page<UserChallenge> userChallenges) {
+        Page<ChallengeResponseDTO.ChallengeStatusDTO> mappedPage = userChallenges.map(ChallengeConverter::toChallengeStatusDTO);
 
         return ChallengeResponseDTO.ChallengeStatusPagedResponseDTO.builder()
-                .content(mappedSlice.getContent())
-                .currentPage(mappedSlice.getNumber() + 1)
-                .isFirst(mappedSlice.isFirst())
-                .isLast(!mappedSlice.hasNext())
+                .content(mappedPage.getContent())
+                .currentPage(mappedPage.getNumber() + 1)
+                .totalPages(mappedPage.getTotalPages())
+                .totalElements(mappedPage.getTotalElements())
+                .isFirst(mappedPage.isFirst())
+                .isLast(mappedPage.isLast())
                 .build();
     }
 

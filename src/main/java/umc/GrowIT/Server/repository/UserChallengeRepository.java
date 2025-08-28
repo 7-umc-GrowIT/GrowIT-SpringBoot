@@ -1,7 +1,7 @@
 package umc.GrowIT.Server.repository;
 
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Slice;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -29,7 +29,7 @@ public interface UserChallengeRepository extends JpaRepository<UserChallenge, Lo
     @Query("SELECT uc FROM UserChallenge uc " +
             "WHERE uc.user.id = :userId " +
             "AND uc.completed = :completed")
-    Slice<UserChallenge> findChallengesByCompletionStatus(
+    Page<UserChallenge> findChallengesByCompletionStatus(
             @Param("userId") Long userId,
             @Param("completed") Boolean completed,
             Pageable pageable);
@@ -39,7 +39,7 @@ public interface UserChallengeRepository extends JpaRepository<UserChallenge, Lo
             "WHERE uc.user.id = :userId " +
             "AND uc.challengeType = :challengeType " +
             "AND uc.completed = false")  // 항상 미완료 챌린지만 조회
-    Slice<UserChallenge> findChallengesByChallengeTypeAndCompletionStatus(
+    Page<UserChallenge> findChallengesByChallengeTypeAndCompletionStatus(
             @Param("userId") Long userId,
             @Param("challengeType") UserChallengeType challengeType,
             Pageable pageable);
