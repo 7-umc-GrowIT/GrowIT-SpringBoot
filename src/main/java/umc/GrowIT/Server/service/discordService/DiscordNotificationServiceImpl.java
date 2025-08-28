@@ -2,6 +2,7 @@ package umc.GrowIT.Server.service.discordService;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
@@ -14,7 +15,6 @@ import umc.GrowIT.Server.web.dto.DiscordDTO.DiscordRequestDTO;
 
 @Slf4j
 @Service
-@RequiredArgsConstructor
 public class DiscordNotificationServiceImpl implements DiscordNotificationService {
 
     private final RestTemplate restTemplate;
@@ -24,6 +24,10 @@ public class DiscordNotificationServiceImpl implements DiscordNotificationServic
 
     @Value("${discord.notification.enabled:false}")
     private boolean notificationEnabled;
+
+    public DiscordNotificationServiceImpl(@Qualifier("discordRestTemplate") RestTemplate restTemplate) {
+        this.restTemplate = restTemplate;
+    }
 
     @Override
     @Async
