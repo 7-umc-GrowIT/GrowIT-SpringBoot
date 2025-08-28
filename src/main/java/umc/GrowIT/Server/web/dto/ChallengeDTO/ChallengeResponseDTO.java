@@ -20,7 +20,7 @@ public class ChallengeResponseDTO {
     public static class ChallengeHomeDTO {
         @Schema(description = "챌린지 키워드(리스트)", example = "즐거운, 차분한, 새로운")
         private List<String> challengeKeywords;
-        @Schema(description = "오늘의 추천 챌린지(리스트)", example = "좋아하는 책 독서하기")
+        @Schema(description = "오늘의 추천 챌린지(리스트)")
         private List<RecommendedChallengeDTO> recommendedChallenges;
         @Schema(description = "챌린지 리포트")
         private ChallengeReportDTO challengeReport;
