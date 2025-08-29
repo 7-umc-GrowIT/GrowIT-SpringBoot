@@ -12,7 +12,6 @@ import java.util.List;
 
 import static umc.GrowIT.Server.apiPayload.code.status.ErrorStatus.TERM_NOT_FOUND;
 
-
 @Service
 @RequiredArgsConstructor
 @Transactional

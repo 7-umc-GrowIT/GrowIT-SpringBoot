@@ -46,11 +46,8 @@ public class TermQueryServiceImpl implements TermQueryService{
      */
     @Override
     public List<UserTerm> checkUserTerms(List<TermRequestDTO.UserTermDTO> requestedUserTerms, User newUser) {
-        // 현행 약관 조회
-        List<Term> terms = termRepository.findAllByStatus(TermStatus.ACTIVE); // 현행 약관 조회
-
-        // 현행 약관 개수 조회
-        int activeTermCount = terms.size();
+        // 현행 약관 수 조회
+        int activeTermCount = termRepository.countByStatus(TermStatus.ACTIVE);
 
         // 요청된 약관 개수와 현행 약관 개수가 다르면 예외 처리
         if (requestedUserTerms.size() != activeTermCount) {
@@ -63,7 +60,7 @@ public class TermQueryServiceImpl implements TermQueryService{
                             .orElse(null);
                     // 존재하지 않는 약관을 요청하면 예외 처리
                     if (term == null) {
-                        throw new TermHandler(ErrorStatus.TERM_NOT_FOUND);
+                        throw new TermHandler(ErrorStatus.INVALID_TERM);
                     }
                     // 필수 약관에 동의하지 않으면 예외 처리
                     if (term.getType() == TermType.MANDATORY && !userTerm.getAgreed()) {
