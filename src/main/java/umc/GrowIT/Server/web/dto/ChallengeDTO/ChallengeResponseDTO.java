@@ -88,9 +88,9 @@ public class ChallengeResponseDTO {
         private List<ChallengeStatusDTO> content;
         @Schema(description = "현재 페이지", example = "1")
         private int currentPage;
-        @Schema(description = "전체 페이지", example = "5")
+        @Schema(description = "전체 페이지", example = "1")
         private int totalPages;
-        @Schema(description = "전체 챌린지 수", example = "15")
+        @Schema(description = "전체 챌린지 수", example = "1")
         private long totalElements;
         @Schema(description = "첫번째 페이지인지", example = "true")
         private boolean isFirst;
