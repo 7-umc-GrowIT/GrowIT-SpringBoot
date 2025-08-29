@@ -89,21 +89,15 @@ public class ChallengeQueryServiceImpl implements ChallengeQueryService {
     // 챌린지 현황 조회
     @Override
     public ChallengeResponseDTO.ChallengeStatusPagedResponseDTO getChallengeStatus(Long userId, UserChallengeType challengeType, Boolean completed, Integer page) {
+        PageRequest pr = PageRequest.of(page - 1, 5);
         Page<UserChallenge> userChallenges;
 
-        // challengeType이 null이면 전체 챌린지 중 완료/미완료만 조회
         if (challengeType == null) {
-            userChallenges = userChallengeRepository.findChallengesByCompletionStatus(userId, completed, PageRequest.of(page-1, 5));
-        }
-        else {
-            if (!completed) {
-                // challengeType이 RANDOM 또는 DAILY인 경우 미완료 챌린지만 조회 (completed = false 고정)
-                userChallenges = userChallengeRepository.findChallengesByChallengeTypeAndCompletionStatus(userId, challengeType, PageRequest.of(page-1, 5));
-            }
-            else {
-                // 잘못된 요청 방지
-                userChallenges = Page.empty();
-            }
+            // 전체 챌린지 중 완료/미완료 챌린지 조회
+            userChallenges = userChallengeRepository.findChallengesByCompletionStatus(userId, completed, pr);
+        } else {
+            // 특정 챌린지 타입 + 완료/미완료 챌린지 조회
+            userChallenges = userChallengeRepository.findByTypeAndCompletion(userId, challengeType, completed, pr);
         }
 
         return ChallengeConverter.toChallengeStatusPagedDTO(userChallenges);

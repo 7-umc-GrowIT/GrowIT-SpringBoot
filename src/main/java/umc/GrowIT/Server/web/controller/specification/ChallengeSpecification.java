@@ -41,8 +41,8 @@ public interface ChallengeSpecification {
                     example = "DAILY")
             @RequestParam(required = false) UserChallengeType challengeType,
             @Parameter(description = "챌린지 완료(인증) 여부",
-                    schema = @Schema(allowableValues = {"TRUE", "FALSE"}),
-                    example = "FALSE")
+                    schema = @Schema(allowableValues = {"true", "false"}),
+                    example = "false")
             @RequestParam(required = false) Boolean completed,
             @Parameter(description = "조회할 페이지",
                     example = "1")
