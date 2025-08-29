@@ -25,14 +25,14 @@ public interface UserChallengeRepository extends JpaRepository<UserChallenge, Lo
             @Param("userId") Long userId,
             @Param("today") LocalDate today);
 
-    // 챌린지 미완료/완료 여부 필터
+    // 전체 챌린지 중 인증 완료 여부 필터
     @Query("SELECT uc FROM UserChallenge uc " +
             "WHERE uc.user.id = :userId AND uc.completed = :completed")
     Page<UserChallenge> findChallengesByCompletionStatus(@Param("userId") Long userId,
                                                          @Param("completed") Boolean completed,
                                                          Pageable pageable);
 
-    // 챌린지 타입 + 완료 여부 필터
+    // 챌린지 타입 + 인증 완료 여부 필터
     @Query("SELECT uc FROM UserChallenge uc " +
             "WHERE uc.user.id = :userId " +
             "AND uc.challengeType = :challengeType " +
