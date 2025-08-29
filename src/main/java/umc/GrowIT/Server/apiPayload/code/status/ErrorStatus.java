@@ -32,7 +32,7 @@ public enum ErrorStatus implements BaseErrorCode {
     //약관 관련 에러
     TERM_NOT_FOUND(HttpStatus.NOT_FOUND, "TERM4001", "존재하지 않는 약관을 요청했습니다."),
     MANDATORY_TERMS_REQUIRED(HttpStatus.BAD_REQUEST, "TERM4002", "필수 약관에 반드시 동의해야 합니다."),
-    ALL_TERMS_REQUIRED(HttpStatus.BAD_REQUEST, "TERM4003", "전체 약관 정보를 주세요."),
+    INVALID_TERM(HttpStatus.BAD_REQUEST, "TERM4004", "약관 정보가 유효하지 않습니다."),
 
     //인증 관련 에러
     EMAIL_NOT_VERIFIED(HttpStatus.BAD_REQUEST, "AUTH4001", "이메일 인증을 완료해주세요."),
