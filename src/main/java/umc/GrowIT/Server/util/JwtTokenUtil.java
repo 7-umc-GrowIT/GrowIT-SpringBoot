@@ -116,9 +116,14 @@ public class JwtTokenUtil {
         );
     }
 
-    public boolean isUserInactive(String token){
+    public boolean isUserInactive(String token) {
         Claims claims = parseClaims(token);
         Long userId = claims.get("userId", Long.class);
         return userQueryService.isUserInactive(userId);
+    }
+
+    public Long getUserId(String token) {
+        Claims claims = parseClaims(token);
+        return claims.get("userId", Long.class);
     }
 }
