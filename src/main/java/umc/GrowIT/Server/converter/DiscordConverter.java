@@ -51,7 +51,7 @@ public class DiscordConverter {
                 .build();
 
         return DiscordRequestDTO.WebhookRequestDTO.builder()
-                .content("@here 서버에서 에러가 발생했습니다! ❌❌")
+                .content("@here 🚨🚨서버에서 에러가 발생했습니다🚨🚨")
                 .embeds(Arrays.asList(embed))
                 .build();
     }
