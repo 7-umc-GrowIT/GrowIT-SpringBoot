@@ -39,7 +39,7 @@ public class DiaryCommandServiceImpl implements DiaryCommandService{
     private final UserChallengeRepository userChallengeRepository;
 
     //일기 작성 시 추가되는 크레딧 개수
-    private final Integer diaryCredit = 2;
+    private static final int DIARY_CREDIT = 2;
 
     @Value("${openai.model1}")
     private String chatModel;
@@ -100,8 +100,8 @@ public class DiaryCommandServiceImpl implements DiaryCommandService{
         diary = diaryRepository.save(diary);
 
         //사용자의 크레딧수 증가
-        user.updateCurrentCredit(user.getCurrentCredit() + diaryCredit);
-        user.updateTotalCredit(user.getTotalCredit() + diaryCredit);
+        user.updateCurrentCredit(user.getCurrentCredit() + DIARY_CREDIT);
+        user.updateTotalCredit(user.getTotalCredit() + DIARY_CREDIT);
 
         return DiaryConverter.toCreateResultDTO(diary);
     }
@@ -253,8 +253,8 @@ public class DiaryCommandServiceImpl implements DiaryCommandService{
         diary = diaryRepository.save(diary);
 
         //사용자의 크레딧 수 증가
-        user.updateCurrentCredit(user.getCurrentCredit() + diaryCredit);
-        user.updateTotalCredit(user.getTotalCredit() + diaryCredit);
+        user.updateCurrentCredit(user.getCurrentCredit() + DIARY_CREDIT);
+        user.updateTotalCredit(user.getTotalCredit() + DIARY_CREDIT);
 
         // 대화 기록 삭제
         conversationHistory.remove(userId);
