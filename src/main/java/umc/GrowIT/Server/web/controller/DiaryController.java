@@ -1,6 +1,7 @@
 package umc.GrowIT.Server.web.controller;
 
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -50,7 +51,7 @@ public class DiaryController implements DiarySpecification {
     }
 
     @PatchMapping("/{diaryId}")
-    public ApiResponse<DiaryResponseDTO.ModifyDiaryResultDTO> modifyDiary(@PathVariable("diaryId") Long diaryId, @RequestBody DiaryRequestDTO.ModifyDiaryDTO request){
+    public ApiResponse<DiaryResponseDTO.ModifyDiaryResultDTO> modifyDiary(@PathVariable("diaryId") Long diaryId, @Valid @RequestBody DiaryRequestDTO.ModifyDiaryDTO request){
         //accessToken에서 userId 추출
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         Long userId = (Long) authentication.getPrincipal();
@@ -67,7 +68,7 @@ public class DiaryController implements DiarySpecification {
         return ApiResponse.onSuccess(diaryCommandService.deleteDiary(diaryId, userId));
     }
     @PostMapping("/text")
-    public ApiResponse<DiaryResponseDTO.CreateDiaryResultDTO> createDiaryByText(@RequestBody DiaryRequestDTO.CreateDiaryDTO request){
+    public ApiResponse<DiaryResponseDTO.CreateDiaryResultDTO> createDiaryByText(@Valid @RequestBody DiaryRequestDTO.CreateDiaryDTO request){
         //accessToken에서 userId 추출
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         Long userId = (Long) authentication.getPrincipal();

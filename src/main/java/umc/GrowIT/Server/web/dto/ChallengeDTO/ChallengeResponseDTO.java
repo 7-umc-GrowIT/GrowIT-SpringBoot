@@ -20,7 +20,7 @@ public class ChallengeResponseDTO {
     public static class ChallengeHomeDTO {
         @Schema(description = "챌린지 키워드(리스트)", example = "즐거운, 차분한, 새로운")
         private List<String> challengeKeywords;
-        @Schema(description = "오늘의 추천 챌린지(리스트)", example = "좋아하는 책 독서하기")
+        @Schema(description = "오늘의 추천 챌린지(리스트)")
         private List<RecommendedChallengeDTO> recommendedChallenges;
         @Schema(description = "챌린지 리포트")
         private ChallengeReportDTO challengeReport;
@@ -64,7 +64,7 @@ public class ChallengeResponseDTO {
     @Builder
     @NoArgsConstructor
     @AllArgsConstructor
-    @Schema(title = "챌린지 조회 response")
+    @Schema(title = "챌린지 리스트 조회 response")
     public static class ChallengeStatusDTO {
         @Schema(description = "챌린지 id", example = "1")
         private Long id;
@@ -127,26 +127,33 @@ public class ChallengeResponseDTO {
         private LocalDateTime certificationDate;
     }
 
-    // 챌린지 삭제 응답 DTO
     @Getter
     @Builder
     @NoArgsConstructor
     @AllArgsConstructor
+    @Schema(title = "챌린지 삭제 response")
     public static class DeleteChallengeResponseDTO {
-        // TODO 디테일하게 결정 필요
+        @Schema(description = "사용자 챌린지 id", example = "1")
         private Long id;
-        private String message; // ex) 챌린지 삭제가 완료되었습니다
+        @Schema(description = "챌린지 삭제 성공 메시지", example = "챌린지를 삭제했어요.")
+        private String message;
     }
 
     @Getter
     @Builder
     @NoArgsConstructor
     @AllArgsConstructor
+    @Schema(title = "챌린지 추천 response")
     public static class ChallengeDTO {
-        private Long id; // 챌린지 ID
-        private String title; //챌린지 제목
-        private String content; //챌린지 내용
-        private Integer time; //챌린지 소요시간
-        private UserChallengeType challengeType; //추천 타입 (Daily or Random)
+        @Schema(description = "추천 챌린지 id", example = "1")
+        private Long id;
+        @Schema(description = "추천 챌린지 제목", example = "좋아하는 책 독서하기")
+        private String title;
+        @Schema(description = "추천 챌린지 내용", example = "좋아하는 책을 골라서 한 번 읽어 보세요!")
+        private String content;
+        @Schema(description = "챌린지 소요 시간", example = "1")
+        private Integer time;
+        @Schema(description = "챌린지 추천 타입(DAILY or RANDOM)", example = "DAILY")
+        private UserChallengeType challengeType;
     }
 }

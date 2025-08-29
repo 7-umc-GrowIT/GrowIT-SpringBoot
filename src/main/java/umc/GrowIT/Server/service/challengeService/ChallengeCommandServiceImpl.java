@@ -25,7 +25,9 @@ public class ChallengeCommandServiceImpl implements ChallengeCommandService {
     private final UserChallengeRepository userChallengeRepository;
     private final ChallengeRepository challengeRepository;
     private final S3Util s3Util;
-    private Integer challengeCredit = 1;
+
+    //챌린지 인증 작성 시 추가되는 크레딧 개수
+    private static final int CHALLENGE_CREDIT = 1;
 
     @Override
     @Transactional
@@ -113,8 +115,8 @@ public class ChallengeCommandServiceImpl implements ChallengeCommandService {
 
         userChallenge.verifyUserChallenge(proofRequest);
 
-        user.updateCurrentCredit(user.getCurrentCredit() + challengeCredit);
-        user.updateTotalCredit(user.getTotalCredit() + challengeCredit);
+        user.updateCurrentCredit(user.getCurrentCredit() + CHALLENGE_CREDIT);
+        user.updateTotalCredit(user.getTotalCredit() + CHALLENGE_CREDIT);
     }
 
     @Override
