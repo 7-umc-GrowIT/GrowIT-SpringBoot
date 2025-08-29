@@ -1,7 +1,7 @@
 package umc.GrowIT.Server.repository;
 
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Slice;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
@@ -26,28 +26,27 @@ public interface UserChallengeRepository extends JpaRepository<UserChallenge, Lo
             @Param("userId") Long userId,
             @Param("today") LocalDate today);
 
-    // 1. 유저의 완료 또는 미완료 챌린지 조회 (challengeType 무시)
+    // 전체 챌린지 중 인증 완료 여부 필터
     @Query("SELECT uc FROM UserChallenge uc " +
-            "WHERE uc.user.id = :userId " +
-            "AND uc.completed = :completed")
-    Slice<UserChallenge> findChallengesByCompletionStatus(
-            @Param("userId") Long userId,
-            @Param("completed") Boolean completed,
-            Pageable pageable);
+            "WHERE uc.user.id = :userId AND uc.completed = :completed")
+    Page<UserChallenge> findChallengesByCompletionStatus(@Param("userId") Long userId,
+                                                         @Param("completed") Boolean completed,
+                                                         Pageable pageable);
 
-    // 2. 특정 challengeType에 대해 미완료 챌린지 조회 (completed가 true인 챌린지는 제외)
+    // 챌린지 타입 + 인증 완료 여부 필터
     @Query("SELECT uc FROM UserChallenge uc " +
             "WHERE uc.user.id = :userId " +
             "AND uc.challengeType = :challengeType " +
-            "AND uc.completed = false")  // 항상 미완료 챌린지만 조회
-    Slice<UserChallenge> findChallengesByChallengeTypeAndCompletionStatus(
+            "AND uc.completed = :completed")
+    Page<UserChallenge> findByTypeAndCompletion(
             @Param("userId") Long userId,
-            @Param("challengeType") UserChallengeType challengeType,
+            @Param("challengeType") UserChallengeType userChallengeType,
+            @Param("completed") Boolean completed,
             Pageable pageable);
 
     //userId와 date로 UserChallenge 조회
     @Query("SELECT uc FROM UserChallenge uc " +
-            "WHERE uc. user.id = :userId " +
+            "WHERE uc.user.id = :userId " +
             "AND uc.date = :date ")
     List<UserChallenge> findUserChallengesByDateAndUserId(
             @Param("userId") Long userId,
