@@ -1,6 +1,5 @@
 package umc.GrowIT.Server.converter;
 
-import umc.GrowIT.Server.domain.Gro;
 import umc.GrowIT.Server.domain.User;
 import umc.GrowIT.Server.web.dto.AuthDTO.AuthResponseDTO;
 import umc.GrowIT.Server.web.dto.OAuthDTO.OAuthApiResponseDTO;
@@ -35,13 +34,6 @@ public class UserConverter {
                 .totalCredit(0)
                 .role(USER)
                 .status(ACTIVE)
-                .build();
-    }
-
-    public static UserResponseDTO.DeleteUserResponseDTO toDeletedUser(User deleteUser) {
-        return UserResponseDTO.DeleteUserResponseDTO.builder()
-                .name(deleteUser.getName())
-                .message("회원탈퇴가 완료되었어요")
                 .build();
     }
 

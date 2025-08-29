@@ -38,10 +38,10 @@ public class UserChallenge extends BaseEntity {
     private boolean completed;
 
     // 인증일시
-    @Column(nullable = false)
+    @Column
     private LocalDateTime certificationDate;
 
-    // 날짜(?)
+    // 연관된 일기의 날짜 (작성날짜 X)
     @Column(nullable = false)
     private LocalDate date;
 

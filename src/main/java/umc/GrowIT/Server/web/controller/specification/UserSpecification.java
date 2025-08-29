@@ -68,15 +68,17 @@ public interface UserSpecification {
     ApiResponse<Void> findPassword(@RequestBody @Valid UserRequestDTO.PasswordDTO passwordDTO);
 
 
-    @PatchMapping("")
-    @Operation(summary = "회원 탈퇴 API", description = "사용자가 자신의 계정을 삭제하는 API입니다.")
+    @DeleteMapping("")
+    @Operation(summary = "회원 탈퇴 API", description = "서비스에서 탈퇴하는 API입니다.<br>" +
+            "실행 즉시, 사용자와 관련된 모든 데이터를 삭제하며 선택한 탈퇴사유와 가입일/탈퇴일을 기록합니다."
+    )
     @ApiResponses({
             @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "COMMON200", description = "⭕ SUCCESS"),
             @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "USER4002", description = "❌ 이메일 또는 패스워드가 일치하지 않습니다.", content = @Content(schema = @Schema(implementation = ApiResponse.class))),
-            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "USER4004", description = "❌ 탈퇴한 회원입니다", content = @Content(schema = @Schema(implementation = ApiResponse.class))),
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "WITHDRAWAL4001", description = "❌ 존재하지 않는 탈퇴 사유입니다.", content = @Content(schema = @Schema(implementation = ApiResponse.class))),
             @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "COMMON400", description = "❌ BAD, 잘못된 요청", content = @Content(schema = @Schema(implementation = ApiResponse.class)))
     })
-    ApiResponse<UserResponseDTO.DeleteUserResponseDTO> deleteUser();
+    ApiResponse<Void> withdrawUser(@Valid @RequestBody UserRequestDTO.DeleteUserRequestDTO deleteUserRequestDTO);
 
     @GetMapping("/mypage")
     @Operation(summary = "마이페이지 조회 API", description = "마이페이지에서 사용자의 정보를 조회합니다.")

@@ -69,14 +69,17 @@ public class UserController implements UserSpecification {
         return ApiResponse.onSuccess();
     }
 
+
     @Override
-    @PatchMapping("")
-    public ApiResponse<UserResponseDTO.DeleteUserResponseDTO> deleteUser() {
+    @DeleteMapping("")
+    public ApiResponse<Void> withdrawUser(
+            @Valid @RequestBody UserRequestDTO.DeleteUserRequestDTO deleteUserRequestDTO
+    ) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         Long userId = (Long) authentication.getPrincipal();
 
-        UserResponseDTO.DeleteUserResponseDTO deleteUser = userCommandService.delete(userId);
-        return ApiResponse.onSuccess(deleteUser);
+        userCommandService.withdraw(userId, deleteUserRequestDTO);
+        return ApiResponse.onSuccess();
     }
 
     @Override

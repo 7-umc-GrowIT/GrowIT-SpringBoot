@@ -1,5 +1,6 @@
 package umc.GrowIT.Server.web.dto.UserDTO;
 
+import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -64,5 +65,17 @@ public class UserRequestDTO {
 
         @Size(min = 8, max = 30, message = "크기는 8에서 30 사이입니다.")
         private String passwordCheck;
+    }
+
+    @Getter
+    @Builder
+    @NoArgsConstructor
+    @AllArgsConstructor
+    @Schema(title = "회원탈퇴 Request")
+    public static class DeleteUserRequestDTO {
+
+        @NotNull(message = "탈퇴이유 ID를 입력해야 합니다.")
+        @Schema(description = "탈퇴이유 ID", example = "1")
+        private Long reasonId;
     }
 }

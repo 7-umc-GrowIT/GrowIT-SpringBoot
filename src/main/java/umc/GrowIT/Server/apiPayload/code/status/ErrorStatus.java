@@ -121,7 +121,14 @@ public enum ErrorStatus implements BaseErrorCode {
     EMOTIONS_DUPLICATE(HttpStatus.INTERNAL_SERVER_ERROR, "GPT5003", "GPT 응답에서 중복된 감정이 존재합니다."),
 
     // 플라스크 관련 에러
-    FLASK_API_CALL_FAILED(HttpStatus.INTERNAL_SERVER_ERROR, "FLASK5001", "Flask API 호출에 실패하였습니다.");
+    FLASK_API_CALL_FAILED(HttpStatus.INTERNAL_SERVER_ERROR, "FLASK5001", "Flask API 호출에 실패하였습니다."),
+
+    // 탈퇴 관련 에러
+    WITHDRAWAL_REASON_NOT_FOUND(HttpStatus.NOT_FOUND, "WITHDRAWAL4001", "존재하지 않는 탈퇴 사유입니다."),
+
+
+
+
     ;
 
 

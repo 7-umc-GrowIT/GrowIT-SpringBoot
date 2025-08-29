@@ -76,7 +76,8 @@ public class User extends BaseEntity {
     private List<OAuthAccount> oAuthAccounts = new ArrayList<>();
 
     @OneToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "refresh_token_id", nullable = false)
+//    @JoinColumn(name = "refresh_token_id", nullable = false)
+    @JoinColumn(name = "refresh_token_id")
     private RefreshToken refreshToken;
 
     public void encodePassword(String password) {
