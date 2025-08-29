@@ -102,16 +102,16 @@ public enum ErrorStatus implements BaseErrorCode {
     ANALYZED_DIARY(HttpStatus.BAD_REQUEST, "DIARY4005", "이미 분석된 일기입니다."),
 
     // S3 관련 에러
-    S3_BAD_FILE_EXTENSION(HttpStatus.BAD_REQUEST, "S3_4001", "파일 확장자가 잘못되었습니다."),
-    S3_FILE_NAME_REQUIRED(HttpStatus.BAD_REQUEST, "S3_4002", "파일 이름은 필수입니다."),
-    S3_FOLDER_NAME_REQUIRED(HttpStatus.BAD_REQUEST, "S3_4003", "폴더 이름은 필수입니다."),
-    S3_INVALID_FOLDER_NAME(HttpStatus.BAD_REQUEST, "S3_4004", "폴더명은 영어로 입력해야 합니다."),
+    S3_BAD_FILE_EXTENSION(HttpStatus.BAD_REQUEST, "S34001", "파일 확장자가 잘못되었습니다."),
+    S3_FILE_NAME_REQUIRED(HttpStatus.BAD_REQUEST, "S34002", "파일 이름은 필수입니다."),
+    S3_FOLDER_NAME_REQUIRED(HttpStatus.BAD_REQUEST, "S34003", "폴더 이름은 필수입니다."),
+    S3_INVALID_FOLDER_NAME(HttpStatus.BAD_REQUEST, "S34004", "폴더명은 영어로 입력해야 합니다."),
 
 
     // OAuth 관련 에러
-    ACCOUNT_ALREADY_EXISTS(HttpStatus.CONFLICT, "OAUTH_4001", "이미 가입한 소셜 계정입니다."),
-    ACCOUNT_NOT_FOUND(HttpStatus.NOT_FOUND, "OAUTH_4002", "존재하지 않는 계정입니다."),
-    ACCOUNT_BAD_REQUEST(HttpStatus.BAD_REQUEST, "OAUTH_4003", "요청한 이메일로 가입할 수 없습니다."),
+    ACCOUNT_ALREADY_EXISTS(HttpStatus.CONFLICT, "OAUTH4001", "이미 가입한 소셜 계정입니다."),
+    ACCOUNT_NOT_FOUND(HttpStatus.NOT_FOUND, "OAUTH4002", "존재하지 않는 계정입니다."),
+    ACCOUNT_BAD_REQUEST(HttpStatus.BAD_REQUEST, "OAUTH4003", "요청한 이메일로 가입할 수 없습니다."),
     INVALID_AUTHORIZATION_CODE(HttpStatus.BAD_REQUEST, "AUTH4030", "유효하지 않은 인가 코드입니다."),
     INVALID_APPLE_CLIENT_SETTING(HttpStatus.INTERNAL_SERVER_ERROR, "AUTH5002", "Apple Client 설정값이 유효하지 않습니다."),
     INVALID_APPLE_ID_TOKEN(HttpStatus.BAD_REQUEST, "AUTH4032", "유효하지 않은 Apple ID Token 입니다."),
