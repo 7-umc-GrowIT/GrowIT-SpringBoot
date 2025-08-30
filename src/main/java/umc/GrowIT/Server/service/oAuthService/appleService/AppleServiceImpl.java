@@ -167,12 +167,12 @@ public class AppleServiceImpl implements AppleService {
 
         // 애플 이메일로 이메일 회원가입이 되어있지 않고 애플 로그인 기록이 없는 경우
         // 회원 약관 정보가 없기 때문에 회원가입 처리
-        if (user.isEmpty() && oAuthAccount.isEmpty()) {
+        if (user.isEmpty()) {
             oAuthUserInfoDTO.setName(name);
             return toOAuthLoginDTO(true, oAuthUserInfoDTO, null);
         // 애플 이메일로 이메일 회원가입이 되어있고 애플 로그인 기록이 없는 경우
         // OAuthAccount 저장 및 기존 계정으로 로그인 처리
-        } else if (user.isPresent() && oAuthAccount.isEmpty()) {
+        } else if (oAuthAccount.isEmpty()) {
             userCommandService.checkUserInactive(existingUser); // 탈퇴한 회원인지 확인
 
             OAuthAccount newOAuthAccount = toOAuthAccount(oAuthUserInfoDTO, existingUser);
