@@ -27,7 +27,6 @@ import umc.GrowIT.Server.web.dto.OAuthDTO.OAuthApiResponseDTO;
 import umc.GrowIT.Server.web.dto.OAuthDTO.OAuthRequestDTO;
 import umc.GrowIT.Server.web.dto.OAuthDTO.OAuthResponseDTO;
 import umc.GrowIT.Server.web.dto.TokenDTO.TokenResponseDTO;
-import umc.GrowIT.Server.web.dto.UserDTO.UserResponseDTO;
 
 import static umc.GrowIT.Server.apiPayload.code.status.ErrorStatus.*;
 import static umc.GrowIT.Server.converter.OAuthAccountConverter.toOAuthAccount;

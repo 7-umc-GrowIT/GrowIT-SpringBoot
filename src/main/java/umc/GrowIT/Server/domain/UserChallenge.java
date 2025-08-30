@@ -11,7 +11,6 @@ import java.time.LocalDateTime;
 
 @Entity
 @Getter
-@Setter
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
@@ -26,23 +25,23 @@ public class UserChallenge extends BaseEntity {
     private String thoughts;
 
     // 인증사진
-    @Column(columnDefinition = "TEXT")
-    private String certificationImageUrl;
+    @Column
+    private String certificationImageName;
 
     // 챌린지 타입 (랜덤 or 데일리)
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
-    private UserChallengeType dtype;
+    private UserChallengeType challengeType;
 
     // 완료여부
     @Column(nullable = false)
     private boolean completed;
 
     // 인증일시
-    @Column(nullable = false)
+    @Column
     private LocalDateTime certificationDate;
 
-    // 날짜(?)
+    // 연관된 일기의 날짜 (작성날짜 X)
     @Column(nullable = false)
     private LocalDate date;
 
@@ -54,13 +53,16 @@ public class UserChallenge extends BaseEntity {
     @JoinColumn(name = "challenge_id", nullable = false)
     private Challenge challenge;
 
-
-
-    // 인증 작성 (최초 등록 또는 전체 업데이트용)
-    public void verifyUserChallenge(ChallengeRequestDTO.ProofRequestDTO proofRequest, String imageUrl){
+    // 인증 작성 (최초 인증 용도)
+    public void verifyUserChallenge(ChallengeRequestDTO.ProofRequestDTO proofRequest){
         this.thoughts = proofRequest.getThoughts();
-        this.certificationImageUrl = imageUrl;
+        this.certificationImageName = proofRequest.getCertificationImageName();
         this.certificationDate = LocalDateTime.now(); // 인증한 날짜 저장
         this.completed = true;
+    }
+
+    public void updateProof(ChallengeRequestDTO.ProofRequestDTO proofRequest) {
+        this.certificationImageName = proofRequest.getCertificationImageName();
+        this.thoughts = proofRequest.getThoughts();
     }
 }

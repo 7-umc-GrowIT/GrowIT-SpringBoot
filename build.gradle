@@ -55,7 +55,13 @@ dependencies {
 	implementation 'org.apache.commons:commons-lang3:3.12.0'
 
 	// S3 세팅
-	implementation 'com.amazonaws:aws-java-sdk-s3:1.12.549'
+	implementation platform("software.amazon.awssdk:bom:2.25.0")
+	implementation "software.amazon.awssdk:s3"
+	implementation 'org.springframework.cloud:spring-cloud-starter-aws:2.2.6.RELEASE'
+	implementation 'com.amazonaws:aws-java-sdk-s3:1.12.767' // sdk 버전에 의해 deprecated 확인 필요
+	implementation 'software.amazon.awssdk:s3control:2.27.3'
+	implementation 'software.amazon.awssdk:s3outposts:2.27.3'
+
 
 	// WebClient
 	implementation 'org.springframework.boot:spring-boot-starter-webflux'
@@ -64,8 +70,7 @@ dependencies {
 	implementation 'org.springframework.boot:spring-boot-starter-actuator'
 
 	// Prometheus
-	//implementation 'io.micrometer:micrometer-registry-prometheus'
-	implementation 'io.micrometer:micrometer-registry-prometheus:1.14.2'
+	implementation 'io.micrometer:micrometer-registry-prometheus'
 	implementation 'io.prometheus:prometheus-metrics-core:1.2.1'
 }
 

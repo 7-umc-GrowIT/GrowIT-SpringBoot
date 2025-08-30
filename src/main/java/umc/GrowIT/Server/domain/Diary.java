@@ -19,11 +19,11 @@ public class Diary extends BaseEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    // 일기의 날짜
+    // 일기 날짜 (작성날짜 X)
     @Column(nullable = false)
     private LocalDate date;
 
-    // 알기 내용
+    // 일기 내용
     @Lob // 필드를 TEXT로 매핑
     @Column(nullable = false, columnDefinition = "TEXT")
     private String content;

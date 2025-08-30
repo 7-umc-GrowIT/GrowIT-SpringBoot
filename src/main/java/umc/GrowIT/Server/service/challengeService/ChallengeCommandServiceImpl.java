@@ -1,7 +1,7 @@
 package umc.GrowIT.Server.service.challengeService;
 
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
+
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import umc.GrowIT.Server.apiPayload.code.status.ErrorStatus;
@@ -10,6 +10,7 @@ import umc.GrowIT.Server.converter.ChallengeConverter;
 import umc.GrowIT.Server.domain.*;
 import umc.GrowIT.Server.domain.enums.UserChallengeType;
 import umc.GrowIT.Server.repository.*;
+import umc.GrowIT.Server.util.S3Util;
 import umc.GrowIT.Server.web.dto.ChallengeDTO.ChallengeRequestDTO;
 import umc.GrowIT.Server.web.dto.ChallengeDTO.ChallengeResponseDTO;
 
@@ -18,17 +19,19 @@ import java.util.*;
 
 @Service
 @RequiredArgsConstructor
-@Slf4j
 public class ChallengeCommandServiceImpl implements ChallengeCommandService {
 
     private final UserRepository userRepository;
     private final UserChallengeRepository userChallengeRepository;
     private final ChallengeRepository challengeRepository;
-    private Integer challengeCredit = 1;
+    private final S3Util s3Util;
+
+    //챌린지 인증 작성 시 추가되는 크레딧 개수
+    private static final int CHALLENGE_CREDIT = 1;
 
     @Override
     @Transactional
-    public ChallengeResponseDTO.SelectChallengeDTO selectChallenges(Long userId, List<ChallengeRequestDTO.SelectChallengeRequestDTO> selectRequestList) {
+    public void selectChallenges(Long userId, List<ChallengeRequestDTO.SelectChallengeRequestDTO> selectRequestList) {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new ChallengeHandler(ErrorStatus.USER_NOT_FOUND));
 
@@ -36,21 +39,18 @@ public class ChallengeCommandServiceImpl implements ChallengeCommandService {
         int dailyChallengeCount = 0;
         int randomChallengeCount = 0;
 
-        // 선택한 UserChallenge 저장
-        List<UserChallenge> savedUserChallenges = new ArrayList<>();
-
         for (ChallengeRequestDTO.SelectChallengeRequestDTO selectRequest : selectRequestList) {
             List<Long> challengeIds = selectRequest.getChallengeIds();
-            UserChallengeType dtype = selectRequest.getDtype();
+            UserChallengeType challengeType = selectRequest.getChallengeType();
             LocalDate date = selectRequest.getDate();
 
-            // 현재 dtype에 따라 저장 가능한 최대 개수 확인
-            if (dtype == UserChallengeType.DAILY) {
+            // 현재 challengeType에 따라 저장 가능한 최대 개수 확인
+            if (challengeType == UserChallengeType.DAILY) {
                 dailyChallengeCount += challengeIds.size();
                 if (dailyChallengeCount > 2) {
                     throw new ChallengeHandler(ErrorStatus.CHALLENGE_DAILY_MAX);
                 }
-            } else if (dtype == UserChallengeType.RANDOM) {
+            } else if (challengeType == UserChallengeType.RANDOM) {
                 randomChallengeCount += challengeIds.size();
                 if (randomChallengeCount > 1) {
                     throw new ChallengeHandler(ErrorStatus.CHALLENGE_RANDOM_MAX);
@@ -67,69 +67,81 @@ public class ChallengeCommandServiceImpl implements ChallengeCommandService {
                     .map(challengeId -> {
                         Challenge challenge = challengeRepository.findById(challengeId)
                                 .orElseThrow(() -> new ChallengeHandler(ErrorStatus.CHALLENGE_NOT_FOUND));
-
-                        // UserChallenge 생성
-                        UserChallenge userChallenge = ChallengeConverter.createUserChallenge(user, challenge, dtype, date);
-                        return userChallengeRepository.save(userChallenge);
+                        return ChallengeConverter.createUserChallenge(user, challenge, challengeType, date);
                     })
                     .toList();
 
-            savedUserChallenges.addAll(userChallenges);
+            userChallengeRepository.saveAll(userChallenges);
         }
+    }
 
+    // 챌린지 인증 이미지 업로드용 Presigned URL 생성
+    @Override
+    @Transactional
+    public ChallengeResponseDTO.ProofPresignedUrlResponseDTO createChallengePresignedUrl(Long userId, ChallengeRequestDTO.ProofRequestPresignedUrlDTO request) {
 
-        // DTO 변환 및 반환
-        return ChallengeConverter.toSelectChallengeDTO(savedUserChallenges);
+        // contentType 검증
+        String contentType = request.getContentType().toLowerCase();
+
+        // 허용하는 확장자 매핑
+        String ext = switch (contentType) {
+            case "image/jpeg", "image/jpg" -> "jpg";
+            case "image/png" -> "png";
+            case "image/svg" -> "svg";
+            case "image/webp" -> "webp";
+            default -> throw new S3Handler(ErrorStatus.S3_BAD_FILE_EXTENSION);
+        };
+
+        String fileName = UUID.randomUUID() + "." + ext;
+        String key = "challenges/" + fileName;
+        String presignedUrl = s3Util.toCreatePresignedUrl(key, contentType);
+
+        return ChallengeConverter.proofPresignedUrlDTO(presignedUrl, fileName);
     }
 
     @Override
     @Transactional
-    public ChallengeResponseDTO.ProofDetailsDTO createChallengeProof(Long userId, Long userChallengeId, ChallengeRequestDTO.ProofRequestDTO proofRequest) {
+    public void createChallengeProof(Long userId, Long userChallengeId, ChallengeRequestDTO.ProofRequestDTO proofRequest) {
 
         UserChallenge userChallenge = userChallengeRepository.findByIdAndUserId(userChallengeId, userId)
                 .orElseThrow(() -> new ChallengeHandler(ErrorStatus.USER_CHALLENGE_NOT_FOUND));
 
         if (userChallenge.isCompleted()) {
-            throw new ChallengeHandler(ErrorStatus.CHALLENGE_VERIFY_ALREADY_EXISTS);
+            throw new ChallengeHandler(ErrorStatus.USER_CHALLENGE_ALREADY_PROVED);
         }
 
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new UserHandler(ErrorStatus.USER_NOT_FOUND));
 
-        userChallenge.verifyUserChallenge(proofRequest, proofRequest.getCertificationImageUrl());
-        userChallengeRepository.save(userChallenge);
+        userChallenge.verifyUserChallenge(proofRequest);
 
-        user.updateCurrentCredit(user.getCurrentCredit() + challengeCredit);
-        user.updateTotalCredit(user.getTotalCredit() + challengeCredit);
-        userRepository.save(user);
-
-        return ChallengeConverter.toProofDetailsDTO(userChallenge.getChallenge(), userChallenge);
+        user.updateCurrentCredit(user.getCurrentCredit() + CHALLENGE_CREDIT);
+        user.updateTotalCredit(user.getTotalCredit() + CHALLENGE_CREDIT);
     }
 
     @Override
     @Transactional
-    public ChallengeResponseDTO.ModifyProofDTO updateChallengeProof(Long userId, Long userChallengeId, ChallengeRequestDTO.ProofRequestDTO updateRequest) {
+    public void updateChallengeProof(Long userId, Long userChallengeId, ChallengeRequestDTO.ProofRequestDTO updateRequest) {
         // 유저 챌린지 조회
         UserChallenge userChallenge = userChallengeRepository.findByIdAndUserId(userChallengeId, userId)
                 .orElseThrow(() -> new ChallengeHandler(ErrorStatus.USER_CHALLENGE_NOT_FOUND));
 
         // 인증이 완료되지 않았을 경우 예외 발생
         if (!userChallenge.isCompleted()) {
-            throw new ChallengeHandler(ErrorStatus.CHALLENGE_NOT_COMPLETED);
+            throw new ChallengeHandler(ErrorStatus.USER_CHALLENGE_NOT_PROVED);
         }
 
-        // 인증 이미지 업데이트
-        if (updateRequest.getCertificationImageUrl() != null && !updateRequest.getCertificationImageUrl().isEmpty()) {
-            userChallenge.setCertificationImageUrl(updateRequest.getCertificationImageUrl()); // 새 이미지 설정
+        // 수정사항 체크
+        boolean sameImage = Objects.equals(updateRequest.getCertificationImageName(), userChallenge.getCertificationImageName());
+        boolean sameThoughts = Objects.equals(updateRequest.getThoughts(), userChallenge.getThoughts());
+
+        // 인증 내역에 수정사항 없는 경우 에러 처리
+        if (sameImage && sameThoughts) {
+            throw new ChallengeHandler(ErrorStatus.USER_CHALLENGE_UPDATE_NO_CHANGES);
         }
 
-        // 소감 업데이트
-        if (updateRequest.getThoughts() != null && !updateRequest.getThoughts().isEmpty()) {
-            userChallenge.setThoughts(updateRequest.getThoughts());
-        }
-
-        userChallengeRepository.save(userChallenge);
-        return ChallengeConverter.toChallengeModifyProofDTO(userChallenge);
+        // 인증 이미지 + 소감 업데이트
+        userChallenge.updateProof(updateRequest);
     }
 
     // 삭제

@@ -31,7 +31,9 @@ import umc.GrowIT.Server.service.termService.TermQueryService;
 import umc.GrowIT.Server.util.JwtTokenUtil;
 import umc.GrowIT.Server.web.dto.TokenDTO.TokenResponseDTO;
 import umc.GrowIT.Server.web.dto.UserDTO.UserRequestDTO;
-import umc.GrowIT.Server.web.dto.UserDTO.UserResponseDTO;
+import umc.GrowIT.Server.converter.WithdrawalConverter;
+import umc.GrowIT.Server.domain.*;
+import umc.GrowIT.Server.repository.*;
 
 
 @Service
@@ -40,10 +42,14 @@ import umc.GrowIT.Server.web.dto.UserDTO.UserResponseDTO;
 public class UserCommandServiceImpl implements UserCommandService {
 
     private final UserRepository userRepository;
+    private final WithdrawalReasonRepository withdrawalReasonRepository;
+    private final WithdrawalLogRepository withdrawalLogRepository;
+
     private final TermQueryService termQueryService;
     private final TermCommandService termCommandService;
     private final RefreshTokenCommandService refreshTokenCommandService;
     private final CustomUserDetailsService customUserDetailsService;
+    private final UserWithdrawalService userWithdrawalService;
 
     private final PasswordEncoder passwordEncoder;
     private final JwtTokenUtil jwtTokenUtil;
@@ -84,7 +90,6 @@ public class UserCommandServiceImpl implements UserCommandService {
 
         // User 엔티티 저장 및 AT/RT 발급
         return issueTokenAndSetRefreshToken(userRepository.save(newUser));
-
     }
 
     @Override
@@ -136,20 +141,28 @@ public class UserCommandServiceImpl implements UserCommandService {
         }
     }
 
+
     @Override
-    public UserResponseDTO.DeleteUserResponseDTO delete(Long userId) {
-        // 1. userId를 통해 조회하고 없으면 오류
+    @Transactional
+    public void withdraw(Long userId, UserRequestDTO.DeleteUserRequestDTO deleteUserRequestDTO) {
+        // 1. TODO 이후 Resolver로 수정
         User deleteUser = userRepository.findById(userId)
                 .orElseThrow(() -> new UserHandler(ErrorStatus.USER_NOT_FOUND));
 
-        // 2. soft delete로 진행하기 때문에 status를 inactive로 변경
-        checkUserInactive(deleteUser); //이미 탈퇴한 회원인지 확인
-        deleteUser.deleteAccount();
-        userRepository.save(deleteUser);
+        // 2. 탈퇴이유 조회
+        Long reasonId = deleteUserRequestDTO.getReasonId();
+        WithdrawalReason withdrawalReason = withdrawalReasonRepository.findById(reasonId)
+                .orElseThrow(() -> new UserHandler(ErrorStatus.WITHDRAWAL_REASON_NOT_FOUND));
 
-        // 3. converter 작업
-        return UserConverter.toDeletedUser(deleteUser);
+        // 3. 탈퇴기록 저장
+        WithdrawalLog withdrawalLog = WithdrawalConverter.toWithdrawalLog(deleteUser, withdrawalReason);
+        withdrawalLogRepository.save(withdrawalLog);
+
+        // 4. 해당 사용자 관련 데이터 전체 삭제
+        userWithdrawalService.deleteUserRelatedData(deleteUser.getId(), deleteUser.getRefreshToken().getId());
     }
+
+
 
     /**
      * AT/RT 발급 및 RT DB 저장
