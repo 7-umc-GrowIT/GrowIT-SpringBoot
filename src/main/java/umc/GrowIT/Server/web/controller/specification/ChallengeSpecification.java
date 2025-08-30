@@ -20,7 +20,7 @@ import java.util.Map;
 
 public interface ChallengeSpecification {
 
-    @GetMapping("summary")
+    @GetMapping("")
     @Operation(summary = "챌린지 홈 조회 API", description = "사용자의 챌린지 홈 화면에 보여질 챌린지 요약 정보를 조회하는 API입니다. <br> " +
             "오늘의 챌린지 추천과 그로의 챌린지 리포트를 조회할 수 있습니다.")
     @ApiResponses({
@@ -29,7 +29,7 @@ public interface ChallengeSpecification {
     })
     ApiResponse<ChallengeResponseDTO.ChallengeHomeDTO> getChallengeHome();
 
-    @GetMapping("")
+    @GetMapping("status")
     @Operation(summary = "챌린지 현황 조회 API", description = "챌린지의 진행 상태(미완료/완료 등)를 조회하는 API입니다. <br> " +
             "challengeType에 값을 주지 않으면 전체 완료/미완료 챌린지를 조회할 수 있습니다.")
     @ApiResponses({

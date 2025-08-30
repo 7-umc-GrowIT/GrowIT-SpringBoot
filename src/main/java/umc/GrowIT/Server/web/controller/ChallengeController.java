@@ -30,14 +30,14 @@ public class ChallengeController implements ChallengeSpecification {
     private final ChallengeQueryService challengeQueryService;
     private final ChallengeCommandService challengeCommandService;
 
-    @GetMapping("summary")
+    @GetMapping("")
     public ApiResponse<ChallengeResponseDTO.ChallengeHomeDTO> getChallengeHome() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         Long userId = (Long) authentication.getPrincipal();
         return ApiResponse.onSuccess(challengeQueryService.getChallengeHome(userId));
     }
 
-    @GetMapping("")
+    @GetMapping("status")
     public ApiResponse<ChallengeResponseDTO.ChallengeStatusPagedResponseDTO> getChallengeStatus(
             @RequestParam(required = false) UserChallengeType challengeType,
             @RequestParam Boolean completed,
