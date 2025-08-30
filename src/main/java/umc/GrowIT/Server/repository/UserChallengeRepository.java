@@ -53,6 +53,9 @@ public interface UserChallengeRepository extends JpaRepository<UserChallenge, Lo
             @Param("date") LocalDate date
     );
 
+    @Query("SELECT COUNT(uc) FROM UserChallenge uc " +
+            "WHERE uc.user.id = :userId AND uc.date = :date")
+    Integer countByDateAndUserId(Long userId, LocalDate date);
 
     @Modifying
     @Query("DELETE FROM UserChallenge uc WHERE uc.user.id = :userId")

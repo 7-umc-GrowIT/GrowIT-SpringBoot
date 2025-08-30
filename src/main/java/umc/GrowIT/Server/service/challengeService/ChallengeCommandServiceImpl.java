@@ -44,6 +44,14 @@ public class ChallengeCommandServiceImpl implements ChallengeCommandService {
             UserChallengeType challengeType = selectRequest.getChallengeType();
             LocalDate date = selectRequest.getDate();
 
+            // 날짜별로 이미 저장된 개수 가져오기
+            Integer existingCount = userChallengeRepository.countByDateAndUserId(userId, date);
+
+            // 이번에 추가하려는 개수까지 포함
+            if (existingCount + challengeIds.size() > 9) {
+                throw new ChallengeHandler(ErrorStatus.CHALLENGE_TOTAL_MAX);
+            }
+
             // 현재 challengeType에 따라 저장 가능한 최대 개수 확인
             if (challengeType == UserChallengeType.DAILY) {
                 dailyChallengeCount += challengeIds.size();
