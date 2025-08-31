@@ -1,10 +1,7 @@
 package umc.GrowIT.Server.web.dto.OAuthDTO;
 
 import jakarta.validation.constraints.NotNull;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 public class OAuthApiResponseDTO {
 
@@ -13,7 +10,6 @@ public class OAuthApiResponseDTO {
     @NoArgsConstructor
     @AllArgsConstructor
     public static class KakaoTokenResponseDTO {
-
         private String token_type;
         private String access_token;
         private String id_token;
@@ -28,21 +24,33 @@ public class OAuthApiResponseDTO {
     @NoArgsConstructor
     @AllArgsConstructor
     public static class KakaoUserInfoResponseDTO {
-
         private Long id;
         private KakaoDTO.KakaoAccount kakao_account;
+    }
+
+    @Getter
+    @Setter
+    @Builder
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class OAuthUserInfoDTO {
+        @NotNull
+        private String socialId;
+        @NotNull
+        private String email;
+        private String name;
+        private String provider;
     }
 
     @Getter
     @Builder
     @NoArgsConstructor
     @AllArgsConstructor
-    public static class OAuthUserInfoDTO {
-
-        @NotNull
-        private Long id;
-        @NotNull
-        private String email;
-        private String name;
+    public static class AppleTokenResponseDTO {
+        private String token_type;
+        private String access_token;
+        private String id_token;
+        private Integer expires_in;
+        private String refresh_token;
     }
 }

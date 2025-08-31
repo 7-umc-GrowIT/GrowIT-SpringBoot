@@ -1,8 +1,9 @@
 package umc.GrowIT.Server.apiPayload.code.status;
 
+import org.springframework.http.HttpStatus;
+
 import lombok.AllArgsConstructor;
 import lombok.Getter;
-import org.springframework.http.HttpStatus;
 import umc.GrowIT.Server.apiPayload.code.BaseErrorCode;
 import umc.GrowIT.Server.apiPayload.code.ErrorReasonDTO;
 
@@ -52,8 +53,6 @@ public enum ErrorStatus implements BaseErrorCode {
 
     EMAIL_SEND_FAIL(HttpStatus.INTERNAL_SERVER_ERROR, "AUTH5001", "이메일 전송에 실패했습니다."),
     EMAIL_ENCODING_FAIL(HttpStatus.INTERNAL_SERVER_ERROR, "AUTH5002", "이메일 내용 인코딩에 실패했습니다."),
-
-    KAKAO_AUTH_CODE_ERROR(HttpStatus.BAD_REQUEST, "AUTH4030", "인가 코드가 유효한지 확인하세요. (동일한 인가 코드 재요청 불가, 인가 코드 발급 후 10분 이내 요청)"),
 
     // 챌린지 관련 에러
     CHALLENGE_NOT_FOUND(HttpStatus.NOT_FOUND, "CHALLENGE4001", "챌린지를 찾을 수 없습니다."),
@@ -106,11 +105,19 @@ public enum ErrorStatus implements BaseErrorCode {
 
     // S3 관련 에러
     S3_BAD_FILE_EXTENSION(HttpStatus.BAD_REQUEST, "S34001", "파일 확장자가 잘못되었습니다."),
+    S3_FILE_NAME_REQUIRED(HttpStatus.BAD_REQUEST, "S34002", "파일 이름은 필수입니다."),
+    S3_FOLDER_NAME_REQUIRED(HttpStatus.BAD_REQUEST, "S34003", "폴더 이름은 필수입니다."),
+    S3_INVALID_FOLDER_NAME(HttpStatus.BAD_REQUEST, "S34004", "폴더명은 영어로 입력해야 합니다."),
 
     // OAuth 관련 에러
-    ACCOUNT_ALREADY_EXISTS(HttpStatus.CONFLICT, "OAUTH_4001", "이미 가입한 소셜 계정입니다."),
-    ACCOUNT_NOT_FOUND(HttpStatus.NOT_FOUND, "OAUTH_4002", "존재하지 않는 계정입니다."),
-    ACCOUNT_BAD_REQUEST(HttpStatus.BAD_REQUEST, "OAUTH_4003", "요청한 이메일로 가입할 수 없습니다."),
+    ACCOUNT_ALREADY_EXISTS(HttpStatus.CONFLICT, "OAUTH4001", "이미 가입한 소셜 계정입니다."),
+    ACCOUNT_NOT_FOUND(HttpStatus.NOT_FOUND, "OAUTH4002", "존재하지 않는 계정입니다."),
+    ACCOUNT_BAD_REQUEST(HttpStatus.BAD_REQUEST, "OAUTH4003", "요청한 이메일로 가입할 수 없습니다."),
+    INVALID_AUTHORIZATION_CODE(HttpStatus.BAD_REQUEST, "AUTH4030", "유효하지 않은 인가 코드입니다."),
+    INVALID_APPLE_CLIENT_SETTING(HttpStatus.INTERNAL_SERVER_ERROR, "AUTH5002", "Apple Client 설정값이 유효하지 않습니다."),
+    INVALID_APPLE_ID_TOKEN(HttpStatus.BAD_REQUEST, "AUTH4032", "유효하지 않은 Apple ID Token 입니다."),
+    APPLE_PARSE_FAILED(HttpStatus.INTERNAL_SERVER_ERROR, "AUTH5001", "ID Token 또는 JWKs 파싱에 실패했습니다."),
+    INVALID_PROVIDER(HttpStatus.BAD_REQUEST, "AUTH4033", "유효하지 않은 소셜 로그인 제공자입니다."),
 
     // 감정 관련 에러
     KEYWORD_NOT_FOUND(HttpStatus.NOT_FOUND, "KEYWORD5001", "감정키워드가 존재하지 않습니다."),
