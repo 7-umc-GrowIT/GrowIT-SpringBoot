@@ -18,8 +18,8 @@ import java.util.Optional;
 public interface UserItemRepository extends JpaRepository<UserItem, Long>  {
     Optional<UserItem> findByUserAndItem(User user, Item item);
 
-    @Query("SELECT ui FROM UserItem ui JOIN FETCH ui.item WHERE ui.user.id = :userId")
-    List<UserItem> findAllWithItemsByUserId(Long userId);
+    @Query("SELECT ui FROM UserItem ui JOIN FETCH ui.item WHERE ui.user.id = :userId AND ui.status = 'EQUIPPED'")
+    List<UserItem> findEquippedItemsByUserId(@Param("userId") Long userId);
 
     //해당 아이템을 사용자가 보유했는지 (userId, itemId)
     Optional<UserItem> findByUserIdAndItemId(Long userId, Long itemId);

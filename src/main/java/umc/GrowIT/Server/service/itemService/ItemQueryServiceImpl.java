@@ -1,11 +1,7 @@
 package umc.GrowIT.Server.service.itemService;
 
-import com.amazonaws.HttpMethod;
-import com.amazonaws.services.s3.AmazonS3;
-import com.amazonaws.services.s3.model.GeneratePresignedUrlRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import umc.GrowIT.Server.converter.ItemConverter;
@@ -13,14 +9,13 @@ import umc.GrowIT.Server.domain.Item;
 import umc.GrowIT.Server.domain.enums.ItemCategory;
 import umc.GrowIT.Server.domain.enums.ItemStatus;
 import umc.GrowIT.Server.repository.ItemRepository;
-import umc.GrowIT.Server.repository.UserItemRepository;
+import umc.GrowIT.Server.util.S3Util;
 import umc.GrowIT.Server.web.dto.ItemDTO.ItemResponseDTO;
 
-import java.util.Date;
+import java.time.Duration;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
 
@@ -29,12 +24,8 @@ import java.util.stream.Collectors;
 @Slf4j
 public class ItemQueryServiceImpl implements ItemQueryService {
 
-    private final AmazonS3 amazonS3;
     private final ItemRepository itemRepository;
-    private final UserItemRepository userItemRepository;
-
-    @Value("${aws.s3.bucket}")
-    private String bucketName;
+    private final S3Util s3Util;
 
     @Override
     @Transactional(readOnly = true)
@@ -95,14 +86,7 @@ public class ItemQueryServiceImpl implements ItemQueryService {
         return items.stream()
                 .collect(Collectors.toMap(
                         item -> item,
-                        item -> {
-                            Date expiration = new Date(System.currentTimeMillis() + TimeUnit.MINUTES.toMillis(15));
-                            GeneratePresignedUrlRequest generatePresignedUrlRequest =
-                                    new GeneratePresignedUrlRequest(bucketName, item.getImageKey())
-                                            .withMethod(HttpMethod.GET)
-                                            .withExpiration(expiration);
-                            return amazonS3.generatePresignedUrl(generatePresignedUrlRequest).toString();
-                        }
+                        item -> s3Util.toGetPresignedUrl(item.getImageKey(), Duration.ofMinutes(15))
                 ));
     }
 
@@ -111,14 +95,7 @@ public class ItemQueryServiceImpl implements ItemQueryService {
         return items.stream()
                 .collect(Collectors.toMap(
                         item -> item,
-                        item -> {
-                            Date expiration = new Date(System.currentTimeMillis() + TimeUnit.MINUTES.toMillis(15));
-                            GeneratePresignedUrlRequest generatePresignedUrlRequest =
-                                    new GeneratePresignedUrlRequest(bucketName, item.getGroImageKey())
-                                            .withMethod(HttpMethod.GET)
-                                            .withExpiration(expiration);
-                            return amazonS3.generatePresignedUrl(generatePresignedUrlRequest).toString();
-                        }
+                        item -> s3Util.toGetPresignedUrl(item.getGroImageKey(), Duration.ofMinutes(15))
                 ));
     }
 }

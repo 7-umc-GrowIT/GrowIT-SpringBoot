@@ -1,11 +1,7 @@
 package umc.GrowIT.Server.service.groService;
 
-import com.amazonaws.HttpMethod;
-import com.amazonaws.services.s3.AmazonS3;
-import com.amazonaws.services.s3.model.GeneratePresignedUrlRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import umc.GrowIT.Server.apiPayload.code.status.ErrorStatus;
 import umc.GrowIT.Server.apiPayload.exception.GroHandler;
@@ -15,18 +11,15 @@ import umc.GrowIT.Server.converter.GroConverter;
 import umc.GrowIT.Server.domain.Gro;
 import umc.GrowIT.Server.domain.Item;
 import umc.GrowIT.Server.domain.UserItem;
-import umc.GrowIT.Server.domain.enums.ItemStatus;
 import umc.GrowIT.Server.repository.GroRepository;
-import umc.GrowIT.Server.repository.ItemRepository;
 import umc.GrowIT.Server.repository.UserItemRepository;
 import umc.GrowIT.Server.repository.UserRepository;
-import umc.GrowIT.Server.service.groService.GroQueryService;
+import umc.GrowIT.Server.util.S3Util;
 import umc.GrowIT.Server.web.dto.GroDTO.GroResponseDTO;
 
-import java.util.Date;
+import java.time.Duration;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
 @Service
@@ -34,95 +27,64 @@ import java.util.stream.Collectors;
 @Slf4j
 public class GroQueryServiceImpl implements GroQueryService {
 
-    private final AmazonS3 amazonS3;
     private final GroRepository groRepository;
     private final UserRepository userRepository;
     private final UserItemRepository userItemRepository;
-
-    @Value("${aws.s3.bucket}")
-    private String bucketName;
+    private final S3Util s3Util;
 
     @Override
     public GroResponseDTO.GroAndEquippedItemsDTO getGroAndEquippedItems(Long userId) {
-        // 1. userId 조회하고 없으면 오류
+        // 1. 사용자 조회
         userRepository.findById(userId)
                 .orElseThrow(() -> new UserHandler(ErrorStatus.USER_NOT_FOUND));
 
-
-        // 2. userId를 통해서 그로 조회하고 없으면 오류
+        // 2. 그로 조회
         Gro gro = groRepository.findByUserId(userId)
                 .orElseThrow(() -> new GroHandler(ErrorStatus.GRO_NOT_FOUND));
 
-
-        // 3. userId를 통해서 사용자 아이템 조회하고 없으면 오류
-        List<UserItem> userItems = userItemRepository.findAllWithItemsByUserId(userId);
-        if (userItems.isEmpty()) {
-            throw new ItemHandler(ErrorStatus.USER_ITEM_NOT_FOUND);
-        }
-
-
-        // 4. 사용자 아이템 중 착용한 것에 대해 필터링하고 없으면 오류
-        List<UserItem> equippedUserItems = userItems.stream()
-                .filter(userItem -> ItemStatus.EQUIPPED.equals(userItem.getStatus()))
-                .collect(Collectors.toList());
+        // 3. 착용 중인 아이템 조회
+        List<UserItem> equippedUserItems = userItemRepository.findEquippedItemsByUserId(userId);
         if (equippedUserItems.isEmpty()) {
             throw new ItemHandler(ErrorStatus.EQUIPPED_USER_ITEM_NOT_FOUND);
         }
 
-
-        // 5. 착용한 아이템을 이용하여 Item 접근
+        // 4. 착용한 아이템을 이용하여 Item 접근
         List<Item> equippedItems = equippedUserItems.stream()
-                .map(userItem -> userItem.getItem())
-                .collect(Collectors.toList());
+                .map(UserItem::getItem)
+                .toList();
 
-
-        // 6. 프리사인드 URL 생성
-        // 레벨에 맞는 이미지 선택하여 프리사인드 URL 생성
+        // 5. 프리사인드 URL 생성
         String groUrl = createGroPreSignedUrl(gro.getLevel());
-
-        // Item의 image_key값 얻어서 프리사인드 URL 생성
         Map<Item, String> itemUrls = createItemPreSignedUrl(equippedItems);
 
-
-        // 7. converter 작업
+        // 6. converter 작업
         return GroConverter.toGroAndEquippedItemsDTO(gro, groUrl, itemUrls);
     }
 
-    // 레벨에 맞는 imageKey로 프리사인드 URL 생성
+
+
+
+    /*
+        이 아래부터 헬퍼메소드
+    */
+
+    // 그로 캐릭터 이미지에 대한 Pre-signed URL 생성
     private String createGroPreSignedUrl(Integer groLevel) {
-        // 레벨에 따른 그로 이미지가 제작되지 않은 관계로 일단 레벨 1에 대해서만 설정
         String imageKey = switch (groLevel) {
             case 1 -> "gro/gro_head.png";
-//            case 2 -> "Gro/그로_2.png";
+//            case 2 -> "gro/gro2_head.png";
             default -> throw new GroHandler(ErrorStatus.GRO_LEVEL_INVALID);
         };
 
-        // 프리사인드 URL 생성 (15분 유효 기간)
-        Date expiration = new Date(System.currentTimeMillis() + TimeUnit.MINUTES.toMillis(15));
-
-        GeneratePresignedUrlRequest generatePresignedUrlRequest =
-                new GeneratePresignedUrlRequest(bucketName, imageKey)
-                        .withMethod(HttpMethod.GET)
-                        .withExpiration(expiration);
-
-        return amazonS3.generatePresignedUrl(generatePresignedUrlRequest).toString();
+        return s3Util.toGetPresignedUrl(imageKey, Duration.ofMinutes(15));
     }
 
-    // imageKey를 통해 S3 이미지 접근하여 프리사인드 URL 생성
+    // 착용 중인 이미지에 대한 Pre-signed URL 생성
     private Map<Item, String> createItemPreSignedUrl(List<Item> equippedItems) {
         return equippedItems.stream()
                 .collect(Collectors.toMap(
-                        item -> item, // key
-                        item -> { // value
-                            // 프리사인드 URL 생성 (15분 유효 기간)
-                            Date expiration = new Date(System.currentTimeMillis() + TimeUnit.MINUTES.toMillis(15));
-
-                            GeneratePresignedUrlRequest generatePresignedUrlRequest = new GeneratePresignedUrlRequest(bucketName, item.getGroImageKey())
-                                    .withMethod(HttpMethod.GET)
-                                    .withExpiration(expiration);
-
-                            return amazonS3.generatePresignedUrl(generatePresignedUrlRequest).toString();
-                        }
+                        item -> item,
+                        item -> s3Util.toGetPresignedUrl(item.getGroImageKey(), Duration.ofMinutes(15))
                 ));
     }
 }
