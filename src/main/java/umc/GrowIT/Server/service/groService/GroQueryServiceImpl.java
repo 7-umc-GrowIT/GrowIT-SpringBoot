@@ -3,6 +3,7 @@ package umc.GrowIT.Server.service.groService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import umc.GrowIT.Server.apiPayload.code.status.ErrorStatus;
 import umc.GrowIT.Server.apiPayload.exception.GroHandler;
 import umc.GrowIT.Server.apiPayload.exception.ItemHandler;
@@ -24,7 +25,6 @@ import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
-@Slf4j
 public class GroQueryServiceImpl implements GroQueryService {
 
     private final GroRepository groRepository;
@@ -33,6 +33,7 @@ public class GroQueryServiceImpl implements GroQueryService {
     private final S3Util s3Util;
 
     @Override
+    @Transactional(readOnly = true)
     public GroResponseDTO.GroAndEquippedItemsDTO getGroAndEquippedItems(Long userId) {
         // 1. 사용자 조회
         userRepository.findById(userId)
