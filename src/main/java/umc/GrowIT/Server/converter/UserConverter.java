@@ -3,8 +3,6 @@ package umc.GrowIT.Server.converter;
 import umc.GrowIT.Server.domain.User;
 import umc.GrowIT.Server.web.dto.AuthDTO.AuthResponseDTO;
 import umc.GrowIT.Server.web.dto.OAuthDTO.OAuthApiResponseDTO;
-import umc.GrowIT.Server.web.dto.OAuthDTO.OAuthResponseDTO;
-import umc.GrowIT.Server.web.dto.TokenDTO.TokenResponseDTO;
 import umc.GrowIT.Server.web.dto.UserDTO.UserRequestDTO;
 import umc.GrowIT.Server.web.dto.UserDTO.UserResponseDTO;
 
@@ -37,16 +35,7 @@ public class UserConverter {
                 .build();
     }
 
-    public static OAuthResponseDTO.KakaoLoginDTO toKakaoLoginDTO(Boolean signupRequired, OAuthApiResponseDTO.OAuthUserInfoDTO oAuthUserInfo, TokenResponseDTO.TokenDTO tokens) {
-        return OAuthResponseDTO.KakaoLoginDTO.builder()
-                .signupRequired(signupRequired)
-                .oAuthUserInfo(oAuthUserInfo)
-                .tokens(tokens)
-                .build();
-    }
-
     public static AuthResponseDTO.LogoutResponseDTO toLogoutDTO(){
-
         return AuthResponseDTO.LogoutResponseDTO.builder()
                 .message("로그아웃이 완료되었습니다.")
                 .build();
