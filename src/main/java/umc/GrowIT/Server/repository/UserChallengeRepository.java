@@ -28,7 +28,8 @@ public interface UserChallengeRepository extends JpaRepository<UserChallenge, Lo
 
     // 전체 챌린지 중 인증 완료 여부 필터
     @Query("SELECT uc FROM UserChallenge uc " +
-            "WHERE uc.user.id = :userId AND uc.completed = :completed")
+            "WHERE uc.user.id = :userId AND uc.completed = :completed " +
+            "ORDER BY uc.createdAt DESC")
     Page<UserChallenge> findChallengesByCompletionStatus(@Param("userId") Long userId,
                                                          @Param("completed") Boolean completed,
                                                          Pageable pageable);
@@ -37,7 +38,8 @@ public interface UserChallengeRepository extends JpaRepository<UserChallenge, Lo
     @Query("SELECT uc FROM UserChallenge uc " +
             "WHERE uc.user.id = :userId " +
             "AND uc.challengeType = :challengeType " +
-            "AND uc.completed = :completed")
+            "AND uc.completed = :completed " +
+            "ORDER BY uc.createdAt DESC")
     Page<UserChallenge> findByTypeAndCompletion(
             @Param("userId") Long userId,
             @Param("challengeType") UserChallengeType userChallengeType,
@@ -53,6 +55,10 @@ public interface UserChallengeRepository extends JpaRepository<UserChallenge, Lo
             @Param("date") LocalDate date
     );
 
+    // 추후에 작업 필요
+//    @Query("SELECT COUNT(uc) FROM UserChallenge uc " +
+//            "WHERE uc.user.id = :userId AND uc.date = :date")
+//    long countByDateAndUserId(Long userId, LocalDate date);
 
     @Modifying
     @Query("DELETE FROM UserChallenge uc WHERE uc.user.id = :userId")

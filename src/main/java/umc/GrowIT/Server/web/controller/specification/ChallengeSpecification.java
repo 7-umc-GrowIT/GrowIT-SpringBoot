@@ -20,7 +20,7 @@ import java.util.Map;
 
 public interface ChallengeSpecification {
 
-    @GetMapping("summary")
+    @GetMapping("")
     @Operation(summary = "챌린지 홈 조회 API", description = "사용자의 챌린지 홈 화면에 보여질 챌린지 요약 정보를 조회하는 API입니다. <br> " +
             "오늘의 챌린지 추천과 그로의 챌린지 리포트를 조회할 수 있습니다.")
     @ApiResponses({
@@ -29,7 +29,7 @@ public interface ChallengeSpecification {
     })
     ApiResponse<ChallengeResponseDTO.ChallengeHomeDTO> getChallengeHome();
 
-    @GetMapping("")
+    @GetMapping("status")
     @Operation(summary = "챌린지 현황 조회 API", description = "챌린지의 진행 상태(미완료/완료 등)를 조회하는 API입니다. <br> " +
             "challengeType에 값을 주지 않으면 전체 완료/미완료 챌린지를 조회할 수 있습니다.")
     @ApiResponses({
@@ -60,7 +60,7 @@ public interface ChallengeSpecification {
             @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "CHALLENGE4005", description = "❌ 데일리 챌린지는 최대 2개까지 저장 가능합니다.", content = @Content(schema = @Schema(implementation = ApiResponse.class))),
             @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "CHALLENGE4006", description = "❌ 랜덤 챌린지는 최대 1개만 저장 가능합니다.", content = @Content(schema = @Schema(implementation = ApiResponse.class)))
     })
-    ApiResponse<Void> selectChallenges(@RequestBody List<ChallengeRequestDTO.SelectChallengeRequestDTO> selectRequestList);
+    ApiResponse<ChallengeResponseDTO.SelectChallengeResponseDTO> selectChallenges(@RequestBody List<ChallengeRequestDTO.SelectChallengeRequestDTO> selectRequestList);
 
     @PostMapping("presigned-url")
     @Operation(summary = "사용자 챌린지 인증 이미지 업로드용 presigned url 생성 API", description = "사용자 챌린지 인증 이미지를 S3에 직접 업로드할 수 있는 presigned url을 생성합니다.")

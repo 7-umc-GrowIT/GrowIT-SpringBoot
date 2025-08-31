@@ -43,11 +43,11 @@ public class ChallengeRequestDTO {
     @AllArgsConstructor
     @Schema(title = "챌린지 선택 후 저장 request")
     public static class SelectChallengeRequestDTO {
-        @Schema(description = "저장할 챌린지 아이디(리스트)", example = "[1, 2]")
+        @Schema(description = "저장할 챌린지 아이디(리스트)", example = "[60, 63]")
         private List<Long> challengeIds;
         @Schema(description = "저장할 챌린지의 타입", example = "DAILY")
         private UserChallengeType challengeType;
-        @Schema(description = "챌린지를 저장하는 날짜(오늘 날짜가 기본값)", example = "2025-08-26")
+        @Schema(description = "챌린지를 저장하는 날짜(오늘 날짜가 기본값)")
         private LocalDate date;
     }
 }
