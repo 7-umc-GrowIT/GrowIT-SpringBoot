@@ -111,6 +111,23 @@ public class ChallengeConverter {
                 .build();
     }
 
+    // 선택한 챌린지 저장
+    public static ChallengeResponseDTO.SelectChallengeResponseDTO toSelectChallengeDTO(List<UserChallenge> userChallenges) {
+        List<ChallengeResponseDTO.SelectedChallengesInfo> selectedChallenges = userChallenges.stream()
+                .map(userChallenge -> ChallengeResponseDTO.SelectedChallengesInfo.builder()
+                        .id(userChallenge.getId())
+                        .challengeType(userChallenge.getChallengeType())
+                        .title(userChallenge.getChallenge().getTitle())
+                        .content(userChallenge.getChallenge().getContent())
+                        .time(userChallenge.getChallenge().getTime())
+                        .build())
+                .toList();
+
+        return ChallengeResponseDTO.SelectChallengeResponseDTO.builder()
+                .selectedChallenges(selectedChallenges) // 여러 개의 챌린지 리스트 반환
+                .build();
+    }
+
     // 챌린지 삭제
     public static ChallengeResponseDTO.DeleteChallengeResponseDTO toDeletedUserChallenge(UserChallenge userChallenge) {
         return ChallengeResponseDTO.DeleteChallengeResponseDTO.builder()

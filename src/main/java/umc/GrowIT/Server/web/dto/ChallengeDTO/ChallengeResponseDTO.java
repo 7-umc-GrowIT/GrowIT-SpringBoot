@@ -30,6 +30,34 @@ public class ChallengeResponseDTO {
     @Builder
     @NoArgsConstructor
     @AllArgsConstructor
+    @Schema(title = "챌린지 선택 후 저장 리스트 response")
+    public static class SelectChallengeResponseDTO {
+        @Schema(description = "저장한 챌린지 리스트")
+        private List<SelectedChallengesInfo> selectedChallenges;
+    }
+
+    @Getter
+    @Builder
+    @NoArgsConstructor
+    @AllArgsConstructor
+    @Schema(title = "챌린지 선택 후 저장 response")
+    public static class SelectedChallengesInfo {
+        @Schema(description = "저장한 챌린지 id", example = "1")
+        private Long id;
+        @Schema(description = "저장한 챌린지 타입", example = "DAILY")
+        private UserChallengeType challengeType;
+        @Schema(description = "저장한 챌린지 제목", example = "좋아하는 책 독서하기")
+        private String title;
+        @Schema(description = "저장한 챌린지 내용", example = "좋아하는 책을 골라서 한 번 읽어 보세요!")
+        private String content;
+        @Schema(description = "챌린지 소요 시간", example = "1")
+        private Integer time;
+    }
+
+    @Getter
+    @Builder
+    @NoArgsConstructor
+    @AllArgsConstructor
     @Schema(title = "챌린치 추천 response")
     public static class RecommendedChallengeDTO {
         @Schema(description = "추천 챌린지 id", example = "1")

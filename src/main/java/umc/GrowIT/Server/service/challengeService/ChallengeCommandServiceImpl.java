@@ -31,7 +31,7 @@ public class ChallengeCommandServiceImpl implements ChallengeCommandService {
 
     @Override
     @Transactional
-    public void selectChallenges(Long userId, List<ChallengeRequestDTO.SelectChallengeRequestDTO> selectRequestList) {
+    public ChallengeResponseDTO.SelectChallengeResponseDTO selectChallenges(Long userId, List<ChallengeRequestDTO.SelectChallengeRequestDTO> selectRequestList) {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new ChallengeHandler(ErrorStatus.USER_NOT_FOUND));
 
@@ -39,18 +39,21 @@ public class ChallengeCommandServiceImpl implements ChallengeCommandService {
         int dailyChallengeCount = 0;
         int randomChallengeCount = 0;
 
+        List<UserChallenge> userChallenges = new ArrayList<>();
+
         for (ChallengeRequestDTO.SelectChallengeRequestDTO selectRequest : selectRequestList) {
             List<Long> challengeIds = selectRequest.getChallengeIds();
             UserChallengeType challengeType = selectRequest.getChallengeType();
             LocalDate date = selectRequest.getDate();
 
-            // 날짜별로 이미 저장된 개수 가져오기
-            Integer existingCount = userChallengeRepository.countByDateAndUserId(userId, date);
-
-            // 이번에 추가하려는 개수까지 포함
-            if (existingCount + challengeIds.size() > 9) {
-                throw new ChallengeHandler(ErrorStatus.CHALLENGE_TOTAL_MAX);
-            }
+            // 추후에 작업 필요
+//            // 날짜별로 이미 저장된 개수 가져오기
+//            long existingCount = userChallengeRepository.countByDateAndUserId(userId, date);
+//
+//            // 이번에 추가하려는 개수까지 포함
+//            if (existingCount + challengeIds.size() > 9) {
+//                throw new ChallengeHandler(ErrorStatus.CHALLENGE_TOTAL_MAX);
+//            }
 
             // 현재 challengeType에 따라 저장 가능한 최대 개수 확인
             if (challengeType == UserChallengeType.DAILY) {
@@ -71,7 +74,7 @@ public class ChallengeCommandServiceImpl implements ChallengeCommandService {
             }
 
             // 각 챌린지를 UserChallenge로 생성 및 저장
-            List<UserChallenge> userChallenges = challengeIds.stream()
+            List<UserChallenge> newChallenges = challengeIds.stream()
                     .map(challengeId -> {
                         Challenge challenge = challengeRepository.findById(challengeId)
                                 .orElseThrow(() -> new ChallengeHandler(ErrorStatus.CHALLENGE_NOT_FOUND));
@@ -79,8 +82,10 @@ public class ChallengeCommandServiceImpl implements ChallengeCommandService {
                     })
                     .toList();
 
-            userChallengeRepository.saveAll(userChallenges);
+            List<UserChallenge> saved = userChallengeRepository.saveAll(newChallenges);
+            userChallenges.addAll(saved);
         }
+        return ChallengeConverter.toSelectChallengeDTO(userChallenges);
     }
 
     // 챌린지 인증 이미지 업로드용 Presigned URL 생성
