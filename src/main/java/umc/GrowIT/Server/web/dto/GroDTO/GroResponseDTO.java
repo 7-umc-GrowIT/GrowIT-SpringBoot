@@ -46,8 +46,7 @@ public class GroResponseDTO {
     @NoArgsConstructor
     @AllArgsConstructor
     public static class GroDTO {
-        private Long id; // 그로 ID
-        private Integer level; // 그로 ID
+        private Integer level; // 그로 레벨
         private String groImageUrl; // 그로 이미지 URL
     }
 
@@ -56,9 +55,8 @@ public class GroResponseDTO {
     @NoArgsConstructor
     @AllArgsConstructor
     public static class EquippedItemsDTO {
-        private Long id; // 아이템 ID
         private String name; // 아이템 이름
-        private ItemCategory category; // 아이템 이름
+        private ItemCategory category; // 아이템 카테고리
         private String itemImageUrl; // 아이템 이미지 URL
     }
 }

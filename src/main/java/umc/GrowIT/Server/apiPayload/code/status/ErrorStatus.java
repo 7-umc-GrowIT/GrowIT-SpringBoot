@@ -74,8 +74,7 @@ public enum ErrorStatus implements BaseErrorCode {
     ITEM_NOT_EQUIPPED(HttpStatus.BAD_REQUEST, "ITEM4005", "착용중인 아이템이 아닙니다."),
 
     // 사용자 아이템 관련 에러
-    USER_ITEM_NOT_FOUND(HttpStatus.NOT_FOUND, "UI4001", "사용자 아이템이 존재하지 않습니다."),
-    EQUIPPED_USER_ITEM_NOT_FOUND(HttpStatus.NOT_FOUND, "UI4002", "착용 중인 사용자 아이템이 존재하지 않습니다."),
+    EQUIPPED_USER_ITEM_NOT_FOUND(HttpStatus.NOT_FOUND, "UI4001", "착용 중인 사용자 아이템이 존재하지 않습니다."),
 
     //결제 관련 에러
     PAYMENT_ERROR(HttpStatus.BAD_REQUEST, "PAYMENT4001", "결제정보가 정확하지 않습니다."),
