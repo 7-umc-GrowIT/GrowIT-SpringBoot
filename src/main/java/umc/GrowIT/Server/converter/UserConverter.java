@@ -2,8 +2,10 @@ package umc.GrowIT.Server.converter;
 
 import umc.GrowIT.Server.domain.Gro;
 import umc.GrowIT.Server.domain.User;
+import umc.GrowIT.Server.domain.enums.LoginMethod;
 import umc.GrowIT.Server.web.dto.AuthDTO.AuthResponseDTO;
 import umc.GrowIT.Server.web.dto.OAuthDTO.OAuthApiResponseDTO;
+import umc.GrowIT.Server.web.dto.TokenDTO.TokenResponseDTO;
 import umc.GrowIT.Server.web.dto.UserDTO.UserRequestDTO;
 import umc.GrowIT.Server.web.dto.UserDTO.UserResponseDTO;
 
@@ -46,6 +48,13 @@ public class UserConverter {
         return UserResponseDTO.MyPageDTO.builder()
                 .userId(user.getId())
                 .name(gro.getName())
+                .build();
+    }
+
+    public static AuthResponseDTO.LoginResponseDTO toLoginResponseDTO(TokenResponseDTO.TokenDTO tokenDTO, LoginMethod loginMethod) {
+        return AuthResponseDTO.LoginResponseDTO.builder()
+                .tokens(tokenDTO)
+                .loginMethod(loginMethod)
                 .build();
     }
 }

@@ -8,6 +8,8 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import umc.GrowIT.Server.domain.enums.LoginMethod;
+import umc.GrowIT.Server.web.dto.AuthDTO.AuthResponseDTO;
 import umc.GrowIT.Server.web.dto.TokenDTO.TokenResponseDTO;
 
 public class OAuthResponseDTO {
@@ -22,6 +24,6 @@ public class OAuthResponseDTO {
 
         private OAuthApiResponseDTO.OAuthUserInfoDTO oAuthUserInfo;
 
-        private TokenResponseDTO.TokenDTO tokens;
+        private AuthResponseDTO.LoginResponseDTO loginResponseDTO;
     }
 }

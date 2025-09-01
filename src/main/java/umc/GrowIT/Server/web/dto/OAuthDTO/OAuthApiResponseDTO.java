@@ -1,5 +1,6 @@
 package umc.GrowIT.Server.web.dto.OAuthDTO;
 
+import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotNull;
 import lombok.*;
 
@@ -35,10 +36,14 @@ public class OAuthApiResponseDTO {
     @AllArgsConstructor
     public static class OAuthUserInfoDTO {
         @NotNull
+        @Schema(description = "소셜 고유 ID", example = "001938.4ff14433e3a...")
         private String socialId;
         @NotNull
+        @Schema(description = "이메일", example = "growit@gmail.com")
         private String email;
+        @Schema(description = "사용자 이름", example = "growit")
         private String name;
+        @Schema(description = "소셜 제공자", example = "APPLE")
         private String provider;
     }
 

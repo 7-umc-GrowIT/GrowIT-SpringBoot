@@ -15,6 +15,7 @@ import umc.GrowIT.Server.service.termService.TermQueryService;
 import umc.GrowIT.Server.service.userService.CustomUserDetailsService;
 import umc.GrowIT.Server.service.userService.UserCommandService;
 import umc.GrowIT.Server.util.JwtTokenUtil;
+import umc.GrowIT.Server.web.dto.AuthDTO.AuthResponseDTO;
 import umc.GrowIT.Server.web.dto.OAuthDTO.OAuthApiResponseDTO;
 import umc.GrowIT.Server.web.dto.OAuthDTO.OAuthRequestDTO;
 import umc.GrowIT.Server.web.dto.TermDTO.TermRequestDTO;
@@ -24,6 +25,7 @@ import java.util.List;
 
 import static umc.GrowIT.Server.apiPayload.code.status.ErrorStatus.*;
 import static umc.GrowIT.Server.converter.OAuthAccountConverter.toOAuthAccount;
+import static umc.GrowIT.Server.converter.UserConverter.toLoginResponseDTO;
 import static umc.GrowIT.Server.converter.UserConverter.toUser;
 import static umc.GrowIT.Server.domain.enums.LoginMethod.SOCIAL;
 
@@ -35,12 +37,10 @@ public class OAuthCommandServiceImpl implements OAuthCommandService {
 
     private final TermQueryService termQueryService;
     private final UserRepository userRepository;
-    private final JwtTokenUtil jwtTokenUtil;
     private final UserCommandService userCommandService;
     private final OAuthAccountRepository oAuthAccountRepository;
-    private final CustomUserDetailsService customUserDetailsService;
 
-    public TokenResponseDTO.TokenDTO signupSocial(OAuthRequestDTO.OAuthUserInfoAndUserTermsDTO oAuthUserInfoAndUserTermsDTO){
+    public AuthResponseDTO.LoginResponseDTO signupSocial(OAuthRequestDTO.OAuthUserInfoAndUserTermsDTO oAuthUserInfoAndUserTermsDTO){
         OAuthApiResponseDTO.OAuthUserInfoDTO oAuthUserInfo = oAuthUserInfoAndUserTermsDTO.getOauthUserInfo();
         List<TermRequestDTO.UserTermDTO> requestedUserTerms = oAuthUserInfoAndUserTermsDTO.getUserTerms();
 
@@ -67,8 +67,6 @@ public class OAuthCommandServiceImpl implements OAuthCommandService {
         oAuthAccountRepository.save(oAuthAccount);
 
         TokenResponseDTO.TokenDTO tokenDTO = userCommandService.issueTokenAndSetRefreshToken(newUser);
-        tokenDTO.setLoginMethod(SOCIAL);
-
-        return tokenDTO;
+        return toLoginResponseDTO(tokenDTO, SOCIAL);
     }
 }
