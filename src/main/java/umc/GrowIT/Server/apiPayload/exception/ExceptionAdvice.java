@@ -30,8 +30,11 @@ import java.util.Optional;
 @RestControllerAdvice(annotations = {RestController.class})
 public class ExceptionAdvice extends ResponseEntityExceptionHandler {
 
-    @Autowired
     private DiscordNotificationService discordNotificationService;
+
+    public ExceptionAdvice(DiscordNotificationService discordNotificationService){
+        this.discordNotificationService =  discordNotificationService;
+    }
 
     @ExceptionHandler
     public ResponseEntity<Object> validation(ConstraintViolationException e, WebRequest request) {
