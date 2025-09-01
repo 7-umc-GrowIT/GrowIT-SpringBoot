@@ -5,6 +5,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import umc.GrowIT.Server.util.dto.CreditDTO;
 import umc.GrowIT.Server.web.dto.ChallengeDTO.ChallengeResponseDTO;
 import umc.GrowIT.Server.web.dto.KeywordDTO.KeywordResponseDTO;
 
@@ -66,10 +67,15 @@ public class DiaryResponseDTO {
     public static class CreateDiaryResultDTO {
         @Schema(description = "일기 id", example = "1")
         Long diaryId;
+
         @Schema(description = "일기 작성 내용", example = "오늘은 미라클 모닝을 해서 아침 8시에 학교에 도착했다. 그런데 강사님께서 ~")
         String content;
+
         @Schema(description = "일기 작성 날짜")
         LocalDate date;
+
+        @Schema(description = "크레딧 정보")
+        CreditDTO.CreditInfo creditInfo;
     }
 
     @Builder
@@ -110,12 +116,18 @@ public class DiaryResponseDTO {
     @AllArgsConstructor
     @Schema(title = "일기 요약 response")
     public static class SummaryResultDTO {
+
         @Schema(description = "일기 id", example = "1")
         Long diaryId;
+
         @Schema(description = "일기 요약 내용", example = "오늘은 평소보다 더 차분한 하루를 보냈다. 아침에 일어나 창밖을 보니..")
         String content;
+
         @Schema(description = "일기 작성 날짜")
         LocalDate date;
+
+        @Schema(description = "크레딧 정보")
+        CreditDTO.CreditInfo creditInfo;
     }
 
     @Getter

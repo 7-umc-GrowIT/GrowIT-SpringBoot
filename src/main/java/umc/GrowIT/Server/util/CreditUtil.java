@@ -1,0 +1,54 @@
+package umc.GrowIT.Server.util;
+
+import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+import umc.GrowIT.Server.domain.CreditHistory;
+import umc.GrowIT.Server.domain.Diary;
+import umc.GrowIT.Server.domain.User;
+import umc.GrowIT.Server.domain.enums.CreditSource;
+import umc.GrowIT.Server.repository.CreditHistoryRepository;
+import umc.GrowIT.Server.repository.CreditRepository;
+
+import java.time.LocalDate;
+
+@Service
+@RequiredArgsConstructor
+public class CreditUtil {
+
+    private final CreditHistoryRepository creditHistoryRepository;
+
+    @Transactional
+    public boolean grantDiaryCredit(User user, Diary diary, Integer amount) {
+        // 1. 해당 날짜에 크레딧 받았는지 확인
+        if (hasDiaryCreditForDate(user, diary.getDate())) {
+            return false; // 이미 지급되었으므로 크레딧 제공 X
+        }
+
+        // 2. 크레딧 기록
+        CreditHistory credit = CreditHistory.builder()
+                .user(user)
+                .source(CreditSource.DIARY)
+                .referenceId(diary.getId())
+                .date(diary.getDate())
+                .amount(amount)
+                .build();
+        creditHistoryRepository.save(credit);
+
+
+        // 3. 사용자 크레딧 최신화
+        user.updateCurrentCredit(user.getCurrentCredit() + amount);
+        user.updateTotalCredit(user.getTotalCredit() + amount);
+
+
+        // 4. 크레딧 제공 O
+        return true;
+    }
+
+    // 해당 날짜에 일기 첫작성으로 인해서 크레딧을 이미 받았는지 확인
+    public boolean hasDiaryCreditForDate(User user, LocalDate date) {
+        return creditHistoryRepository.existsByUserAndDateAndSource(user, date, CreditSource.DIARY);
+    }
+}
+
+
