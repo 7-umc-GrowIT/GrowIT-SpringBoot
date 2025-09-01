@@ -35,7 +35,7 @@ public interface AuthSpecification {
             @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "TERM4003", description = "❌ 전체 약관 정보를 주세요.", content = @Content(schema = @Schema(implementation = ApiResponse.class))),
             @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "COMMON400", description = "❌ 회원가입 입력 형식이 맞지 않습니다.", content = @Content(schema = @Schema(implementation = ApiResponse.class)))
     })
-    ApiResponse<TokenResponseDTO.TokenDTO> signupEmail(@RequestBody @Valid UserRequestDTO.UserInfoDTO userInfoDTO);
+    ApiResponse<AuthResponseDTO.LoginResponseDTO> signupEmail(@RequestBody @Valid UserRequestDTO.UserInfoDTO userInfoDTO);
 
     @PostMapping("/login")
     @Operation(summary = "이메일 로그인 API", description = "이메일 로그인 API 입니다. AccessToken, RefreshToken 이 모두 만료되어 토큰 재발급 API 에서 AccessToken 재발급이 불가능하면 로그인 화면으로 이동합니다.", security = @SecurityRequirement(name = ""))
@@ -45,7 +45,7 @@ public interface AuthSpecification {
             @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "USER4004", description = "❌ 탈퇴한 회원입니다.", content = @Content(schema = @Schema(implementation = ApiResponse.class))),
             @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "COMMON400", description = "❌ 로그인 입력 형식이 맞지 않습니다.", content = @Content(schema = @Schema(implementation = ApiResponse.class)))
     })
-    ApiResponse<TokenResponseDTO.TokenDTO> loginEmail(@RequestBody @Valid UserRequestDTO.EmailLoginDTO emailLoginDTO);
+    ApiResponse<AuthResponseDTO.LoginResponseDTO> loginEmail(@RequestBody @Valid UserRequestDTO.EmailLoginDTO emailLoginDTO);
 
     @PostMapping("/reissue")
     @Operation(summary = "토큰 재발급 API", description = "AccessToken 이 만료되었다는 401 에러 발생 시 토큰 재발급을 요청하는 API 입니다. 로그인 또는 회원가입 시 얻은 RefreshToken 을 Request Body 에 담아 요청해 주세요.")
@@ -111,7 +111,7 @@ public interface AuthSpecification {
             @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "TERM_4002", description = "❌ 필수 약관에 반드시 동의해야 합니다.", content = @Content(schema = @Schema(implementation = ApiResponse.class))),
             @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "TERM4003", description = "❌ 전체 약관 정보를 주세요.", content = @Content(schema = @Schema(implementation = ApiResponse.class)))
     })
-    ApiResponse<TokenResponseDTO.TokenDTO> signupSocial(@RequestBody @Valid OAuthRequestDTO.OAuthUserInfoAndUserTermsDTO oAuthUserInfoAndUserTermsDTO);
+    ApiResponse<AuthResponseDTO.LoginResponseDTO> signupSocial(@RequestBody @Valid OAuthRequestDTO.OAuthUserInfoAndUserTermsDTO oAuthUserInfoAndUserTermsDTO);
 
     @PostMapping("/logout")
     @Operation(summary = "로그아웃 API", description = "사용자 로그아웃을 처리하는 API입니다. AccessToken을 무효화하고 RefreshToken을 삭제합니다.")
