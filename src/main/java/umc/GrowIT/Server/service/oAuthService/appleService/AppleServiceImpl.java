@@ -8,6 +8,7 @@ import static umc.GrowIT.Server.apiPayload.code.status.ErrorStatus._INTERNAL_SER
 import static umc.GrowIT.Server.converter.OAuthAccountConverter.toOAuthAccount;
 import static umc.GrowIT.Server.converter.OAuthConverter.toOAuthLoginDTO;
 import static umc.GrowIT.Server.converter.OAuthConverter.toOAuthUserInfoDTO;
+import static umc.GrowIT.Server.domain.enums.LoginMethod.SOCIAL;
 
 import java.security.interfaces.RSAPublicKey;
 import java.text.ParseException;
@@ -38,6 +39,7 @@ import umc.GrowIT.Server.apiPayload.exception.OAuthHandler;
 import umc.GrowIT.Server.domain.OAuthAccount;
 import umc.GrowIT.Server.domain.OAuthAccount;
 import umc.GrowIT.Server.domain.User;
+import umc.GrowIT.Server.domain.enums.LoginMethod;
 import umc.GrowIT.Server.repository.OAuthAccountRepository;
 import umc.GrowIT.Server.repository.UserRepository;
 import umc.GrowIT.Server.service.userService.CustomUserDetailsService;
@@ -183,6 +185,8 @@ public class AppleServiceImpl implements AppleService {
                 customUserDetailsService.loadUserByUsername(existingUser.getPrimaryEmail())
         );
         userCommandService.setRefreshToken(tokenDTO.getRefreshToken(), existingUser);
+        tokenDTO.setLoginMethod(SOCIAL);
+
         return toOAuthLoginDTO(false, null, tokenDTO); // 로그인 처리
         }
 }

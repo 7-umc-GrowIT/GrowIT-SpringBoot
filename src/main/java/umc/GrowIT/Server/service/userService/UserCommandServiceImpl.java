@@ -1,6 +1,7 @@
 package umc.GrowIT.Server.service.userService;
 
 import static umc.GrowIT.Server.apiPayload.code.status.ErrorStatus._BAD_REQUEST;
+import static umc.GrowIT.Server.domain.enums.LoginMethod.LOCAL;
 import static umc.GrowIT.Server.domain.enums.UserStatus.INACTIVE;
 
 import java.util.List;
@@ -89,7 +90,9 @@ public class UserCommandServiceImpl implements UserCommandService {
         newUser.setUserTerms(userTerms);
 
         // User 엔티티 저장 및 AT/RT 발급
-        return issueTokenAndSetRefreshToken(userRepository.save(newUser));
+        TokenResponseDTO.TokenDTO tokenDTO = issueTokenAndSetRefreshToken(userRepository.save(newUser));
+        tokenDTO.setLoginMethod(LOCAL);
+        return tokenDTO;
     }
 
     @Override
@@ -197,6 +200,7 @@ public class UserCommandServiceImpl implements UserCommandService {
 
         //인증 성공 시 JWT 토큰 생성
         TokenResponseDTO.TokenDTO tokenDTO = jwtTokenUtil.generateToken((CustomUserDetails) authentication.getPrincipal());
+        tokenDTO.setLoginMethod(LOCAL);
 
         return tokenDTO;
     }

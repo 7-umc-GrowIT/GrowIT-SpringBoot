@@ -32,6 +32,7 @@ import static umc.GrowIT.Server.apiPayload.code.status.ErrorStatus.*;
 import static umc.GrowIT.Server.converter.OAuthAccountConverter.toOAuthAccount;
 import static umc.GrowIT.Server.converter.OAuthConverter.toOAuthLoginDTO;
 import static umc.GrowIT.Server.converter.OAuthConverter.toOAuthUserInfoDTO;
+import static umc.GrowIT.Server.domain.enums.LoginMethod.SOCIAL;
 
 @Service
 @RequiredArgsConstructor
@@ -143,6 +144,8 @@ public class KakaoServiceImpl implements KakaoService {
             TokenResponseDTO.TokenDTO tokenDTO = jwtTokenUtil.generateToken(
                     customUserDetailsService.loadUserByUsername(user.getPrimaryEmail()));
             userCommandService.setRefreshToken(tokenDTO.getRefreshToken(), user);
+            tokenDTO.setLoginMethod(SOCIAL);
+
             return toOAuthLoginDTO(false, null, tokenDTO); // 로그인 처리
         }
     }

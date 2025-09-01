@@ -8,6 +8,7 @@ import umc.GrowIT.Server.apiPayload.exception.OAuthHandler;
 import umc.GrowIT.Server.domain.OAuthAccount;
 import umc.GrowIT.Server.domain.User;
 import umc.GrowIT.Server.domain.UserTerm;
+import umc.GrowIT.Server.domain.enums.LoginMethod;
 import umc.GrowIT.Server.repository.OAuthAccountRepository;
 import umc.GrowIT.Server.repository.UserRepository;
 import umc.GrowIT.Server.service.termService.TermQueryService;
@@ -24,6 +25,7 @@ import java.util.List;
 import static umc.GrowIT.Server.apiPayload.code.status.ErrorStatus.*;
 import static umc.GrowIT.Server.converter.OAuthAccountConverter.toOAuthAccount;
 import static umc.GrowIT.Server.converter.UserConverter.toUser;
+import static umc.GrowIT.Server.domain.enums.LoginMethod.SOCIAL;
 
 @Service
 @RequiredArgsConstructor
@@ -64,6 +66,9 @@ public class OAuthCommandServiceImpl implements OAuthCommandService {
         userRepository.save(newUser);
         oAuthAccountRepository.save(oAuthAccount);
 
-        return userCommandService.issueTokenAndSetRefreshToken(newUser);
+        TokenResponseDTO.TokenDTO tokenDTO = userCommandService.issueTokenAndSetRefreshToken(newUser);
+        tokenDTO.setLoginMethod(SOCIAL);
+
+        return tokenDTO;
     }
 }
