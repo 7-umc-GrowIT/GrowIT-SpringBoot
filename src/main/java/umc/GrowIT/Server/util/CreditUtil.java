@@ -6,6 +6,7 @@ import org.springframework.transaction.annotation.Transactional;
 import umc.GrowIT.Server.domain.CreditHistory;
 import umc.GrowIT.Server.domain.Diary;
 import umc.GrowIT.Server.domain.User;
+import umc.GrowIT.Server.domain.UserItem;
 import umc.GrowIT.Server.domain.enums.CreditSource;
 import umc.GrowIT.Server.repository.CreditHistoryRepository;
 import umc.GrowIT.Server.repository.CreditRepository;
@@ -18,7 +19,6 @@ public class CreditUtil {
 
     private final CreditHistoryRepository creditHistoryRepository;
 
-    @Transactional
     public boolean grantDiaryCredit(User user, Diary diary, Integer amount) {
         // 1. 해당 날짜에 크레딧 받았는지 확인
         if (hasDiaryCreditForDate(user, diary.getDate())) {
@@ -32,7 +32,9 @@ public class CreditUtil {
                 .referenceId(diary.getId())
                 .date(diary.getDate())
                 .amount(amount)
-                .build();
+                .build()
+                ;
+
         creditHistoryRepository.save(credit);
 
 
@@ -45,6 +47,26 @@ public class CreditUtil {
         return true;
     }
 
+    public void processItemPurchase(User user, UserItem userItem, Integer itemPrice) {
+        // 1. 크레딧 사용 기록 (음수로 저장)
+        CreditHistory credit = CreditHistory.builder()
+                .user(user)
+                .source(CreditSource.ITEM)
+                .referenceId(userItem.getId())
+                .amount(-itemPrice)
+                .build()
+                ;
+
+        creditHistoryRepository.save(credit);
+
+        // 2. 사용자 크레딧 최신화
+        user.updateCurrentCredit(user.getCurrentCredit() - itemPrice);
+    }
+
+
+    /*
+        이 아래부터 헬퍼메소드
+    */
     // 해당 날짜에 일기 첫작성으로 인해서 크레딧을 이미 받았는지 확인
     public boolean hasDiaryCreditForDate(User user, LocalDate date) {
         return creditHistoryRepository.existsByUserAndDateAndSource(user, date, CreditSource.DIARY);
