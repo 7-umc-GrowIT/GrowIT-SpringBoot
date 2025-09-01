@@ -17,7 +17,7 @@ public class CreditUtil {
 
     private final CreditHistoryRepository creditHistoryRepository;
 
-    // 일기 첫작성으로 인한 크레딧 제공 판단 및 사용자 크레딧 최신화
+    // 일기 첫작성으로 인한 크레딧 제공 기록 및 사용자 크레딧 최신화
     public boolean grantDiaryCredit(User user, Diary diary, Integer amount) {
         // 1. 해당 날짜에 크레딧 받았는지 확인
         if (hasDiaryCreditForDate(user, diary.getDate())) {
@@ -63,6 +63,27 @@ public class CreditUtil {
 
         // 2. 사용자 크레딧 최신화
         user.updateCurrentCredit(user.getCurrentCredit() - item.getPrice());
+    }
+
+    // 챌린지 인증으로 인한 크레딧 제공 기록 및 사용자 크레딧 최신화
+    public void grantUserChallengeCredit(User user, UserChallenge userChallenge, Integer amount) {
+        // 1. 크레딧 기록
+        CreditHistory credit = CreditHistory.builder()
+                .user(user)
+                .source(CreditSource.CHALLENGE)
+                .referenceId(userChallenge.getId())
+                .date(userChallenge.getDate())
+                .amount(amount)
+                .description(String.format("[%s] 챌린지 완료",
+                        userChallenge.getDate().format(DateTimeFormatter.ofPattern("MM-dd"))))
+                .build()
+                ;
+
+        creditHistoryRepository.save(credit);
+
+        // 2. 사용자 크레딧 최신화
+        user.updateCurrentCredit(user.getCurrentCredit() + amount);
+        user.updateTotalCredit(user.getTotalCredit() + amount);
     }
 
 

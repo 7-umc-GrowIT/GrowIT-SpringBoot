@@ -10,6 +10,7 @@ import umc.GrowIT.Server.converter.ChallengeConverter;
 import umc.GrowIT.Server.domain.*;
 import umc.GrowIT.Server.domain.enums.UserChallengeType;
 import umc.GrowIT.Server.repository.*;
+import umc.GrowIT.Server.util.CreditUtil;
 import umc.GrowIT.Server.util.S3Util;
 import umc.GrowIT.Server.web.dto.ChallengeDTO.ChallengeRequestDTO;
 import umc.GrowIT.Server.web.dto.ChallengeDTO.ChallengeResponseDTO;
@@ -27,6 +28,7 @@ public class ChallengeCommandServiceImpl implements ChallengeCommandService {
     private final UserChallengeRepository userChallengeRepository;
     private final ChallengeRepository challengeRepository;
     private final S3Util s3Util;
+    private final CreditUtil creditUtil;
 
     //챌린지 인증 작성 시 추가되는 크레딧 개수
     private static final int CHALLENGE_CREDIT = 1;
@@ -140,8 +142,7 @@ public class ChallengeCommandServiceImpl implements ChallengeCommandService {
 
         // 챌린지 인증 3번까지 크레딧 지급
         if (completedCountOnDate <= 3) {
-            user.updateCurrentCredit(user.getCurrentCredit() + CHALLENGE_CREDIT);
-            user.updateTotalCredit(user.getTotalCredit() + CHALLENGE_CREDIT);
+            creditUtil.grantUserChallengeCredit(user, userChallenge, CHALLENGE_CREDIT);
         }
     }
 
