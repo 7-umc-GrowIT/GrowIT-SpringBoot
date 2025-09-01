@@ -12,6 +12,7 @@ public class WithdrawalResponseDTO {
     @Getter
     @NoArgsConstructor
     @AllArgsConstructor
+    @Schema(title = "탈퇴이유 조회 Response")
     public static class WithdrawalReasonDTO {
 
         @Schema(description = "탈퇴이유 ID", example = "1")

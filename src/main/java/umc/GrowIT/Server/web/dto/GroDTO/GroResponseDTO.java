@@ -36,8 +36,12 @@ public class GroResponseDTO {
     @Getter
     @NoArgsConstructor
     @AllArgsConstructor
+    @Schema(title = "그로와 착용 아이템 이미지 조회 Response")
     public static class GroAndEquippedItemsDTO {
+        @Schema(description = "그로 정보")
         private GroDTO gro;
+
+        @Schema(description = "착용 아이템 정보")
         private List<EquippedItemsDTO> equippedItems;
     }
 
@@ -45,18 +49,31 @@ public class GroResponseDTO {
     @Getter
     @NoArgsConstructor
     @AllArgsConstructor
+    @Schema(title = "그로 정보")
     public static class GroDTO {
-        private Integer level; // 그로 레벨
-        private String groImageUrl; // 그로 이미지 URL
+        @Schema(description = "그로 레벨", example = "1")
+        private Integer level;
+
+        @Schema(description = "그로 이미지 URL", example = "https://example.com/gro.png")
+        private String groImageUrl;
     }
 
     @Builder
     @Getter
     @NoArgsConstructor
     @AllArgsConstructor
+    @Schema(title = "착용 아이템 정보")
     public static class EquippedItemsDTO {
-        private String name; // 아이템 이름
-        private ItemCategory category; // 아이템 카테고리
-        private String itemImageUrl; // 아이템 이미지 URL
+        @Schema(description = "사용자 아이템 ID", example = "1")
+        private Long id;
+
+        @Schema(description = "아이템 이름", example = "체리")
+        private String name;
+
+        @Schema(description = "아이템 카테고리")
+        private ItemCategory category;
+
+        @Schema(description = "아이템 이미지 URL", example = "https://example.com/item.png")
+        private String itemImageUrl;
     }
 }
