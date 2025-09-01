@@ -1,6 +1,7 @@
 package umc.GrowIT.Server.service.oAuthService;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import umc.GrowIT.Server.apiPayload.exception.OAuthHandler;
@@ -27,6 +28,7 @@ import static umc.GrowIT.Server.converter.UserConverter.toUser;
 @Service
 @RequiredArgsConstructor
 @Transactional
+@Slf4j
 public class OAuthCommandServiceImpl implements OAuthCommandService {
 
     private final TermQueryService termQueryService;
@@ -41,7 +43,7 @@ public class OAuthCommandServiceImpl implements OAuthCommandService {
         List<TermRequestDTO.UserTermDTO> requestedUserTerms = oAuthUserInfoAndUserTermsDTO.getUserTerms();
 
         // 이미 최초 소셜 로그인을 한 경우 가입 불가
-        if (oAuthAccountRepository.existsByProviderId(oAuthUserInfo.getId()))
+        if (oAuthAccountRepository.existsBySocialId(oAuthUserInfo.getSocialId()))
             throw new OAuthHandler(ACCOUNT_ALREADY_EXISTS);
 
         // 동일한 이메일이 이미 존재하는 경우 가입 불가, 소셜 로그인에서 처리되었어야 함
@@ -62,7 +64,6 @@ public class OAuthCommandServiceImpl implements OAuthCommandService {
         userRepository.save(newUser);
         oAuthAccountRepository.save(oAuthAccount);
 
-        // AT/RT 토큰 발급 및 RT DB 저장
         return userCommandService.issueTokenAndSetRefreshToken(newUser);
     }
 }

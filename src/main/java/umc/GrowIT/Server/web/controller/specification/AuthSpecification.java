@@ -1,22 +1,25 @@
 package umc.GrowIT.Server.web.controller.specification;
 
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestParam;
+
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import jakarta.validation.Valid;
-import org.springframework.web.bind.annotation.*;
 import umc.GrowIT.Server.apiPayload.ApiResponse;
 import umc.GrowIT.Server.domain.enums.AuthType;
 import umc.GrowIT.Server.web.dto.AuthDTO.AuthRequestDTO;
 import umc.GrowIT.Server.web.dto.AuthDTO.AuthResponseDTO;
+import umc.GrowIT.Server.web.dto.OAuthDTO.OAuthApiResponseDTO;
 import umc.GrowIT.Server.web.dto.OAuthDTO.OAuthRequestDTO;
 import umc.GrowIT.Server.web.dto.OAuthDTO.OAuthResponseDTO;
 import umc.GrowIT.Server.web.dto.TokenDTO.TokenRequestDTO;
 import umc.GrowIT.Server.web.dto.TokenDTO.TokenResponseDTO;
 import umc.GrowIT.Server.web.dto.UserDTO.UserRequestDTO;
-import umc.GrowIT.Server.web.dto.UserDTO.UserResponseDTO;
 
 public interface AuthSpecification {
 
@@ -81,13 +84,22 @@ public interface AuthSpecification {
     ApiResponse<AuthResponseDTO.VerifyAuthCodeResponseDTO> verifyAuthCode(@RequestBody @Valid AuthRequestDTO.VerifyAuthCodeRequestDTO request);
 
     @PostMapping("/login/kakao")
-    @Operation(summary = "카카오 소셜 로그인", description = "카카오 소셜 로그인 API 입니다. 인가 코드를 Query String 에 담아 요청해주세요.", security = @SecurityRequirement(name = ""))
+    @Operation(summary = "카카오 소셜 로그인", description = "카카오 소셜 로그인 API 입니다.", security = @SecurityRequirement(name = ""))
     @ApiResponses({
             @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "COMMON200", description = "⭕ SUCCESS"),
-            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "AUTH4030", description = "❌ 인가 코드가 유효한지 확인하세요. (동일한 인가 코드 재요청 불가, 인가 코드 발급 후 10분 이내 요청)", content = @Content(schema = @Schema(implementation = ApiResponse.class))),
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "AUTH4030", description = "❌ 인가 코드가 유효한지 확인하세요.", content = @Content(schema = @Schema(implementation = ApiResponse.class))),
             @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "USER4004", description = "❌ 탈퇴한 회원입니다.", content = @Content(schema = @Schema(implementation = ApiResponse.class)))
     })
-    ApiResponse<OAuthResponseDTO.KakaoLoginDTO> loginKakao(@RequestParam(value = "code") String code);
+    ApiResponse<OAuthResponseDTO.OAuthLoginDTO> loginKakao(OAuthRequestDTO.SocialLoginDTO socialLoginDTO);
+
+    @PostMapping("/login/apple")
+    @Operation(summary = "애플 소셜 로그인", description = "애플 소셜 로그인 API 입니다.", security = @SecurityRequirement(name = ""))
+    @ApiResponses({
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "COMMON200", description = "⭕ SUCCESS"),
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "AUTH4031", description = "❌ 인가 코드가 유효한지 확인하세요.", content = @Content(schema = @Schema(implementation = ApiResponse.class))),
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "USER4004", description = "❌ 탈퇴한 회원입니다.", content = @Content(schema = @Schema(implementation = ApiResponse.class)))
+    })
+    ApiResponse<OAuthResponseDTO.OAuthLoginDTO> loginApple(OAuthRequestDTO.SocialLoginDTO socialLoginDTO);
 
     @PostMapping("/signup/social")
     @Operation(summary = "소셜 간편 가입", description = "소셜 로그인 시 계정이 존재하지 않을 때 약관 목록으로 간편 가입을 진행하는 API 입니다. (termId 1~4는 필수 동의 항목입니다.)")
@@ -100,4 +112,16 @@ public interface AuthSpecification {
             @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "TERM4003", description = "❌ 전체 약관 정보를 주세요.", content = @Content(schema = @Schema(implementation = ApiResponse.class)))
     })
     ApiResponse<TokenResponseDTO.TokenDTO> signupSocial(@RequestBody @Valid OAuthRequestDTO.OAuthUserInfoAndUserTermsDTO oAuthUserInfoAndUserTermsDTO);
+
+    @PostMapping("/logout")
+    @Operation(summary = "로그아웃 API", description = "사용자 로그아웃을 처리하는 API입니다. AccessToken을 무효화하고 RefreshToken을 삭제합니다.")
+    @ApiResponses({
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "COMMON200", description = "⭕ SUCCESS"),
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "USER4002", description = "❌ 이메일 또는 패스워드가 일치하지 않습니다.", content = @Content(schema = @Schema(implementation = ApiResponse.class))),
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "USER4004", description = "❌ 탈퇴한 회원입니다.", content = @Content(schema = @Schema(implementation = ApiResponse.class))),
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "AUTH4011", description = "❌ 유효하지 않은 토큰입니다.", content = @Content(schema = @Schema(implementation = ApiResponse.class))),
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "AUTH4012", description = "❌ 만료된 토큰입니다.", content = @Content(schema = @Schema(implementation = ApiResponse.class))),
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "AUTH4015", description = "❌ 토큰이 제공되지 않았습니다.", content = @Content(schema = @Schema(implementation = ApiResponse.class)))
+    })
+    ApiResponse<AuthResponseDTO.LogoutResponseDTO> logout();
 }

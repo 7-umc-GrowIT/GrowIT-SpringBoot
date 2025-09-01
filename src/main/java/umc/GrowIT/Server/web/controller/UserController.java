@@ -8,9 +8,10 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 import umc.GrowIT.Server.apiPayload.ApiResponse;
 import umc.GrowIT.Server.domain.enums.ItemCategory;
-import umc.GrowIT.Server.service.CreditService.CreditQueryServiceImpl;
-import umc.GrowIT.Server.service.ItemService.ItemQueryServiceImpl;
+import umc.GrowIT.Server.service.creditService.CreditQueryServiceImpl;
+import umc.GrowIT.Server.service.itemService.ItemQueryServiceImpl;
 import umc.GrowIT.Server.service.userService.UserCommandService;
+import umc.GrowIT.Server.service.userService.UserQueryService;
 import umc.GrowIT.Server.web.controller.specification.UserSpecification;
 import umc.GrowIT.Server.web.dto.CreditDTO.CreditResponseDTO;
 import umc.GrowIT.Server.web.dto.ItemDTO.ItemResponseDTO;
@@ -27,6 +28,7 @@ public class UserController implements UserSpecification {
 
     private final CreditQueryServiceImpl creditQueryService;
     private final UserCommandService userCommandService;
+    private final UserQueryService userQueryService;
     private final ItemQueryServiceImpl itemQueryServiceImpl;
 
     @Override
@@ -67,13 +69,26 @@ public class UserController implements UserSpecification {
         return ApiResponse.onSuccess();
     }
 
+
     @Override
-    @PatchMapping("")
-    public ApiResponse<UserResponseDTO.DeleteUserResponseDTO> deleteUser() {
+    @DeleteMapping("")
+    public ApiResponse<Void> withdrawUser(
+            @Valid @RequestBody UserRequestDTO.DeleteUserRequestDTO deleteUserRequestDTO
+    ) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         Long userId = (Long) authentication.getPrincipal();
 
-        UserResponseDTO.DeleteUserResponseDTO deleteUser = userCommandService.delete(userId);
-        return ApiResponse.onSuccess(deleteUser);
+        userCommandService.withdraw(userId, deleteUserRequestDTO);
+        return ApiResponse.onSuccess();
+    }
+
+    @Override
+    @GetMapping("/mypage")
+    public ApiResponse<UserResponseDTO.MyPageDTO> getMyPage() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        Long userId = (Long) authentication.getPrincipal();
+
+        UserResponseDTO.MyPageDTO result = userQueryService.getMyPage(userId);
+        return ApiResponse.onSuccess(result);
     }
 }

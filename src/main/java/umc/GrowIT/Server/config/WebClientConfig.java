@@ -18,4 +18,11 @@ public class WebClientConfig {
                 .baseUrl("https://kapi.kakao.com")
                 .build();
     }
+
+    @Bean
+    public WebClient appleAuthWebClient() {
+        return WebClient.builder()
+                .baseUrl("https://appleid.apple.com")
+                .build();
+    }
 }

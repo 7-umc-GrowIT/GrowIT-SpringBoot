@@ -1,8 +1,9 @@
 package umc.GrowIT.Server.repository;
 
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Slice;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import umc.GrowIT.Server.domain.UserChallenge;
@@ -25,34 +26,48 @@ public interface UserChallengeRepository extends JpaRepository<UserChallenge, Lo
             @Param("userId") Long userId,
             @Param("today") LocalDate today);
 
-    // 1. 유저의 완료 또는 미완료 챌린지 조회 (dtype 무시)
+    // 전체 챌린지 중 인증 완료 여부 필터
     @Query("SELECT uc FROM UserChallenge uc " +
-            "WHERE uc.user.id = :userId " +
-            "AND uc.completed = :completed")
-    Slice<UserChallenge> findChallengesByCompletionStatus(
-            @Param("userId") Long userId,
-            @Param("completed") Boolean completed,
-            Pageable pageable);
+            "WHERE uc.user.id = :userId AND uc.completed = :completed " +
+            "ORDER BY uc.createdAt DESC")
+    Page<UserChallenge> findChallengesByCompletionStatus(@Param("userId") Long userId,
+                                                         @Param("completed") Boolean completed,
+                                                         Pageable pageable);
 
-    // 2. 특정 dtype에 대해 미완료 챌린지 조회 (completed가 true인 챌린지는 제외)
+    // 챌린지 타입 + 인증 완료 여부 필터
     @Query("SELECT uc FROM UserChallenge uc " +
             "WHERE uc.user.id = :userId " +
-            "AND uc.dtype = :dtype " +
-            "AND uc.completed = false")  // 항상 미완료 챌린지만 조회
-    Slice<UserChallenge> findChallengesByDtypeAndCompletionStatus(
+            "AND uc.challengeType = :challengeType " +
+            "AND uc.completed = :completed " +
+            "ORDER BY uc.createdAt DESC")
+    Page<UserChallenge> findByTypeAndCompletion(
             @Param("userId") Long userId,
-            @Param("dtype") UserChallengeType dtype,
+            @Param("challengeType") UserChallengeType userChallengeType,
+            @Param("completed") Boolean completed,
             Pageable pageable);
 
     //userId와 date로 UserChallenge 조회
     @Query("SELECT uc FROM UserChallenge uc " +
-            "WHERE uc. user.id = :userId " +
+            "WHERE uc.user.id = :userId " +
             "AND uc.date = :date ")
     List<UserChallenge> findUserChallengesByDateAndUserId(
             @Param("userId") Long userId,
             @Param("date") LocalDate date
     );
 
+    // 추후에 작업 필요
+//    @Query("SELECT COUNT(uc) FROM UserChallenge uc " +
+//            "WHERE uc.user.id = :userId AND uc.date = :date")
+//    long countByDateAndUserId(Long userId, LocalDate date);
+
+    @Modifying
+    @Query("DELETE FROM UserChallenge uc WHERE uc.user.id = :userId")
+    void deleteByUserId(@Param("userId") Long userId);
+
+    // TODO 회원탈퇴 API 네이티브 삭제 메소드 - 추후 확인 필요
+//    @Modifying
+//    @Query(value = "DELETE FROM user_challenge WHERE user_id = :userId", nativeQuery = true)
+//    void deleteByUserIdNative(@Param("userId") Long userId);
 }
 
 

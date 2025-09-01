@@ -3,8 +3,6 @@ package umc.GrowIT.Server.domain;
 
 import jakarta.persistence.*;
 import lombok.*;
-import org.hibernate.annotations.OnDelete;
-import org.hibernate.annotations.OnDeleteAction;
 import umc.GrowIT.Server.domain.common.BaseEntity;
 
 import java.time.LocalDateTime;
@@ -12,20 +10,26 @@ import java.time.LocalDateTime;
 @Entity
 @Getter
 @Builder
-@NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class RefreshToken extends BaseEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    // RT값
     @Column(nullable = false, length = 512)
     private String refreshToken;
 
+    // 만료일
     @Column(nullable = false)
     private LocalDateTime expiryDate;
 
     @OneToOne(mappedBy = "refreshToken")
     private User user;
+
+//    @OneToOne
+//    @JoinColumn(name = "user_id", nullable = false)
+//    private User user;
 }

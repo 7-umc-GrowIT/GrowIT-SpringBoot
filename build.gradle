@@ -25,18 +25,29 @@ repositories {
 }
 
 dependencies {
+	// Spring Basic
 	implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
-	implementation 'org.springframework.boot:spring-boot-starter-oauth2-client'
-	implementation 'org.springframework.boot:spring-boot-starter-security'
 	implementation 'org.springframework.boot:spring-boot-starter-validation'
 	implementation 'org.springframework.boot:spring-boot-starter-web'
 	implementation 'org.springframework.boot:spring-boot-starter-thymeleaf'
+
+	// Spring Security
+	implementation 'org.springframework.boot:spring-boot-starter-oauth2-client'
+	implementation 'org.springframework.boot:spring-boot-starter-security'
+
+	// Lombok
 	compileOnly 'org.projectlombok:lombok'
-	runtimeOnly 'com.mysql:mysql-connector-j'
 	annotationProcessor 'org.projectlombok:lombok'
+
+	// Database
+	runtimeOnly 'com.mysql:mysql-connector-j'
+
+	// Test
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
 	testImplementation 'org.springframework.security:spring-security-test'
 	testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
+	testCompileOnly 'org.projectlombok:lombok'
+	testAnnotationProcessor 'org.projectlombok:lombok'
 
 	// Swagger
 	implementation 'org.springdoc:springdoc-openapi-starter-webmvc-ui:2.7.0'
@@ -45,24 +56,26 @@ dependencies {
 	implementation 'io.jsonwebtoken:jjwt-api:0.11.5'
 	runtimeOnly 'io.jsonwebtoken:jjwt-impl:0.11.5'
 	runtimeOnly 'io.jsonwebtoken:jjwt-jackson:0.11.5'
+	implementation 'com.nimbusds:nimbus-jose-jwt:9.31'
 
-	// 이메일 전송
+	// Mail
 	implementation 'org.springframework.boot:spring-boot-starter-mail'
-	// 문자열 자동 생성
+
+	// String Utils (문자열 유틸, 랜덤 문자열 생성)
 	implementation 'org.apache.commons:commons-lang3:3.12.0'
 
-	// S3 세팅
-	implementation 'com.amazonaws:aws-java-sdk-s3:1.12.549'
+	// S3
+	implementation platform("software.amazon.awssdk:bom:2.25.0")
+	implementation "software.amazon.awssdk:s3"
 
 	// WebClient
 	implementation 'org.springframework.boot:spring-boot-starter-webflux'
 
-	// Spring Actuator : 모니터링 지표 수집
+	// Spring Actuator (모니터링 지표 수집)
 	implementation 'org.springframework.boot:spring-boot-starter-actuator'
 
 	// Prometheus
-	//implementation 'io.micrometer:micrometer-registry-prometheus'
-	implementation 'io.micrometer:micrometer-registry-prometheus:1.14.2'
+	implementation 'io.micrometer:micrometer-registry-prometheus'
 	implementation 'io.prometheus:prometheus-metrics-core:1.2.1'
 }
 

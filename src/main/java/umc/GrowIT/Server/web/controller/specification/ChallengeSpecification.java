@@ -5,6 +5,7 @@ import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import jakarta.validation.Valid;
 import org.springframework.data.domain.Page;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -15,10 +16,11 @@ import umc.GrowIT.Server.web.dto.ChallengeDTO.ChallengeRequestDTO;
 import umc.GrowIT.Server.web.dto.ChallengeDTO.ChallengeResponseDTO;
 
 import java.util.List;
+import java.util.Map;
 
 public interface ChallengeSpecification {
 
-    @GetMapping("summary")
+    @GetMapping("")
     @Operation(summary = "챌린지 홈 조회 API", description = "사용자의 챌린지 홈 화면에 보여질 챌린지 요약 정보를 조회하는 API입니다. <br> " +
             "오늘의 챌린지 추천과 그로의 챌린지 리포트를 조회할 수 있습니다.")
     @ApiResponses({
@@ -27,81 +29,86 @@ public interface ChallengeSpecification {
     })
     ApiResponse<ChallengeResponseDTO.ChallengeHomeDTO> getChallengeHome();
 
-    @GetMapping("/")
+    @GetMapping("status")
     @Operation(summary = "챌린지 현황 조회 API", description = "챌린지의 진행 상태(미완료/완료 등)를 조회하는 API입니다. <br> " +
-            "dtype에 값을 주지 않으면 전체 완료/미완료 챌린지를 조회할 수 있습니다. <br> " +
-            "응답은 슬라이스 기반으로 페이징되며, 현재 페이지, 리스트, 다음 페이지 존재 여부 등의 정보가 포함됩니다.")
+            "challengeType에 값을 주지 않으면 전체 완료/미완료 챌린지를 조회할 수 있습니다.")
     @ApiResponses({
             @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "COMMON200", description = "⭕ SUCCESS"),
             @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "COMMON400", description = "❌ BAD, 잘못된 요청", content = @Content(schema = @Schema(implementation = ApiResponse.class)))
     })
     ApiResponse<ChallengeResponseDTO.ChallengeStatusPagedResponseDTO> getChallengeStatus(
-            @RequestParam(required = false) UserChallengeType dtype,
+            @Parameter(description = "챌린지 유형",
+                    example = "DAILY")
+            @RequestParam(required = false) UserChallengeType challengeType,
+            @Parameter(description = "챌린지 완료(인증) 여부",
+                    schema = @Schema(allowableValues = {"true", "false"}),
+                    example = "false")
             @RequestParam(required = false) Boolean completed,
+            @Parameter(description = "조회할 페이지",
+                    example = "1")
             @RequestParam Integer page);
 
-    @PostMapping("{challengeId}/select")
-    @Operation(summary = "선택된 챌린지 저장 API", description = "사용자가 선택한 챌린지를 저장하는 API입니다. <br> " +
+    @PostMapping("select")
+    @Operation(summary = "선택한 챌린지 저장 API", description = "일기 분석 결과의 챌린지 목록에서 사용자가 선택한 챌린지를 저장하는 API입니다. <br> " +
             "DAILY와 RANDOM에 각각 저장하고 싶은 챌린지 아이디를 입력하여 리스트 형태로 보내주세요. <br> " +
-            "데일리챌린지는 최대 2개까지 저장할 수 있으며, 랜덤챌린지는 최대 1개까지 저장할 수 있습니다. <br> " +
-            "ex) [\n" +
-            "  {\n" +
-            "    \"challengeIds\": [\n" +
-            "      1,2\n" +
-            "    ],\n" +
-            "    \"dtype\": \"DAILY\"\n" +
-            "  },\n" +
-            "  {\n" +
-            "    \"challengeIds\": [\n" +
-            "      3\n" +
-            "    ],\n" +
-            "    \"dtype\": \"RANDOM\"\n" +
-            "  }\n" +
-            "]"
-    )
+            "데일리챌린지는 최대 2개까지 저장할 수 있으며, 랜덤챌린지는 최대 1개까지 저장할 수 있습니다. <br> ")
     @ApiResponses({
             @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "COMMON200", description = "⭕ SUCCESS"),
             @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "USER4002", description = "❌ 이메일 또는 패스워드가 일치하지 않습니다.", content = @Content(schema = @Schema(implementation = ApiResponse.class))),
             @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "CHALLENGE4001", description = "❌ 챌린지를 찾을 수 없습니다.", content = @Content(schema = @Schema(implementation = ApiResponse.class))),
-            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "CHALLENGE4006", description = "❌ 최소 하나의 챌린지를 선택해야 합니다.", content = @Content(schema = @Schema(implementation = ApiResponse.class))),
-            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "CHALLENGE4007", description = "❌ 데일리 챌린지는 최대 2개까지 저장 가능합니다.", content = @Content(schema = @Schema(implementation = ApiResponse.class))),
-            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "CHALLENGE4008", description = "❌ 랜덤 챌린지는 최대 1개만 저장 가능합니다.", content = @Content(schema = @Schema(implementation = ApiResponse.class)))
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "CHALLENGE4004", description = "❌ 최소 하나의 챌린지를 선택해야 합니다.", content = @Content(schema = @Schema(implementation = ApiResponse.class))),
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "CHALLENGE4005", description = "❌ 데일리 챌린지는 최대 2개까지 저장 가능합니다.", content = @Content(schema = @Schema(implementation = ApiResponse.class))),
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "CHALLENGE4006", description = "❌ 랜덤 챌린지는 최대 1개만 저장 가능합니다.", content = @Content(schema = @Schema(implementation = ApiResponse.class)))
     })
-    ApiResponse<ChallengeResponseDTO.SelectChallengeDTO> selectChallenges(@RequestBody List<ChallengeRequestDTO.SelectChallengeRequestDTO> selectRequestList);
+    ApiResponse<ChallengeResponseDTO.SelectChallengeResponseDTO> selectChallenges(@RequestBody List<ChallengeRequestDTO.SelectChallengeRequestDTO> selectRequestList);
 
-    @PostMapping("{userChallengeId}/prove")
-    @Operation(summary = "챌린지 인증 작성 API", description = "챌린지 인증을 작성하는 API입니다. <br>" +
-            "s3에 업로드한 객체 URL을 certificationImageUrl로 넘겨주세요. ")
+    @PostMapping("presigned-url")
+    @Operation(summary = "사용자 챌린지 인증 이미지 업로드용 presigned url 생성 API", description = "사용자 챌린지 인증 이미지를 S3에 직접 업로드할 수 있는 presigned url을 생성합니다.")
+    @ApiResponses({
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "COMMON200", description = "⭕ SUCCESS"),
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "S34001", description = "❌ 파일 확장자가 잘못되었습니다.", content = @Content(schema = @Schema(implementation = ApiResponse.class))),
+    })
+    ApiResponse<ChallengeResponseDTO.ProofPresignedUrlResponseDTO> getProofPresignedUrl(@Valid @RequestBody ChallengeRequestDTO.ProofRequestPresignedUrlDTO request);
+
+    @PostMapping("{userChallengeId}")
+    @Operation(summary = "사용자 챌린지 인증 작성 API", description = "사용자의 특정 챌린지 인증내역을 작성하는 API입니다. <br>" +
+            "미완료 상태의 챌린지만 인증 작성할 수 있습니다. <br>" +
+            "presigned url 생성 시 반환된 파일명을 certificationImageName으로 넘겨주세요. ")
     @ApiResponses({
             @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "COMMON200", description = "⭕ SUCCESS"),
             @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "USER4002", description = "❌ 이메일 또는 패스워드가 일치하지 않습니다.", content = @Content(schema = @Schema(implementation = ApiResponse.class))),
             @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "UC4001", description = "❌ 사용자 챌린지를 찾을 수 없습니다.", content = @Content(schema = @Schema(implementation = ApiResponse.class))),
-            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "CHALLENGE4004", description = "❌ 이미 완료된 챌린지입니다.", content = @Content(schema = @Schema(implementation = ApiResponse.class)))
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "UC4003", description = "❌ 이미 완료된 챌린지입니다.", content = @Content(schema = @Schema(implementation = ApiResponse.class)))
     })
-    ApiResponse<ChallengeResponseDTO.ProofDetailsDTO> createChallengeProof(@PathVariable Long userChallengeId, @RequestBody ChallengeRequestDTO.ProofRequestDTO proofRequest);
+    @Parameter(name = "userChallengeId", description = "인증 작성할 사용자 챌린지의 ID", example = "1")
+    ApiResponse<Void> createChallengeProof(@PathVariable Long userChallengeId,
+            @Valid @RequestBody ChallengeRequestDTO.ProofRequestDTO proofRequest);
 
     @GetMapping("{userChallengeId}")
-    @Operation(summary = "챌린지 인증 내역 조회 API", description = "사용자 챌린지 ID를  path variable로 전달받아 해당 사용자 챌린지의 인증 내역을 조회합니다.")
+    @Operation(summary = "사용자 챌린지 인증 내역 조회 API", description = "사용자의 특정 챌린지 인증 내역을 조회하는 API입니다.<br>" +
+            "사용자 챌린지 ID를 path variable로 전달받아 해당 사용자 챌린지의 인증 내역을 조회합니다.")
     @ApiResponses({
             @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "COMMON200", description = "⭕ SUCCESS"),
             @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "UC4001", description = "❌ 사용자 챌린지를 찾을 수 없습니다.", content = @Content(schema = @Schema(implementation = ApiResponse.class))),
-            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "CHALLENGE4002", description = "❌ 챌린지 인증이 완료되지 않았습니다.", content = @Content(schema = @Schema(implementation = ApiResponse.class)))
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "UC4004", description = "❌ 챌린지 인증이 완료되지 않았습니다.", content = @Content(schema = @Schema(implementation = ApiResponse.class)))
     })
+    @Parameter(name = "userChallengeId", description = "인증 내역을 조회할 사용자 챌린지의 ID", example = "1")
     ApiResponse<ChallengeResponseDTO.ProofDetailsDTO> getChallengeProofDetails(@PathVariable Long userChallengeId);
 
 
     @PatchMapping("{userChallengeId}")
-    @Operation(summary = "챌린지 인증 수정 API", description = "챌린지 인증을 수정하는 API입니다. <br>" +
-            "s3에 업로드한 객체 URL을 certificationImageUrl로 넘겨주세요. ")
+    @Operation(summary = "사용자 챌린지 인증 내역 수정 API", description = "챌린지 인증 내역을 수정하는 API입니다. <br>" +
+            "presigned url 생성 시 반환된 파일명을 certificationImage로 넘겨주세요. ")
     @ApiResponses({
             @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "COMMON200", description = "⭕ SUCCESS"),
             @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "USER4002", description = "❌ 이메일 또는 패스워드가 일치하지 않습니다.", content = @Content(schema = @Schema(implementation = ApiResponse.class))),
             @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "UC4001", description = "❌ 사용자 챌린지를 찾을 수 없습니다.", content = @Content(schema = @Schema(implementation = ApiResponse.class))),
-            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "CHALLENGE4002", description = "❌ 챌린지 인증이 완료되지 않았습니다.", content = @Content(schema = @Schema(implementation = ApiResponse.class))),
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "UC4004", description = "❌ 챌린지 인증이 완료되지 않았습니다.", content = @Content(schema = @Schema(implementation = ApiResponse.class))),
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "UC4005", description = "❌ 챌린지 인증 내역에 수정사항이 없습니다.", content = @Content(schema = @Schema(implementation = ApiResponse.class)))
     })
-
-    ApiResponse<ChallengeResponseDTO.ModifyProofDTO> updateChallengeProof(@PathVariable Long userChallengeId, @RequestBody(required = false) ChallengeRequestDTO.ProofRequestDTO updateRequest);
-
+    @Parameter(name = "userChallengeId", description = "인증 내역을 수정할 사용자 챌린지의 ID", example = "1")
+    ApiResponse<Void> updateChallengeProof(@PathVariable Long userChallengeId,
+            @Valid @RequestBody(required = false) ChallengeRequestDTO.ProofRequestDTO updateRequest);
 
     @DeleteMapping("{userChallengeId}")
     @Operation(
@@ -118,6 +125,6 @@ public interface ChallengeSpecification {
             @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "COMMON400", description = "❌ BAD, 잘못된 요청", content = @Content(schema = @Schema(implementation = ApiResponse.class)))
 
     })
-    @Parameter(name = "userChallengeId", description = "삭제할 사용자 챌린지의 ID", required = true)
+    @Parameter(name = "userChallengeId", description = "삭제할 사용자 챌린지의 ID", example = "1")
     ApiResponse<ChallengeResponseDTO.DeleteChallengeResponseDTO> deleteChallenge(@PathVariable("userChallengeId") Long userChallengeId);
 }

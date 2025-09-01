@@ -15,8 +15,6 @@ import umc.GrowIT.Server.repository.RefreshTokenRepository;
 import umc.GrowIT.Server.service.userService.CustomUserDetailsService;
 import umc.GrowIT.Server.web.dto.TokenDTO.TokenRequestDTO;
 import umc.GrowIT.Server.web.dto.TokenDTO.TokenResponseDTO;
-import umc.GrowIT.Server.web.dto.UserDTO.UserRequestDTO;
-import umc.GrowIT.Server.web.dto.UserDTO.UserResponseDTO;
 
 import java.time.LocalDateTime;
 import java.time.ZoneId;
@@ -66,4 +64,9 @@ public class RefreshTokenCommandServiceImpl implements RefreshTokenCommandServic
 
     }
 
+    @Override
+    @Transactional
+    public void deleteRefreshToken(RefreshToken refreshToken) {
+        refreshTokenRepository.delete(refreshToken);
+    }
 }

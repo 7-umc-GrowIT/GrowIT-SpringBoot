@@ -15,7 +15,6 @@ import org.springframework.stereotype.Component;
 import umc.GrowIT.Server.domain.CustomUserDetails;
 import umc.GrowIT.Server.service.userService.UserQueryService;
 import umc.GrowIT.Server.web.dto.TokenDTO.TokenResponseDTO;
-import umc.GrowIT.Server.web.dto.UserDTO.UserResponseDTO;
 
 import java.security.Key;
 import java.util.Collections;

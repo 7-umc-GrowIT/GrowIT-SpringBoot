@@ -1,15 +1,15 @@
 package umc.GrowIT.Server.domain;
 
-import umc.GrowIT.Server.domain.common.BaseEntity;
 import jakarta.persistence.*;
 import lombok.*;
+import umc.GrowIT.Server.domain.common.BaseEntity;
 
 
 @Entity
 @Getter
 @Builder
-@NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class ChallengeKeyword extends BaseEntity {
 
     @Id
@@ -23,8 +23,4 @@ public class ChallengeKeyword extends BaseEntity {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "keyword_id", nullable = false)
     private Keyword keyword;
-
-    public void setChallenge(Challenge challenge) {
-        this.challenge = challenge;
-    }
 }

@@ -8,9 +8,8 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 import umc.GrowIT.Server.apiPayload.ApiResponse;
 import umc.GrowIT.Server.domain.enums.ItemCategory;
-import umc.GrowIT.Server.domain.enums.ItemStatus;
-import umc.GrowIT.Server.service.ItemService.ItemCommandService;
-import umc.GrowIT.Server.service.ItemService.ItemQueryServiceImpl;
+import umc.GrowIT.Server.service.itemService.ItemCommandService;
+import umc.GrowIT.Server.service.itemService.ItemQueryServiceImpl;
 import umc.GrowIT.Server.web.controller.specification.ItemSpecification;
 import umc.GrowIT.Server.web.dto.ItemDTO.ItemResponseDTO;
 import umc.GrowIT.Server.web.dto.ItemEquipDTO.ItemEquipRequestDTO;
@@ -19,13 +18,14 @@ import umc.GrowIT.Server.web.dto.ItemEquipDTO.ItemEquipResponseDTO;
 @Tag(name="Item", description = "아이템 관련 API")
 @RestController
 @RequiredArgsConstructor
+@RequestMapping("/items")
 public class ItemController implements ItemSpecification {
 
     private final ItemQueryServiceImpl itemQueryServiceImpl;
     private final ItemCommandService itemCommandService;
 
     @Override
-    @GetMapping("/items")
+    @GetMapping("")
     public ApiResponse<ItemResponseDTO.ItemListDTO> getItemList(ItemCategory category) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         Long userId = (Long) authentication.getPrincipal(); //사용자 식별 id
@@ -36,7 +36,7 @@ public class ItemController implements ItemSpecification {
 
     //그로 아이템 착용/해제
     @Override
-    @PatchMapping("/items/{itemId}")
+    @PatchMapping("/{itemId}")
     public ApiResponse<ItemEquipResponseDTO> updateItemStatus(Long itemId, ItemEquipRequestDTO request) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         Long userId = (Long) authentication.getPrincipal();
@@ -47,7 +47,7 @@ public class ItemController implements ItemSpecification {
     }
 
     @Override
-    @PostMapping("/items/{itemId}/purchase")
+    @PostMapping("/{itemId}/purchase")
     public ApiResponse<ItemResponseDTO.PurchaseItemResponseDTO> purchaseItem(Long itemId) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         Long userId = (Long) authentication.getPrincipal(); //사용자 식별 id

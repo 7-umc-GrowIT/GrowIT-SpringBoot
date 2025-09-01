@@ -1,42 +1,39 @@
 package umc.GrowIT.Server.service.userService;
 
-import lombok.RequiredArgsConstructor;
+import static umc.GrowIT.Server.apiPayload.code.status.ErrorStatus._BAD_REQUEST;
+import static umc.GrowIT.Server.domain.enums.UserStatus.INACTIVE;
+
+import java.util.List;
+import java.util.Optional;
+
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
+
+import lombok.RequiredArgsConstructor;
 import umc.GrowIT.Server.apiPayload.code.status.ErrorStatus;
-import umc.GrowIT.Server.apiPayload.exception.TermHandler;
 import umc.GrowIT.Server.apiPayload.exception.UserHandler;
-import umc.GrowIT.Server.converter.TermConverter;
 import umc.GrowIT.Server.converter.UserConverter;
-import umc.GrowIT.Server.domain.*;
-import umc.GrowIT.Server.domain.enums.TermType;
 import umc.GrowIT.Server.domain.CustomUserDetails;
-import umc.GrowIT.Server.repository.OAuthAccountRepository;
+import umc.GrowIT.Server.domain.RefreshToken;
+import umc.GrowIT.Server.domain.User;
+import umc.GrowIT.Server.domain.UserTerm;
+import umc.GrowIT.Server.repository.UserRepository;
 import umc.GrowIT.Server.service.refreshTokenService.RefreshTokenCommandService;
 import umc.GrowIT.Server.service.termService.TermCommandService;
 import umc.GrowIT.Server.service.termService.TermQueryService;
-import umc.GrowIT.Server.web.dto.TermDTO.TermRequestDTO;
+import umc.GrowIT.Server.util.JwtTokenUtil;
 import umc.GrowIT.Server.web.dto.TokenDTO.TokenResponseDTO;
 import umc.GrowIT.Server.web.dto.UserDTO.UserRequestDTO;
-import umc.GrowIT.Server.web.dto.UserDTO.UserResponseDTO;
-import umc.GrowIT.Server.repository.TermRepository;
-import umc.GrowIT.Server.repository.UserRepository;
-import umc.GrowIT.Server.util.JwtTokenUtil;
-
-import java.util.Collections;
-import java.util.List;
-import java.util.Optional;
-import java.util.stream.Collectors;
-
-import static umc.GrowIT.Server.apiPayload.code.status.ErrorStatus._BAD_REQUEST;
-import static umc.GrowIT.Server.domain.enums.UserStatus.INACTIVE;
+import umc.GrowIT.Server.converter.WithdrawalConverter;
+import umc.GrowIT.Server.domain.*;
+import umc.GrowIT.Server.repository.*;
 
 
 @Service
@@ -45,10 +42,14 @@ import static umc.GrowIT.Server.domain.enums.UserStatus.INACTIVE;
 public class UserCommandServiceImpl implements UserCommandService {
 
     private final UserRepository userRepository;
+    private final WithdrawalReasonRepository withdrawalReasonRepository;
+    private final WithdrawalLogRepository withdrawalLogRepository;
+
     private final TermQueryService termQueryService;
     private final TermCommandService termCommandService;
     private final RefreshTokenCommandService refreshTokenCommandService;
     private final CustomUserDetailsService customUserDetailsService;
+    private final UserWithdrawalService userWithdrawalService;
 
     private final PasswordEncoder passwordEncoder;
     private final JwtTokenUtil jwtTokenUtil;
@@ -89,7 +90,6 @@ public class UserCommandServiceImpl implements UserCommandService {
 
         // User 엔티티 저장 및 AT/RT 발급
         return issueTokenAndSetRefreshToken(userRepository.save(newUser));
-
     }
 
     @Override
@@ -141,28 +141,38 @@ public class UserCommandServiceImpl implements UserCommandService {
         }
     }
 
+
     @Override
-    public UserResponseDTO.DeleteUserResponseDTO delete(Long userId) {
-        // 1. userId를 통해 조회하고 없으면 오류
+    @Transactional
+    public void withdraw(Long userId, UserRequestDTO.DeleteUserRequestDTO deleteUserRequestDTO) {
+        // 1. TODO 이후 Resolver로 수정
         User deleteUser = userRepository.findById(userId)
                 .orElseThrow(() -> new UserHandler(ErrorStatus.USER_NOT_FOUND));
 
-        // 2. soft delete로 진행하기 때문에 status를 inactive로 변경
-        checkUserInactive(deleteUser); //이미 탈퇴한 회원인지 확인
-        deleteUser.deleteAccount();
-        userRepository.save(deleteUser);
+        // 2. 탈퇴이유 조회
+        Long reasonId = deleteUserRequestDTO.getReasonId();
+        WithdrawalReason withdrawalReason = withdrawalReasonRepository.findById(reasonId)
+                .orElseThrow(() -> new UserHandler(ErrorStatus.WITHDRAWAL_REASON_NOT_FOUND));
 
-        // 3. converter 작업
-        return UserConverter.toDeletedUser(deleteUser);
+        // 3. 탈퇴기록 저장
+        WithdrawalLog withdrawalLog = WithdrawalConverter.toWithdrawalLog(deleteUser, withdrawalReason);
+        withdrawalLogRepository.save(withdrawalLog);
+
+        // 4. 해당 사용자 관련 데이터 전체 삭제
+        userWithdrawalService.deleteUserRelatedData(deleteUser.getId(), deleteUser.getRefreshToken().getId());
     }
+
+
 
     /**
      * AT/RT 발급 및 RT DB 저장
      */
     @Override
+    @Transactional(propagation = Propagation.REQUIRED)
     public TokenResponseDTO.TokenDTO issueTokenAndSetRefreshToken(User user) {
         TokenResponseDTO.TokenDTO tokenDTO = jwtTokenUtil.generateToken(
-                customUserDetailsService.loadUserByUsername(user.getPrimaryEmail()));
+                customUserDetailsService.loadUserByUsername(user.getPrimaryEmail())
+        );
 
         RefreshToken refreshTokenEntity = refreshTokenCommandService.createRefreshToken(tokenDTO.getRefreshToken(), user);
         user.setRefreshToken(refreshTokenEntity);
