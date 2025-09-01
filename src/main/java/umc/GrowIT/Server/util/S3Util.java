@@ -33,7 +33,7 @@ public class S3Util {
                 .build();
 
         PutObjectPresignRequest putObjectPresignRequest = PutObjectPresignRequest.builder()
-                .signatureDuration(Duration.ofMinutes(30))
+                .signatureDuration(Duration.ofMinutes(15))
                 .putObjectRequest(putObjectRequest)
                 .build();
 
