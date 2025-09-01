@@ -3,6 +3,9 @@ package umc.GrowIT.Server.repository;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 import umc.GrowIT.Server.domain.CreditHistory;
 import umc.GrowIT.Server.domain.User;
 import umc.GrowIT.Server.domain.enums.CreditSource;
@@ -22,4 +25,8 @@ public interface CreditHistoryRepository extends JpaRepository<CreditHistory, Lo
 
     Slice<CreditHistory> findByUserAndCreatedAtBetweenAndAmountLessThanOrderByCreatedAtDesc(
             User user, LocalDateTime start, LocalDateTime end, int amount, Pageable pageable);
+
+    @Modifying
+    @Query("DELETE FROM CreditHistory ch WHERE ch.user.id = :userId")
+    void deleteByUserId(@Param("userId") Long userId);
 }
