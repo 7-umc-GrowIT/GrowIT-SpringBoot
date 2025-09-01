@@ -83,7 +83,7 @@ public class UserConverter {
 
         return UserResponseDTO.CreditHistoryResponseDTO.builder()
                 .yearMonth(yearMonth.getYear() + "년 " + String.format("%02d", yearMonth.getMonthValue()) + "월")
-                .dailyHistories(dailyHistories)
+                .creditHistories(dailyHistories)
                 .hasNext(hasNext)
                 .build();
     }

@@ -32,7 +32,7 @@ public class UserResponseDTO {
         private String yearMonth;
 
         @Schema(description = "날짜별 크레딧 내역")
-        private Map<String, List<CreditRecordDTO>> dailyHistories;
+        private Map<String, List<CreditRecordDTO>> creditHistories;
 
         @Schema(description = "다음 페이지 존재 여부", example = "true")
         private Boolean hasNext;
