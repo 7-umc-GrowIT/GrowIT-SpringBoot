@@ -3,6 +3,7 @@ package umc.GrowIT.Server.converter;
 import umc.GrowIT.Server.domain.Gro;
 import umc.GrowIT.Server.domain.Item;
 import umc.GrowIT.Server.domain.User;
+import umc.GrowIT.Server.domain.UserItem;
 import umc.GrowIT.Server.web.dto.GroDTO.GroResponseDTO;
 
 import java.util.List;
@@ -30,7 +31,7 @@ public class GroConverter {
                 .build();
     }
 
-    public static GroResponseDTO.GroAndEquippedItemsDTO toGroAndEquippedItemsDTO(Gro gro, String groImageUrl, Map<Item, String> itemUrls) {
+    public static GroResponseDTO.GroAndEquippedItemsDTO toGroAndEquippedItemsDTO(Gro gro, String groImageUrl, Map<UserItem, String> itemUrls) {
         // 1. GroDTO 생성
         GroResponseDTO.GroDTO groDTO = GroResponseDTO.GroDTO.builder()
                 .level(gro.getLevel())
@@ -40,10 +41,11 @@ public class GroConverter {
 
         // 2. EquippedItemsDTO 리스트 생성
         List<GroResponseDTO.EquippedItemsDTO> equippedItems = itemUrls.entrySet().stream()
-                .map(item -> GroResponseDTO.EquippedItemsDTO.builder()
-                        .name(item.getKey().getName())
-                        .category(item.getKey().getCategory())
-                        .itemImageUrl(item.getValue())
+                .map(entry -> GroResponseDTO.EquippedItemsDTO.builder()
+                        .id(entry.getKey().getId())
+                        .name(entry.getKey().getItem().getName())
+                        .category(entry.getKey().getItem().getCategory())
+                        .itemImageUrl(entry.getValue())
                         .build())
                 .collect(Collectors.toList())
                 ;

@@ -49,16 +49,11 @@ public class GroQueryServiceImpl implements GroQueryService {
             throw new ItemHandler(ErrorStatus.EQUIPPED_USER_ITEM_NOT_FOUND);
         }
 
-        // 4. 착용한 아이템을 이용하여 Item 접근
-        List<Item> equippedItems = equippedUserItems.stream()
-                .map(UserItem::getItem)
-                .toList();
-
-        // 5. 프리사인드 URL 생성
+        // 4. 프리사인드 URL 생성
         String groUrl = createGroPreSignedUrl(gro.getLevel());
-        Map<Item, String> itemUrls = createItemPreSignedUrl(equippedItems);
+        Map<UserItem, String> itemUrls = createItemPreSignedUrl(equippedUserItems);
 
-        // 6. converter 작업
+        // 5. converter 작업
         return GroConverter.toGroAndEquippedItemsDTO(gro, groUrl, itemUrls);
     }
 
@@ -81,11 +76,11 @@ public class GroQueryServiceImpl implements GroQueryService {
     }
 
     // 착용 중인 이미지에 대한 Pre-signed URL 생성
-    private Map<Item, String> createItemPreSignedUrl(List<Item> equippedItems) {
-        return equippedItems.stream()
+    private Map<UserItem, String> createItemPreSignedUrl(List<UserItem> equippedUserItems) {
+        return equippedUserItems.stream()
                 .collect(Collectors.toMap(
-                        item -> item,
-                        item -> s3Util.toGetPresignedUrl(item.getGroImageKey(), Duration.ofMinutes(15))
+                        userItem -> userItem,
+                        userItem -> s3Util.toGetPresignedUrl(userItem.getItem().getGroImageKey(), Duration.ofMinutes(15))
                 ));
     }
 }
