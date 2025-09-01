@@ -133,8 +133,14 @@ public class ChallengeCommandServiceImpl implements ChallengeCommandService {
 
         userChallenge.verifyUserChallenge(proofRequest);
 
-        user.updateCurrentCredit(user.getCurrentCredit() + CHALLENGE_CREDIT);
-        user.updateTotalCredit(user.getTotalCredit() + CHALLENGE_CREDIT);
+        // 동일한 date로 저장한 챌린지 개수 가져오기
+        long creditCount = userChallengeRepository.countByDateAndCompletion(userId, true, userChallenge.getDate());
+
+        // 챌린지 인증 3번까지 크레딧 지급
+        if (creditCount <= 3) {
+            user.updateCurrentCredit(user.getCurrentCredit() + CHALLENGE_CREDIT);
+            user.updateTotalCredit(user.getTotalCredit() + CHALLENGE_CREDIT);
+        }
     }
 
     @Override
