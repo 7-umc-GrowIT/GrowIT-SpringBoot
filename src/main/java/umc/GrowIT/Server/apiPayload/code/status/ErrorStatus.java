@@ -57,7 +57,6 @@ public enum ErrorStatus implements BaseErrorCode {
 
     // 챌린지 관련 에러
     CHALLENGE_NOT_FOUND(HttpStatus.NOT_FOUND, "CHALLENGE4001", "챌린지를 찾을 수 없습니다."),
-    CHALLENGE_TOTAL_MAX(HttpStatus.BAD_REQUEST, "CHALLENGE4002", "챌린지는 하루에 9개까지 저장 가능합니다."),
     CHALLENGE_SAVE_LIMIT(HttpStatus.BAD_REQUEST, "CHALLENGE4003", "챌린지는 3개까지 저장 가능합니다."),
     CHALLENGE_AT_LEAST(HttpStatus.BAD_REQUEST, "CHALLENGE4004", "최소 하나의 챌린지를 선택해야 합니다."),
     CHALLENGE_DAILY_MAX(HttpStatus.BAD_REQUEST, "CHALLENGE4005", "데일리 챌린지는 최대 2개까지 저장 가능합니다."),
