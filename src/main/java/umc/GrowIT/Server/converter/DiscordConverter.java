@@ -19,7 +19,7 @@ public class DiscordConverter {
         List<DiscordRequestDTO.FieldDTO> fields = Arrays.asList(
                 DiscordRequestDTO.FieldDTO.builder()
                         .name("🚨 에러 메시지")
-                        .value("```" + (errorMessage.length() > 200 ? errorMessage.substring(0, 200) + "..." : errorMessage) + "```")
+                        .value("```" + (errorMessage.length() > 1000 ? errorMessage.substring(0, 1000) + "..." : errorMessage) + "```")
                         .inline(false)
                         .build(),
                 DiscordRequestDTO.FieldDTO.builder()
