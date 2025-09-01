@@ -58,7 +58,7 @@ public class ItemCommandServiceImpl implements ItemCommandService {
         UserItem savedUserItem = userItemRepository.save(newUserItem);
 
         // 6. 크레딧 차감 및 이력 기록
-        creditUtil.deductItemCredit(user, savedUserItem, item.getPrice());
+        creditUtil.deductItemCredit(user, savedUserItem, item);
 
         // 7. converter 작업
         return ItemConverter.toPurchaseItemResponseDTO(savedUserItem);

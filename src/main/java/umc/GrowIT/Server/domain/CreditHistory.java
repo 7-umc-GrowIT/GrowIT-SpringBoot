@@ -22,7 +22,11 @@ public class CreditHistory extends BaseEntity {
     @Column(nullable = false)
     private Integer amount;
 
-    // 크레딧 +- 이유
+    // 크레딧 +- 설명
+    @Column(nullable = false, length = 100)
+    private String description;
+
+    // 크레딧 +- 출처
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private CreditSource source;

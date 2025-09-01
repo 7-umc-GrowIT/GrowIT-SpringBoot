@@ -3,15 +3,13 @@ package umc.GrowIT.Server.util;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import umc.GrowIT.Server.domain.CreditHistory;
-import umc.GrowIT.Server.domain.Diary;
-import umc.GrowIT.Server.domain.User;
-import umc.GrowIT.Server.domain.UserItem;
+import umc.GrowIT.Server.domain.*;
 import umc.GrowIT.Server.domain.enums.CreditSource;
 import umc.GrowIT.Server.repository.CreditHistoryRepository;
 import umc.GrowIT.Server.repository.CreditRepository;
 
 import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 
 @Service
 @RequiredArgsConstructor
@@ -33,6 +31,7 @@ public class CreditUtil {
                 .referenceId(diary.getId())
                 .date(diary.getDate())
                 .amount(amount)
+                .description(String.format("[%s] 일기 작성", diary.getDate().format(DateTimeFormatter.ofPattern("MM-dd"))))
                 .build()
                 ;
 
@@ -49,20 +48,21 @@ public class CreditUtil {
     }
 
     // 아이템 구매로 인한 사용자 크레딧 최신화
-    public void deductItemCredit(User user, UserItem userItem, Integer itemPrice) {
+    public void deductItemCredit(User user, UserItem userItem, Item item) {
         // 1. 크레딧 사용 기록 (음수로 저장)
         CreditHistory credit = CreditHistory.builder()
                 .user(user)
                 .source(CreditSource.ITEM)
                 .referenceId(userItem.getId())
-                .amount(-itemPrice)
+                .amount(-item.getPrice())
+                .description(String.format("[%s] 아이템 구매", item.getName()))
                 .build()
                 ;
 
         creditHistoryRepository.save(credit);
 
         // 2. 사용자 크레딧 최신화
-        user.updateCurrentCredit(user.getCurrentCredit() - itemPrice);
+        user.updateCurrentCredit(user.getCurrentCredit() - item.getPrice());
     }
 
 

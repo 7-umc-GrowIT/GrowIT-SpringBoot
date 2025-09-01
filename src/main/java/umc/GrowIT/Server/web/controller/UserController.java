@@ -3,6 +3,7 @@ package umc.GrowIT.Server.web.controller;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
@@ -12,6 +13,7 @@ import umc.GrowIT.Server.service.creditService.CreditQueryServiceImpl;
 import umc.GrowIT.Server.service.itemService.ItemQueryServiceImpl;
 import umc.GrowIT.Server.service.userService.UserCommandService;
 import umc.GrowIT.Server.service.userService.UserQueryService;
+import umc.GrowIT.Server.web.controller.enums.CreditFilterType;
 import umc.GrowIT.Server.web.controller.specification.UserSpecification;
 import umc.GrowIT.Server.web.dto.CreditDTO.CreditResponseDTO;
 import umc.GrowIT.Server.web.dto.ItemDTO.ItemResponseDTO;
@@ -90,5 +92,19 @@ public class UserController implements UserSpecification {
 
         UserResponseDTO.MyPageDTO result = userQueryService.getMyPage(userId);
         return ApiResponse.onSuccess(result);
+    }
+
+    @Override
+    @GetMapping("/credits/history")
+    public ApiResponse<UserResponseDTO.CreditHistoryResponseDTO> getCreditHistory(
+            @RequestParam Integer year,
+            @RequestParam Integer month,
+            @RequestParam CreditFilterType filter,
+            @RequestParam int page
+    ) {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        Long userId = (Long) authentication.getPrincipal();
+
+        return ApiResponse.onSuccess(userQueryService.getCreditHistory(userId, year, month, filter, page));
     }
 }
