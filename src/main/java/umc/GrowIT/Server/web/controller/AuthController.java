@@ -47,16 +47,16 @@ public class AuthController implements AuthSpecification {
 
     @Override
     @PostMapping("/login")
-    public ApiResponse<TokenResponseDTO.TokenDTO> loginEmail(@RequestBody @Valid UserRequestDTO.EmailLoginDTO emailLoginDTO) {
-        TokenResponseDTO.TokenDTO tokenDTO = userCommandService.loginEmail(emailLoginDTO);
-        return ApiResponse.onSuccess(tokenDTO);
+    public ApiResponse<AuthResponseDTO.LoginResponseDTO> loginEmail(@RequestBody @Valid UserRequestDTO.EmailLoginDTO emailLoginDTO) {
+        AuthResponseDTO.LoginResponseDTO loginDTO = userCommandService.loginEmail(emailLoginDTO);
+        return ApiResponse.onSuccess(loginDTO);
     }
 
     @Override
     @PostMapping("/signup")
-    public ApiResponse<TokenResponseDTO.TokenDTO> signupEmail(@RequestBody @Valid UserRequestDTO.UserInfoDTO userInfoDTO) {
-        TokenResponseDTO.TokenDTO tokenDTO = userCommandService.signupEmail(userInfoDTO);
-        return ApiResponse.onSuccess(tokenDTO);
+    public ApiResponse<AuthResponseDTO.LoginResponseDTO> signupEmail(@RequestBody @Valid UserRequestDTO.UserInfoDTO userInfoDTO) {
+        AuthResponseDTO.LoginResponseDTO loginDTO = userCommandService.signupEmail(userInfoDTO);
+        return ApiResponse.onSuccess(loginDTO);
     }
 
     @Override
@@ -103,9 +103,9 @@ public class AuthController implements AuthSpecification {
 
     @Override
     @PostMapping("/signup/social")
-    public ApiResponse<TokenResponseDTO.TokenDTO> signupSocial(@RequestBody @Valid OAuthRequestDTO.OAuthUserInfoAndUserTermsDTO oAuthUserInfoAndUserTermsDTO) {
-        TokenResponseDTO.TokenDTO tokenDTO = oAuthService.signupSocial(oAuthUserInfoAndUserTermsDTO);
-        return ApiResponse.onSuccess(tokenDTO);
+    public ApiResponse<AuthResponseDTO.LoginResponseDTO> signupSocial(@RequestBody @Valid OAuthRequestDTO.OAuthUserInfoAndUserTermsDTO oAuthUserInfoAndUserTermsDTO) {
+        AuthResponseDTO.LoginResponseDTO loginDTO = oAuthService.signupSocial(oAuthUserInfoAndUserTermsDTO);
+        return ApiResponse.onSuccess(loginDTO);
     }
 
     @Override

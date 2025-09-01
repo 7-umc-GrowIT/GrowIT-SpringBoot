@@ -1,15 +1,16 @@
 package umc.GrowIT.Server.service.userService;
 
 import umc.GrowIT.Server.domain.User;
+import umc.GrowIT.Server.web.dto.AuthDTO.AuthResponseDTO;
 import umc.GrowIT.Server.web.dto.TokenDTO.TokenResponseDTO;
 import umc.GrowIT.Server.web.dto.UserDTO.UserRequestDTO;
 
 
 public interface UserCommandService {
 
-    TokenResponseDTO.TokenDTO signupEmail(UserRequestDTO.UserInfoDTO userInfoDTO);
+    AuthResponseDTO.LoginResponseDTO signupEmail(UserRequestDTO.UserInfoDTO userInfoDTO);
 
-    TokenResponseDTO.TokenDTO loginEmail(UserRequestDTO.EmailLoginDTO emailLoginDTO);
+    AuthResponseDTO.LoginResponseDTO loginEmail(UserRequestDTO.EmailLoginDTO emailLoginDTO);
 
     void updatePassword(UserRequestDTO.PasswordDTO passwordDTO);
 

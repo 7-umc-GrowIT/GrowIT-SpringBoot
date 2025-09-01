@@ -8,6 +8,7 @@ import static umc.GrowIT.Server.apiPayload.code.status.ErrorStatus._INTERNAL_SER
 import static umc.GrowIT.Server.converter.OAuthAccountConverter.toOAuthAccount;
 import static umc.GrowIT.Server.converter.OAuthConverter.toOAuthLoginDTO;
 import static umc.GrowIT.Server.converter.OAuthConverter.toOAuthUserInfoDTO;
+import static umc.GrowIT.Server.domain.enums.LoginMethod.SOCIAL;
 
 import java.security.interfaces.RSAPublicKey;
 import java.text.ParseException;
@@ -38,6 +39,7 @@ import umc.GrowIT.Server.apiPayload.exception.OAuthHandler;
 import umc.GrowIT.Server.domain.OAuthAccount;
 import umc.GrowIT.Server.domain.OAuthAccount;
 import umc.GrowIT.Server.domain.User;
+import umc.GrowIT.Server.domain.enums.LoginMethod;
 import umc.GrowIT.Server.repository.OAuthAccountRepository;
 import umc.GrowIT.Server.repository.UserRepository;
 import umc.GrowIT.Server.service.userService.CustomUserDetailsService;
@@ -169,7 +171,7 @@ public class AppleServiceImpl implements AppleService {
         // 회원 약관 정보가 없기 때문에 회원가입 처리
         if (user.isEmpty()) {
             oAuthUserInfoDTO.setName(name);
-            return toOAuthLoginDTO(true, oAuthUserInfoDTO, null);
+            return toOAuthLoginDTO(true, oAuthUserInfoDTO, null, null);
         // 애플 이메일로 이메일 회원가입이 되어있고 애플 로그인 기록이 없는 경우
         // OAuthAccount 저장 및 기존 계정으로 로그인 처리
         } else if (oAuthAccount.isEmpty()) {
@@ -183,6 +185,7 @@ public class AppleServiceImpl implements AppleService {
                 customUserDetailsService.loadUserByUsername(existingUser.getPrimaryEmail())
         );
         userCommandService.setRefreshToken(tokenDTO.getRefreshToken(), existingUser);
-        return toOAuthLoginDTO(false, null, tokenDTO); // 로그인 처리
+
+        return toOAuthLoginDTO(false, null, tokenDTO, SOCIAL); // 로그인 처리
         }
 }

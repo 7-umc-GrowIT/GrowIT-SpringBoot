@@ -1,6 +1,8 @@
 package umc.GrowIT.Server.service.userService;
 
 import static umc.GrowIT.Server.apiPayload.code.status.ErrorStatus._BAD_REQUEST;
+import static umc.GrowIT.Server.converter.UserConverter.toLoginResponseDTO;
+import static umc.GrowIT.Server.domain.enums.LoginMethod.LOCAL;
 import static umc.GrowIT.Server.domain.enums.UserStatus.INACTIVE;
 
 import java.util.List;
@@ -29,6 +31,7 @@ import umc.GrowIT.Server.service.refreshTokenService.RefreshTokenCommandService;
 import umc.GrowIT.Server.service.termService.TermCommandService;
 import umc.GrowIT.Server.service.termService.TermQueryService;
 import umc.GrowIT.Server.util.JwtTokenUtil;
+import umc.GrowIT.Server.web.dto.AuthDTO.AuthResponseDTO;
 import umc.GrowIT.Server.web.dto.TokenDTO.TokenResponseDTO;
 import umc.GrowIT.Server.web.dto.UserDTO.UserRequestDTO;
 import umc.GrowIT.Server.converter.WithdrawalConverter;
@@ -56,7 +59,7 @@ public class UserCommandServiceImpl implements UserCommandService {
     private final AuthenticationManager authenticationManager;
 
     @Override
-    public TokenResponseDTO.TokenDTO signupEmail(UserRequestDTO.UserInfoDTO userInfoDTO) {
+    public AuthResponseDTO.LoginResponseDTO signupEmail(UserRequestDTO.UserInfoDTO userInfoDTO) {
         //인증 받지 않았을 때 예외 처리
         if (userInfoDTO.getIsVerified() == null || !userInfoDTO.getIsVerified())
             throw new UserHandler(ErrorStatus.EMAIL_NOT_VERIFIED);
@@ -77,7 +80,9 @@ public class UserCommandServiceImpl implements UserCommandService {
                     .orElseThrow(() -> new UserHandler(_BAD_REQUEST));
             user.linkUserWithKakaoAccount(email, passwordEncoder.encode(userInfoDTO.getPassword())); // 이메일, 비밀번호 업데이트
             termCommandService.updateUserTerms(userInfoDTO.getUserTerms()); // 약관 목록 업데이트
-            return issueTokenAndSetRefreshToken(user);
+            TokenResponseDTO.TokenDTO tokenDTO = issueTokenAndSetRefreshToken(user);
+
+            return toLoginResponseDTO(tokenDTO, LOCAL);
         }
 
         // 최초 이메일 회원가입
@@ -89,11 +94,13 @@ public class UserCommandServiceImpl implements UserCommandService {
         newUser.setUserTerms(userTerms);
 
         // User 엔티티 저장 및 AT/RT 발급
-        return issueTokenAndSetRefreshToken(userRepository.save(newUser));
+        TokenResponseDTO.TokenDTO tokenDTO = issueTokenAndSetRefreshToken(userRepository.save(newUser));
+
+        return toLoginResponseDTO(tokenDTO, LOCAL);
     }
 
     @Override
-    public TokenResponseDTO.TokenDTO loginEmail(UserRequestDTO.EmailLoginDTO emailLoginDTO) {
+    public AuthResponseDTO.LoginResponseDTO loginEmail(UserRequestDTO.EmailLoginDTO emailLoginDTO) {
         String email = emailLoginDTO.getEmail(); //사용자가 입력한 email
         String password = emailLoginDTO.getPassword(); //사용자가 입력한 password
 
@@ -108,7 +115,7 @@ public class UserCommandServiceImpl implements UserCommandService {
             TokenResponseDTO.TokenDTO tokenDTO = performAuthentication(email, password);
             setRefreshToken(tokenDTO.getRefreshToken(), user);
 
-            return tokenDTO;
+            return toLoginResponseDTO(tokenDTO, LOCAL);
         } catch (UsernameNotFoundException | BadCredentialsException e) {
             throw new UserHandler(ErrorStatus.USER_NOT_FOUND); //사용자가 입력한 email 또는 password 데이터가 데이터베이스에 없을 때 예외 처리
         }
