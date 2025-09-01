@@ -121,10 +121,10 @@ public class ChallengeCommandServiceImpl implements ChallengeCommandService {
         }
 
         // 오늘 날짜로 인증 완료한 챌린지 개수 가져오기
-        long completedCount = userChallengeRepository.countByCompletion(userId, true, startOfDay, endOfDay);
+        long todayCompletedCount = userChallengeRepository.countCompletedTodayByUserId(userId, true, startOfDay, endOfDay);
 
         // 인증 작성한 챌린지 개수가 10개인 경우
-        if (completedCount == 10) {
+        if (todayCompletedCount == 10) {
             throw new ChallengeHandler(ErrorStatus.USER_CHALLENGE_PROVED_LIMIT);
         }
 
@@ -133,11 +133,13 @@ public class ChallengeCommandServiceImpl implements ChallengeCommandService {
 
         userChallenge.verifyUserChallenge(proofRequest);
 
+        LocalDate targetDate = userChallenge.getDate();
+
         // 동일한 date로 저장한 챌린지 개수 가져오기
-        long creditCount = userChallengeRepository.countByDateAndCompletion(userId, true, userChallenge.getDate());
+        long completedCountOnDate = userChallengeRepository.countCompletedOnDateByUserId(userId, true, targetDate);
 
         // 챌린지 인증 3번까지 크레딧 지급
-        if (creditCount <= 3) {
+        if (completedCountOnDate <= 3) {
             user.updateCurrentCredit(user.getCurrentCredit() + CHALLENGE_CREDIT);
             user.updateTotalCredit(user.getTotalCredit() + CHALLENGE_CREDIT);
         }

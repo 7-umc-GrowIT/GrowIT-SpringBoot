@@ -61,7 +61,7 @@ public interface UserChallengeRepository extends JpaRepository<UserChallenge, Lo
             "WHERE uc.user.id = :userId " +
             "AND uc.completed = :completed " +
             "AND uc.createdAt BETWEEN :startOfDay AND :endOfDay")
-    long countByCompletion(@Param("userId") Long userId,
+    long countCompletedTodayByUserId(@Param("userId") Long userId,
                            @Param("completed") Boolean completed,
                            @Param("startOfDay") LocalDateTime startOfDay,
                            @Param("endOfDay") LocalDateTime endOfDay);
@@ -71,7 +71,7 @@ public interface UserChallengeRepository extends JpaRepository<UserChallenge, Lo
             "WHERE uc.user.id = :userId " +
             "AND uc.completed = :completed " +
             "AND uc.date = :date")
-    long countByDateAndCompletion(@Param("userId") Long userId,
+    long countCompletedOnDateByUserId(@Param("userId") Long userId,
                                   @Param("completed") Boolean completed,
                                   @Param("date") LocalDate date
     );
