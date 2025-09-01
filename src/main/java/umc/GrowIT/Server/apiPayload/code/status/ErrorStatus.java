@@ -29,6 +29,7 @@ public enum ErrorStatus implements BaseErrorCode {
     USER_CHALLENGE_ALREADY_PROVED(HttpStatus.BAD_REQUEST, "UC4003", "이미 완료된 챌린지입니다."),
     USER_CHALLENGE_NOT_PROVED(HttpStatus.BAD_REQUEST, "UC4004", "챌린지 인증이 완료되지 않았습니다."),
     USER_CHALLENGE_UPDATE_NO_CHANGES(HttpStatus.BAD_REQUEST, "UC4005", "챌린지 인증 내역에 수정사항이 없습니다."),
+    USER_CHALLENGE_PROVED_LIMIT(HttpStatus.BAD_REQUEST, "UC4006", "하루에 인증 가능한 챌린지 개수는 10개입니다."),
 
     //약관 관련 에러
     TERM_NOT_FOUND(HttpStatus.NOT_FOUND, "TERM4001", "존재하지 않는 약관을 요청했습니다."),

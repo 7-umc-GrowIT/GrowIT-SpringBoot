@@ -15,6 +15,8 @@ import umc.GrowIT.Server.web.dto.ChallengeDTO.ChallengeRequestDTO;
 import umc.GrowIT.Server.web.dto.ChallengeDTO.ChallengeResponseDTO;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.util.*;
 
 @Service
@@ -114,12 +116,24 @@ public class ChallengeCommandServiceImpl implements ChallengeCommandService {
     @Override
     @Transactional
     public void createChallengeProof(Long userId, Long userChallengeId, ChallengeRequestDTO.ProofRequestDTO proofRequest) {
+        LocalDate today = LocalDate.now();
+
+        LocalDateTime startOfDay = today.atStartOfDay();
+        LocalDateTime endOfDay = today.atTime(LocalTime.MAX);
 
         UserChallenge userChallenge = userChallengeRepository.findByIdAndUserId(userChallengeId, userId)
                 .orElseThrow(() -> new ChallengeHandler(ErrorStatus.USER_CHALLENGE_NOT_FOUND));
 
         if (userChallenge.isCompleted()) {
             throw new ChallengeHandler(ErrorStatus.USER_CHALLENGE_ALREADY_PROVED);
+        }
+
+        // 오늘 날짜로 인증 완료한 챌린지 개수 가져오기
+        long completedCount = userChallengeRepository.countByCompletion(userId, true, startOfDay, endOfDay);
+
+        // 인증 작성한 챌린지 개수가 10개인 경우
+        if (completedCount == 10) {
+            throw new ChallengeHandler(ErrorStatus.USER_CHALLENGE_PROVED_LIMIT);
         }
 
         User user = userRepository.findById(userId)

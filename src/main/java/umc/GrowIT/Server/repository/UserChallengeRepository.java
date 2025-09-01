@@ -10,6 +10,7 @@ import umc.GrowIT.Server.domain.UserChallenge;
 import umc.GrowIT.Server.domain.enums.UserChallengeType;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -58,6 +59,16 @@ public interface UserChallengeRepository extends JpaRepository<UserChallenge, Lo
     @Query("SELECT COUNT(uc) FROM UserChallenge uc " +
             "WHERE uc.user.id = :userId AND uc.date = :date")
     long countByDateAndUserId(Long userId, LocalDate date);
+
+    // 하루에 인증 완료한 챌린지 개수 조회
+    @Query("SELECT COUNT(uc) FROM UserChallenge uc " +
+            "WHERE uc.user.id = :userId " +
+            "AND uc.completed = :completed " +
+            "AND uc.createdAt BETWEEN :startOfDay AND :endOfDay")
+    long countByCompletion(@Param("userId") Long userId,
+                           @Param("completed") Boolean completed,
+                           @Param("startOfDay") LocalDateTime startOfDay,
+                           @Param("endOfDay") LocalDateTime endOfDay);
 
     @Modifying
     @Query("DELETE FROM UserChallenge uc WHERE uc.user.id = :userId")
