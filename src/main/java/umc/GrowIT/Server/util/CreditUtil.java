@@ -19,6 +19,7 @@ public class CreditUtil {
 
     private final CreditHistoryRepository creditHistoryRepository;
 
+    // 일기 첫작성으로 인한 크레딧 제공 판단 및 사용자 크레딧 최신화
     public boolean grantDiaryCredit(User user, Diary diary, Integer amount) {
         // 1. 해당 날짜에 크레딧 받았는지 확인
         if (hasDiaryCreditForDate(user, diary.getDate())) {
@@ -47,7 +48,8 @@ public class CreditUtil {
         return true;
     }
 
-    public void processItemPurchase(User user, UserItem userItem, Integer itemPrice) {
+    // 아이템 구매로 인한 사용자 크레딧 최신화
+    public void deductItemCredit(User user, UserItem userItem, Integer itemPrice) {
         // 1. 크레딧 사용 기록 (음수로 저장)
         CreditHistory credit = CreditHistory.builder()
                 .user(user)
