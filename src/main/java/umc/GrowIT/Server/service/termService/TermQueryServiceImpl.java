@@ -1,8 +1,10 @@
 package umc.GrowIT.Server.service.termService;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import lombok.RequiredArgsConstructor;
@@ -12,7 +14,6 @@ import umc.GrowIT.Server.converter.TermConverter;
 import umc.GrowIT.Server.domain.Term;
 import umc.GrowIT.Server.domain.User;
 import umc.GrowIT.Server.domain.UserTerm;
-import umc.GrowIT.Server.domain.enums.TermStatus;
 import umc.GrowIT.Server.domain.enums.TermType;
 import umc.GrowIT.Server.repository.TermRepository;
 import umc.GrowIT.Server.web.dto.TermDTO.TermRequestDTO;
@@ -20,6 +21,7 @@ import umc.GrowIT.Server.web.dto.TermDTO.TermResponseDTO;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class TermQueryServiceImpl implements TermQueryService{
 
     private final TermRepository termRepository;
@@ -28,7 +30,8 @@ public class TermQueryServiceImpl implements TermQueryService{
      * 현행 약관 목록 조회
      */
     public List<TermResponseDTO.TermDTO> getTerms(){
-        List<Term> terms = termRepository.findAllByStatus(TermStatus.ACTIVE); // 현행 약관 조회
+        LocalDateTime today = LocalDateTime.now();
+        List<Term> terms = termRepository.findAllByDate(today); // 현행 약관 조회
 
         return terms.stream()
                 .map(TermConverter::toTermDTO)
@@ -47,7 +50,8 @@ public class TermQueryServiceImpl implements TermQueryService{
     @Override
     public List<UserTerm> checkUserTerms(List<TermRequestDTO.UserTermDTO> requestedUserTerms, User newUser) {
         // 현행 약관 수 조회
-        int activeTermCount = termRepository.countByStatus(TermStatus.ACTIVE);
+        LocalDateTime today = LocalDateTime.now();
+        int activeTermCount = termRepository.countByDate(today);
 
         // 요청된 약관 개수와 현행 약관 개수가 다르면 예외 처리
         if (requestedUserTerms.size() != activeTermCount) {
@@ -62,13 +66,15 @@ public class TermQueryServiceImpl implements TermQueryService{
                     if (term == null) {
                         throw new TermHandler(ErrorStatus.INVALID_TERM);
                     }
+                    // 현행 약관 여부 검증
+                    boolean isActive = (!term.getEffectiveDate().isAfter(today)) &&
+                            (term.getExpirationDate() == null || !term.getExpirationDate().isBefore(today));
+                    if (!isActive) {
+                        throw new TermHandler(ErrorStatus.INVALID_TERM);
+                    }
                     // 필수 약관에 동의하지 않으면 예외 처리
                     if (term.getType() == TermType.MANDATORY && !userTerm.getAgreed()) {
                         throw new TermHandler(ErrorStatus.MANDATORY_TERMS_REQUIRED);
-                    }
-                    // 약관 동의 상태 검증
-                    if (term.getStatus() != TermStatus.ACTIVE) {
-                        throw new TermHandler(ErrorStatus.INVALID_TERM);
                     }
                     // UserTerm 엔티티 생성
                     return TermConverter.toUserTerm(userTerm.getAgreed(), term, newUser);

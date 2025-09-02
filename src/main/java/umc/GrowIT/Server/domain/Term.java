@@ -19,7 +19,6 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import umc.GrowIT.Server.domain.common.BaseEntity;
-import umc.GrowIT.Server.domain.enums.TermStatus;
 import umc.GrowIT.Server.domain.enums.TermType;
 
 @Entity
@@ -45,11 +44,6 @@ public class Term extends BaseEntity {
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private TermType type;
-
-    // 약관 적용 상태
-    @Enumerated(EnumType.STRING)
-    @Column(nullable = false)
-    private TermStatus status;
 
     // 약관 효력 발생일
     @Column(nullable = false)

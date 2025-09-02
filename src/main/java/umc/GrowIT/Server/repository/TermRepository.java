@@ -1,14 +1,17 @@
 package umc.GrowIT.Server.repository;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
 
 import umc.GrowIT.Server.domain.Term;
-import umc.GrowIT.Server.domain.enums.TermStatus;
 
 public interface TermRepository extends JpaRepository<Term, Long> {
-    List<Term> findAllByStatus(TermStatus status);
+    @Query("SELECT COUNT(t) FROM Term t WHERE t.effectiveDate <= :today AND (t.expirationDate IS NULL OR t.expirationDate >= :today)")
+    int countByDate(LocalDateTime today);
 
-    int countByStatus(TermStatus status);
+    @Query("SELECT t FROM Term t WHERE t.effectiveDate <= :today AND (t.expirationDate IS NULL OR t.expirationDate >= :today)")
+    List<Term> findAllByDate(LocalDateTime today);
 }
