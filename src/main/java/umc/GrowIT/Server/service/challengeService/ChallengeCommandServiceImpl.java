@@ -110,7 +110,7 @@ public class ChallengeCommandServiceImpl implements ChallengeCommandService {
 
     @Override
     @Transactional
-    public ChallengeResponseDTO.ProofDetailsDTO createChallengeProof(Long userId, Long userChallengeId, ChallengeRequestDTO.ProofRequestDTO proofRequest) {
+    public ChallengeResponseDTO.CreateProofDTO createChallengeProof(Long userId, Long userChallengeId, ChallengeRequestDTO.ProofRequestDTO proofRequest) {
         LocalDate today = LocalDate.now();
 
         LocalDateTime startOfDay = today.atStartOfDay();
@@ -146,9 +146,7 @@ public class ChallengeCommandServiceImpl implements ChallengeCommandService {
             creditUtil.grantUserChallengeCredit(user, userChallenge, CHALLENGE_CREDIT);
         }
 
-        String certificationImageUrl = s3Util.toGetPresignedUrl("challenges/" + userChallenge.getCertificationImageName(), Duration.ofMinutes(15));
-
-        return ChallengeConverter.toProofDetailsDTO(userChallenge, certificationImageUrl);
+        return ChallengeConverter.toCreateProofDTO(userChallenge);
     }
 
     @Override
@@ -175,8 +173,7 @@ public class ChallengeCommandServiceImpl implements ChallengeCommandService {
         // 인증 이미지 + 소감 업데이트
         userChallenge.updateProof(updateRequest);
 
-        String certificationImageUrl = s3Util.toGetPresignedUrl("challenges/" + userChallenge.getCertificationImageName(), Duration.ofMinutes(15));
-        return ChallengeConverter.toChallengeModifyProofDTO(userChallenge, certificationImageUrl);
+        return ChallengeConverter.toChallengeModifyProofDTO(userChallenge);
     }
 
     // 삭제

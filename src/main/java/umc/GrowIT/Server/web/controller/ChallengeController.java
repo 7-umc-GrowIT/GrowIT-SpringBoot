@@ -72,12 +72,12 @@ public class ChallengeController implements ChallengeSpecification {
     }
 
     @PostMapping("{userChallengeId}")
-    public ApiResponse<ChallengeResponseDTO.ProofDetailsDTO> createChallengeProof(@PathVariable Long userChallengeId, @Valid @RequestBody ChallengeRequestDTO.ProofRequestDTO proofRequest) {
+    public ApiResponse<ChallengeResponseDTO.CreateProofDTO> createChallengeProof(@PathVariable Long userChallengeId, @Valid @RequestBody ChallengeRequestDTO.ProofRequestDTO proofRequest) {
 
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         Long userId = (Long) authentication.getPrincipal();
 
-        ChallengeResponseDTO.ProofDetailsDTO response = challengeCommandService.createChallengeProof(userId, userChallengeId, proofRequest);
+        ChallengeResponseDTO.CreateProofDTO response = challengeCommandService.createChallengeProof(userId, userChallengeId, proofRequest);
         return ApiResponse.onSuccess(response);
     }
 
