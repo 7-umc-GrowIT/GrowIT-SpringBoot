@@ -15,6 +15,7 @@ public class UserWithdrawalServiceImpl implements UserWithdrawalService {
     private final DiaryRepository diaryRepository;
     private final GroRepository groRepository;
     private final OAuthAccountRepository oAuthAccountRepository;
+    private final CreditHistoryRepository creditHistoryRepository;
     private final UserRepository userRepository;
     private final RefreshTokenRepository refreshTokenRepository;
 
@@ -32,6 +33,7 @@ public class UserWithdrawalServiceImpl implements UserWithdrawalService {
         diaryRepository.deleteByUserId(userId);
         groRepository.deleteByUserId(userId);
         oAuthAccountRepository.deleteByUserId(userId);
+        creditHistoryRepository.deleteByUserId(userId);
 
         // 4. User 삭제
         userRepository.deleteById(userId);

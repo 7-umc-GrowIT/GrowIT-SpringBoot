@@ -11,6 +11,8 @@ import umc.GrowIT.Server.web.dto.KeywordDTO.KeywordResponseDTO;
 import java.time.LocalDate;
 import java.util.List;
 
+;
+
 public class DiaryResponseDTO {
     @Builder
     @Getter
@@ -70,6 +72,8 @@ public class DiaryResponseDTO {
         String content;
         @Schema(description = "일기 작성 날짜")
         LocalDate date;
+        @Schema(description = "크레딧 정보")
+        CreditInfo creditInfo;
     }
 
     @Builder
@@ -116,6 +120,19 @@ public class DiaryResponseDTO {
         String content;
         @Schema(description = "일기 작성 날짜")
         LocalDate date;
+        @Schema(description = "크레딧 정보")
+        CreditInfo creditInfo;
+    }
+
+    @Builder
+    @Getter
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class CreditInfo {
+        @Schema(description = "크레딧 지급 여부", example = "true")
+        Boolean granted;
+        @Schema(description = "지급된 크레딧 양 (지급되지 않은 경우 0)", example = "2")
+        Integer amount;
     }
 
     @Getter

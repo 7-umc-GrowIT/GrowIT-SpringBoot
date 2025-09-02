@@ -15,6 +15,7 @@ import umc.GrowIT.Server.converter.FlaskConverter;
 import umc.GrowIT.Server.domain.*;
 import umc.GrowIT.Server.repository.*;
 import umc.GrowIT.Server.repository.DiaryRepository;
+import umc.GrowIT.Server.util.CreditUtil;
 import umc.GrowIT.Server.web.dto.DiaryDTO.DiaryRequestDTO;
 import umc.GrowIT.Server.web.dto.DiaryDTO.DiaryResponseDTO;
 import umc.GrowIT.Server.web.dto.FlaskDTO.FlaskRequestDTO;
@@ -37,6 +38,8 @@ public class DiaryCommandServiceImpl implements DiaryCommandService{
     private final KeywordRepository keywordRepository;
     private final ChallengeRepository challengeRepository;
     private final UserChallengeRepository userChallengeRepository;
+
+    private final CreditUtil creditUtil;
 
     //일기 작성 시 추가되는 크레딧 개수
     private static final int DIARY_CREDIT = 2;
@@ -77,10 +80,13 @@ public class DiaryCommandServiceImpl implements DiaryCommandService{
         }
 
         diary.updateContent(request.getContent());
+
+        diaryRepository.save(diary);
         return DiaryConverter.toModifyResultDTO(diary);
     }
 
     @Override
+    @Transactional
     public DiaryResponseDTO.CreateDiaryResultDTO createDiary(DiaryRequestDTO.CreateDiaryDTO request, Long userId) {
 
         //유저 조회
@@ -99,11 +105,10 @@ public class DiaryCommandServiceImpl implements DiaryCommandService{
         //일기 저장
         diary = diaryRepository.save(diary);
 
-        //사용자의 크레딧수 증가
-        user.updateCurrentCredit(user.getCurrentCredit() + DIARY_CREDIT);
-        user.updateTotalCredit(user.getTotalCredit() + DIARY_CREDIT);
+        // 사용자의 크레딧 수 증가
+        boolean isGranted = creditUtil.grantDiaryCredit(user, diary, DIARY_CREDIT);
 
-        return DiaryConverter.toCreateResultDTO(diary);
+        return DiaryConverter.toCreateResultDTO(diary, isGranted, DIARY_CREDIT);
     }
 
     @Override
@@ -187,6 +192,7 @@ public class DiaryCommandServiceImpl implements DiaryCommandService{
     }
 
     @Override
+    @Transactional
     public DiaryResponseDTO.SummaryResultDTO createDiaryByVoice(DiaryRequestDTO.SummaryDTO request, Long userId) {
 
         // 유저 조회
@@ -252,14 +258,13 @@ public class DiaryCommandServiceImpl implements DiaryCommandService{
         //일기 저장
         diary = diaryRepository.save(diary);
 
-        //사용자의 크레딧 수 증가
-        user.updateCurrentCredit(user.getCurrentCredit() + DIARY_CREDIT);
-        user.updateTotalCredit(user.getTotalCredit() + DIARY_CREDIT);
+        // 사용자의 크레딧 수 증가
+        boolean isGranted = creditUtil.grantDiaryCredit(user, diary, DIARY_CREDIT);
 
         // 대화 기록 삭제
         conversationHistory.remove(userId);
 
-        return DiaryConverter.toSummaryResultDTO(diary);
+        return DiaryConverter.toSummaryResultDTO(diary, isGranted, DIARY_CREDIT);
     }
 
     private void checkDiaryDate(Long userId, LocalDate date) {

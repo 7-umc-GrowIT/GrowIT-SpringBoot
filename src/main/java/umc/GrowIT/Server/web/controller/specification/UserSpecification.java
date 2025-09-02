@@ -10,6 +10,7 @@ import jakarta.validation.Valid;
 import org.springframework.web.bind.annotation.*;
 import umc.GrowIT.Server.apiPayload.ApiResponse;
 import umc.GrowIT.Server.domain.enums.ItemCategory;
+import umc.GrowIT.Server.domain.enums.CreditTransactionType;
 import umc.GrowIT.Server.web.dto.CreditDTO.CreditResponseDTO;
 import umc.GrowIT.Server.web.dto.ItemDTO.ItemResponseDTO;
 import umc.GrowIT.Server.web.dto.PaymentDTO.PaymentRequestDTO;
@@ -88,4 +89,20 @@ public interface UserSpecification {
             @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "USER40101", description = "❌ 이메일 또는 패스워드가 일치하지 않습니다.", content = @Content(schema = @Schema(implementation = ApiResponse.class)))
     })
     ApiResponse<UserResponseDTO.MyPageDTO> getMyPage();
+
+
+    @GetMapping("/credits/history")
+    @Operation(summary = "크레딧 기록 조회 API", description = "현재 사용되는 곳이 별도로 없는 테스트 용도의 API입니다.")
+    @ApiResponses({
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "COMMON200", description = "⭕ SUCCESS"),
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "COMMON400", description = "❌ BAD, 잘못된 요청", content = @Content(schema = @Schema(implementation = ApiResponse.class)))
+    })
+    ApiResponse<UserResponseDTO.CreditHistoryResponseDTO> getCreditHistory (
+            @Parameter(description = "조회 연도", example = "2025") @RequestParam Integer year,
+            @Parameter(description = "조회 월", example = "9") @RequestParam Integer month,
+            @Parameter(description = "조회 타입 (ALL, EARN, SPEND)", example = "ALL")
+            @RequestParam(defaultValue = "ALL") CreditTransactionType type,
+            @Parameter(description = "페이지 번호 (0부터 시작)", example = "0")
+            @RequestParam(defaultValue = "0") int page
+    );
 }
