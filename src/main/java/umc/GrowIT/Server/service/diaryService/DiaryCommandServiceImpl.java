@@ -86,6 +86,7 @@ public class DiaryCommandServiceImpl implements DiaryCommandService{
     }
 
     @Override
+    @Transactional
     public DiaryResponseDTO.CreateDiaryResultDTO createDiary(DiaryRequestDTO.CreateDiaryDTO request, Long userId) {
 
         //유저 조회
@@ -191,6 +192,7 @@ public class DiaryCommandServiceImpl implements DiaryCommandService{
     }
 
     @Override
+    @Transactional
     public DiaryResponseDTO.SummaryResultDTO createDiaryByVoice(DiaryRequestDTO.SummaryDTO request, Long userId) {
 
         // 유저 조회
