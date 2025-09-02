@@ -110,6 +110,7 @@ public class ChallengeConverter {
                 .title(userChallenge.getChallenge().getTitle())
                 .time(userChallenge.getChallenge().getTime())
                 .certificationImageUrl(certificationImageUrl)
+                .certificationImageName(userChallenge.getCertificationImageName())
                 .thoughts(userChallenge.getThoughts())
                 .certificationDate(userChallenge.getCertificationDate())
                 .build();
