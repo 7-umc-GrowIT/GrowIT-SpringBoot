@@ -1,8 +1,9 @@
 package umc.GrowIT.Server.apiPayload.code.status;
 
+import org.springframework.http.HttpStatus;
+
 import lombok.AllArgsConstructor;
 import lombok.Getter;
-import org.springframework.http.HttpStatus;
 import umc.GrowIT.Server.apiPayload.code.BaseErrorCode;
 import umc.GrowIT.Server.apiPayload.code.ErrorReasonDTO;
 
@@ -28,6 +29,7 @@ public enum ErrorStatus implements BaseErrorCode {
     USER_CHALLENGE_ALREADY_PROVED(HttpStatus.BAD_REQUEST, "UC4003", "이미 완료된 챌린지입니다."),
     USER_CHALLENGE_NOT_PROVED(HttpStatus.BAD_REQUEST, "UC4004", "챌린지 인증이 완료되지 않았습니다."),
     USER_CHALLENGE_UPDATE_NO_CHANGES(HttpStatus.BAD_REQUEST, "UC4005", "챌린지 인증 내역에 수정사항이 없습니다."),
+    USER_CHALLENGE_PROVED_LIMIT(HttpStatus.BAD_REQUEST, "UC4006", "하루에 10번만 인증이 가능합니다."),
 
     //약관 관련 에러
     TERM_NOT_FOUND(HttpStatus.NOT_FOUND, "TERM4001", "존재하지 않는 약관을 요청했습니다."),
@@ -53,11 +55,8 @@ public enum ErrorStatus implements BaseErrorCode {
     EMAIL_SEND_FAIL(HttpStatus.INTERNAL_SERVER_ERROR, "AUTH5001", "이메일 전송에 실패했습니다."),
     EMAIL_ENCODING_FAIL(HttpStatus.INTERNAL_SERVER_ERROR, "AUTH5002", "이메일 내용 인코딩에 실패했습니다."),
 
-    KAKAO_AUTH_CODE_ERROR(HttpStatus.BAD_REQUEST, "AUTH4030", "인가 코드가 유효한지 확인하세요. (동일한 인가 코드 재요청 불가, 인가 코드 발급 후 10분 이내 요청)"),
-
     // 챌린지 관련 에러
     CHALLENGE_NOT_FOUND(HttpStatus.NOT_FOUND, "CHALLENGE4001", "챌린지를 찾을 수 없습니다."),
-    CHALLENGE_ALREADY_SAVED(HttpStatus.BAD_REQUEST, "CHALLENGE4002", "오늘 이미 챌린지를 저장하였습니다. 추가 저장은 불가능합니다."),
     CHALLENGE_SAVE_LIMIT(HttpStatus.BAD_REQUEST, "CHALLENGE4003", "챌린지는 3개까지 저장 가능합니다."),
     CHALLENGE_AT_LEAST(HttpStatus.BAD_REQUEST, "CHALLENGE4004", "최소 하나의 챌린지를 선택해야 합니다."),
     CHALLENGE_DAILY_MAX(HttpStatus.BAD_REQUEST, "CHALLENGE4005", "데일리 챌린지는 최대 2개까지 저장 가능합니다."),
@@ -75,8 +74,7 @@ public enum ErrorStatus implements BaseErrorCode {
     ITEM_NOT_EQUIPPED(HttpStatus.BAD_REQUEST, "ITEM4005", "착용중인 아이템이 아닙니다."),
 
     // 사용자 아이템 관련 에러
-    USER_ITEM_NOT_FOUND(HttpStatus.NOT_FOUND, "UI4001", "사용자 아이템이 존재하지 않습니다."),
-    EQUIPPED_USER_ITEM_NOT_FOUND(HttpStatus.NOT_FOUND, "UI4002", "착용 중인 사용자 아이템이 존재하지 않습니다."),
+    EQUIPPED_USER_ITEM_NOT_FOUND(HttpStatus.NOT_FOUND, "UI4001", "착용 중인 사용자 아이템이 존재하지 않습니다."),
 
     //결제 관련 에러
     PAYMENT_ERROR(HttpStatus.BAD_REQUEST, "PAYMENT4001", "결제정보가 정확하지 않습니다."),
@@ -106,11 +104,19 @@ public enum ErrorStatus implements BaseErrorCode {
 
     // S3 관련 에러
     S3_BAD_FILE_EXTENSION(HttpStatus.BAD_REQUEST, "S34001", "파일 확장자가 잘못되었습니다."),
+    S3_FILE_NAME_REQUIRED(HttpStatus.BAD_REQUEST, "S34002", "파일 이름은 필수입니다."),
+    S3_FOLDER_NAME_REQUIRED(HttpStatus.BAD_REQUEST, "S34003", "폴더 이름은 필수입니다."),
+    S3_INVALID_FOLDER_NAME(HttpStatus.BAD_REQUEST, "S34004", "폴더명은 영어로 입력해야 합니다."),
 
     // OAuth 관련 에러
-    ACCOUNT_ALREADY_EXISTS(HttpStatus.CONFLICT, "OAUTH_4001", "이미 가입한 소셜 계정입니다."),
-    ACCOUNT_NOT_FOUND(HttpStatus.NOT_FOUND, "OAUTH_4002", "존재하지 않는 계정입니다."),
-    ACCOUNT_BAD_REQUEST(HttpStatus.BAD_REQUEST, "OAUTH_4003", "요청한 이메일로 가입할 수 없습니다."),
+    ACCOUNT_ALREADY_EXISTS(HttpStatus.CONFLICT, "OAUTH4001", "이미 가입한 소셜 계정입니다."),
+    ACCOUNT_NOT_FOUND(HttpStatus.NOT_FOUND, "OAUTH4002", "존재하지 않는 계정입니다."),
+    ACCOUNT_BAD_REQUEST(HttpStatus.BAD_REQUEST, "OAUTH4003", "요청한 이메일로 가입할 수 없습니다."),
+    INVALID_AUTHORIZATION_CODE(HttpStatus.BAD_REQUEST, "AUTH4030", "유효하지 않은 인가 코드입니다."),
+    INVALID_APPLE_CLIENT_SETTING(HttpStatus.INTERNAL_SERVER_ERROR, "AUTH5002", "Apple Client 설정값이 유효하지 않습니다."),
+    INVALID_APPLE_ID_TOKEN(HttpStatus.BAD_REQUEST, "AUTH4032", "유효하지 않은 Apple ID Token 입니다."),
+    APPLE_PARSE_FAILED(HttpStatus.INTERNAL_SERVER_ERROR, "AUTH5001", "ID Token 또는 JWKs 파싱에 실패했습니다."),
+    INVALID_PROVIDER(HttpStatus.BAD_REQUEST, "AUTH4033", "유효하지 않은 소셜 로그인 제공자입니다."),
 
     // 감정 관련 에러
     KEYWORD_NOT_FOUND(HttpStatus.NOT_FOUND, "KEYWORD5001", "감정키워드가 존재하지 않습니다."),

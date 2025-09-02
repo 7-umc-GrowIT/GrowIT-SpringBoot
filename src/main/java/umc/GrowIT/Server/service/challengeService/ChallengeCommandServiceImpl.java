@@ -15,6 +15,8 @@ import umc.GrowIT.Server.web.dto.ChallengeDTO.ChallengeRequestDTO;
 import umc.GrowIT.Server.web.dto.ChallengeDTO.ChallengeResponseDTO;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.util.*;
 
 @Service
@@ -25,17 +27,21 @@ public class ChallengeCommandServiceImpl implements ChallengeCommandService {
     private final UserChallengeRepository userChallengeRepository;
     private final ChallengeRepository challengeRepository;
     private final S3Util s3Util;
-    private Integer challengeCredit = 1;
+
+    //챌린지 인증 작성 시 추가되는 크레딧 개수
+    private static final int CHALLENGE_CREDIT = 1;
 
     @Override
     @Transactional
-    public void selectChallenges(Long userId, List<ChallengeRequestDTO.SelectChallengeRequestDTO> selectRequestList) {
+    public ChallengeResponseDTO.SelectChallengeResponseDTO selectChallenges(Long userId, List<ChallengeRequestDTO.SelectChallengeRequestDTO> selectRequestList) {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new ChallengeHandler(ErrorStatus.USER_NOT_FOUND));
 
         // 전체 선택된 챌린지 개수 초기화
         int dailyChallengeCount = 0;
         int randomChallengeCount = 0;
+
+        List<UserChallenge> userChallenges = new ArrayList<>();
 
         for (ChallengeRequestDTO.SelectChallengeRequestDTO selectRequest : selectRequestList) {
             List<Long> challengeIds = selectRequest.getChallengeIds();
@@ -61,7 +67,7 @@ public class ChallengeCommandServiceImpl implements ChallengeCommandService {
             }
 
             // 각 챌린지를 UserChallenge로 생성 및 저장
-            List<UserChallenge> userChallenges = challengeIds.stream()
+            List<UserChallenge> newChallenges = challengeIds.stream()
                     .map(challengeId -> {
                         Challenge challenge = challengeRepository.findById(challengeId)
                                 .orElseThrow(() -> new ChallengeHandler(ErrorStatus.CHALLENGE_NOT_FOUND));
@@ -69,8 +75,10 @@ public class ChallengeCommandServiceImpl implements ChallengeCommandService {
                     })
                     .toList();
 
-            userChallengeRepository.saveAll(userChallenges);
+            List<UserChallenge> saved = userChallengeRepository.saveAll(newChallenges);
+            userChallenges.addAll(saved);
         }
+        return ChallengeConverter.toSelectChallengeDTO(userChallenges);
     }
 
     // 챌린지 인증 이미지 업로드용 Presigned URL 생성
@@ -100,6 +108,10 @@ public class ChallengeCommandServiceImpl implements ChallengeCommandService {
     @Override
     @Transactional
     public void createChallengeProof(Long userId, Long userChallengeId, ChallengeRequestDTO.ProofRequestDTO proofRequest) {
+        LocalDate today = LocalDate.now();
+
+        LocalDateTime startOfDay = today.atStartOfDay();
+        LocalDateTime endOfDay = today.atTime(LocalTime.MAX);
 
         UserChallenge userChallenge = userChallengeRepository.findByIdAndUserId(userChallengeId, userId)
                 .orElseThrow(() -> new ChallengeHandler(ErrorStatus.USER_CHALLENGE_NOT_FOUND));
@@ -108,13 +120,29 @@ public class ChallengeCommandServiceImpl implements ChallengeCommandService {
             throw new ChallengeHandler(ErrorStatus.USER_CHALLENGE_ALREADY_PROVED);
         }
 
+        // 오늘 날짜로 인증 완료한 챌린지 개수 가져오기
+        long todayCompletedCount = userChallengeRepository.countCompletedTodayByUserId(userId, startOfDay, endOfDay);
+
+        // 인증 작성한 챌린지 개수가 10개인 경우
+        if (todayCompletedCount == 10) {
+            throw new ChallengeHandler(ErrorStatus.USER_CHALLENGE_PROVED_LIMIT);
+        }
+
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new UserHandler(ErrorStatus.USER_NOT_FOUND));
 
         userChallenge.verifyUserChallenge(proofRequest);
 
-        user.updateCurrentCredit(user.getCurrentCredit() + challengeCredit);
-        user.updateTotalCredit(user.getTotalCredit() + challengeCredit);
+        LocalDate targetDate = userChallenge.getDate();
+
+        // 동일한 date로 저장한 챌린지 개수 가져오기
+        long completedCountOnDate = userChallengeRepository.countCompletedOnDateByUserId(userId, targetDate);
+
+        // 챌린지 인증 3번까지 크레딧 지급
+        if (completedCountOnDate <= 3) {
+            user.updateCurrentCredit(user.getCurrentCredit() + CHALLENGE_CREDIT);
+            user.updateTotalCredit(user.getTotalCredit() + CHALLENGE_CREDIT);
+        }
     }
 
     @Override

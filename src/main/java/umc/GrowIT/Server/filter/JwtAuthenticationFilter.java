@@ -16,6 +16,7 @@ import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import io.jsonwebtoken.SignatureException;
 import umc.GrowIT.Server.apiPayload.exception.JwtAuthenticationException;
+import umc.GrowIT.Server.repository.UserRepository;
 import umc.GrowIT.Server.util.JwtTokenUtil;
 
 import static umc.GrowIT.Server.apiPayload.code.status.ErrorStatus.*;
@@ -25,6 +26,7 @@ import static umc.GrowIT.Server.apiPayload.code.status.ErrorStatus.*;
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
     private final JwtTokenUtil jwtTokenUtil;
+    private final UserRepository userRepository;
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
@@ -38,9 +40,14 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                 throw new JwtAuthenticationException(MISSING_TOKEN);
             }
 
-            //토큰에서 사용자 정보 읽어서 탈퇴한 회원인지 확인
-            if (jwtTokenUtil.isUserInactive(token))
-                throw new JwtAuthenticationException(USER_STATUS_INACTIVE);
+            // 토큰에서 사용자 정보 읽어서 탈퇴한 회원인지 확인
+            // if (jwtTokenUtil.isUserInactive(token))
+            //    throw new JwtAuthenticationException(USER_STATUS_INACTIVE);
+
+            // 사용자 정보 확인
+            Long userId = jwtTokenUtil.getUserId(token);
+            userRepository.findById(userId)
+                    .orElseThrow(() -> new JwtAuthenticationException(USER_NOT_FOUND));
 
             //토큰이 유효한지 확인
             if (jwtTokenUtil.validateToken(token)) {

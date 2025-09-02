@@ -30,14 +30,14 @@ public class ChallengeController implements ChallengeSpecification {
     private final ChallengeQueryService challengeQueryService;
     private final ChallengeCommandService challengeCommandService;
 
-    @GetMapping("summary")
+    @GetMapping("")
     public ApiResponse<ChallengeResponseDTO.ChallengeHomeDTO> getChallengeHome() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         Long userId = (Long) authentication.getPrincipal();
         return ApiResponse.onSuccess(challengeQueryService.getChallengeHome(userId));
     }
 
-    @GetMapping("")
+    @GetMapping("status")
     public ApiResponse<ChallengeResponseDTO.ChallengeStatusPagedResponseDTO> getChallengeStatus(
             @RequestParam(required = false) UserChallengeType challengeType,
             @RequestParam Boolean completed,
@@ -52,12 +52,12 @@ public class ChallengeController implements ChallengeSpecification {
     }
 
     @PostMapping("select")
-    public ApiResponse<Void> selectChallenges(@RequestBody List<ChallengeRequestDTO.SelectChallengeRequestDTO> selectRequestList) {
+    public ApiResponse<ChallengeResponseDTO.SelectChallengeResponseDTO> selectChallenges(@RequestBody List<ChallengeRequestDTO.SelectChallengeRequestDTO> selectRequestList) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         Long userId = (Long) authentication.getPrincipal();
 
-        challengeCommandService.selectChallenges(userId, selectRequestList);
-        return ApiResponse.onSuccess();
+        ChallengeResponseDTO.SelectChallengeResponseDTO response = challengeCommandService.selectChallenges(userId, selectRequestList);
+        return ApiResponse.onSuccess(response);
     }
 
     @PostMapping("presigned-url")

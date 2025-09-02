@@ -1,6 +1,6 @@
 package umc.GrowIT.Server.converter;
 
-import org.springframework.data.domain.Slice;
+import org.springframework.data.domain.Page;
 import umc.GrowIT.Server.domain.Challenge;
 import umc.GrowIT.Server.domain.User;
 import umc.GrowIT.Server.domain.UserChallenge;
@@ -67,14 +67,16 @@ public class ChallengeConverter {
                 .build();
     }
 
-    public static ChallengeResponseDTO.ChallengeStatusPagedResponseDTO toChallengeStatusPagedDTO(Slice<UserChallenge> userChallenges) {
-        Slice<ChallengeResponseDTO.ChallengeStatusDTO> mappedSlice = userChallenges.map(ChallengeConverter::toChallengeStatusDTO);
+    public static ChallengeResponseDTO.ChallengeStatusPagedResponseDTO toChallengeStatusPagedDTO(Page<UserChallenge> userChallenges) {
+        Page<ChallengeResponseDTO.ChallengeStatusDTO> mappedPage = userChallenges.map(ChallengeConverter::toChallengeStatusDTO);
 
         return ChallengeResponseDTO.ChallengeStatusPagedResponseDTO.builder()
-                .content(mappedSlice.getContent())
-                .currentPage(mappedSlice.getNumber() + 1)
-                .isFirst(mappedSlice.isFirst())
-                .isLast(!mappedSlice.hasNext())
+                .content(mappedPage.getContent())
+                .currentPage(mappedPage.getNumber() + 1)
+                .totalPages(mappedPage.getTotalPages())
+                .totalElements(mappedPage.getTotalElements())
+                .isFirst(mappedPage.isFirst())
+                .isLast(mappedPage.isLast())
                 .build();
     }
 
@@ -86,7 +88,7 @@ public class ChallengeConverter {
                 .build();
     }
 
-    // 챌린지 인증 작성 결과 반환
+    // 챌린지 인증 내역 조회
     public static ChallengeResponseDTO.ProofDetailsDTO toProofDetailsDTO(UserChallenge userChallenge, String certificationImageUrl) {
         return ChallengeResponseDTO.ProofDetailsDTO.builder()
                 .id(userChallenge.getId())
@@ -106,6 +108,23 @@ public class ChallengeConverter {
                 .challengeType(challengeType)
                 .date(date)
                 .completed(false)
+                .build();
+    }
+
+    // 선택한 챌린지 저장
+    public static ChallengeResponseDTO.SelectChallengeResponseDTO toSelectChallengeDTO(List<UserChallenge> userChallenges) {
+        List<ChallengeResponseDTO.SelectedChallengesInfo> selectedChallenges = userChallenges.stream()
+                .map(userChallenge -> ChallengeResponseDTO.SelectedChallengesInfo.builder()
+                        .id(userChallenge.getId())
+                        .challengeType(userChallenge.getChallengeType())
+                        .title(userChallenge.getChallenge().getTitle())
+                        .content(userChallenge.getChallenge().getContent())
+                        .time(userChallenge.getChallenge().getTime())
+                        .build())
+                .toList();
+
+        return ChallengeResponseDTO.SelectChallengeResponseDTO.builder()
+                .selectedChallenges(selectedChallenges) // 여러 개의 챌린지 리스트 반환
                 .build();
     }
 

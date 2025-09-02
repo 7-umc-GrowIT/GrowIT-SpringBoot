@@ -1,16 +1,32 @@
 package umc.GrowIT.Server.domain;
 
-import jakarta.persistence.*;
-import lombok.*;
-import org.hibernate.annotations.ColumnDefault;
-import umc.GrowIT.Server.domain.common.BaseEntity;
-import umc.GrowIT.Server.domain.enums.Role;
-import umc.GrowIT.Server.domain.enums.UserStatus;
+import static umc.GrowIT.Server.domain.enums.UserStatus.ACTIVE;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import static umc.GrowIT.Server.domain.enums.UserStatus.ACTIVE;
+import org.hibernate.annotations.ColumnDefault;
+
+import jakarta.persistence.CascadeType;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
+import jakarta.persistence.FetchType;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.OneToMany;
+import jakarta.persistence.OneToOne;
+import lombok.AccessLevel;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import umc.GrowIT.Server.domain.common.BaseEntity;
+import umc.GrowIT.Server.domain.enums.Role;
+import umc.GrowIT.Server.domain.enums.UserStatus;
 
 @Entity
 @Getter
@@ -23,12 +39,12 @@ public class User extends BaseEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    // 메인이메일
+    // 메인 이메일
     @Column(unique = true, length = 50)
     private String primaryEmail;
 
     // 비밀번호
-    @Column(nullable = false, length = 100)
+    @Column(length = 100)
     private String password;
 
     // 사용자 이름
@@ -54,10 +70,6 @@ public class User extends BaseEntity {
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private Role role;
-
-    // 사용자의 그로
-    @OneToOne(mappedBy = "user", cascade = CascadeType.ALL)
-    private Gro gro;
 
 //    // 사용자 구독여부
 //    @Column(name = "is_subscribed", nullable = false)
