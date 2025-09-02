@@ -17,6 +17,13 @@ import java.util.List;
 public interface CreditHistoryRepository extends JpaRepository<CreditHistory, Long> {
     boolean existsByUserAndDateAndSource(User user, LocalDate date, CreditSource creditSource);
 
+    // 동일한 date에 대해 인증 완료한 챌린지 개수 조회 (크레딧 지급 용도)
+    @Query("SELECT COUNT(uc) FROM UserChallenge uc " +
+            "WHERE uc.user.id = :userId " +
+            "AND uc.completed = true " +
+            "AND uc.date = :date")
+    long countCompletedOnDateByUserId(@Param("userId") Long userId, @Param("date") LocalDate date);
+
     Slice<CreditHistory> findByUserAndCreatedAtBetweenOrderByCreatedAtDesc(
             User user, LocalDateTime start, LocalDateTime end, Pageable pageable);
 

@@ -7,6 +7,7 @@ import org.springframework.transaction.annotation.Transactional;
 import umc.GrowIT.Server.apiPayload.code.status.ErrorStatus;
 import umc.GrowIT.Server.apiPayload.exception.*;
 import umc.GrowIT.Server.converter.ChallengeConverter;
+import umc.GrowIT.Server.converter.DiaryConverter;
 import umc.GrowIT.Server.domain.*;
 import umc.GrowIT.Server.domain.enums.UserChallengeType;
 import umc.GrowIT.Server.repository.*;
@@ -116,6 +117,9 @@ public class ChallengeCommandServiceImpl implements ChallengeCommandService {
         LocalDateTime startOfDay = today.atStartOfDay();
         LocalDateTime endOfDay = today.atTime(LocalTime.MAX);
 
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new UserHandler(ErrorStatus.USER_NOT_FOUND));
+
         UserChallenge userChallenge = userChallengeRepository.findByIdAndUserId(userChallengeId, userId)
                 .orElseThrow(() -> new ChallengeHandler(ErrorStatus.USER_CHALLENGE_NOT_FOUND));
 
@@ -131,22 +135,12 @@ public class ChallengeCommandServiceImpl implements ChallengeCommandService {
             throw new ChallengeHandler(ErrorStatus.USER_CHALLENGE_PROVED_LIMIT);
         }
 
-        User user = userRepository.findById(userId)
-                .orElseThrow(() -> new UserHandler(ErrorStatus.USER_NOT_FOUND));
-
         userChallenge.verifyUserChallenge(proofRequest);
 
-        LocalDate targetDate = userChallenge.getDate();
+        // 사용자의 크레딧 수 증가
+        boolean isGranted = creditUtil.grantUserChallengeCredit(user, userChallenge, CHALLENGE_CREDIT);
 
-        // 동일한 date로 저장한 챌린지 개수 가져오기
-        long completedCountOnDate = userChallengeRepository.countCompletedOnDateByUserId(userId, targetDate);
-
-        // 챌린지 인증 3번까지 크레딧 지급
-        if (completedCountOnDate <= 3) {
-            creditUtil.grantUserChallengeCredit(user, userChallenge, CHALLENGE_CREDIT);
-        }
-
-        return ChallengeConverter.toCreateProofDTO(userChallenge);
+        return ChallengeConverter.toCreateProofDTO(userChallenge, isGranted, CHALLENGE_CREDIT);
     }
 
     @Override

@@ -6,6 +6,7 @@ import umc.GrowIT.Server.domain.User;
 import umc.GrowIT.Server.domain.UserChallenge;
 import umc.GrowIT.Server.domain.enums.UserChallengeType;
 import umc.GrowIT.Server.web.dto.ChallengeDTO.ChallengeResponseDTO;
+import umc.GrowIT.Server.web.dto.DiaryDTO.DiaryResponseDTO;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -89,13 +90,17 @@ public class ChallengeConverter {
     }
 
     // 챌린지 인증 작성 결과
-    public static ChallengeResponseDTO.CreateProofDTO toCreateProofDTO(UserChallenge userChallenge) {
+    public static ChallengeResponseDTO.CreateProofDTO toCreateProofDTO(UserChallenge userChallenge, boolean creditGranted, int creditAmount) {
         return ChallengeResponseDTO.CreateProofDTO.builder()
                 .id(userChallenge.getId())
                 .title(userChallenge.getChallenge().getTitle())
                 .certificationImageName(userChallenge.getCertificationImageName())
                 .thoughts(userChallenge.getThoughts())
                 .certificationDate(userChallenge.getCertificationDate())
+                .creditInfo(ChallengeResponseDTO.CreditInfo.builder()
+                        .granted(creditGranted)
+                        .amount(creditGranted ? creditAmount : 0)
+                        .build())
                 .build();
     }
 

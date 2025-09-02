@@ -66,8 +66,15 @@ public class CreditUtil {
     }
 
     // 챌린지 인증으로 인한 크레딧 제공 기록 및 사용자 크레딧 최신화
-    public void grantUserChallengeCredit(User user, UserChallenge userChallenge, Integer amount) {
-        // 1. 크레딧 기록
+    public boolean grantUserChallengeCredit(User user, UserChallenge userChallenge, Integer amount) {
+        // 1. 동일한 날짜의 일기에 대해 인증 완료한 챌린지 개수 가져오기
+        long completedCountOnDate = creditHistoryRepository.countCompletedOnDateByUserId(user.getId(), userChallenge.getDate());
+
+        if (completedCountOnDate >= 4) {
+            return false; // 챌린지 인증 4번째부터는 크레딧 제공 x
+        }
+
+        // 2. 크레딧 기록
         CreditHistory credit = CreditHistory.builder()
                 .user(user)
                 .source(CreditSource.CHALLENGE)
@@ -81,9 +88,12 @@ public class CreditUtil {
 
         creditHistoryRepository.save(credit);
 
-        // 2. 사용자 크레딧 최신화
+        // 3. 사용자 크레딧 최신화
         user.updateCurrentCredit(user.getCurrentCredit() + amount);
         user.updateTotalCredit(user.getTotalCredit() + amount);
+
+        // 4. 크레딧 제공 O
+        return true;
     }
 
 
