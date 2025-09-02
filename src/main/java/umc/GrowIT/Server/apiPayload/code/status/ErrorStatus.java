@@ -128,9 +128,6 @@ public enum ErrorStatus implements BaseErrorCode {
 
     // S3 관련 에러
     S3_BAD_FILE_EXTENSION(HttpStatus.BAD_REQUEST, "S340001", "파일 확장자가 잘못되었습니다."),
-    S3_FILE_NAME_REQUIRED(HttpStatus.BAD_REQUEST, "S340002", "파일 이름은 필수입니다."),
-    S3_FOLDER_NAME_REQUIRED(HttpStatus.BAD_REQUEST, "S340003", "폴더 이름은 필수입니다."),
-    S3_INVALID_FOLDER_NAME(HttpStatus.BAD_REQUEST, "S340004", "폴더명은 영어로 입력해야 합니다."),
 
     ;
 
