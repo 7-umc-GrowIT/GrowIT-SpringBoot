@@ -65,19 +65,18 @@ public enum ErrorStatus implements BaseErrorCode {
     WITHDRAWAL_REASON_NOT_FOUND(HttpStatus.NOT_FOUND, "WITHDRAWAL40401", "존재하지 않는 탈퇴 사유입니다."),
 
     // 그로 관련 에러
-    GRO_NICKNAME_LENGTH_INVALID(HttpStatus.BAD_REQUEST, "GRO40001", "닉네임은 2~8자 이내로 작성해야 합니다."),
-    GRO_NICKNAME_UPDATE_NO_CHANGE(HttpStatus.BAD_REQUEST, "GRO40002", "그로의 닉네임에 수정사항이 없습니다."),
+    GRO_NICKNAME_UPDATE_NO_CHANGE(HttpStatus.BAD_REQUEST, "GRO40001", "그로의 닉네임에 수정사항이 없습니다."),
     GRO_NOT_FOUND(HttpStatus.NOT_FOUND, "GRO40401", "그로에 대한 정보가 존재하지 않습니다."),
     GRO_ALREADY_EXISTS(HttpStatus.CONFLICT, "GRO40901", "사용자의 그로가 이미 존재합니다."),
     GRO_NICKNAME_ALREADY_EXISTS(HttpStatus.CONFLICT, "GRO40902", "다른 닉네임과 중복되는 닉네임입니다."),
     GRO_LEVEL_INVALID(HttpStatus.INTERNAL_SERVER_ERROR, "GRO50001", "그로 레벨이 유효하지 않습니다."),
 
     // 아이템 관련 에러
-    ITEM_NOT_FOUND(HttpStatus.BAD_REQUEST, "ITEM40001", "아이템을 찾을 수 없습니다."),
-    ITEM_NOT_OWNED(HttpStatus.BAD_REQUEST, "ITEM40002", "보유하지 않은 아이템입니다."),
-    ITEM_OWNED(HttpStatus.BAD_REQUEST, "ITEM40003", "이미 보유 중인 아이템입니다."),
-    ITEM_ALREADY_EQUIPPED(HttpStatus.BAD_REQUEST, "ITEM40004", "이미 착용중인 아이템입니다."),
-    ITEM_NOT_EQUIPPED(HttpStatus.BAD_REQUEST, "ITEM40005", "착용중인 아이템이 아닙니다."),
+    ITEM_NOT_OWNED(HttpStatus.BAD_REQUEST, "ITEM40001", "보유하지 않은 아이템입니다."),
+    ITEM_NOT_EQUIPPED(HttpStatus.BAD_REQUEST, "ITEM40002", "착용중인 아이템이 아닙니다."),
+    ITEM_NOT_FOUND(HttpStatus.NOT_FOUND, "ITEM40401", "아이템을 찾을 수 없습니다."),
+    ITEM_ALREADY_EQUIPPED(HttpStatus.CONFLICT, "ITEM40901", "이미 착용중인 아이템입니다."),
+    ITEM_OWNED(HttpStatus.CONFLICT, "ITEM40902", "이미 보유중인 아이템입니다."),
 
     // 사용자 아이템 관련 에러
     EQUIPPED_USER_ITEM_NOT_FOUND(HttpStatus.NOT_FOUND, "UI40401", "착용 중인 사용자 아이템이 존재하지 않습니다."),
@@ -86,19 +85,19 @@ public enum ErrorStatus implements BaseErrorCode {
     PAYMENT_ERROR(HttpStatus.BAD_REQUEST, "PAYMENT40001", "결제정보가 정확하지 않습니다."),
 
     // 크레딧 관련 에러
-    CREDIT_NOT_FOUND(HttpStatus.BAD_REQUEST, "CREDIT40001", "크레딧 정보를 찾을 수 없습니다."),
-    INSUFFICIENT_CREDIT(HttpStatus.BAD_REQUEST, "CREDIT40002", "보유 크레딧이 부족합니다."),
+    INSUFFICIENT_CREDIT(HttpStatus.BAD_REQUEST, "CREDIT40001", "보유 크레딧이 부족합니다."),
+    CREDIT_NOT_FOUND(HttpStatus.NOT_FOUND, "CREDIT40401", "크레딧 정보를 찾을 수 없습니다."),
 
     // 날짜 관련 에러
     DATE_NOT_FOUND(HttpStatus.BAD_REQUEST, "DATE40001", "유효하지 않은 날짜입니다."),
     DATE_IS_AFTER(HttpStatus.BAD_REQUEST, "DATE40002", "날짜는 오늘 이후로 설정할 수 없습니다."),
 
     // 일기 관련 에러
-    DIARY_NOT_FOUND(HttpStatus.BAD_REQUEST, "DIARY40001", "존재하지 않는 일기입니다."),
-    DIARY_CHARACTER_LIMIT(HttpStatus.BAD_REQUEST, "DIARY40002", "100자 이내로 작성된 일기입니다."),
-    DIARY_ALREADY_EXISTS(HttpStatus.BAD_REQUEST, "DIARY40003", "해당날짜에 이미 일기가 존재합니다."),
-    DIARY_SAME_CONTENT(HttpStatus.BAD_REQUEST, "DIARY40004", "기존 일기와 동일한 내용입니다."),
-    ANALYZED_DIARY(HttpStatus.BAD_REQUEST, "DIARY40005", "이미 분석된 일기입니다."),
+    DIARY_CHARACTER_LIMIT(HttpStatus.BAD_REQUEST, "DIARY40001", "100자 이내로 작성된 일기입니다."),
+    DIARY_SAME_CONTENT(HttpStatus.BAD_REQUEST, "DIARY40002", "기존 일기와 동일한 내용입니다."),
+    DIARY_NOT_FOUND(HttpStatus.NOT_FOUND, "DIARY40401", "존재하지 않는 일기입니다."),
+    DIARY_ALREADY_EXISTS(HttpStatus.CONFLICT, "DIARY40901", "해당날짜에 이미 일기가 존재합니다."),
+    ANALYZED_DIARY(HttpStatus.CONFLICT, "DIARY40902", "이미 분석된 일기입니다."),
 
     // 감정 관련 에러
     KEYWORD_NOT_FOUND(HttpStatus.NOT_FOUND, "KEYWORD40401", "감정키워드가 존재하지 않습니다."),
@@ -120,12 +119,12 @@ public enum ErrorStatus implements BaseErrorCode {
     RELATED_CHALLENGE_NOT_FOUND(HttpStatus.NOT_FOUND, "CHALLENGE40402", "연관된 챌린지가 없습니다."),
 
     // 사용자 챌린지 관련 에러
-    USER_CHALLENGE_COMPLETE(HttpStatus.BAD_REQUEST, "UC40001", "완료된 챌린지는 삭제가 불가합니다"),
-    USER_CHALLENGE_ALREADY_PROVED(HttpStatus.BAD_REQUEST, "UC40002", "이미 완료된 챌린지입니다."),
-    USER_CHALLENGE_NOT_PROVED(HttpStatus.BAD_REQUEST, "UC40003", "챌린지 인증이 완료되지 않았습니다."),
-    USER_CHALLENGE_UPDATE_NO_CHANGES(HttpStatus.BAD_REQUEST, "UC40004", "챌린지 인증 내역에 수정사항이 없습니다."),
-    USER_CHALLENGE_PROVED_LIMIT(HttpStatus.BAD_REQUEST, "UC40005", "하루에 10번만 인증이 가능합니다."),
+    USER_CHALLENGE_NOT_PROVED(HttpStatus.BAD_REQUEST, "UC40001", "챌린지 인증이 완료되지 않았습니다."),
+    USER_CHALLENGE_UPDATE_NO_CHANGES(HttpStatus.BAD_REQUEST, "UC40002", "챌린지 인증 내역에 수정사항이 없습니다."),
+    USER_CHALLENGE_PROVED_LIMIT(HttpStatus.BAD_REQUEST, "UC40003", "하루에 10번만 인증이 가능합니다."),
     USER_CHALLENGE_NOT_FOUND(HttpStatus.NOT_FOUND, "UC40401", "사용자 챌린지가 존재하지 않습니다"),
+    USER_CHALLENGE_COMPLETE(HttpStatus.CONFLICT, "UC40901", "완료된 챌린지는 삭제가 불가합니다"),
+    USER_CHALLENGE_ALREADY_PROVED(HttpStatus.CONFLICT, "UC40902", "이미 완료된 챌린지입니다."),
 
     // S3 관련 에러
     S3_BAD_FILE_EXTENSION(HttpStatus.BAD_REQUEST, "S340001", "파일 확장자가 잘못되었습니다."),
