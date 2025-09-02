@@ -115,7 +115,7 @@ public class ChallengeQueryServiceImpl implements ChallengeQueryService {
             throw new ChallengeHandler(ErrorStatus.USER_CHALLENGE_NOT_PROVED);
         }
 
-        String certificationImageUrl = s3Util.toGetPresignedUrl("challenges/" + userChallenge.getCertificationImageName(), Duration.ofMinutes(30));
+        String certificationImageUrl = s3Util.toGetPresignedUrl("challenges/" + userChallenge.getCertificationImageName(), Duration.ofMinutes(15));
         return ChallengeConverter.toProofDetailsDTO(userChallenge, certificationImageUrl);
     }
 

@@ -109,11 +109,14 @@ public class ChallengeCommandServiceImpl implements ChallengeCommandService {
 
     @Override
     @Transactional
-    public void createChallengeProof(Long userId, Long userChallengeId, ChallengeRequestDTO.ProofRequestDTO proofRequest) {
+    public ChallengeResponseDTO.CreateProofDTO createChallengeProof(Long userId, Long userChallengeId, ChallengeRequestDTO.ProofRequestDTO proofRequest) {
         LocalDate today = LocalDate.now();
 
         LocalDateTime startOfDay = today.atStartOfDay();
         LocalDateTime endOfDay = today.atTime(LocalTime.MAX);
+
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new UserHandler(ErrorStatus.USER_NOT_FOUND));
 
         UserChallenge userChallenge = userChallengeRepository.findByIdAndUserId(userChallengeId, userId)
                 .orElseThrow(() -> new ChallengeHandler(ErrorStatus.USER_CHALLENGE_NOT_FOUND));
@@ -130,25 +133,17 @@ public class ChallengeCommandServiceImpl implements ChallengeCommandService {
             throw new ChallengeHandler(ErrorStatus.USER_CHALLENGE_PROVED_LIMIT);
         }
 
-        User user = userRepository.findById(userId)
-                .orElseThrow(() -> new UserHandler(ErrorStatus.USER_NOT_FOUND));
-
         userChallenge.verifyUserChallenge(proofRequest);
 
-        LocalDate targetDate = userChallenge.getDate();
+        // 사용자의 크레딧 수 증가
+        boolean isGranted = creditUtil.grantUserChallengeCredit(user, userChallenge, CHALLENGE_CREDIT);
 
-        // 동일한 date로 저장한 챌린지 개수 가져오기
-        long completedCountOnDate = userChallengeRepository.countCompletedOnDateByUserId(userId, targetDate);
-
-        // 챌린지 인증 3번까지 크레딧 지급
-        if (completedCountOnDate <= 3) {
-            creditUtil.grantUserChallengeCredit(user, userChallenge, CHALLENGE_CREDIT);
-        }
+        return ChallengeConverter.toCreateProofDTO(userChallenge, isGranted, CHALLENGE_CREDIT);
     }
 
     @Override
     @Transactional
-    public void updateChallengeProof(Long userId, Long userChallengeId, ChallengeRequestDTO.ProofRequestDTO updateRequest) {
+    public ChallengeResponseDTO.ModifyProofDTO updateChallengeProof(Long userId, Long userChallengeId, ChallengeRequestDTO.ProofRequestDTO updateRequest) {
         // 유저 챌린지 조회
         UserChallenge userChallenge = userChallengeRepository.findByIdAndUserId(userChallengeId, userId)
                 .orElseThrow(() -> new ChallengeHandler(ErrorStatus.USER_CHALLENGE_NOT_FOUND));
@@ -169,6 +164,8 @@ public class ChallengeCommandServiceImpl implements ChallengeCommandService {
 
         // 인증 이미지 + 소감 업데이트
         userChallenge.updateProof(updateRequest);
+
+        return ChallengeConverter.toChallengeModifyProofDTO(userChallenge);
     }
 
     // 삭제

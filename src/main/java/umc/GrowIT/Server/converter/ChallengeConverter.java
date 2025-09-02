@@ -88,6 +88,21 @@ public class ChallengeConverter {
                 .build();
     }
 
+    // 챌린지 인증 작성 결과
+    public static ChallengeResponseDTO.CreateProofDTO toCreateProofDTO(UserChallenge userChallenge, boolean creditGranted, int creditAmount) {
+        return ChallengeResponseDTO.CreateProofDTO.builder()
+                .id(userChallenge.getId())
+                .title(userChallenge.getChallenge().getTitle())
+                .certificationImageName(userChallenge.getCertificationImageName())
+                .thoughts(userChallenge.getThoughts())
+                .certificationDate(userChallenge.getCertificationDate())
+                .creditInfo(ChallengeResponseDTO.CreditInfo.builder()
+                        .granted(creditGranted)
+                        .amount(creditGranted ? creditAmount : 0)
+                        .build())
+                .build();
+    }
+
     // 챌린지 인증 내역 조회
     public static ChallengeResponseDTO.ProofDetailsDTO toProofDetailsDTO(UserChallenge userChallenge, String certificationImageUrl) {
         return ChallengeResponseDTO.ProofDetailsDTO.builder()
@@ -126,6 +141,14 @@ public class ChallengeConverter {
 
         return ChallengeResponseDTO.SelectChallengeResponseDTO.builder()
                 .selectedChallenges(selectedChallenges) // 여러 개의 챌린지 리스트 반환
+                .build();
+    }
+
+    // 챌린지 수정
+    public static ChallengeResponseDTO.ModifyProofDTO toChallengeModifyProofDTO(UserChallenge userChallenge) {
+        return ChallengeResponseDTO.ModifyProofDTO.builder()
+                .certificationImageName(userChallenge.getCertificationImageName())
+                .thoughts(userChallenge.getThoughts())
                 .build();
     }
 
