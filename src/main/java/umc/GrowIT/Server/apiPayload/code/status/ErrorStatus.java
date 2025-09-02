@@ -19,9 +19,9 @@ public enum ErrorStatus implements BaseErrorCode {
 
     // 멤버 관련 에러
     NICKNAME_NOT_EXIST(HttpStatus.BAD_REQUEST, "USER40001", "비밀번호 확인이 일치하지 않습니다."),
-    USER_NOT_FOUND(HttpStatus.UNAUTHORIZED, "USER40102", "이메일 또는 패스워드가 일치하지 않습니다."),
-    USER_STATUS_INACTIVE(HttpStatus.FORBIDDEN, "USER40304", "탈퇴한 회원입니다."),
-    EMAIL_ALREADY_EXISTS(HttpStatus.CONFLICT, "USER40903", "이미 존재하는 이메일입니다."),
+    USER_NOT_FOUND(HttpStatus.UNAUTHORIZED, "USER40101", "이메일 또는 패스워드가 일치하지 않습니다."),
+    USER_STATUS_INACTIVE(HttpStatus.FORBIDDEN, "USER40301", "탈퇴한 회원입니다."),
+    EMAIL_ALREADY_EXISTS(HttpStatus.CONFLICT, "USER40901", "이미 존재하는 이메일입니다."),
 
     // 인증 관련 에러
     EMAIL_NOT_VERIFIED(HttpStatus.BAD_REQUEST, "AUTH40001", "이메일 인증을 완료해주세요."),
@@ -43,8 +43,8 @@ public enum ErrorStatus implements BaseErrorCode {
     EMAIL_ENCODING_FAIL(HttpStatus.INTERNAL_SERVER_ERROR, "AUTH50002", "이메일 내용 인코딩에 실패했습니다."),
 
     // OAuth 관련 에러
-    ACCOUNT_BAD_REQUEST(HttpStatus.BAD_REQUEST, "OAUTH40003", "요청한 이메일로 가입할 수 없습니다."),
-    ACCOUNT_NOT_FOUND(HttpStatus.NOT_FOUND, "OAUTH40402", "존재하지 않는 계정입니다."),
+    ACCOUNT_BAD_REQUEST(HttpStatus.BAD_REQUEST, "OAUTH40001", "요청한 이메일로 가입할 수 없습니다."),
+    ACCOUNT_NOT_FOUND(HttpStatus.NOT_FOUND, "OAUTH40401", "존재하지 않는 계정입니다."),
     ACCOUNT_ALREADY_EXISTS(HttpStatus.CONFLICT, "OAUTH40901", "이미 가입한 소셜 계정입니다."),
 
     INVALID_AUTHORIZATION_CODE(HttpStatus.BAD_REQUEST, "AUTH40005", "유효하지 않은 인가 코드입니다."),
