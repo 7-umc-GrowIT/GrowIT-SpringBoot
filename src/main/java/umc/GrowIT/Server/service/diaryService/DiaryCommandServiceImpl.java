@@ -80,6 +80,8 @@ public class DiaryCommandServiceImpl implements DiaryCommandService{
         }
 
         diary.updateContent(request.getContent());
+
+        diaryRepository.save(diary);
         return DiaryConverter.toModifyResultDTO(diary);
     }
 
