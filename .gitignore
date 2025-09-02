@@ -42,3 +42,10 @@ out/
 
 ### Mac OS 메타 데이터 ###
 .DS_Store
+
+
+# 로그 파일들
+/logs/
+*.log
+*.log.*
+*.gz
