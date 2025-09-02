@@ -159,6 +159,19 @@ public class ChallengeResponseDTO {
         private LocalDateTime certificationDate;
     }
 
+    // 챌린지 수정
+    @Getter
+    @Builder
+    @NoArgsConstructor
+    @AllArgsConstructor
+    @Schema(title = "챌린지 수정 response")
+    public static class ModifyProofDTO {
+        @Schema(description = "챌린지 인증 이미지 url", example = "https://growit-server-bucket.s3.ap-northeast-2.amazonaws.com/challenges/1842f2aa-40d0-4ae3~")
+        private String certificationImageUrl;
+        @Schema(description = "챌린지 인증 소감", example = "오늘은 우주공강에 학교 도서관에 가서~")
+        private String thoughts;
+    }
+
     @Getter
     @Builder
     @NoArgsConstructor

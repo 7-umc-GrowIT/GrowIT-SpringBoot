@@ -128,6 +128,14 @@ public class ChallengeConverter {
                 .build();
     }
 
+    // 챌린지 수정
+    public static ChallengeResponseDTO.ModifyProofDTO toChallengeModifyProofDTO(UserChallenge userChallenge, String certificationImageUrl) {
+        return ChallengeResponseDTO.ModifyProofDTO.builder()
+                .certificationImageUrl(certificationImageUrl)
+                .thoughts(userChallenge.getThoughts())
+                .build();
+    }
+
     // 챌린지 삭제
     public static ChallengeResponseDTO.DeleteChallengeResponseDTO toDeletedUserChallenge(UserChallenge userChallenge) {
         return ChallengeResponseDTO.DeleteChallengeResponseDTO.builder()
