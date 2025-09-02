@@ -17,26 +17,13 @@ public enum ErrorStatus implements BaseErrorCode {
     _UNAUTHORIZED(HttpStatus.UNAUTHORIZED, "COMMON401", "인증이 필요합니다."),
     _FORBIDDEN(HttpStatus.FORBIDDEN, "COMMON403", "금지된 요청입니다."),
 
-    //멤버 관련 에러
+    // 멤버 관련 에러
     NICKNAME_NOT_EXIST(HttpStatus.BAD_REQUEST, "USER40001", "비밀번호 확인이 일치하지 않습니다."),
     USER_NOT_FOUND(HttpStatus.UNAUTHORIZED, "USER40102", "이메일 또는 패스워드가 일치하지 않습니다."),
     USER_STATUS_INACTIVE(HttpStatus.FORBIDDEN, "USER40304", "탈퇴한 회원입니다."),
     EMAIL_ALREADY_EXISTS(HttpStatus.CONFLICT, "USER40903", "이미 존재하는 이메일입니다."),
 
-    //사용자 챌린지 관련 에러
-    USER_CHALLENGE_COMPLETE(HttpStatus.BAD_REQUEST, "UC40001", "완료된 챌린지는 삭제가 불가합니다"),
-    USER_CHALLENGE_ALREADY_PROVED(HttpStatus.BAD_REQUEST, "UC40002", "이미 완료된 챌린지입니다."),
-    USER_CHALLENGE_NOT_PROVED(HttpStatus.BAD_REQUEST, "UC40003", "챌린지 인증이 완료되지 않았습니다."),
-    USER_CHALLENGE_UPDATE_NO_CHANGES(HttpStatus.BAD_REQUEST, "UC40004", "챌린지 인증 내역에 수정사항이 없습니다."),
-    USER_CHALLENGE_PROVED_LIMIT(HttpStatus.BAD_REQUEST, "UC40005", "하루에 10번만 인증이 가능합니다."),
-    USER_CHALLENGE_NOT_FOUND(HttpStatus.NOT_FOUND, "UC40401", "사용자 챌린지가 존재하지 않습니다"),
-
-    //약관 관련 에러
-    MANDATORY_TERMS_REQUIRED(HttpStatus.BAD_REQUEST, "TERM40001", "필수 약관에 반드시 동의해야 합니다."),
-    ALL_TERMS_REQUIRED(HttpStatus.BAD_REQUEST, "TERM40002", "전체 약관 정보를 주세요."),
-    TERM_NOT_FOUND(HttpStatus.NOT_FOUND, "TERM40401", "존재하지 않는 약관을 요청했습니다."),
-
-    //인증 관련 에러
+    // 인증 관련 에러
     EMAIL_NOT_VERIFIED(HttpStatus.BAD_REQUEST, "AUTH40001", "이메일 인증을 완료해주세요."),
     INVALID_AUTH_TYPE(HttpStatus.BAD_REQUEST, "AUTH40002", "이메일 인증 타입이 잘못되었습니다."),
     AUTH_CODE_NOT_FOUND(HttpStatus.BAD_REQUEST, "AUTH40003", "유효한 인증번호가 없습니다."),
@@ -55,16 +42,35 @@ public enum ErrorStatus implements BaseErrorCode {
     EMAIL_SEND_FAIL(HttpStatus.INTERNAL_SERVER_ERROR, "AUTH50001", "이메일 전송에 실패했습니다."),
     EMAIL_ENCODING_FAIL(HttpStatus.INTERNAL_SERVER_ERROR, "AUTH50002", "이메일 내용 인코딩에 실패했습니다."),
 
-    // 챌린지 관련 에러
-    CHALLENGE_SAVE_LIMIT(HttpStatus.BAD_REQUEST, "CHALLENGE40001", "챌린지는 3개까지 저장 가능합니다."),
-    CHALLENGE_AT_LEAST(HttpStatus.BAD_REQUEST, "CHALLENGE40002", "최소 하나의 챌린지를 선택해야 합니다."),
-    CHALLENGE_DAILY_MAX(HttpStatus.BAD_REQUEST, "CHALLENGE40003", "데일리 챌린지는 최대 2개까지 저장 가능합니다."),
-    CHALLENGE_RANDOM_MAX(HttpStatus.BAD_REQUEST, "CHALLENGE40004", "랜덤 챌린지는 최대 1개만 저장 가능합니다."),
-    CHALLENGE_NOT_FOUND(HttpStatus.NOT_FOUND, "CHALLENGE40401", "챌린지를 찾을 수 없습니다."),
-    RELATED_CHALLENGE_NOT_FOUND(HttpStatus.NOT_FOUND, "CHALLENGE40402", "연관된 챌린지가 없습니다."),
+    // OAuth 관련 에러
+    ACCOUNT_BAD_REQUEST(HttpStatus.BAD_REQUEST, "OAUTH40003", "요청한 이메일로 가입할 수 없습니다."),
+    ACCOUNT_NOT_FOUND(HttpStatus.NOT_FOUND, "OAUTH40402", "존재하지 않는 계정입니다."),
+    ACCOUNT_ALREADY_EXISTS(HttpStatus.CONFLICT, "OAUTH40901", "이미 가입한 소셜 계정입니다."),
 
-    //기타 에러
+    INVALID_AUTHORIZATION_CODE(HttpStatus.BAD_REQUEST, "AUTH40005", "유효하지 않은 인가 코드입니다."),
+    INVALID_APPLE_ID_TOKEN(HttpStatus.BAD_REQUEST, "AUTH40006", "유효하지 않은 Apple ID Token 입니다."),
+    INVALID_PROVIDER(HttpStatus.BAD_REQUEST, "AUTH40007", "유효하지 않은 소셜 로그인 제공자입니다."),
+    INVALID_APPLE_CLIENT_SETTING(HttpStatus.INTERNAL_SERVER_ERROR, "AUTH50003", "Apple Client 설정값이 유효하지 않습니다."),
+    APPLE_PARSE_FAILED(HttpStatus.INTERNAL_SERVER_ERROR, "AUTH50004", "ID Token 또는 JWKs 파싱에 실패했습니다."),
+
+    // 약관 관련 에러
+    MANDATORY_TERMS_REQUIRED(HttpStatus.BAD_REQUEST, "TERM40001", "필수 약관에 반드시 동의해야 합니다."),
+    ALL_TERMS_REQUIRED(HttpStatus.BAD_REQUEST, "TERM40002", "전체 약관 정보를 주세요."),
+    TERM_NOT_FOUND(HttpStatus.NOT_FOUND, "TERM40401", "존재하지 않는 약관을 요청했습니다."),
+
+    // 비밀번호 에러
     PASSWORD_NOT_MATCH(HttpStatus.BAD_REQUEST, "PWD40001", "비밀번호 확인이 일치하지 않습니다."),
+
+    // 탈퇴 관련 에러
+    WITHDRAWAL_REASON_NOT_FOUND(HttpStatus.NOT_FOUND, "WITHDRAWAL40401", "존재하지 않는 탈퇴 사유입니다."),
+
+    // 그로 관련 에러
+    GRO_NICKNAME_LENGTH_INVALID(HttpStatus.BAD_REQUEST, "GRO40001", "닉네임은 2~8자 이내로 작성해야 합니다."),
+    GRO_NICKNAME_UPDATE_NO_CHANGE(HttpStatus.BAD_REQUEST, "GRO40002", "그로의 닉네임에 수정사항이 없습니다."),
+    GRO_NOT_FOUND(HttpStatus.NOT_FOUND, "GRO40401", "그로에 대한 정보가 존재하지 않습니다."),
+    GRO_ALREADY_EXISTS(HttpStatus.CONFLICT, "GRO40901", "사용자의 그로가 이미 존재합니다."),
+    GRO_NICKNAME_ALREADY_EXISTS(HttpStatus.CONFLICT, "GRO40902", "다른 닉네임과 중복되는 닉네임입니다."),
+    GRO_LEVEL_INVALID(HttpStatus.INTERNAL_SERVER_ERROR, "GRO50001", "그로 레벨이 유효하지 않습니다."),
 
     // 아이템 관련 에러
     ITEM_NOT_FOUND(HttpStatus.BAD_REQUEST, "ITEM40001", "아이템을 찾을 수 없습니다."),
@@ -76,7 +82,7 @@ public enum ErrorStatus implements BaseErrorCode {
     // 사용자 아이템 관련 에러
     EQUIPPED_USER_ITEM_NOT_FOUND(HttpStatus.NOT_FOUND, "UI40401", "착용 중인 사용자 아이템이 존재하지 않습니다."),
 
-    //결제 관련 에러
+    // 결제 관련 에러
     PAYMENT_ERROR(HttpStatus.BAD_REQUEST, "PAYMENT40001", "결제정보가 정확하지 않습니다."),
 
     // 크레딧 관련 에러
@@ -87,37 +93,12 @@ public enum ErrorStatus implements BaseErrorCode {
     DATE_NOT_FOUND(HttpStatus.BAD_REQUEST, "DATE40001", "유효하지 않은 날짜입니다."),
     DATE_IS_AFTER(HttpStatus.BAD_REQUEST, "DATE40002", "날짜는 오늘 이후로 설정할 수 없습니다."),
 
-    //그로 관련
-    GRO_NICKNAME_LENGTH_INVALID(HttpStatus.BAD_REQUEST, "GRO40001", "닉네임은 2~8자 이내로 작성해야 합니다."),
-    GRO_NICKNAME_UPDATE_NO_CHANGE(HttpStatus.BAD_REQUEST, "GRO40002", "그로의 닉네임에 수정사항이 없습니다."),
-    GRO_NOT_FOUND(HttpStatus.NOT_FOUND, "GRO40401", "그로에 대한 정보가 존재하지 않습니다."),
-    GRO_ALREADY_EXISTS(HttpStatus.CONFLICT, "GRO40901", "사용자의 그로가 이미 존재합니다."),
-    GRO_NICKNAME_ALREADY_EXISTS(HttpStatus.CONFLICT, "GRO40902", "다른 닉네임과 중복되는 닉네임입니다."),
-    GRO_LEVEL_INVALID(HttpStatus.INTERNAL_SERVER_ERROR, "GRO50001", "그로 레벨이 유효하지 않습니다."),
-
-    //일기 관련 에러
+    // 일기 관련 에러
     DIARY_NOT_FOUND(HttpStatus.BAD_REQUEST, "DIARY40001", "존재하지 않는 일기입니다."),
     DIARY_CHARACTER_LIMIT(HttpStatus.BAD_REQUEST, "DIARY40002", "100자 이내로 작성된 일기입니다."),
     DIARY_ALREADY_EXISTS(HttpStatus.BAD_REQUEST, "DIARY40003", "해당날짜에 이미 일기가 존재합니다."),
     DIARY_SAME_CONTENT(HttpStatus.BAD_REQUEST, "DIARY40004", "기존 일기와 동일한 내용입니다."),
     ANALYZED_DIARY(HttpStatus.BAD_REQUEST, "DIARY40005", "이미 분석된 일기입니다."),
-
-    // S3 관련 에러
-    S3_BAD_FILE_EXTENSION(HttpStatus.BAD_REQUEST, "S340001", "파일 확장자가 잘못되었습니다."),
-    S3_FILE_NAME_REQUIRED(HttpStatus.BAD_REQUEST, "S340002", "파일 이름은 필수입니다."),
-    S3_FOLDER_NAME_REQUIRED(HttpStatus.BAD_REQUEST, "S340003", "폴더 이름은 필수입니다."),
-    S3_INVALID_FOLDER_NAME(HttpStatus.BAD_REQUEST, "S340004", "폴더명은 영어로 입력해야 합니다."),
-
-    // OAuth 관련 에러
-    ACCOUNT_BAD_REQUEST(HttpStatus.BAD_REQUEST, "OAUTH40003", "요청한 이메일로 가입할 수 없습니다."),
-    ACCOUNT_NOT_FOUND(HttpStatus.NOT_FOUND, "OAUTH40402", "존재하지 않는 계정입니다."),
-    ACCOUNT_ALREADY_EXISTS(HttpStatus.CONFLICT, "OAUTH40901", "이미 가입한 소셜 계정입니다."),
-
-    INVALID_AUTHORIZATION_CODE(HttpStatus.BAD_REQUEST, "AUTH40005", "유효하지 않은 인가 코드입니다."),
-    INVALID_APPLE_ID_TOKEN(HttpStatus.BAD_REQUEST, "AUTH40006", "유효하지 않은 Apple ID Token 입니다."),
-    INVALID_PROVIDER(HttpStatus.BAD_REQUEST, "AUTH40007", "유효하지 않은 소셜 로그인 제공자입니다."),
-    INVALID_APPLE_CLIENT_SETTING(HttpStatus.INTERNAL_SERVER_ERROR, "AUTH50003", "Apple Client 설정값이 유효하지 않습니다."),
-    APPLE_PARSE_FAILED(HttpStatus.INTERNAL_SERVER_ERROR, "AUTH50004", "ID Token 또는 JWKs 파싱에 실패했습니다."),
 
     // 감정 관련 에러
     KEYWORD_NOT_FOUND(HttpStatus.NOT_FOUND, "KEYWORD40401", "감정키워드가 존재하지 않습니다."),
@@ -130,8 +111,27 @@ public enum ErrorStatus implements BaseErrorCode {
     // 플라스크 관련 에러
     FLASK_API_CALL_FAILED(HttpStatus.INTERNAL_SERVER_ERROR, "FLASK50001", "Flask API 호출에 실패하였습니다."),
 
-    // 탈퇴 관련 에러
-    WITHDRAWAL_REASON_NOT_FOUND(HttpStatus.NOT_FOUND, "WITHDRAWAL40401", "존재하지 않는 탈퇴 사유입니다."),
+    // 챌린지 관련 에러
+    CHALLENGE_SAVE_LIMIT(HttpStatus.BAD_REQUEST, "CHALLENGE40001", "챌린지는 3개까지 저장 가능합니다."),
+    CHALLENGE_AT_LEAST(HttpStatus.BAD_REQUEST, "CHALLENGE40002", "최소 하나의 챌린지를 선택해야 합니다."),
+    CHALLENGE_DAILY_MAX(HttpStatus.BAD_REQUEST, "CHALLENGE40003", "데일리 챌린지는 최대 2개까지 저장 가능합니다."),
+    CHALLENGE_RANDOM_MAX(HttpStatus.BAD_REQUEST, "CHALLENGE40004", "랜덤 챌린지는 최대 1개만 저장 가능합니다."),
+    CHALLENGE_NOT_FOUND(HttpStatus.NOT_FOUND, "CHALLENGE40401", "챌린지를 찾을 수 없습니다."),
+    RELATED_CHALLENGE_NOT_FOUND(HttpStatus.NOT_FOUND, "CHALLENGE40402", "연관된 챌린지가 없습니다."),
+
+    // 사용자 챌린지 관련 에러
+    USER_CHALLENGE_COMPLETE(HttpStatus.BAD_REQUEST, "UC40001", "완료된 챌린지는 삭제가 불가합니다"),
+    USER_CHALLENGE_ALREADY_PROVED(HttpStatus.BAD_REQUEST, "UC40002", "이미 완료된 챌린지입니다."),
+    USER_CHALLENGE_NOT_PROVED(HttpStatus.BAD_REQUEST, "UC40003", "챌린지 인증이 완료되지 않았습니다."),
+    USER_CHALLENGE_UPDATE_NO_CHANGES(HttpStatus.BAD_REQUEST, "UC40004", "챌린지 인증 내역에 수정사항이 없습니다."),
+    USER_CHALLENGE_PROVED_LIMIT(HttpStatus.BAD_REQUEST, "UC40005", "하루에 10번만 인증이 가능합니다."),
+    USER_CHALLENGE_NOT_FOUND(HttpStatus.NOT_FOUND, "UC40401", "사용자 챌린지가 존재하지 않습니다"),
+
+    // S3 관련 에러
+    S3_BAD_FILE_EXTENSION(HttpStatus.BAD_REQUEST, "S340001", "파일 확장자가 잘못되었습니다."),
+    S3_FILE_NAME_REQUIRED(HttpStatus.BAD_REQUEST, "S340002", "파일 이름은 필수입니다."),
+    S3_FOLDER_NAME_REQUIRED(HttpStatus.BAD_REQUEST, "S340003", "폴더 이름은 필수입니다."),
+    S3_INVALID_FOLDER_NAME(HttpStatus.BAD_REQUEST, "S340004", "폴더명은 영어로 입력해야 합니다."),
 
     ;
 
