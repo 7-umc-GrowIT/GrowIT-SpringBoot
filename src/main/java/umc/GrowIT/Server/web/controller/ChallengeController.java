@@ -19,7 +19,7 @@ import org.springframework.web.bind.annotation.RestController;
 import umc.GrowIT.Server.web.dto.ChallengeDTO.ChallengeResponseDTO;
 
 import java.util.List;
-import java.util.Map;
+
 
 @Tag(name = "Challenge", description = "챌린지 관련 API")
 @RestController

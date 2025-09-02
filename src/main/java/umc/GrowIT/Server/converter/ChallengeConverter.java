@@ -6,7 +6,6 @@ import umc.GrowIT.Server.domain.User;
 import umc.GrowIT.Server.domain.UserChallenge;
 import umc.GrowIT.Server.domain.enums.UserChallengeType;
 import umc.GrowIT.Server.web.dto.ChallengeDTO.ChallengeResponseDTO;
-import umc.GrowIT.Server.web.dto.DiaryDTO.DiaryResponseDTO;
 
 import java.time.LocalDate;
 import java.util.List;
