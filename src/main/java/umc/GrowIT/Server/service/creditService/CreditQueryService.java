@@ -1,6 +1,5 @@
 package umc.GrowIT.Server.service.creditService;
 
-import umc.GrowIT.Server.web.controller.enums.CreditFilterType;
 import umc.GrowIT.Server.web.dto.CreditDTO.CreditResponseDTO;
 
 public interface CreditQueryService {

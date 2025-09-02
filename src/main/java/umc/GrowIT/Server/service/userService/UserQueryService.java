@@ -1,6 +1,6 @@
 package umc.GrowIT.Server.service.userService;
 
-import umc.GrowIT.Server.web.controller.enums.CreditFilterType;
+import umc.GrowIT.Server.domain.enums.CreditTransactionType;
 import umc.GrowIT.Server.web.dto.UserDTO.UserResponseDTO;
 
 public interface UserQueryService {
@@ -8,5 +8,5 @@ public interface UserQueryService {
 
     UserResponseDTO.MyPageDTO getMyPage(Long userId);
 
-    UserResponseDTO.CreditHistoryResponseDTO getCreditHistory(Long userId, int year, int month, CreditFilterType filter, int page);
+    UserResponseDTO.CreditHistoryResponseDTO getCreditHistory(Long userId, int year, int month, CreditTransactionType type, int page);
 }

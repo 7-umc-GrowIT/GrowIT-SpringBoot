@@ -7,11 +7,10 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import jakarta.validation.Valid;
-import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.web.bind.annotation.*;
 import umc.GrowIT.Server.apiPayload.ApiResponse;
 import umc.GrowIT.Server.domain.enums.ItemCategory;
-import umc.GrowIT.Server.web.controller.enums.CreditFilterType;
+import umc.GrowIT.Server.domain.enums.CreditTransactionType;
 import umc.GrowIT.Server.web.dto.CreditDTO.CreditResponseDTO;
 import umc.GrowIT.Server.web.dto.ItemDTO.ItemResponseDTO;
 import umc.GrowIT.Server.web.dto.PaymentDTO.PaymentRequestDTO;
@@ -101,8 +100,8 @@ public interface UserSpecification {
     ApiResponse<UserResponseDTO.CreditHistoryResponseDTO> getCreditHistory (
             @Parameter(description = "조회 연도", example = "2025") @RequestParam Integer year,
             @Parameter(description = "조회 월", example = "9") @RequestParam Integer month,
-            @Parameter(description = "조회 필터 (ALL, EARN, SPEND)", example = "ALL")
-            @RequestParam(defaultValue = "ALL") CreditFilterType filter,
+            @Parameter(description = "조회 타입 (ALL, EARN, SPEND)", example = "ALL")
+            @RequestParam(defaultValue = "ALL") CreditTransactionType type,
             @Parameter(description = "페이지 번호 (0부터 시작)", example = "0")
             @RequestParam(defaultValue = "0") int page
     );

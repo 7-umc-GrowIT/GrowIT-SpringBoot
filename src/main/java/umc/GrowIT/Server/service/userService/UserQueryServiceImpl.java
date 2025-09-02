@@ -15,13 +15,11 @@ import umc.GrowIT.Server.domain.User;
 import umc.GrowIT.Server.repository.CreditHistoryRepository;
 import umc.GrowIT.Server.repository.GroRepository;
 import umc.GrowIT.Server.repository.UserRepository;
-import umc.GrowIT.Server.web.controller.enums.CreditFilterType;
+import umc.GrowIT.Server.domain.enums.CreditTransactionType;
 import umc.GrowIT.Server.web.dto.UserDTO.UserResponseDTO;
 
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.YearMonth;
-import java.util.List;
 
 import static umc.GrowIT.Server.domain.enums.UserStatus.INACTIVE;
 
@@ -49,16 +47,16 @@ public class UserQueryServiceImpl implements UserQueryService {
 
     @Override
     @Transactional(readOnly = true)
-    public UserResponseDTO.CreditHistoryResponseDTO getCreditHistory(Long userId, int year, int month, CreditFilterType filterType, int page) {
+    public UserResponseDTO.CreditHistoryResponseDTO getCreditHistory(Long userId, int year, int month, CreditTransactionType type, int page) {
         // 1. 사용자 확인
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new UserHandler(ErrorStatus.USER_NOT_FOUND));
 
-        // 2. 월 & filterType에 맞게 조회
+        // 2. 월 & type에 맞게 조회
         YearMonth ym = YearMonth.of(year, month);
         Pageable pageable = PageRequest.of(page, 10);
 
-        Slice<CreditHistory> histories = getCreditHistoryByMonth(user, ym, filterType, pageable);
+        Slice<CreditHistory> histories = getCreditHistoryByMonth(user, ym, type, pageable);
 
         // 3. 결과 반환
         return UserConverter.toCreditHistoryResponseDTO(histories.getContent(), ym, histories.hasNext());
@@ -75,11 +73,11 @@ public class UserQueryServiceImpl implements UserQueryService {
     }
 
     private Slice<CreditHistory> getCreditHistoryByMonth(User user, YearMonth yearMonth,
-                                                         CreditFilterType filter, Pageable pageable) {
+                                                         CreditTransactionType type, Pageable pageable) {
         LocalDateTime startDateTime = yearMonth.atDay(1).atStartOfDay();
         LocalDateTime endDateTime = yearMonth.atEndOfMonth().atTime(23, 59, 59);
 
-        return switch (filter) {
+        return switch (type) {
             case ALL -> creditHistoryRepository.findByUserAndCreatedAtBetweenOrderByCreatedAtDesc(
                     user, startDateTime, endDateTime, pageable);
             case EARN -> creditHistoryRepository.findByUserAndCreatedAtBetweenAndAmountGreaterThanOrderByCreatedAtDesc(

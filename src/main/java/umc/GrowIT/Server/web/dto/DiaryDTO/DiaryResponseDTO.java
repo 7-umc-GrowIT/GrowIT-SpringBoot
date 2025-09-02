@@ -5,12 +5,13 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import umc.GrowIT.Server.util.dto.CreditDTO;
 import umc.GrowIT.Server.web.dto.ChallengeDTO.ChallengeResponseDTO;
 import umc.GrowIT.Server.web.dto.KeywordDTO.KeywordResponseDTO;
 
 import java.time.LocalDate;
 import java.util.List;
+
+;
 
 public class DiaryResponseDTO {
     @Builder
@@ -75,7 +76,7 @@ public class DiaryResponseDTO {
         LocalDate date;
 
         @Schema(description = "크레딧 정보")
-        CreditDTO.CreditInfo creditInfo;
+        CreditInfo creditInfo;
     }
 
     @Builder
@@ -127,7 +128,19 @@ public class DiaryResponseDTO {
         LocalDate date;
 
         @Schema(description = "크레딧 정보")
-        CreditDTO.CreditInfo creditInfo;
+        CreditInfo creditInfo;
+    }
+
+    @Builder
+    @Getter
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class CreditInfo {
+        @Schema(description = "크레딧 지급 여부", example = "true")
+        Boolean granted;
+
+        @Schema(description = "지급된 크레딧 양 (지급되지 않은 경우 0)", example = "10")
+        Integer amount;
     }
 
     @Getter
