@@ -3,8 +3,6 @@ package umc.GrowIT.Server.converter;
 import umc.GrowIT.Server.domain.Challenge;
 import umc.GrowIT.Server.domain.Diary;
 import umc.GrowIT.Server.domain.Keyword;
-import umc.GrowIT.Server.domain.enums.UserChallengeType;
-import umc.GrowIT.Server.util.dto.CreditDTO;
 import umc.GrowIT.Server.web.dto.ChallengeDTO.ChallengeResponseDTO;
 import umc.GrowIT.Server.web.dto.DiaryDTO.DiaryResponseDTO;
 import umc.GrowIT.Server.web.dto.KeywordDTO.KeywordResponseDTO;
