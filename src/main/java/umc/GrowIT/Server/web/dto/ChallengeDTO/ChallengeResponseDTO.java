@@ -166,7 +166,7 @@ public class ChallengeResponseDTO {
     public static class CreditInfo {
         @Schema(description = "크레딧 지급 여부", example = "true")
         Boolean granted;
-        @Schema(description = "지급된 크레딧 양 (지급되지 않은 경우 0)", example = "10")
+        @Schema(description = "지급된 크레딧 양 (지급되지 않은 경우 0)", example = "1")
         Integer amount;
     }
 
