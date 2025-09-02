@@ -12,6 +12,7 @@ import umc.GrowIT.Server.service.creditService.CreditQueryServiceImpl;
 import umc.GrowIT.Server.service.itemService.ItemQueryServiceImpl;
 import umc.GrowIT.Server.service.userService.UserCommandService;
 import umc.GrowIT.Server.service.userService.UserQueryService;
+import umc.GrowIT.Server.domain.enums.CreditTransactionType;
 import umc.GrowIT.Server.web.controller.specification.UserSpecification;
 import umc.GrowIT.Server.web.dto.CreditDTO.CreditResponseDTO;
 import umc.GrowIT.Server.web.dto.ItemDTO.ItemResponseDTO;
@@ -90,5 +91,19 @@ public class UserController implements UserSpecification {
 
         UserResponseDTO.MyPageDTO result = userQueryService.getMyPage(userId);
         return ApiResponse.onSuccess(result);
+    }
+
+    @Override
+    @GetMapping("/credits/history")
+    public ApiResponse<UserResponseDTO.CreditHistoryResponseDTO> getCreditHistory(
+            @RequestParam Integer year,
+            @RequestParam Integer month,
+            @RequestParam CreditTransactionType type,
+            @RequestParam int page
+    ) {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        Long userId = (Long) authentication.getPrincipal();
+
+        return ApiResponse.onSuccess(userQueryService.getCreditHistory(userId, year, month, type, page));
     }
 }
