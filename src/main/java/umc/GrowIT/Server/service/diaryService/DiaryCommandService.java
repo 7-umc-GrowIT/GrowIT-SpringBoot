@@ -9,7 +9,7 @@ public interface DiaryCommandService {
 
     DiaryResponseDTO.CreateDiaryResultDTO createDiary(DiaryRequestDTO.CreateDiaryDTO request, Long userId);
 
-    DiaryResponseDTO.DeleteDiaryResultDTO deleteDiary(Long diaryId, Long userId);
+    void deleteDiary(Long diaryId, Long userId);
 
     DiaryResponseDTO.VoiceChatResultDTO chatByVoice(DiaryRequestDTO.VoiceChatDTO request, Long userId);
 

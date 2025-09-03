@@ -14,7 +14,6 @@ import umc.GrowIT.Server.converter.DiaryConverter;
 import umc.GrowIT.Server.converter.FlaskConverter;
 import umc.GrowIT.Server.domain.*;
 import umc.GrowIT.Server.repository.*;
-import umc.GrowIT.Server.repository.DiaryRepository;
 import umc.GrowIT.Server.util.CreditUtil;
 import umc.GrowIT.Server.web.dto.DiaryDTO.DiaryRequestDTO;
 import umc.GrowIT.Server.web.dto.DiaryDTO.DiaryResponseDTO;
@@ -112,24 +111,15 @@ public class DiaryCommandServiceImpl implements DiaryCommandService{
     }
 
     @Override
-    public DiaryResponseDTO.DeleteDiaryResultDTO deleteDiary(Long diaryId, Long userId) {
+    public void deleteDiary(Long diaryId, Long userId) {
         //유저 조회
         User user = userRepository.findById(userId).orElseThrow(() -> new UserHandler(ErrorStatus.USER_NOT_FOUND));
 
         Optional<Diary> optionalDiary = diaryRepository.findByUserIdAndId(userId, diaryId);
         Diary diary = optionalDiary.orElseThrow(()->new DiaryHandler(ErrorStatus.DIARY_NOT_FOUND));
-        LocalDate targetDate = diary.getDate();
 
         //일기 삭제
         diaryRepository.delete(diary);
-
-        //UserChallenge 조회
-        List<UserChallenge> targetUserChallenge = userChallengeRepository.findUserChallengesByDateAndUserId(user.getId(), targetDate);
-
-        //UserChallenge 삭제
-        userChallengeRepository.deleteAll(targetUserChallenge);
-
-        return DiaryConverter.toDeleteResultDTO(diary);
     }
 
     @Override

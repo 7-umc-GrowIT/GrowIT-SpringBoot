@@ -71,13 +71,6 @@ public class DiaryConverter {
                 ;
     }
 
-    public static DiaryResponseDTO.DeleteDiaryResultDTO toDeleteResultDTO(Diary diary){
-
-        return DiaryResponseDTO.DeleteDiaryResultDTO.builder()
-                .message("일기를 삭제했어요.")
-                .build();
-    }
-
     public static DiaryResponseDTO.VoiceChatResultDTO toVoiceChatResultDTO(String aiChat){
 
         return DiaryResponseDTO.VoiceChatResultDTO.builder()
