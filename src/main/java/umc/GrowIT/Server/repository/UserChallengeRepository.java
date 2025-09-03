@@ -49,15 +49,6 @@ public interface UserChallengeRepository extends JpaRepository<UserChallenge, Lo
             @Param("completed") Boolean completed,
             Pageable pageable);
 
-    //userId와 date로 UserChallenge 조회
-    @Query("SELECT uc FROM UserChallenge uc " +
-            "WHERE uc.user.id = :userId " +
-            "AND uc.date = :date ")
-    List<UserChallenge> findUserChallengesByDateAndUserId(
-            @Param("userId") Long userId,
-            @Param("date") LocalDate date
-    );
-
     // 하루에 인증 완료한 챌린지 개수 조회
     @Query("SELECT COUNT(uc) FROM UserChallenge uc " +
             "WHERE uc.user.id = :userId " +
