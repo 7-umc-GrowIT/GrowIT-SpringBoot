@@ -58,6 +58,7 @@ public enum ErrorStatus implements BaseErrorCode {
     MANDATORY_TERMS_REQUIRED(HttpStatus.BAD_REQUEST, "TERM_400_01", "필수 약관에 반드시 동의해야 합니다."),
     ALL_TERMS_REQUIRED(HttpStatus.BAD_REQUEST, "TERM_400_02", "전체 약관 정보를 주세요."),
     TERM_NOT_FOUND(HttpStatus.NOT_FOUND, "TERM_404_01", "존재하지 않는 약관을 요청했습니다."),
+    INVALID_TERM(HttpStatus.BAD_REQUEST, "TERM_400_03", "유효하지 않은 약관입니다."),
 
     // 비밀번호 에러
     PASSWORD_NOT_MATCH(HttpStatus.BAD_REQUEST, "PWD_400_01", "비밀번호 확인이 일치하지 않습니다."), // UserErrorStatus 로 이동

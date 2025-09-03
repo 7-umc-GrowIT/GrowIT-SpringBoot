@@ -11,6 +11,7 @@ import umc.GrowIT.Server.apiPayload.code.ErrorReasonDTO;
 public enum TermErrorStatus implements BaseErrorCode {
     MANDATORY_TERMS_REQUIRED(HttpStatus.BAD_REQUEST, "TERM_400_01", "필수 약관에 반드시 동의해야 합니다."),
     ALL_TERMS_REQUIRED(HttpStatus.BAD_REQUEST, "TERM_400_02", "전체 약관 정보를 주세요."),
+    INVALID_TERM(HttpStatus.BAD_REQUEST, "TERM_400_03", "유효하지 않은 약관입니다."),
 
     TERM_NOT_FOUND(HttpStatus.NOT_FOUND, "TERM_404_01", "존재하지 않는 약관을 요청했습니다."),
     ;
