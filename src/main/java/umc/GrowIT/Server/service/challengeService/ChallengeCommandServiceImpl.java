@@ -170,7 +170,7 @@ public class ChallengeCommandServiceImpl implements ChallengeCommandService {
 
     // 삭제
     @Override
-    public ChallengeResponseDTO.DeleteChallengeResponseDTO delete(Long userChallengeId, Long userId) {
+    public void delete(Long userChallengeId, Long userId) {
         // 1. userId를 조회하고 없으면 오류
         userRepository.findById(userId)
                 .orElseThrow(() -> new UserHandler(ErrorStatus.USER_NOT_FOUND));
@@ -186,8 +186,5 @@ public class ChallengeCommandServiceImpl implements ChallengeCommandService {
 
         // 4. 삭제
         userChallengeRepository.deleteById(userChallengeId);
-
-        // 5. converter 작업
-        return ChallengeConverter.toDeletedUserChallenge(userChallenge);
     }
 }

@@ -209,18 +209,6 @@ public class ChallengeResponseDTO {
     @Builder
     @NoArgsConstructor
     @AllArgsConstructor
-    @Schema(title = "챌린지 삭제 response")
-    public static class DeleteChallengeResponseDTO {
-        @Schema(description = "사용자 챌린지 id", example = "1")
-        private Long id;
-        @Schema(description = "챌린지 삭제 성공 메시지", example = "챌린지를 삭제했어요.")
-        private String message;
-    }
-
-    @Getter
-    @Builder
-    @NoArgsConstructor
-    @AllArgsConstructor
     @Schema(title = "챌린지 추천 response")
     public static class ChallengeDTO {
         @Schema(description = "추천 챌린지 id", example = "1")

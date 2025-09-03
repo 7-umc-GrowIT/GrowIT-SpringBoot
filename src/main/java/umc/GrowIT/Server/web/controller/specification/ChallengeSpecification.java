@@ -131,5 +131,5 @@ public interface ChallengeSpecification {
             @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "UC_409_01", description = "❌ 완료된 챌린지는 삭제가 불가합니다.", content = @Content(schema = @Schema(implementation = ApiResponse.class)))
     })
     @Parameter(name = "userChallengeId", description = "삭제할 사용자 챌린지의 ID", example = "1")
-    ApiResponse<ChallengeResponseDTO.DeleteChallengeResponseDTO> deleteChallenge(@PathVariable("userChallengeId") Long userChallengeId);
+    ApiResponse<Void> deleteChallenge(@PathVariable("userChallengeId") Long userChallengeId);
 }

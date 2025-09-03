@@ -152,14 +152,6 @@ public class ChallengeConverter {
                 .build();
     }
 
-    // 챌린지 삭제
-    public static ChallengeResponseDTO.DeleteChallengeResponseDTO toDeletedUserChallenge(UserChallenge userChallenge) {
-        return ChallengeResponseDTO.DeleteChallengeResponseDTO.builder()
-                .id(userChallenge.getId())
-                .message("챌린지를 삭제했어요")
-                .build();
-    }
-
     public static List<ChallengeResponseDTO.ChallengeDTO> toRecommendedChallenges(List<Challenge> dailyChallenges, Challenge randomChallenge) {
         // daily 챌린지 변환
         List<ChallengeResponseDTO.ChallengeDTO> recommendedChallenges = dailyChallenges.stream()
