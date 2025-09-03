@@ -19,7 +19,7 @@ public enum ErrorStatus implements BaseErrorCode {
 
     // 멤버 관련 에러
     NICKNAME_NOT_EXIST(HttpStatus.BAD_REQUEST, "USER_400_01", "비밀번호 확인이 일치하지 않습니다."),
-    USER_NOT_FOUND(HttpStatus.UNAUTHORIZED, "USER_401_01", "이메일 또는 패스워드가 일치하지 않습니다."),
+    USER_NOT_FOUND(HttpStatus.NOT_FOUND, "USER_401_01", "사용자를 찾을 수 없습니다."),
     USER_STATUS_INACTIVE(HttpStatus.FORBIDDEN, "USER_403_01", "탈퇴한 회원입니다."),
     EMAIL_ALREADY_EXISTS(HttpStatus.CONFLICT, "USER_409_01", "이미 존재하는 이메일입니다."),
 
@@ -28,6 +28,7 @@ public enum ErrorStatus implements BaseErrorCode {
     INVALID_AUTH_TYPE(HttpStatus.BAD_REQUEST, "AUTH_400_02", "이메일 인증 타입이 잘못되었습니다."),
     AUTH_CODE_NOT_FOUND(HttpStatus.BAD_REQUEST, "AUTH_400_03", "유효한 인증번호가 없습니다."),
     AUTH_CODE_MISMATCH(HttpStatus.BAD_REQUEST, "AUTH_400_04", "인증번호가 올바르지 않습니다."),
+    INVALID_CREDENTIALS(HttpStatus.UNAUTHORIZED, "USER_401_01", "이메일 또는 비밀번호가 일치하지 않습니다."),
 
     INVALID_TOKEN(HttpStatus.UNAUTHORIZED, "AUTH_401_01", "유효하지 않은 토큰입니다."),
     EXPIRED_TOKEN(HttpStatus.UNAUTHORIZED, "AUTH_401_02", "만료된 토큰입니다. 토큰의 만료 시간이 지나 더 이상 유효하지 않습니다."),
