@@ -98,12 +98,12 @@ public class ChallengeController implements ChallengeSpecification {
     }
 
     @DeleteMapping("{userChallengeId}")
-    public ApiResponse<ChallengeResponseDTO.DeleteChallengeResponseDTO> deleteChallenge(@PathVariable("userChallengeId") Long userChallengeId) {
+    public ApiResponse<Void> deleteChallenge(@PathVariable("userChallengeId") Long userChallengeId) {
         //AccessToken에서 userId 추출
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         Long userId = (Long) authentication.getPrincipal();
 
-        ChallengeResponseDTO.DeleteChallengeResponseDTO deleteChallenge = challengeCommandService.delete(userChallengeId, userId);
-        return ApiResponse.onSuccess(deleteChallenge);
+        challengeCommandService.delete(userChallengeId, userId);
+        return ApiResponse.onSuccess();
     }
 }

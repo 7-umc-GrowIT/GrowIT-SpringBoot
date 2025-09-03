@@ -124,5 +124,5 @@ public interface ChallengeSpecification {
 
     })
     @Parameter(name = "userChallengeId", description = "삭제할 사용자 챌린지의 ID", example = "1")
-    ApiResponse<ChallengeResponseDTO.DeleteChallengeResponseDTO> deleteChallenge(@PathVariable("userChallengeId") Long userChallengeId);
+    ApiResponse<Void> deleteChallenge(@PathVariable("userChallengeId") Long userChallengeId);
 }
