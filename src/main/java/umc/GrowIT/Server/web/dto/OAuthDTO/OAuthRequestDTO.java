@@ -6,7 +6,6 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import net.jcip.annotations.NotThreadSafe;
 import umc.GrowIT.Server.web.dto.TermDTO.TermRequestDTO;
 
 import java.util.List;

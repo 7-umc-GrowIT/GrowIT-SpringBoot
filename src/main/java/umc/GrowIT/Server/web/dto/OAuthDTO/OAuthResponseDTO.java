@@ -1,16 +1,10 @@
 package umc.GrowIT.Server.web.dto.OAuthDTO;
 
-import static com.fasterxml.jackson.annotation.JsonInclude.Include.NON_NULL;
-
-import com.fasterxml.jackson.annotation.JsonInclude;
-
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import umc.GrowIT.Server.domain.enums.LoginMethod;
 import umc.GrowIT.Server.web.dto.AuthDTO.AuthResponseDTO;
-import umc.GrowIT.Server.web.dto.TokenDTO.TokenResponseDTO;
 
 public class OAuthResponseDTO {
     @Getter
