@@ -72,7 +72,7 @@ public class ChallengeQueryServiceImpl implements ChallengeQueryService {
                 ? keywordService.getTodayDiaryKeywords(userId)
                 : Collections.emptyList();
 
-        // 사용자가 직접 저장한 챌린지만 가져옴
+        // 오늘 날짜의 일기에서 저장한 챌린지 목록 조회 (최신순, 최대 3개)
         List<UserChallenge> savedChallenges = userChallengeRepository.findTodayUserChallengesByUserId(userId, today, PageRequest.of(0, 3));
 
         return ChallengeConverter.toChallengeHomeDTO(
