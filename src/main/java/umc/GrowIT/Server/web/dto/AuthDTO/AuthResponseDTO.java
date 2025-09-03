@@ -1,5 +1,6 @@
 package umc.GrowIT.Server.web.dto.AuthDTO;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -9,6 +10,8 @@ import umc.GrowIT.Server.domain.enums.LoginMethod;
 import umc.GrowIT.Server.web.dto.TokenDTO.TokenResponseDTO;
 
 import java.time.LocalDateTime;
+
+import static com.fasterxml.jackson.annotation.JsonInclude.Include.NON_NULL;
 
 public class AuthResponseDTO {
 

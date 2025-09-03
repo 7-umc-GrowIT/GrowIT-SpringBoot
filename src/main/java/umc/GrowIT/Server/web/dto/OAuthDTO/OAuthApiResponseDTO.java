@@ -1,8 +1,11 @@
 package umc.GrowIT.Server.web.dto.OAuthDTO;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotNull;
 import lombok.*;
+
+import static com.fasterxml.jackson.annotation.JsonInclude.Include.NON_NULL;
 
 public class OAuthApiResponseDTO {
 

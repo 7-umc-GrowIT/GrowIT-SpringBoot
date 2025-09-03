@@ -17,7 +17,6 @@ public class OAuthResponseDTO {
     @Builder
     @NoArgsConstructor
     @AllArgsConstructor
-    @JsonInclude(NON_NULL)
     public static class OAuthLoginDTO {
 
         private Boolean signupRequired;
