@@ -1,32 +1,14 @@
 package umc.GrowIT.Server.domain;
 
-import static umc.GrowIT.Server.domain.enums.UserStatus.ACTIVE;
-
-import java.util.ArrayList;
-import java.util.List;
-
+import jakarta.persistence.*;
+import lombok.*;
 import org.hibernate.annotations.ColumnDefault;
-
-import jakarta.persistence.CascadeType;
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.EnumType;
-import jakarta.persistence.Enumerated;
-import jakarta.persistence.FetchType;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.OneToMany;
-import jakarta.persistence.OneToOne;
-import lombok.AccessLevel;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
 import umc.GrowIT.Server.domain.common.BaseEntity;
 import umc.GrowIT.Server.domain.enums.Role;
 import umc.GrowIT.Server.domain.enums.UserStatus;
+
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Getter
@@ -87,19 +69,15 @@ public class User extends BaseEntity {
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
     private List<OAuthAccount> oAuthAccounts = new ArrayList<>();
 
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
+    private List<CreditHistory> creditHistories = new ArrayList<>();
+
     @OneToOne(fetch = FetchType.LAZY)
-//    @JoinColumn(name = "refresh_token_id", nullable = false)
     @JoinColumn(name = "refresh_token_id")
     private RefreshToken refreshToken;
 
     public void encodePassword(String password) {
         this.password = password;
-    }
-
-    public void deleteAccount() {
-        if (this.status == ACTIVE) {
-            this.status = UserStatus.INACTIVE;
-        }
     }
 
     public void updateCurrentCredit(Integer currentCredit) {

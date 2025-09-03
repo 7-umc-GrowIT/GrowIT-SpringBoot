@@ -142,6 +142,38 @@ public class ChallengeResponseDTO {
     @Builder
     @NoArgsConstructor
     @AllArgsConstructor
+    @Schema(title = "챌린지 인증 작성 결과 response")
+    public static class CreateProofDTO {
+        @Schema(description = "챌린지 인증 내역 id", example = "1")
+        private Long id;
+        @Schema(description = "챌린지 제목", example = "학교 도서관에서 독서하기")
+        private String title;
+        @Schema(description = "챌린지 인증 파일명", example = "3c99605a8e01.png")
+        private String certificationImageName;
+        @Schema(description = "챌린지 인증 소감", example = "오늘은 우주공강에 학교 도서관에 가서~")
+        private String thoughts;
+        @Schema(description = "챌린지 인증 날짜", example ="2025-08-26T01:11:50")
+        @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss")
+        private LocalDateTime certificationDate;
+        @Schema(description = "크레딧 정보")
+        CreditInfo creditInfo;
+    }
+
+    @Builder
+    @Getter
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class CreditInfo {
+        @Schema(description = "크레딧 지급 여부", example = "true")
+        Boolean granted;
+        @Schema(description = "지급된 크레딧 양 (지급되지 않은 경우 0)", example = "1")
+        Integer amount;
+    }
+
+    @Getter
+    @Builder
+    @NoArgsConstructor
+    @AllArgsConstructor
     @Schema(title = "챌린지 인증 내역 response")
     public static class ProofDetailsDTO {
         @Schema(description = "챌린지 인증 내역 id", example = "1")
@@ -150,6 +182,8 @@ public class ChallengeResponseDTO {
         private String title;
         @Schema(description = "챌린지 인증 이미지 url", example = "https://growit-server-bucket.s3.ap-northeast-2.amazonaws.com/challenges/1842f2aa-40d0-4ae3~")
         private String certificationImageUrl;
+        @Schema(description = "챌린지 인증 이미지 파일명", example = "3c99605a8e01.png")
+        private String certificationImageName;
         @Schema(description = "챌린지 인증 소감", example = "오늘은 우주공강에 학교 도서관에 가서~")
         private String thoughts;
         @Schema(description = "챌린지 소요 시간", example = "1")
@@ -157,6 +191,18 @@ public class ChallengeResponseDTO {
         @Schema(description = "챌린지 인증 날짜", example ="2025-08-26T01:11:50")
         @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss")
         private LocalDateTime certificationDate;
+    }
+
+    @Getter
+    @Builder
+    @NoArgsConstructor
+    @AllArgsConstructor
+    @Schema(title = "챌린지 수정 response")
+    public static class ModifyProofDTO {
+        @Schema(description = "챌린지 인증 파일명", example = "3c99605a8e01.png")
+        private String certificationImageName;
+        @Schema(description = "챌린지 인증 소감", example = "오늘은 우주공강에 학교 도서관에 가서~")
+        private String thoughts;
     }
 
     @Getter

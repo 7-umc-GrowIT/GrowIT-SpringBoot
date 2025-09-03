@@ -14,21 +14,25 @@ import umc.GrowIT.Server.domain.enums.ItemStatus;
 import umc.GrowIT.Server.repository.ItemRepository;
 import umc.GrowIT.Server.repository.UserItemRepository;
 import umc.GrowIT.Server.repository.UserRepository;
+import umc.GrowIT.Server.util.CreditUtil;
 import umc.GrowIT.Server.web.dto.ItemDTO.ItemResponseDTO;
 import umc.GrowIT.Server.web.dto.ItemEquipDTO.ItemEquipResponseDTO;
 
 @Slf4j
 @Service
 @RequiredArgsConstructor
-@Transactional
 public class ItemCommandServiceImpl implements ItemCommandService {
 
     private final UserRepository userRepository;
     private final ItemRepository itemRepository;
     private final UserItemRepository userItemRepository;
 
-    @Override //아이템 구매 기능
+    private final CreditUtil creditUtil;
+
+    @Override
+    @Transactional
     public ItemResponseDTO.PurchaseItemResponseDTO purchase(Long itemId, Long userId) {
+
         // 1. 사용자 조회하고 없으면 오류
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new ItemHandler(ErrorStatus.USER_NOT_FOUND));
@@ -49,23 +53,20 @@ public class ItemCommandServiceImpl implements ItemCommandService {
             throw new ItemHandler(ErrorStatus.INSUFFICIENT_CREDIT);
         }
 
-        // 보유 크레딧 >= 아이템 가격 = 아이템 구매
-        // 보유 크레딧 최신화
-        user.updateCurrentCredit(user.getCurrentCredit() - item.getPrice());
-        userRepository.save(user);
-
-        // user_item에 저장
-        UserItem newUserItem = ItemConverter.toUserItem();
-        newUserItem.setUser(user);
-        newUserItem.setItem(item);
+        // 5. user_item에 저장
+        UserItem newUserItem = ItemConverter.toUserItem(user, item);
         UserItem savedUserItem = userItemRepository.save(newUserItem);
 
-        // converter 작업
+        // 6. 크레딧 차감 및 이력 기록
+        creditUtil.deductItemCredit(user, savedUserItem, item);
+
+        // 7. converter 작업
         return ItemConverter.toPurchaseItemResponseDTO(savedUserItem);
     }
 
 
     @Override
+    @Transactional
     public ItemEquipResponseDTO updateItemStatus(Long userId, Long itemId, String requestStatus) {
 
 
