@@ -73,9 +73,7 @@ public class ChallengeQueryServiceImpl implements ChallengeQueryService {
                 : Collections.emptyList();
 
         // 사용자가 직접 저장한 챌린지만 가져옴
-        List<UserChallenge> savedChallenges = todayDiary.isPresent()
-                ? userChallengeRepository.findTodayUserChallengesByUserId(userId, today)
-                : Collections.emptyList();
+        List<UserChallenge> savedChallenges = userChallengeRepository.findTodayUserChallengesByUserId(userId, today);
 
         return ChallengeConverter.toChallengeHomeDTO(
                 savedChallenges,

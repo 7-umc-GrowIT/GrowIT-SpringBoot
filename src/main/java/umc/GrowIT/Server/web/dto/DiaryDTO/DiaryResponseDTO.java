@@ -92,16 +92,6 @@ public class DiaryResponseDTO {
     @Getter
     @NoArgsConstructor
     @AllArgsConstructor
-    @Schema(title = "일기 삭제 response")
-    public static class DeleteDiaryResultDTO {
-        @Schema(description = "일기 삭제 성공 메시지", example = "일기를 삭제했어요.")
-        String message;
-    }
-
-    @Builder
-    @Getter
-    @NoArgsConstructor
-    @AllArgsConstructor
     @Schema(title = "음성 대화 response")
     public static class VoiceChatResultDTO {
         @Schema(description = "AI의 답변 내용", example = "힘든 하루셨군요. 어떤 일이 있으셨나요?")

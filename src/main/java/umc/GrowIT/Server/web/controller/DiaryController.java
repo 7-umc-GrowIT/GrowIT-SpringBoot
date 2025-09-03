@@ -60,12 +60,12 @@ public class DiaryController implements DiarySpecification {
     }
 
     @DeleteMapping("/{diaryId}")
-    public ApiResponse<DiaryResponseDTO.DeleteDiaryResultDTO> deleteDiary(@PathVariable("diaryId") Long diaryId){
+    public ApiResponse<Void> deleteDiary(@PathVariable("diaryId") Long diaryId){
         //accessToken에서 userId 추출
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         Long userId = (Long) authentication.getPrincipal();
-
-        return ApiResponse.onSuccess(diaryCommandService.deleteDiary(diaryId, userId));
+        diaryCommandService.deleteDiary(diaryId, userId);
+        return ApiResponse.onSuccess();
     }
     @PostMapping("/text")
     public ApiResponse<DiaryResponseDTO.CreateDiaryResultDTO> createDiaryByText(@Valid @RequestBody DiaryRequestDTO.CreateDiaryDTO request){
