@@ -59,7 +59,7 @@ public enum ErrorStatus implements BaseErrorCode {
     TERM_NOT_FOUND(HttpStatus.NOT_FOUND, "TERM_404_01", "존재하지 않는 약관을 요청했습니다."),
 
     // 비밀번호 에러
-    PASSWORD_NOT_MATCH(HttpStatus.BAD_REQUEST, "PWD_400_01", "비밀번호 확인이 일치하지 않습니다."),
+    PASSWORD_NOT_MATCH(HttpStatus.BAD_REQUEST, "PWD_400_01", "비밀번호 확인이 일치하지 않습니다."), // UserErrorStatus 로 이동
 
     // 탈퇴 관련 에러
     WITHDRAWAL_REASON_NOT_FOUND(HttpStatus.NOT_FOUND, "WITHDRAWAL_404_01", "존재하지 않는 탈퇴 사유입니다."),
@@ -89,8 +89,8 @@ public enum ErrorStatus implements BaseErrorCode {
     CREDIT_NOT_FOUND(HttpStatus.NOT_FOUND, "CREDIT_404_01", "크레딧 정보를 찾을 수 없습니다."),
 
     // 날짜 관련 에러
-    DATE_NOT_FOUND(HttpStatus.BAD_REQUEST, "DATE_400_01", "유효하지 않은 날짜입니다."),
-    DATE_IS_AFTER(HttpStatus.BAD_REQUEST, "DATE_400_02", "날짜는 오늘 이후로 설정할 수 없습니다."),
+    DATE_NOT_FOUND(HttpStatus.BAD_REQUEST, "DATE_400_01", "유효하지 않은 날짜입니다."), // DiaryErrorStatus 로 이동
+    DATE_IS_AFTER(HttpStatus.BAD_REQUEST, "DATE_400_02", "날짜는 오늘 이후로 설정할 수 없습니다."), // DiaryErrorStatus 로 이동
 
     // 일기 관련 에러
     DIARY_CHARACTER_LIMIT(HttpStatus.BAD_REQUEST, "DIARY_400_01", "100자 이내로 작성된 일기입니다."),
@@ -128,7 +128,6 @@ public enum ErrorStatus implements BaseErrorCode {
 
     // S3 관련 에러
     S3_BAD_FILE_EXTENSION(HttpStatus.BAD_REQUEST, "S3_400_01", "파일 확장자가 잘못되었습니다."),
-
     ;
 
     private final HttpStatus httpStatus;
