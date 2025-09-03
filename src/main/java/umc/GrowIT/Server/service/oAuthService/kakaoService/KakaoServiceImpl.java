@@ -32,6 +32,7 @@ import static umc.GrowIT.Server.apiPayload.code.status.ErrorStatus.*;
 import static umc.GrowIT.Server.converter.OAuthAccountConverter.toOAuthAccount;
 import static umc.GrowIT.Server.converter.OAuthConverter.toOAuthLoginDTO;
 import static umc.GrowIT.Server.converter.OAuthConverter.toOAuthUserInfoDTO;
+import static umc.GrowIT.Server.converter.UserConverter.toLoginResponseDTO;
 import static umc.GrowIT.Server.domain.enums.LoginMethod.SOCIAL;
 
 @Service
@@ -130,7 +131,7 @@ public class KakaoServiceImpl implements KakaoService {
         // DB에 카카오 이메일과 일치하는 이메일 있는지 확인 (일부 연동)
         // TODO: 카카오에서 얻어온 사용자 본인 인증 정보와 DB 의 본인 인증 정보 일치 확인 추가 (연동)
         if (!userRepository.existsByPrimaryEmail(oAuthUserInfoDTO.getEmail()))
-            return toOAuthLoginDTO(true, oAuthUserInfoDTO, null, null); // 최초 회원가입 요청
+            return toOAuthLoginDTO(true, oAuthUserInfoDTO, toLoginResponseDTO(null, null)); // 최초 회원가입 요청
         else {
             User user = userRepository.findByPrimaryEmail(oAuthUserInfoDTO.getEmail())
                     .orElseThrow(() -> new UserHandler(_BAD_REQUEST));
@@ -145,7 +146,7 @@ public class KakaoServiceImpl implements KakaoService {
                     customUserDetailsService.loadUserByUsername(user.getPrimaryEmail()));
             userCommandService.setRefreshToken(tokenDTO.getRefreshToken(), user);
 
-            return toOAuthLoginDTO(false, null, tokenDTO, SOCIAL); // 로그인 처리
+            return toOAuthLoginDTO(false, null, toLoginResponseDTO(tokenDTO, SOCIAL)); // 로그인 처리
         }
     }
 }

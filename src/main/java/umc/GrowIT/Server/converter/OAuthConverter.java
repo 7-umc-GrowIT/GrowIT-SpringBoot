@@ -1,6 +1,7 @@
 package umc.GrowIT.Server.converter;
 
 import umc.GrowIT.Server.domain.enums.LoginMethod;
+import umc.GrowIT.Server.web.dto.AuthDTO.AuthResponseDTO;
 import umc.GrowIT.Server.web.dto.OAuthDTO.OAuthApiResponseDTO;
 import umc.GrowIT.Server.web.dto.OAuthDTO.OAuthResponseDTO;
 import umc.GrowIT.Server.web.dto.TokenDTO.TokenResponseDTO;
@@ -27,11 +28,11 @@ public class OAuthConverter {
                 .build();
     }
 
-    public static OAuthResponseDTO.OAuthLoginDTO toOAuthLoginDTO(Boolean signupRequired, OAuthApiResponseDTO.OAuthUserInfoDTO oAuthUserInfo, TokenResponseDTO.TokenDTO tokens, LoginMethod loginMethod) {
+    public static OAuthResponseDTO.OAuthLoginDTO toOAuthLoginDTO(Boolean signupRequired, OAuthApiResponseDTO.OAuthUserInfoDTO oAuthUserInfo, AuthResponseDTO.LoginResponseDTO loginResponseDTO) {
         return OAuthResponseDTO.OAuthLoginDTO.builder()
                 .signupRequired(signupRequired)
                 .oAuthUserInfo(oAuthUserInfo)
-                .loginResponseDTO(toLoginResponseDTO(tokens, loginMethod))
+                .loginResponseDTO(loginResponseDTO)
                 .build();
     }
 }
