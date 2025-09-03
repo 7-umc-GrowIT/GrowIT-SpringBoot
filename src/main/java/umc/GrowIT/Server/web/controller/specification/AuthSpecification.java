@@ -25,7 +25,7 @@ public interface AuthSpecification {
 
     @PostMapping("/signup")
     @SecurityRequirement(name = "")
-    @Operation(summary = "이메일 회원가입 API", description = "약관 목록 입력할 때 termId 1~6 입력해 주세요. (termId 1~4는 필수 동의 항목입니다.)", security = @SecurityRequirement(name = ""))
+    @Operation(summary = "이메일 회원가입 API", description = "GET /terms 약관 목록 조회 API 에서 조회된 약관에 대한 동의 정보를 함께 주세요.", security = @SecurityRequirement(name = ""))
     @ApiResponses({
             @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "COMMON200", description = "⭕ SUCCESS"),
             @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "AUTH4001", description = "❌ 이메일 인증을 완료해주세요.", content = @Content(schema = @Schema(implementation = ApiResponse.class))),
