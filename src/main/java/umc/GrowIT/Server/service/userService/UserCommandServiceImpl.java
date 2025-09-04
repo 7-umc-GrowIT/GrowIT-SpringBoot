@@ -20,6 +20,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import lombok.RequiredArgsConstructor;
 import umc.GrowIT.Server.apiPayload.code.status.ErrorStatus;
+import umc.GrowIT.Server.apiPayload.exception.AuthHandler;
 import umc.GrowIT.Server.apiPayload.exception.UserHandler;
 import umc.GrowIT.Server.converter.UserConverter;
 import umc.GrowIT.Server.domain.CustomUserDetails;
@@ -117,7 +118,7 @@ public class UserCommandServiceImpl implements UserCommandService {
 
             return toLoginResponseDTO(tokenDTO, LOCAL);
         } catch (UsernameNotFoundException | BadCredentialsException e) {
-            throw new UserHandler(ErrorStatus.USER_NOT_FOUND); //사용자가 입력한 email 또는 password 데이터가 데이터베이스에 없을 때 예외 처리
+            throw new AuthHandler(ErrorStatus.INVALID_CREDENTIALS); //사용자가 입력한 email 또는 password 데이터가 데이터베이스에 없을 때 예외 처리
         }
     }
 
