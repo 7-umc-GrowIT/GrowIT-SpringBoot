@@ -120,5 +120,4 @@ public class AuthController implements AuthSpecification {
 
         return ApiResponse.onSuccess(result);
     }
-
 }
