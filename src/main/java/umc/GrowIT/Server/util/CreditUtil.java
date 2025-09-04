@@ -24,6 +24,9 @@
         // 날짜별로 처음 일기 작성 시 적립되는 크레딧
         private static final int DAILY_FIRST_DIARY_CREDIT = 2;
 
+        // 챌린지 인증 작성 시 적립되는 크레딧
+        private static final int CHALLENGE_CREDIT = 1;
+
         // 일기 첫작성으로 인한 크레딧 제공 기록 및 사용자 크레딧 최신화
         public CreditGrantResult grantDiaryCredit(User user, Diary diary) {
             int amount = 0;
@@ -82,12 +85,12 @@
         }
 
         // 챌린지 인증으로 인한 크레딧 제공 기록 및 사용자 크레딧 최신화
-        public boolean grantUserChallengeCredit(User user, UserChallenge userChallenge, Integer amount) {
+        public CreditGrantResult grantUserChallengeCredit(User user, UserChallenge userChallenge) {
             // 1. 동일한 날짜의 일기에 대해 인증 완료한 챌린지 개수 가져오기
             long completedCountOnDate = userChallengeRepository.countCompletedOnDateByUserId(user.getId(), userChallenge.getDate());
 
             if (completedCountOnDate >= 4) {
-                return false; // 챌린지 인증 4번째부터는 크레딧 제공 x
+                return new CreditGrantResult(false, 0); // 챌린지 인증 4번째부터는 크레딧 제공 x
             }
 
             // 2. 크레딧 기록
@@ -96,7 +99,7 @@
                     .source(CreditSource.CHALLENGE)
                     .referenceId(userChallenge.getId())
                     .date(userChallenge.getDate())
-                    .amount(amount)
+                    .amount(CHALLENGE_CREDIT)
                     .description(String.format("[%s] 챌린지 완료",
                             userChallenge.getDate().format(DateTimeFormatter.ofPattern("MM-dd"))))
                     .build()
@@ -105,11 +108,11 @@
             creditHistoryRepository.save(credit);
 
             // 3. 사용자 크레딧 최신화
-            user.updateCurrentCredit(user.getCurrentCredit() + amount);
-            user.updateTotalCredit(user.getTotalCredit() + amount);
+            user.updateCurrentCredit(user.getCurrentCredit() + CHALLENGE_CREDIT);
+            user.updateTotalCredit(user.getTotalCredit() + CHALLENGE_CREDIT);
 
             // 4. 크레딧 제공 O
-            return true;
+            return new CreditGrantResult(true, CHALLENGE_CREDIT);
         }
 
 
