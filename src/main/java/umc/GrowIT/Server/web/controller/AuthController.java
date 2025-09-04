@@ -32,8 +32,6 @@ import umc.GrowIT.Server.web.dto.TokenDTO.TokenRequestDTO;
 import umc.GrowIT.Server.web.dto.TokenDTO.TokenResponseDTO;
 import umc.GrowIT.Server.web.dto.UserDTO.UserRequestDTO;
 
-import java.util.Map;
-
 @Tag(name = "Auth", description = "인증 관련 API")
 @RestController
 @RequiredArgsConstructor
