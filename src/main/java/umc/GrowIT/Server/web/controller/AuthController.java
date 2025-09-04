@@ -122,10 +122,4 @@ public class AuthController implements AuthSpecification {
 
         return ApiResponse.onSuccess(result);
     }
-
-    @PostMapping("/apple/oauth/return")
-    public ApiResponse<Map<String, String>> handleApplePost(@RequestParam Map<String, String> params) {
-        return ApiResponse.onSuccess(params);
-    }
-
 }
