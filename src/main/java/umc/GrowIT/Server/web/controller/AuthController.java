@@ -32,8 +32,6 @@ import umc.GrowIT.Server.web.dto.TokenDTO.TokenRequestDTO;
 import umc.GrowIT.Server.web.dto.TokenDTO.TokenResponseDTO;
 import umc.GrowIT.Server.web.dto.UserDTO.UserRequestDTO;
 
-import java.util.Map;
-
 @Tag(name = "Auth", description = "인증 관련 API")
 @RestController
 @RequiredArgsConstructor
@@ -121,11 +119,6 @@ public class AuthController implements AuthSpecification {
         AuthResponseDTO.LogoutResponseDTO result = authService.logout(userId);
 
         return ApiResponse.onSuccess(result);
-    }
-
-    @PostMapping("/apple/oauth/return")
-    public ApiResponse<Map<String, String>> handleApplePost(@RequestParam Map<String, String> params) {
-        return ApiResponse.onSuccess(params);
     }
 
 }
