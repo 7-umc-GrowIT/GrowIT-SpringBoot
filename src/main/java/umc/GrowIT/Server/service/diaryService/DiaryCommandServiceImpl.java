@@ -14,6 +14,7 @@ import umc.GrowIT.Server.converter.DiaryConverter;
 import umc.GrowIT.Server.converter.FlaskConverter;
 import umc.GrowIT.Server.domain.*;
 import umc.GrowIT.Server.repository.*;
+import umc.GrowIT.Server.util.dto.CreditGrantResult;
 import umc.GrowIT.Server.util.CreditUtil;
 import umc.GrowIT.Server.web.dto.DiaryDTO.DiaryRequestDTO;
 import umc.GrowIT.Server.web.dto.DiaryDTO.DiaryResponseDTO;
@@ -36,12 +37,8 @@ public class DiaryCommandServiceImpl implements DiaryCommandService{
     private final ChallengeKeywordRepository challengeKeywordRepository;
     private final KeywordRepository keywordRepository;
     private final ChallengeRepository challengeRepository;
-    private final UserChallengeRepository userChallengeRepository;
 
     private final CreditUtil creditUtil;
-
-    //일기 작성 시 추가되는 크레딧 개수
-    private static final int DIARY_CREDIT = 2;
 
     @Value("${openai.model1}")
     private String chatModel;
@@ -105,9 +102,9 @@ public class DiaryCommandServiceImpl implements DiaryCommandService{
         diary = diaryRepository.save(diary);
 
         // 사용자의 크레딧 수 증가
-        boolean isGranted = creditUtil.grantDiaryCredit(user, diary, DIARY_CREDIT);
+        CreditGrantResult result = creditUtil.grantDiaryCredit(user, diary);
 
-        return DiaryConverter.toCreateResultDTO(diary, isGranted, DIARY_CREDIT);
+        return DiaryConverter.toCreateResultDTO(diary, result);
     }
 
     @Override
@@ -249,12 +246,12 @@ public class DiaryCommandServiceImpl implements DiaryCommandService{
         diary = diaryRepository.save(diary);
 
         // 사용자의 크레딧 수 증가
-        boolean isGranted = creditUtil.grantDiaryCredit(user, diary, DIARY_CREDIT);
+        CreditGrantResult result = creditUtil.grantDiaryCredit(user, diary);
 
         // 대화 기록 삭제
         conversationHistory.remove(userId);
 
-        return DiaryConverter.toSummaryResultDTO(diary, isGranted, DIARY_CREDIT);
+        return DiaryConverter.toSummaryResultDTO(diary, result);
     }
 
     private void checkDiaryDate(Long userId, LocalDate date) {

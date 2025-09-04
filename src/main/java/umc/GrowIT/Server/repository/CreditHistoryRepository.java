@@ -28,4 +28,6 @@ public interface CreditHistoryRepository extends JpaRepository<CreditHistory, Lo
     @Modifying
     @Query("DELETE FROM CreditHistory ch WHERE ch.user.id = :userId")
     void deleteByUserId(@Param("userId") Long userId);
+
+    boolean existsByUserAndSource(User user, CreditSource creditSource);
 }

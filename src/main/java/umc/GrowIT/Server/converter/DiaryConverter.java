@@ -3,6 +3,7 @@ package umc.GrowIT.Server.converter;
 import umc.GrowIT.Server.domain.Challenge;
 import umc.GrowIT.Server.domain.Diary;
 import umc.GrowIT.Server.domain.Keyword;
+import umc.GrowIT.Server.util.dto.CreditGrantResult;
 import umc.GrowIT.Server.web.dto.ChallengeDTO.ChallengeResponseDTO;
 import umc.GrowIT.Server.web.dto.DiaryDTO.DiaryResponseDTO;
 import umc.GrowIT.Server.web.dto.KeywordDTO.KeywordResponseDTO;
@@ -57,15 +58,15 @@ public class DiaryConverter {
                 .build();
     }
 
-    public static DiaryResponseDTO.CreateDiaryResultDTO toCreateResultDTO(Diary diary, boolean creditGranted, int creditAmount){
+    public static DiaryResponseDTO.CreateDiaryResultDTO toCreateResultDTO(Diary diary, CreditGrantResult result){
 
         return DiaryResponseDTO.CreateDiaryResultDTO.builder()
                 .diaryId(diary.getId())
                 .content(diary.getContent())
                 .date(diary.getDate())
                 .creditInfo(DiaryResponseDTO.CreditInfo.builder()
-                        .granted(creditGranted)
-                        .amount(creditGranted ? creditAmount : 0)
+                        .granted(result.isGranted())
+                        .amount(result.isGranted() ? result.getAmount() : 0)
                         .build())
                 .build()
                 ;
@@ -78,15 +79,15 @@ public class DiaryConverter {
                 .build();
     }
 
-    public static DiaryResponseDTO.SummaryResultDTO toSummaryResultDTO(Diary diary, boolean creditGranted, int creditAmount){
+    public static DiaryResponseDTO.SummaryResultDTO toSummaryResultDTO(Diary diary, CreditGrantResult result){
 
         return DiaryResponseDTO.SummaryResultDTO.builder()
                 .diaryId(diary.getId())
                 .content(diary.getContent())
                 .date(diary.getDate())
                 .creditInfo(DiaryResponseDTO.CreditInfo.builder()
-                        .granted(creditGranted)
-                        .amount(creditGranted ? creditAmount : 0)
+                        .granted(result.isGranted())
+                        .amount(result.isGranted() ? result.getAmount() : 0)
                         .build())
                 .build();
     }
