@@ -109,6 +109,7 @@ public class AppleServiceImpl implements AppleService {
         try {
             // 토큰 파싱
             SignedJWT idTokenJwt = SignedJWT.parse(idToken);
+            log.debug("ID Token : {}", idToken);
 
             // Apple JWKs 가져오기
             String jwksStr = appleAuthWebClient.get()
