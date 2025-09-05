@@ -44,6 +44,11 @@ public class OAuthCommandServiceImpl implements OAuthCommandService {
         OAuthApiResponseDTO.OAuthUserInfoDTO oAuthUserInfo = oAuthUserInfoAndUserTermsDTO.getOauthUserInfo();
         List<TermRequestDTO.UserTermDTO> requestedUserTerms = oAuthUserInfoAndUserTermsDTO.getUserTerms();
 
+        log.info("oAuthUserInfo.getSocialId() : {}", oAuthUserInfo.getSocialId());
+        log.info("oAuthUserInfo.getProvider() : {}", oAuthUserInfo.getProvider());
+        log.info("oAuthUserInfo.getEmail() : {}", oAuthUserInfo.getEmail());
+        log.info("oAuthUserInfo.getName() : {}", oAuthUserInfo.getName());
+
         // 이미 최초 소셜 로그인을 한 경우 가입 불가
         if (oAuthAccountRepository.existsBySocialId(oAuthUserInfo.getSocialId()))
             throw new OAuthHandler(ACCOUNT_ALREADY_EXISTS);
