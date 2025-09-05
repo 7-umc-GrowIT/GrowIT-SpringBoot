@@ -31,8 +31,10 @@ public class JwtTokenUtil {
     private final UserQueryService userQueryService;
 
     private final Key key;
-    public static final long ACCESS_TOKEN_EXPIRATION_MS = 60L * 60 * 1000; // Access token 만료 시간 1시간
-    public static final long REFRESH_TOKEN_EXPIRATION_MS = 60L * 24 * 60 * 60 * 1000; // Refresh token 만료 시간 60일
+//    public static final long ACCESS_TOKEN_EXPIRATION_MS = 60L * 60 * 1000; // Access token 만료 시간 1시간
+//    public static final long REFRESH_TOKEN_EXPIRATION_MS = 60L * 24 * 60 * 60 * 1000; // Refresh token 만료 시간 60일
+    public static final long ACCESS_TOKEN_EXPIRATION_MS = 3L * 60 * 1000; // Access token 만료 시간 3분 (임시)
+    public static final long REFRESH_TOKEN_EXPIRATION_MS = 30L * 60 * 1000; // Refresh token 만료 시간 30분 (임시)
 
     public JwtTokenUtil(@Value("${spring.jwt.secretKey}") String secretKey, UserQueryService userQueryService) {
         byte[] keyBytes = Decoders.BASE64.decode(secretKey);
