@@ -7,9 +7,11 @@ import org.springframework.web.client.RestTemplate;
 
 @Configuration
 public class OpenAiConfig {
+    // 대화&요약용
     @Value("${openai.api.key}")
     private String openAiKey;
 
+    // 감정 분석용
     @Value("${openai.api.key-sub}")
     private String subOpenAiKey;
 
