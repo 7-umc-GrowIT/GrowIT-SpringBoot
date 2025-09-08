@@ -4,6 +4,7 @@ import jakarta.persistence.*;
 import lombok.*;
 import umc.GrowIT.Server.domain.common.BaseEntity;
 import umc.GrowIT.Server.domain.enums.CreditSource;
+import umc.GrowIT.Server.domain.enums.DiaryType;
 
 import java.time.LocalDate;
 
@@ -38,6 +39,11 @@ public class CreditHistory extends BaseEntity {
     // 과거의 DIARY, CHALLENGE를 관리하기 위한 날짜
     @Column(nullable = true)
     private LocalDate date;
+
+    // CreditSource가 Diary일 경우만 사용되는 일기 타입 (음성 or 텍스트)
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = true)
+    private DiaryType diaryType;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id", nullable = false)

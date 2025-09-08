@@ -4,6 +4,7 @@
     import org.springframework.stereotype.Service;
     import umc.GrowIT.Server.domain.*;
     import umc.GrowIT.Server.domain.enums.CreditSource;
+    import umc.GrowIT.Server.domain.enums.DiaryType;
     import umc.GrowIT.Server.repository.CreditHistoryRepository;
     import umc.GrowIT.Server.repository.UserChallengeRepository;
     import umc.GrowIT.Server.util.dto.CreditGrantResult;
@@ -28,12 +29,12 @@
         private static final int CHALLENGE_CREDIT = 1;
 
         // 일기 첫작성으로 인한 크레딧 제공 기록 및 사용자 크레딧 최신화
-        public CreditGrantResult grantDiaryCredit(User user, Diary diary) {
+        public CreditGrantResult grantDiaryCredit(User user, Diary diary, DiaryType diaryType) {
             int amount = 0;
 
             // 1. 사용자의 상황 판단 통해 크레딧 결정
-            // 앱 자체 일기 첫작성 시
-            if (isFirstDiaryEver(user)) {
+            // 음성으로 일기 작성할 때에만 앱 자체 첫작성인지 체크
+            if (diaryType.equals(DiaryType.VOICE) && isFirstDiaryEver(user)) {
                 amount = FIRST_DIARY_CREDIT;
             }
             // 날짜별 일기 첫작성 시
@@ -51,6 +52,7 @@
                     .source(CreditSource.DIARY)
                     .referenceId(diary.getId())
                     .date(diary.getDate())
+                    .diaryType(diaryType)
                     .amount(amount)
                     .description(String.format("[%s] 일기 작성", diary.getDate().format(DateTimeFormatter.ofPattern("MM-dd"))))
                     .build()
@@ -121,7 +123,7 @@
         */
         // 앱 최초 일기 작성 여부 확인 (가입 후 최초 1회)
         private boolean isFirstDiaryEver(User user) {
-            return !creditHistoryRepository.existsByUserAndSource(user, CreditSource.DIARY);
+            return !creditHistoryRepository.existsByUserAndSourceAndDiaryType(user, CreditSource.DIARY, DiaryType.VOICE);
         }
         // 해당 날짜에 일기 첫작성으로 인해서 크레딧을 이미 받았는지 확인
         public boolean hasDiaryCreditForDate(User user, LocalDate date) {

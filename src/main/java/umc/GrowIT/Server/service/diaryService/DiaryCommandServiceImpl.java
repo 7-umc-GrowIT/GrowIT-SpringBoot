@@ -16,6 +16,7 @@ import umc.GrowIT.Server.apiPayload.exception.*;
 import umc.GrowIT.Server.converter.DiaryConverter;
 import umc.GrowIT.Server.converter.FlaskConverter;
 import umc.GrowIT.Server.domain.*;
+import umc.GrowIT.Server.domain.enums.DiaryType;
 import umc.GrowIT.Server.repository.*;
 import umc.GrowIT.Server.util.dto.CreditGrantResult;
 import umc.GrowIT.Server.util.CreditUtil;
@@ -105,13 +106,14 @@ public class DiaryCommandServiceImpl implements DiaryCommandService{
                 .content(request.getContent())
                 .user(user)
                 .date(request.getDate())
+                .type(DiaryType.TEXT)
                 .build();
 
         //일기 저장
         diary = diaryRepository.save(diary);
 
         // 사용자의 크레딧 수 증가
-        CreditGrantResult result = creditUtil.grantDiaryCredit(user, diary);
+        CreditGrantResult result = creditUtil.grantDiaryCredit(user, diary, DiaryType.TEXT);
 
         return DiaryConverter.toCreateResultDTO(diary, result);
     }
@@ -249,13 +251,14 @@ public class DiaryCommandServiceImpl implements DiaryCommandService{
                 .content(aiChat)
                 .user(user)
                 .date(request.getDate())
+                .type(DiaryType.VOICE)
                 .build();
 
         //일기 저장
         diary = diaryRepository.save(diary);
 
         // 사용자의 크레딧 수 증가
-        CreditGrantResult result = creditUtil.grantDiaryCredit(user, diary);
+        CreditGrantResult result = creditUtil.grantDiaryCredit(user, diary, DiaryType.VOICE);
 
         // 대화 기록 삭제
         conversationHistory.remove(userId);
