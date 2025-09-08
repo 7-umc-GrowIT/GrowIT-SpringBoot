@@ -21,6 +21,11 @@ public class DiaryQueryServiceImpl implements DiaryQueryService{
     private final DiaryRepository diaryRepository;
 
     @Override
+    public boolean hasWrittenAny(Long userId) {
+        return diaryRepository.existsByUserId(userId);
+    }
+
+    @Override
     public DiaryResponseDTO.DiaryDateListDTO getDiaryDate(Integer year, Integer month, Long userId) {
         // Diary 리스트를 year와 month를 기준으로 필터링
         List<Diary> diaryList = diaryRepository.findByUserIdAndYearAndMonth(userId, year, month);

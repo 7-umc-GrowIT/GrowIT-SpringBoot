@@ -23,6 +23,15 @@ public class DiaryController implements DiarySpecification {
     private final DiaryQueryService diaryQueryService;
     private final DiaryCommandService diaryCommandService;
 
+    @GetMapping("/has-any")
+    public ApiResponse<Boolean> hasAnyDiary(){
+        //accessToken에서 userId 추출
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        Long userId = (Long) authentication.getPrincipal();
+
+        return ApiResponse.onSuccess(diaryQueryService.hasWrittenAny(userId));
+    }
+
     @GetMapping("/dates")
     public ApiResponse<DiaryResponseDTO.DiaryDateListDTO> getDiaryDate(@RequestParam Integer year,
                                                                        @RequestParam Integer month){
