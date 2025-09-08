@@ -57,4 +57,14 @@ public class UserResponseDTO {
         @Schema(description = "타입", example = "적립")
         private String type;
     }
+
+    @Builder
+    @Getter
+    @NoArgsConstructor
+    @AllArgsConstructor
+    @Schema(title = "이메일 조회 Response")
+    public static class EmailResponseDTO {
+        @Schema(description = "이메일", example = "GrowIT2025@gmail.com")
+        private String email;
+    }
 }

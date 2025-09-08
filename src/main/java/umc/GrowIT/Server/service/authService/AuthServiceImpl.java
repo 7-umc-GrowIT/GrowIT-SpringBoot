@@ -93,7 +93,7 @@ public class AuthServiceImpl implements AuthService {
             if (user == null) {
                 throw new UserHandler(ErrorStatus.USER_NOT_FOUND);
             }
-            userCommandService.checkUserInactive(user); // 탈퇴한 회원인지 확인
+//            userCommandService.checkUserInactive(user); // 탈퇴한 회원인지 확인
         } else { //type이 잘못됨
             throw new AuthHandler(ErrorStatus.INVALID_AUTH_TYPE);
         }
