@@ -46,6 +46,9 @@ public class DiaryCommandServiceImpl implements DiaryCommandService{
     @Value("${openai.model2}")
     private String summaryModel;
 
+    @Value("${openai.model3}")
+    private String fineTunedSummaryModel;
+
     @Value("${openai.keyword-model}")
     private String keywordModel;
 
@@ -202,38 +205,36 @@ public class DiaryCommandServiceImpl implements DiaryCommandService{
         }
 
 
-        //‼️‼️‼️ 대화 기록이 없으면 테스트용 더미 데이터 사용
-//        if (messages == null || messages.isEmpty()) {
-//            messages = new ArrayList<>();
-//            messages.add(new Message("user", "오늘 정말 힘든 하루였어요"));
-//            messages.add(new Message("assistant", "힘든 하루셨군요. 어떤 일이 있으셨나요?"));
-//            messages.add(new Message("user", "회사에서 업무가 너무 많아서 스트레스받았어요"));
-//            messages.add(new Message("assistant", "업무 스트레스는 정말 힘드시겠어요. 그래도 하루 일과를 마치셨으니 고생 많으셨어요."));
-//            messages.add(new Message("user", "그래도 저녁에 맛있는 음식 먹으면서 기분이 좀 나아졌네요"));
-//            messages.add(new Message("assistant", "좋은 음식으로 기분전환이 되셨다니 다행이에요."));
-//        }
+        // 기존 대화 내용 길이 체크 추가
+        int totalContentLength = messages.stream()
+                .filter(msg -> msg.getRole().equals("user"))
+                .mapToInt(msg -> msg.getContent().length())
+                .sum();
 
+        String summaryPrompt; // 대화 길이별 프롬프트 선택용
+        String selectedModel; // 대화 길이별 모델 선택용
 
-        // AI에게 대화내용 요약 요청
-        messages.add(new Message("system", "다음의 내용은 사용자가 AI와 대화한 기록이야." +
-                " role: user인 경우 사용자의 말이고, role: assistant인 경우 AI가 사용자의 말에 대답하는 말이야." +
-                " 이 기록을 바탕으로 사용자가 혼자 쓰는 일기처럼 1인칭 시점으로 작성해줘." +
-                " 기본적으로는 '~했다', '~였다'로 끝나는 문체를 사용하고," +
-                " '~걸까?', '~는구나' 같은 혼잣말은 전체 글에서 1-2번 정도만 자연스럽게 사용해줘." +
-                " 사용자의 감정이 자연스럽게 드러나도록 작성하되, 실제 대화 내용에만 기반해줘." +
-                " 일기에서 AI와 대화했다는 사실이 드러나지 않도록 하고, 날짜는 적지 말아줘."));
+        if (totalContentLength < 20) { // 사용자 입력이 20자 미만인 경우
+            selectedModel = summaryModel;
+            summaryPrompt = "다음의 내용은 사용자가 AI와 대화한 기록이야." +
+                    " role: user인 경우 사용자의 말이고, role: assistant인 경우 AI가 사용자의 말에 대답하는 말이야." +
+                    " 이 기록을 바탕으로 사용자가 혼자 쓰는 일기처럼 1인칭 시점으로 작성해줘." +
+                    " 대화 내용이 매우 짧으므로 추측하여 내용을 확장하지 말고, 주어진 정보만으로 1-2문장의 간단한 일기로 작성해줘." +
+                    " '~했다', '~였다'로 끝나는 문체를 사용하고, AI와 대화했다는 사실이 드러나지 않도록 해줘.";
+        } else {
+            selectedModel = fineTunedSummaryModel;
+            summaryPrompt = "다음의 내용은 사용자가 AI와 대화한 기록이야." +
+                    " role: user인 경우 사용자의 말이고, role: assistant인 경우 AI가 사용자의 말에 대답하는 말이야." +
+                    " 이 기록을 바탕으로 사용자가 혼자 쓰는 일기처럼 1인칭 시점으로 작성해줘." +
+                    " 기본적으로는 '~했다', '~였다'로 끝나는 문체를 사용하고," +
+                    " '~걸까?', '~는구나' 같은 혼잣말은 전체 글에서 1-2번 정도만 자연스럽게 사용해줘." +
+                    " 사용자의 감정이 자연스럽게 드러나도록 작성하되, 실제 대화 내용에만 기반해줘." +
+                    " 일기에서 AI와 대화했다는 사실이 드러나지 않도록 하고, 날짜는 적지 말아줘.";
+        }
 
-//        // ChatGPT 요청 생성
-//        ChatGPTRequest gptRequest = new ChatGPTRequest(summaryModel, messages);
-//
-//        // API 요청 및 응답 처리
-//        ChatGPTResponse chatGPTResponse = template.postForObject(apiURL, gptRequest, ChatGPTResponse.class);
-//
-//        if (chatGPTResponse.getChoices().isEmpty()) {
-//            throw new OpenAIHandler(ErrorStatus.GPT_RESPONSE_EMPTY);
-//        }
+        messages.add(new Message("system", summaryPrompt));
 
-        String aiChat = requestGptChat(summaryModel, messages);
+        String aiChat = requestGptChat(selectedModel, messages);
 
         //일기 생성
         Diary diary = Diary.builder()
