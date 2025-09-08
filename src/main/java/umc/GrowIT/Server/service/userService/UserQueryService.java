@@ -9,4 +9,6 @@ public interface UserQueryService {
     UserResponseDTO.MyPageDTO getMyPage(Long userId);
 
     UserResponseDTO.CreditHistoryResponseDTO getCreditHistory(Long userId, int year, int month, CreditTransactionType type, int page);
+
+    UserResponseDTO.EmailResponseDTO getMyEmail(Long userId);
 }

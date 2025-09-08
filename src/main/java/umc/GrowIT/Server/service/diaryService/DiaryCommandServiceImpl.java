@@ -4,10 +4,13 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.client.RestClient;
 import org.springframework.web.client.RestTemplate;
+import org.springframework.web.reactive.function.client.WebClient;
 import umc.GrowIT.Server.apiPayload.code.status.ErrorStatus;
 import umc.GrowIT.Server.apiPayload.exception.*;
 import umc.GrowIT.Server.converter.DiaryConverter;
@@ -55,11 +58,17 @@ public class DiaryCommandServiceImpl implements DiaryCommandService{
     @Value("${openai.api.url}")
     private String apiURL;
 
+    // 대화&요약용
     @Autowired
     private RestTemplate template;
 
+    // 감정 분석용
     @Autowired
     private RestTemplate subTemplate;
+
+    // Flask 호출용
+    private final RestClient flaskRestClient;
+
 
     //userId-대화내용 저장용 HashMap
     private final Map<Long, List<Message>> conversationHistory = new HashMap<>();
@@ -388,19 +397,21 @@ public class DiaryCommandServiceImpl implements DiaryCommandService{
         // Flask에 모든 감정을 전달하여 유사도 분석 요청
         log.info("[입력된 감정을 Flask로 전달하여 분석]");
 
-        ResponseEntity<FlaskResponseDTO.EmotionAnalysisResponseDTO> response = template.postForEntity(
-                "http://localhost:5000/analyze_emotions",
-                request,
-                FlaskResponseDTO.EmotionAnalysisResponseDTO.class);
+        FlaskResponseDTO.EmotionAnalysisResponseDTO response = flaskRestClient
+                .post()
+                .uri("/analyze_emotions")
+                .contentType(MediaType.APPLICATION_JSON)
+                .body(request)
+                .retrieve()
+                .body(FlaskResponseDTO.EmotionAnalysisResponseDTO.class);
 
-        FlaskResponseDTO.EmotionAnalysisResponseDTO body = response.getBody();
 
         // 응답 오류체크
-        if (body.getAnalyzedEmotions() == null || body.getAnalyzedEmotions().isEmpty()) {
+        if (response == null || response.getAnalyzedEmotions() == null || response.getAnalyzedEmotions().isEmpty()) {
             throw new FlaskHandler(ErrorStatus.FLASK_API_CALL_FAILED);
         }
 
-        List<FlaskResponseDTO.SimilarityResultDTO> analyzedEmotions = body.getAnalyzedEmotions();
+        List<FlaskResponseDTO.SimilarityResultDTO> analyzedEmotions = response.getAnalyzedEmotions();
 
         for (FlaskResponseDTO.SimilarityResultDTO analysisResult : analyzedEmotions) {
 
