@@ -20,7 +20,7 @@
         private final UserChallengeRepository userChallengeRepository;
 
         // 앱 자체에서 처음 일기 작성 시 적립되는 크레딧
-        private static final int FIRST_DIARY_CREDIT = 5;
+        private static final int FIRST_VOICE_DIARY_CREDIT = 5;
 
         // 날짜별로 처음 일기 작성 시 적립되는 크레딧
         private static final int DAILY_FIRST_DIARY_CREDIT = 2;
@@ -35,7 +35,7 @@
             // 1. 사용자의 상황 판단 통해 크레딧 결정
             // 음성으로 일기 작성할 때에만 앱 자체 첫작성인지 체크
             if (diaryType.equals(DiaryType.VOICE) && isFirstDiaryEver(user)) {
-                amount = FIRST_DIARY_CREDIT;
+                amount = FIRST_VOICE_DIARY_CREDIT;
             }
             // 날짜별 일기 첫작성 시
             else if (!hasDiaryCreditForDate(user, diary.getDate())) {
