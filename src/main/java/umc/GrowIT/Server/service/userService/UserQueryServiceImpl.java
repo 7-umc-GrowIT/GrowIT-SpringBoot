@@ -33,20 +33,6 @@ public class UserQueryServiceImpl implements UserQueryService {
 
     @Override
     @Transactional(readOnly = true)
-    public UserResponseDTO.MyPageDTO getMyPage(Long userId) {
-        User user = userRepository.findById(userId)
-                .orElseThrow(() -> new UserHandler(ErrorStatus.USER_NOT_FOUND));
-
-
-        Gro gro = groRepository.findByUserId(userId)
-                .orElseThrow(() -> new UserHandler(ErrorStatus.GRO_NOT_FOUND));
-
-
-        return UserConverter.toMyPageDTO(user, gro);
-    }
-
-    @Override
-    @Transactional(readOnly = true)
     public UserResponseDTO.CreditHistoryResponseDTO getCreditHistory(Long userId, int year, int month, CreditTransactionType type, int page) {
         // 1. 사용자 확인
         User user = userRepository.findById(userId)
@@ -61,6 +47,34 @@ public class UserQueryServiceImpl implements UserQueryService {
         // 3. 결과 반환
         return UserConverter.toCreditHistoryResponseDTO(histories.getContent(), ym, histories.hasNext());
     }
+
+
+    @Override
+    @Transactional(readOnly = true)
+    public UserResponseDTO.MyPageDTO getMyPage(Long userId) {
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new UserHandler(ErrorStatus.USER_NOT_FOUND));
+
+
+        Gro gro = groRepository.findByUserId(userId)
+                .orElseThrow(() -> new UserHandler(ErrorStatus.GRO_NOT_FOUND));
+
+
+        return UserConverter.toMyPageDTO(user, gro);
+    }
+
+
+    @Override
+    @Transactional(readOnly = true)
+    public UserResponseDTO.EmailResponseDTO getMyEmail(Long userId) {
+        // 1. 사용자 확인
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new UserHandler(ErrorStatus.USER_NOT_FOUND));
+
+        // 2.결과 반환
+        return UserConverter.toEmailResponseDTO(user);
+    }
+
 
     /*
         이 아래부터 헬퍼메소드

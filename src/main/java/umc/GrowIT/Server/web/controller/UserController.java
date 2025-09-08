@@ -63,11 +63,19 @@ public class UserController implements UserSpecification {
         return ApiResponse.onSuccess(null);
     }
 
+
     @Override
-    @PatchMapping("/password")
-    public ApiResponse<Void> findPassword(@RequestBody @Valid UserRequestDTO.PasswordDTO passwordDTO) {
-        userCommandService.updatePassword(passwordDTO);
-        return ApiResponse.onSuccess();
+    @GetMapping("/credits/history")
+    public ApiResponse<UserResponseDTO.CreditHistoryResponseDTO> getCreditHistory(
+            @RequestParam Integer year,
+            @RequestParam Integer month,
+            @RequestParam CreditTransactionType type,
+            @RequestParam int page
+    ) {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        Long userId = (Long) authentication.getPrincipal();
+
+        return ApiResponse.onSuccess(userQueryService.getCreditHistory(userId, year, month, type, page));
     }
 
 
@@ -83,6 +91,15 @@ public class UserController implements UserSpecification {
         return ApiResponse.onSuccess();
     }
 
+
+    @Override
+    @PatchMapping("/password")
+    public ApiResponse<Void> findPassword(@RequestBody @Valid UserRequestDTO.PasswordDTO passwordDTO) {
+        userCommandService.updatePassword(passwordDTO);
+        return ApiResponse.onSuccess();
+    }
+
+
     @Override
     @GetMapping("/mypage")
     public ApiResponse<UserResponseDTO.MyPageDTO> getMyPage() {
@@ -94,16 +111,12 @@ public class UserController implements UserSpecification {
     }
 
     @Override
-    @GetMapping("/credits/history")
-    public ApiResponse<UserResponseDTO.CreditHistoryResponseDTO> getCreditHistory(
-            @RequestParam Integer year,
-            @RequestParam Integer month,
-            @RequestParam CreditTransactionType type,
-            @RequestParam int page
-    ) {
+    @GetMapping("/me/email")
+    public ApiResponse<UserResponseDTO.EmailResponseDTO> getMyEmail() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         Long userId = (Long) authentication.getPrincipal();
 
-        return ApiResponse.onSuccess(userQueryService.getCreditHistory(userId, year, month, type, page));
+        UserResponseDTO.EmailResponseDTO result = userQueryService.getMyEmail(userId);
+        return ApiResponse.onSuccess(result);
     }
 }

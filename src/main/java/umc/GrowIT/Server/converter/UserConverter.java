@@ -96,4 +96,11 @@ public class UserConverter {
                 .type(history.getAmount() > 0 ? "적립" : "사용")
                 .build();
     }
+
+    public static UserResponseDTO.EmailResponseDTO toEmailResponseDTO(User user) {
+        return UserResponseDTO.EmailResponseDTO.builder()
+                .email(user.getPrimaryEmail())
+                .build()
+                ;
+    }
 }

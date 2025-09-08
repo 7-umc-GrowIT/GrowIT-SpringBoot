@@ -29,6 +29,8 @@ public enum ErrorStatus implements BaseErrorCode {
     AUTH_CODE_NOT_FOUND(HttpStatus.BAD_REQUEST, "AUTH_400_03", "유효한 인증번호가 없습니다."),
     AUTH_CODE_MISMATCH(HttpStatus.BAD_REQUEST, "AUTH_400_04", "인증번호가 올바르지 않습니다."),
     INVALID_CREDENTIALS(HttpStatus.UNAUTHORIZED, "USER_401_01", "이메일 또는 비밀번호가 일치하지 않습니다."),
+    PASSWORD_RESET_UNAVAILABLE(HttpStatus.BAD_REQUEST, "AUTH_400_05", "소셜 회원가입 계정은 비밀번호 재설정이 불가능합니다."),
+
 
     INVALID_TOKEN(HttpStatus.UNAUTHORIZED, "AUTH_401_01", "유효하지 않은 토큰입니다."),
     EXPIRED_TOKEN(HttpStatus.UNAUTHORIZED, "AUTH_401_02", "만료된 토큰입니다. 토큰의 만료 시간이 지나 더 이상 유효하지 않습니다."),
@@ -38,7 +40,14 @@ public enum ErrorStatus implements BaseErrorCode {
     INVALID_TOKEN_FORMAT(HttpStatus.UNAUTHORIZED, "AUTH_401_06", "잘못된 토큰 형식입니다. 토큰이 Base64 URL 인코딩 규칙을 따르지 않거나, 토큰 내부 JSON 구조가 잘못 되었습니다."),
     INVALID_SIGNATURE(HttpStatus.UNAUTHORIZED, "AUTH_401_07", "토큰의 서명이 올바르지 않습니다. 서명이 서버에서 사용하는 비밀키와 일치하지 않습니다."),
 
+
     REFRESH_TOKEN_NOT_FOUND(HttpStatus.NOT_FOUND, "AUTH_404_01", "데이터베이스에서 refreshToken을 찾을 수 없습니다."),
+    EMAIL_NOT_FOUND(HttpStatus.NOT_FOUND, "AUTH_404_02", "회원가입되지 않은 이메일입니다."),
+
+
+    EMAIL_EXISTS_GENERAL(HttpStatus.CONFLICT, "AUTH_409_01", "이미 일반 회원가입된 이메일입니다."),
+    EMAIL_EXISTS_SOCIAL(HttpStatus.CONFLICT, "AUTH_409_02", "이미 소셜 회원가입된 이메일입니다."),
+
 
     EMAIL_SEND_FAIL(HttpStatus.INTERNAL_SERVER_ERROR, "AUTH_500_01", "이메일 전송에 실패했습니다."),
     EMAIL_ENCODING_FAIL(HttpStatus.INTERNAL_SERVER_ERROR, "AUTH_500_02", "이메일 내용 인코딩에 실패했습니다."),
