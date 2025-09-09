@@ -6,7 +6,7 @@ import umc.GrowIT.Server.web.dto.DiaryDTO.DiaryResponseDTO;
 
 public interface DiaryQueryService {
 
-    boolean hasWrittenAny(Long userId, CreditSource creditSource, DiaryType diaryType);
+    boolean hasVoiceDiaries(Long userId, CreditSource creditSource, DiaryType diaryType);
 
     DiaryResponseDTO.DiaryDateListDTO getDiaryDate(Integer year, Integer month, Long userId);
 

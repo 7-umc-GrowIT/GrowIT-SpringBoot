@@ -32,7 +32,7 @@ public class DiaryController implements DiarySpecification {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         Long userId = (Long) authentication.getPrincipal();
 
-        return ApiResponse.onSuccess(diaryQueryService.hasWrittenAny(userId, creditSource, diaryType));
+        return ApiResponse.onSuccess(diaryQueryService.hasVoiceDiaries(userId, creditSource, diaryType));
     }
 
     @GetMapping("/dates")
