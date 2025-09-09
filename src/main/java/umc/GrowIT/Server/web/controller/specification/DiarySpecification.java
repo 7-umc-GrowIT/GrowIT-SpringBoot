@@ -21,12 +21,12 @@ import umc.GrowIT.Server.web.dto.DiaryDTO.DiaryRequestDTO;
 import umc.GrowIT.Server.web.dto.DiaryDTO.DiaryResponseDTO;
 
 public interface DiarySpecification {
-    @GetMapping("/has-any")
+    @GetMapping("/has-voice-diary")
     @Operation(summary = "음성 일기 작성 여부 조회 API",description = "사용자가 한번이라도 음성 일기를 작성했는지의 여부를 조회하는 API입니다.")
     @ApiResponses({
             @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "COMMON_200", description = "⭕ SUCCESS"),
     })
-    ApiResponse<Boolean> hasAnyDiary();
+    ApiResponse<Boolean> hasVoiceDiary();
 
     @GetMapping("/dates")
     @Operation(summary = "일기 작성 날짜 조회 API",description = "특정 사용자의 일기 메인 화면에서 사용할 월별 일기 기록한 날짜를 보여주기 위한 API입니다. Query String으로 year와 month를 주세요." +

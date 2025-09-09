@@ -25,8 +25,8 @@ public class DiaryController implements DiarySpecification {
     private final DiaryQueryService diaryQueryService;
     private final DiaryCommandService diaryCommandService;
 
-    @GetMapping("/has-any")
-    public ApiResponse<Boolean> hasAnyDiary(){
+    @GetMapping("/has-voice-diary")
+    public ApiResponse<Boolean> hasVoiceDiary(){
         //accessToken에서 userId 추출
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         Long userId = (Long) authentication.getPrincipal();
