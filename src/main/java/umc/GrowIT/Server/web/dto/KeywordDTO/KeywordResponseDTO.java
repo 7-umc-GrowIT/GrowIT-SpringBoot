@@ -11,6 +11,7 @@ public class KeywordResponseDTO {
     @Builder
     @NoArgsConstructor
     @AllArgsConstructor
+    @Schema(title = "감정 키워드 response")
     public static class KeywordDTO {
         @Schema(description = "감정 키워드 id", example = "1")
         private Long id;

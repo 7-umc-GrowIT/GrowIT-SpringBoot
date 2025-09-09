@@ -14,6 +14,7 @@ public class ItemResponseDTO {
     @Getter
     @NoArgsConstructor
     @AllArgsConstructor
+    @Schema(title = "아이템 목록 조회 response")
     public static class ItemListDTO {
         @Schema(description = "아이템 목록")
         private List<ItemDTO> itemList;
@@ -23,20 +24,21 @@ public class ItemResponseDTO {
     @Getter
     @NoArgsConstructor
     @AllArgsConstructor
+    @Schema(title = "아이템 조회 response")
     public static class ItemDTO {
-        @Schema(description = "아이템 ID")
+        @Schema(description = "아이템 ID", example = "1")
         Long id;
 
-        @Schema(description = "아이템명")
+        @Schema(description = "아이템명", example = "곰돌이")
         String name;
 
-        @Schema(description = "아이템 가격 (크레딧)", example = "120")
+        @Schema(description = "아이템 가격 (크레딧)", example = "100")
         Integer price;
 
-        @Schema(description = "상점 리스트용 이미지 URL")
+        @Schema(description = "상점 리스트용 이미지 URL", example = "https://example.com/bear.png")
         String imageUrl;
 
-        @Schema(description = "그로 착용용 이미지 URL")
+        @Schema(description = "그로 착용용 이미지 URL", example = "https://example.com/bear.png")
         String groImageUrl;
 
         @Schema(description = "아이템 카테고리", allowableValues = {"BACKGROUND", "OBJECT", "PLANT", "HEAD_ACCESSORY"})
@@ -49,13 +51,15 @@ public class ItemResponseDTO {
         boolean purchased;
     }
 
-    // 아이템 주문 응답 DTO
     @Getter
     @Builder
     @NoArgsConstructor
     @AllArgsConstructor
+    @Schema(title = "아이템 구매 응답 response")
     public static class PurchaseItemResponseDTO {
-        private Long itemId;    // 구매한 아이템 ID
-        private String itemName; // 구매한 아이템 이름
+        @Schema(description = "구매한 아이템 ID", example = "1")
+        private Long itemId;
+        @Schema(description = "구매한 아이템 이름", example = "곰돌이")
+        private String itemName;
     }
 }

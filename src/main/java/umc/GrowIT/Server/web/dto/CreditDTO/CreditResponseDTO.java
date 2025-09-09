@@ -11,6 +11,7 @@ public class CreditResponseDTO {
     @Getter
     @NoArgsConstructor
     @AllArgsConstructor
+    @Schema(title = "사용자가 현재 보유한 크레딧 조회 response")
     public static class CurrentCreditDTO {
         @Schema(description = "현재 보유한 크레딧", example = "1200")
         private Integer currentCredit;
@@ -20,6 +21,7 @@ public class CreditResponseDTO {
     @Getter
     @NoArgsConstructor
     @AllArgsConstructor
+    @Schema(title = "사용자의 누적 크레딧 조회 response")
     public static class TotalCreditDTO {
         @Schema(description = "누적 크레딧", example = "5000")
         private Integer totalCredit;

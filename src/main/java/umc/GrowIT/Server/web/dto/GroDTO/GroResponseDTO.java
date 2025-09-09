@@ -17,17 +17,18 @@ public class GroResponseDTO {
     @Getter
     @NoArgsConstructor
     @AllArgsConstructor
+    @Schema(title = "그로 생성 response")
     public static class CreateResponseDTO {
-        @Schema(description = "그로 id")
+        @Schema(description = "그로 id", example = "1")
         private Long id;
 
-        @Schema(description = "사용자 id")
+        @Schema(description = "사용자 id", example = "1")
         private Long user_id;
 
-        @Schema(description = "사용자가 입력한 그로의 이름")
+        @Schema(description = "사용자가 입력한 그로의 이름" , example = "그루")
         private String name;
 
-        @Schema(description = "초기 레벨")
+        @Schema(description = "초기 레벨", example = "1")
         private Integer level;
     }
 

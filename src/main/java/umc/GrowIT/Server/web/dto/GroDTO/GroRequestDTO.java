@@ -15,6 +15,7 @@ public class GroRequestDTO {
     @Getter
     @NoArgsConstructor
     @AllArgsConstructor
+    @Schema(title = "그로 생성 Request")
     public static class CreateRequestDTO {
         @Schema(description = "성장할 그로의 이름(2~8자)", example = "그로우")
         @NotBlank(message = "닉네임은 필수 입력 항목입니다.")
@@ -29,6 +30,7 @@ public class GroRequestDTO {
     @Getter
     @NoArgsConstructor
     @AllArgsConstructor
+    @Schema(title = "그로 닉네임 변경 Request")
     public static class NicknameRequestDTO {
         @Schema(description = "변경하려는 그로의 닉네임(2~8자)", example = "그로우")
         @NotBlank(message = "닉네임은 필수 입력 항목입니다.")
