@@ -33,8 +33,7 @@ public class UserRequestDTO {
         private String name;
 
         @Schema(description = "가입할 계정의 비밀번호", example = "rlarmfh25!@")
-        @Size(min = 8, max = 30, message =  "크기는 8에서 30 사이입니다.")
-        @Pattern(regexp = "^(?=.*[A-Za-z])(?=.*\\d)(?=.*[!@#$%^&*])[A-Za-z\\d!@#$%^&*]+$", message = "비밀번호는 영문, 숫자, 특수문자를 각각 1개 이상 포함해야 합니다.")
+        @Pattern(regexp = "^(?=.*[A-Za-z])(?=.*\\d)(?=.*[!@#$%^&*])[A-Za-z\\d!@#$%^&*]{8,30}$", message = "비밀번호는 8~30자의 영문 대소문자, 숫자, 특수문자로 이루어져야 합니다.")
         private String password;
 
         @Schema(description = "동의할 약관 항목")
@@ -74,8 +73,7 @@ public class UserRequestDTO {
         private String email;
 
         @Schema(description = "변경하려는 비밀번호 입력", example = "rlarmfh25!@")
-        @Size(min = 8, max = 30, message = "크기는 8에서 30 사이입니다.")
-        @Pattern(regexp = "^(?=.*[A-Za-z])(?=.*\\d)(?=.*[!@#$%^&*])[A-Za-z\\d!@#$%^&*]+$", message = "비밀번호는 영문, 숫자, 특수문자를 각각 1개 이상 포함해야 합니다.")
+        @Pattern(regexp = "^(?=.*[A-Za-z])(?=.*\\d)(?=.*[!@#$%^&*])[A-Za-z\\d!@#$%^&*]{8,30}$", message = "비밀번호는 8~30자의 영문 대소문자, 숫자, 특수문자로 이루어져야 합니다.")
         private String password;
 
         @Schema(description = "변경하려는 비밀번호 재입력", example = "rlarmfh25!@")
