@@ -62,6 +62,7 @@ public class ChallengeConverter {
         return ChallengeResponseDTO.ChallengeStatusDTO.builder()
                 .id(userChallenge.getId())
                 .title(userChallenge.getChallenge().getTitle())
+                .content(userChallenge.getChallenge().getContent())
                 .challengeType(userChallenge.getChallengeType())
                 .time(userChallenge.getChallenge().getTime())
                 .completed(userChallenge.isCompleted())
