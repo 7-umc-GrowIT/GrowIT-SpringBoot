@@ -5,9 +5,15 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import umc.GrowIT.Server.apiPayload.code.status.ErrorStatus;
 import umc.GrowIT.Server.apiPayload.exception.DiaryHandler;
+import umc.GrowIT.Server.apiPayload.exception.UserHandler;
 import umc.GrowIT.Server.converter.DiaryConverter;
 import umc.GrowIT.Server.domain.Diary;
+import umc.GrowIT.Server.domain.User;
+import umc.GrowIT.Server.domain.enums.CreditSource;
+import umc.GrowIT.Server.domain.enums.DiaryType;
+import umc.GrowIT.Server.repository.CreditHistoryRepository;
 import umc.GrowIT.Server.repository.DiaryRepository;
+import umc.GrowIT.Server.repository.UserRepository;
 import umc.GrowIT.Server.web.dto.DiaryDTO.DiaryResponseDTO;
 
 import java.util.List;
@@ -19,10 +25,14 @@ import java.util.Optional;
 public class DiaryQueryServiceImpl implements DiaryQueryService{
 
     private final DiaryRepository diaryRepository;
+    private final CreditHistoryRepository creditHistoryRepository;
+    private final UserRepository userRepository;
 
     @Override
-    public boolean hasWrittenAny(Long userId) {
-        return diaryRepository.existsByUserId(userId);
+    public boolean hasWrittenAny(Long userId, CreditSource creditSource, DiaryType diaryType) {
+        User user = userRepository.findById(userId).orElseThrow(() -> new UserHandler(ErrorStatus.USER_NOT_FOUND));
+
+        return creditHistoryRepository.existsByUserAndSourceAndDiaryType(user,creditSource, diaryType);
     }
 
     @Override
