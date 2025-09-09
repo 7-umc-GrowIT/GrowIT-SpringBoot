@@ -12,7 +12,7 @@ public class UserResponseDTO {
     @Builder
     @NoArgsConstructor
     @AllArgsConstructor
-    @Schema(description = "마이페이지 조회 response")
+    @Schema(title = "마이페이지 조회 response")
     public static class MyPageDTO {
         @Schema(description = "유저 ID", example="1")
         private Long userId;

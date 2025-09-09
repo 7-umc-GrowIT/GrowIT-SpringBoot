@@ -32,7 +32,7 @@ public class AuthResponseDTO {
     @Builder
     @NoArgsConstructor
     @AllArgsConstructor
-    @Schema(description = "인증 코드 확인 response")
+    @Schema(title = "인증 코드 확인 response")
     public static class VerifyAuthCodeResponseDTO {
         @Schema(description = "인증 메시지", example = "인증이 완료되었습니다.")
         private String message;

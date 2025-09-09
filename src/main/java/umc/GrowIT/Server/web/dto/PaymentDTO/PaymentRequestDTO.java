@@ -11,6 +11,7 @@ import lombok.NoArgsConstructor;
 @Getter
 @NoArgsConstructor
 @AllArgsConstructor
+@Schema(title = "결제 요청 Request")
 public class PaymentRequestDTO {
     @NotNull
     @Schema(
@@ -33,6 +34,6 @@ public class PaymentRequestDTO {
     )
     private Integer creditAmount;
 
-
+    @Schema(description = "결제 수단")
     private String paymentMethod;
 }
