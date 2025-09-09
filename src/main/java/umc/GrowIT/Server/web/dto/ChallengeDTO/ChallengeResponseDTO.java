@@ -46,9 +46,9 @@ public class ChallengeResponseDTO {
         private Long id;
         @Schema(description = "저장한 챌린지 타입", example = "DAILY")
         private UserChallengeType challengeType;
-        @Schema(description = "저장한 챌린지 제목", example = "좋아하는 책 독서하기")
+        @Schema(description = "저장한 챌린지 제목", example = "독서하기")
         private String title;
-        @Schema(description = "저장한 챌린지 내용", example = "좋아하는 책을 골라서 한 번 읽어 보세요!")
+        @Schema(description = "저장한 챌린지 내용", example = "좋아하는 책 한 페이지 읽기.")
         private String content;
         @Schema(description = "챌린지 소요 시간", example = "1")
         private Integer time;
@@ -62,9 +62,9 @@ public class ChallengeResponseDTO {
     public static class RecommendedChallengeDTO {
         @Schema(description = "추천 챌린지 id", example = "1")
         private Long id;
-        @Schema(description = "추천 챌린지 제목", example = "좋아하는 책 독서하기")
+        @Schema(description = "추천 챌린지 제목", example = "독서하기")
         private String title;
-        @Schema(description = "추천 챌린지 내용", example = "좋아하는 책을 골라서 한 번 읽어 보세요!")
+        @Schema(description = "추천 챌린지 내용", example = "좋아하는 책 한 페이지 읽기.")
         private String content;
         @Schema(description = "챌린지 타입(DAILY or RANDOM)", example = "DAILY")
         private UserChallengeType challengeType;
@@ -96,8 +96,10 @@ public class ChallengeResponseDTO {
     public static class ChallengeStatusDTO {
         @Schema(description = "챌린지 id", example = "1")
         private Long id;
-        @Schema(description = "챌린지 제목", example = "좋아하는 책 독서하기")
+        @Schema(description = "챌린지 제목", example = "독서하기")
         private String title;
+        @Schema(description = "챌린지 내용", example = "좋아하는 책 한 페이지 읽기.")
+        private String content;
         @Schema(description = "챌린지 타입(DAILY or RANDOM)", example = "DAILY")
         private UserChallengeType challengeType;
         @Schema(description = "챌린지 소요 시간", example = "1")
@@ -213,9 +215,9 @@ public class ChallengeResponseDTO {
     public static class ChallengeDTO {
         @Schema(description = "추천 챌린지 id", example = "1")
         private Long id;
-        @Schema(description = "추천 챌린지 제목", example = "좋아하는 책 독서하기")
+        @Schema(description = "추천 챌린지 제목", example = "독서하기")
         private String title;
-        @Schema(description = "추천 챌린지 내용", example = "좋아하는 책을 골라서 한 번 읽어 보세요!")
+        @Schema(description = "추천 챌린지 내용", example = "좋아하는 책 한 페이지 읽기.")
         private String content;
         @Schema(description = "챌린지 소요 시간", example = "1")
         private Integer time;
