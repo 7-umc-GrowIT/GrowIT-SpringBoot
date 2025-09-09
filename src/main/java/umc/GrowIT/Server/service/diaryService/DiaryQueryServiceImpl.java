@@ -29,10 +29,10 @@ public class DiaryQueryServiceImpl implements DiaryQueryService{
     private final UserRepository userRepository;
 
     @Override
-    public boolean hasVoiceDiaries(Long userId, CreditSource creditSource, DiaryType diaryType) {
+    public boolean hasVoiceDiaries(Long userId) {
         User user = userRepository.findById(userId).orElseThrow(() -> new UserHandler(ErrorStatus.USER_NOT_FOUND));
 
-        return creditHistoryRepository.existsByUserAndSourceAndDiaryType(user, creditSource, diaryType);
+        return creditHistoryRepository.existsByUserAndSourceAndDiaryType(user, CreditSource.DIARY, DiaryType.VOICE);
     }
 
     @Override

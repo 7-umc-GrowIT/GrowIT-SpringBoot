@@ -26,13 +26,7 @@ public interface DiarySpecification {
     @ApiResponses({
             @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "COMMON_200", description = "⭕ SUCCESS"),
     })
-    ApiResponse<Boolean> hasAnyDiary(
-            @Parameter(description = "크레딧 조회 타입",
-                    schema = @Schema(allowableValues = {"DIARY"}),
-                    example = "DIARY")@RequestParam(required = false) CreditSource creditSource,
-            @Parameter(description = "일기 타입",
-                    schema = @Schema(allowableValues = {"VOICE"}),
-                    example = "VOICE")@RequestParam(required = false) DiaryType diaryType);
+    ApiResponse<Boolean> hasAnyDiary();
 
     @GetMapping("/dates")
     @Operation(summary = "일기 작성 날짜 조회 API",description = "특정 사용자의 일기 메인 화면에서 사용할 월별 일기 기록한 날짜를 보여주기 위한 API입니다. Query String으로 year와 month를 주세요." +
