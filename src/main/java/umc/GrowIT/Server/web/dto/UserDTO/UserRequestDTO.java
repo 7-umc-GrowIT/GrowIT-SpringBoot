@@ -28,7 +28,9 @@ public class UserRequestDTO {
         @Size(min = 1, max = 20, message = "크기는 1에서 20 사이입니다.")
         private String name;
 
+        @Schema(description = "비밀번호 입력", example = "rlarmfh25!@")
         @Size(min = 8, max = 30, message =  "크기는 8에서 30 사이입니다.")
+        @Pattern(regexp = "^(?=.*[A-Za-z])(?=.*\\d)(?=.*[!@#$%^&*])[A-Za-z\\d!@#$%^&*]+$", message = "비밀번호는 영문, 숫자, 특수문자를 각각 1개 이상 포함해야 합니다.")
         private String password;
 
         @NotEmpty(message = "필수 입력 항목입니다.")
@@ -45,6 +47,7 @@ public class UserRequestDTO {
         @Email(message = "이메일 형식에 맞춰주세요.")
         private String email;
 
+        @Schema(description = "비밀번호 입력", example = "rlarmfh25!@")
         @Size(min = 8, max = 30, message = "크기는 8에서 30 사이입니다.")
         private String password;
     }
@@ -60,7 +63,9 @@ public class UserRequestDTO {
         @Email(message = "이메일 형식에 맞춰주세요.")
         private String email;
 
+        @Schema(description = "비밀번호 입력", example = "rlarmfh25!@")
         @Size(min = 8, max = 30, message = "크기는 8에서 30 사이입니다.")
+        @Pattern(regexp = "^(?=.*[A-Za-z])(?=.*\\d)(?=.*[!@#$%^&*])[A-Za-z\\d!@#$%^&*]+$", message = "비밀번호는 영문, 숫자, 특수문자를 각각 1개 이상 포함해야 합니다.")
         private String password;
 
         @Size(min = 8, max = 30, message = "크기는 8에서 30 사이입니다.")
