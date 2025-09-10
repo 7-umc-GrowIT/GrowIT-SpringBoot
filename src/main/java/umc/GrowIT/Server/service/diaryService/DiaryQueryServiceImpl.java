@@ -10,7 +10,6 @@ import umc.GrowIT.Server.converter.DiaryConverter;
 import umc.GrowIT.Server.domain.Diary;
 import umc.GrowIT.Server.domain.User;
 import umc.GrowIT.Server.domain.enums.CreditSource;
-import umc.GrowIT.Server.domain.enums.DiaryType;
 import umc.GrowIT.Server.repository.CreditHistoryRepository;
 import umc.GrowIT.Server.repository.DiaryRepository;
 import umc.GrowIT.Server.repository.UserRepository;
@@ -32,7 +31,7 @@ public class DiaryQueryServiceImpl implements DiaryQueryService{
     public boolean hasVoiceDiaries(Long userId) {
         User user = userRepository.findById(userId).orElseThrow(() -> new UserHandler(ErrorStatus.USER_NOT_FOUND));
 
-        return creditHistoryRepository.existsByUserAndSourceAndDiaryType(user, CreditSource.DIARY, DiaryType.VOICE);
+        return creditHistoryRepository.existsByUserAndSource(user, CreditSource.VOICE_DIARY);
     }
 
     @Override

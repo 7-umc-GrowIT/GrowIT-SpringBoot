@@ -7,12 +7,9 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 import umc.GrowIT.Server.apiPayload.ApiResponse;
-import umc.GrowIT.Server.domain.enums.CreditSource;
-import umc.GrowIT.Server.domain.enums.DiaryType;
 import umc.GrowIT.Server.service.diaryService.DiaryCommandService;
 import umc.GrowIT.Server.service.diaryService.DiaryQueryService;
 import umc.GrowIT.Server.web.controller.specification.DiarySpecification;
-import umc.GrowIT.Server.web.dto.ChallengeDTO.ChallengeResponseDTO;
 import umc.GrowIT.Server.web.dto.DiaryDTO.DiaryRequestDTO;
 import umc.GrowIT.Server.web.dto.DiaryDTO.DiaryResponseDTO;
 

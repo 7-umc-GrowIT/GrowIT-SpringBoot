@@ -3,8 +3,6 @@ package umc.GrowIT.Server.domain;
 import jakarta.persistence.*;
 import lombok.*;
 import umc.GrowIT.Server.domain.common.BaseEntity;
-import umc.GrowIT.Server.domain.enums.DiaryType;
-import umc.GrowIT.Server.domain.enums.TermType;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
@@ -30,10 +28,11 @@ public class Diary extends BaseEntity {
     @Column(nullable = false, columnDefinition = "TEXT")
     private String content;
 
-    // 일기 타입 (음성 or 텍스트)
-    @Enumerated(EnumType.STRING)
-    @Column(nullable = false)
-    private DiaryType type;
+//    // 일기 타입 (음성 or 텍스트)
+//    @Enumerated(EnumType.STRING)
+//    @Column(nullable = false)
+//    private DiaryType type;
+
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id", nullable = false)
