@@ -12,10 +12,9 @@ import umc.GrowIT.Server.domain.enums.CreditSource;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.List;
 
 public interface CreditHistoryRepository extends JpaRepository<CreditHistory, Long> {
-    boolean existsByUserAndDateAndSource(User user, LocalDate date, CreditSource creditSource);
-
     Slice<CreditHistory> findByUserAndCreatedAtBetweenOrderByCreatedAtDesc(
             User user, LocalDateTime start, LocalDateTime end, Pageable pageable);
 
@@ -30,4 +29,6 @@ public interface CreditHistoryRepository extends JpaRepository<CreditHistory, Lo
     void deleteByUserId(@Param("userId") Long userId);
 
     boolean existsByUserAndSource(User user, CreditSource creditSource);
+
+    boolean existsByUserAndDateAndSourceIn(User user, LocalDate date, List<CreditSource> sources);
 }

@@ -5,17 +5,16 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.MediaType;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.client.RestClient;
 import org.springframework.web.client.RestTemplate;
-import org.springframework.web.reactive.function.client.WebClient;
 import umc.GrowIT.Server.apiPayload.code.status.ErrorStatus;
 import umc.GrowIT.Server.apiPayload.exception.*;
 import umc.GrowIT.Server.converter.DiaryConverter;
 import umc.GrowIT.Server.converter.FlaskConverter;
 import umc.GrowIT.Server.domain.*;
+import umc.GrowIT.Server.domain.enums.CreditSource;
 import umc.GrowIT.Server.repository.*;
 import umc.GrowIT.Server.util.dto.CreditGrantResult;
 import umc.GrowIT.Server.util.CreditUtil;
@@ -110,7 +109,7 @@ public class DiaryCommandServiceImpl implements DiaryCommandService{
         diary = diaryRepository.save(diary);
 
         // 사용자의 크레딧 수 증가
-        CreditGrantResult result = creditUtil.grantDiaryCredit(user, diary);
+        CreditGrantResult result = creditUtil.grantDiaryCredit(user, diary, CreditSource.TEXT_DIARY);
 
         return DiaryConverter.toCreateResultDTO(diary, result);
     }
@@ -252,7 +251,7 @@ public class DiaryCommandServiceImpl implements DiaryCommandService{
         diary = diaryRepository.save(diary);
 
         // 사용자의 크레딧 수 증가
-        CreditGrantResult result = creditUtil.grantDiaryCredit(user, diary);
+        CreditGrantResult result = creditUtil.grantDiaryCredit(user, diary, CreditSource.VOICE_DIARY);
 
         // 대화 기록 삭제
         conversationHistory.remove(userId);
