@@ -11,10 +11,6 @@ public class OpenAiConfig {
     @Value("${openai.api.key}")
     private String openAiKey;
 
-    // 감정 분석용
-    @Value("${openai.api.key-sub}")
-    private String subOpenAiKey;
-
     @Bean
     public RestTemplate template(){
         RestTemplate restTemplate = new RestTemplate();
@@ -25,16 +21,4 @@ public class OpenAiConfig {
         return restTemplate;
     }
 
-    /**
-     * 일기-감정키워드 추출하는 모델 API 호출 템플릿
-     */
-    @Bean
-    public RestTemplate subTemplate(){
-        RestTemplate restTemplate = new RestTemplate();
-        restTemplate.getInterceptors().add((request, body, execution) -> {
-            request.getHeaders().add("Authorization", "Bearer " + subOpenAiKey);
-            return execution.execute(request, body);
-        });
-        return restTemplate;
-    }
 }

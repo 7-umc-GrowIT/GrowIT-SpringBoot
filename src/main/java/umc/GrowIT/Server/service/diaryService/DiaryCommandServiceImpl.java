@@ -58,13 +58,9 @@ public class DiaryCommandServiceImpl implements DiaryCommandService{
     @Value("${openai.api.url}")
     private String apiURL;
 
-    // 대화&요약용
+    // 대화&요약용&키워드 분석용
     @Autowired
     private RestTemplate template;
-
-    // 감정 분석용
-    @Autowired
-    private RestTemplate subTemplate;
 
     // Flask 호출용
     private final RestClient flaskRestClient;
@@ -355,7 +351,7 @@ public class DiaryCommandServiceImpl implements DiaryCommandService{
         ChatGPTRequest gptRequest = new ChatGPTRequest(keywordModel, prompt, temperature);
 
         // API 요청 및 응답 처리
-        ChatGPTResponse chatGPTResponse = subTemplate.postForObject(apiURL, gptRequest, ChatGPTResponse.class);
+        ChatGPTResponse chatGPTResponse = template.postForObject(apiURL, gptRequest, ChatGPTResponse.class);
         if (chatGPTResponse.getChoices().isEmpty()) {
             throw new OpenAIHandler(ErrorStatus.GPT_RESPONSE_EMPTY);
         }
