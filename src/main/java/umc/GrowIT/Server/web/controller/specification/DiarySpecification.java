@@ -15,8 +15,6 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import jakarta.validation.Valid;
 import umc.GrowIT.Server.apiPayload.ApiResponse;
-import umc.GrowIT.Server.domain.enums.CreditSource;
-import umc.GrowIT.Server.domain.enums.DiaryType;
 import umc.GrowIT.Server.web.dto.DiaryDTO.DiaryRequestDTO;
 import umc.GrowIT.Server.web.dto.DiaryDTO.DiaryResponseDTO;
 

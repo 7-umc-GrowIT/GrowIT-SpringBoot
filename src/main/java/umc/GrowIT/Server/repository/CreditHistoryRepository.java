@@ -9,14 +9,12 @@ import org.springframework.data.repository.query.Param;
 import umc.GrowIT.Server.domain.CreditHistory;
 import umc.GrowIT.Server.domain.User;
 import umc.GrowIT.Server.domain.enums.CreditSource;
-import umc.GrowIT.Server.domain.enums.DiaryType;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.List;
 
 public interface CreditHistoryRepository extends JpaRepository<CreditHistory, Long> {
-    boolean existsByUserAndDateAndSource(User user, LocalDate date, CreditSource creditSource);
-
     Slice<CreditHistory> findByUserAndCreatedAtBetweenOrderByCreatedAtDesc(
             User user, LocalDateTime start, LocalDateTime end, Pageable pageable);
 
@@ -30,5 +28,7 @@ public interface CreditHistoryRepository extends JpaRepository<CreditHistory, Lo
     @Query("DELETE FROM CreditHistory ch WHERE ch.user.id = :userId")
     void deleteByUserId(@Param("userId") Long userId);
 
-    boolean existsByUserAndSourceAndDiaryType(User user, CreditSource creditSource, DiaryType diaryType);
+    boolean existsByUserAndSource(User user, CreditSource creditSource);
+
+    boolean existsByUserAndDateAndSourceIn(User user, LocalDate date, List<CreditSource> sources);
 }
