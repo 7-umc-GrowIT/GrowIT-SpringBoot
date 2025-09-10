@@ -10,7 +10,6 @@ import umc.GrowIT.Server.apiPayload.ApiResponse;
 import umc.GrowIT.Server.service.diaryService.DiaryCommandService;
 import umc.GrowIT.Server.service.diaryService.DiaryQueryService;
 import umc.GrowIT.Server.web.controller.specification.DiarySpecification;
-import umc.GrowIT.Server.web.dto.ChallengeDTO.ChallengeResponseDTO;
 import umc.GrowIT.Server.web.dto.DiaryDTO.DiaryRequestDTO;
 import umc.GrowIT.Server.web.dto.DiaryDTO.DiaryResponseDTO;
 
@@ -22,6 +21,15 @@ public class DiaryController implements DiarySpecification {
 
     private final DiaryQueryService diaryQueryService;
     private final DiaryCommandService diaryCommandService;
+
+    @GetMapping("/has-voice-diary")
+    public ApiResponse<Boolean> hasVoiceDiary(){
+        //accessToken에서 userId 추출
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        Long userId = (Long) authentication.getPrincipal();
+
+        return ApiResponse.onSuccess(diaryQueryService.hasVoiceDiaries(userId));
+    }
 
     @GetMapping("/dates")
     public ApiResponse<DiaryResponseDTO.DiaryDateListDTO> getDiaryDate(@RequestParam Integer year,

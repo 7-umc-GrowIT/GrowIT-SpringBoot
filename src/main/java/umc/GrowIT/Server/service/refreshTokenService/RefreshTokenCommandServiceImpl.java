@@ -1,6 +1,7 @@
 package umc.GrowIT.Server.service.refreshTokenService;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import umc.GrowIT.Server.apiPayload.code.status.ErrorStatus;
@@ -25,6 +26,7 @@ import static umc.GrowIT.Server.domain.enums.UserStatus.INACTIVE;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class RefreshTokenCommandServiceImpl implements RefreshTokenCommandService {
 
     private final RefreshTokenRepository refreshTokenRepository;
@@ -47,6 +49,9 @@ public class RefreshTokenCommandServiceImpl implements RefreshTokenCommandServic
     public TokenResponseDTO.AccessTokenDTO reissueToken(TokenRequestDTO.ReissueDTO reissueDTO) {
         RefreshToken storedRefreshToken = refreshTokenRepository.findByRefreshToken(reissueDTO.getRefreshToken()) //요청한 refresh token 이 database 에 존재하는지 확인
                 .orElseThrow(() -> new AuthHandler(ErrorStatus.REFRESH_TOKEN_NOT_FOUND));
+
+        if (storedRefreshToken.getUser() == null)
+            throw new AuthHandler(ErrorStatus.INVALID_TOKEN);
 
         if (storedRefreshToken.getUser().getStatus() == INACTIVE)   //탈퇴한 회원은 accessToken 재발급 하지 않음
             throw new UserHandler(ErrorStatus.USER_STATUS_INACTIVE);
