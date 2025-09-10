@@ -54,7 +54,6 @@ public class UserRequestDTO {
         private String email;
 
         @Schema(description = "로그인할 계정의 비밀번호", example = "rlarmfh25!@")
-        @Size(min = 8, max = 30, message = "크기는 8에서 30 사이입니다.")
         private String password;
     }
 
@@ -77,7 +76,6 @@ public class UserRequestDTO {
         private String password;
 
         @Schema(description = "변경하려는 비밀번호 재입력", example = "rlarmfh25!@")
-        @Size(min = 8, max = 30, message = "크기는 8에서 30 사이입니다.")
         private String passwordCheck;
     }
 
