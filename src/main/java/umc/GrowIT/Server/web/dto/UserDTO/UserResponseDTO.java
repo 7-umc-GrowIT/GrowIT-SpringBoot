@@ -8,11 +8,11 @@ import java.util.Map;
 
 public class UserResponseDTO {
 
-    // 마이페이지 조회 DTO
     @Getter
     @Builder
     @NoArgsConstructor
     @AllArgsConstructor
+    @Schema(title = "마이페이지 조회 response")
     public static class MyPageDTO {
         @Schema(description = "유저 ID", example="1")
         private Long userId;

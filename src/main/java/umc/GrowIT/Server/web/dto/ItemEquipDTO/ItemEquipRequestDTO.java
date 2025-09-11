@@ -11,6 +11,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
+@Schema(title = "아이템 착용 Request")
 public class ItemEquipRequestDTO {
 
 

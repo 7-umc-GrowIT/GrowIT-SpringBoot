@@ -95,7 +95,7 @@ public interface UserSpecification {
 
 
     @PatchMapping("/password")
-    @Operation(summary = "비밀번호 변경", description = "", security = @SecurityRequirement(name = "tempToken"))
+    @Operation(summary = "비밀번호 변경", description = "사용자의 비밀번호를 변경하는 API입니다.", security = @SecurityRequirement(name = "tempToken"))
     @ApiResponses({
             @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "COMMON_200", description = "⭕ SUCCESS"),
             @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "AUTH_400_01", description = "❌ 이메일 인증을 완료해주세요.", content = @Content(schema = @Schema(implementation = ApiResponse.class))),

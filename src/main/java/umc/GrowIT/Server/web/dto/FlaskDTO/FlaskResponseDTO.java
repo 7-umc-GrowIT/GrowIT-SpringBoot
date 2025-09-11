@@ -1,5 +1,6 @@
 package umc.GrowIT.Server.web.dto.FlaskDTO;
 
+import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -9,12 +10,13 @@ import java.util.List;
 
 public class FlaskResponseDTO {
 
-    // Flask 응답 DTO
     @Getter
     @Builder
     @NoArgsConstructor
     @AllArgsConstructor
+    @Schema(title = "Flask 응답")
     public static class EmotionAnalysisResponseDTO {
+        @Schema(description = "분석된 감정 키워드 목록")
         private List<SimilarityResultDTO> analyzedEmotions;
     }
 

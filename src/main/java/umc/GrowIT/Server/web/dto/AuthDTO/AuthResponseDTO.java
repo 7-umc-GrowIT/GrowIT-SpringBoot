@@ -12,42 +12,49 @@ import java.time.LocalDateTime;
 
 public class AuthResponseDTO {
 
-    // 이메일 인증 전송 응답 DTO
     @Getter
     @Builder
     @NoArgsConstructor
     @AllArgsConstructor
+    @Schema(title = "인증 메일 전송 response")
     public static class SendAuthEmailResponseDTO {
-        // TODO 디테일하게 결정 필요
+        @Schema(description = "인증번호 받을 이메일", example = "GrowIT2025@gmail.com")
         private String email;
-        private String message; // ex) 인증 이메일이 발송되었습니다
+        @Schema(description = "인증 발송 성공 메시지", example = "이메일로 인증번호가 전송되었습니다.")
+        private String message;
+        @Schema(description = "인증번호", example = "T3hUWX1t")
         private String code;
+        @Schema(description = "인증번호 만료기한", example = "2025-09-09T05:32:10.772Z")
         private LocalDateTime expiration;
     }
 
-    // 인증 코드 확인 응답 DTO
     @Getter
     @Builder
     @NoArgsConstructor
     @AllArgsConstructor
+    @Schema(title = "인증 코드 확인 response")
     public static class VerifyAuthCodeResponseDTO {
-        // TODO 디테일하게 결정 필요
-        private String message; // ex) 인증이 완료되었습니다, 인증번호가 올바르지 않습니다
+        @Schema(description = "인증 메시지", example = "인증이 완료되었습니다.")
+        private String message;
     }
 
     @Getter
     @Builder
     @NoArgsConstructor
     @AllArgsConstructor
+    @Schema(title = "로그아웃 response")
     public static class LogoutResponseDTO {
-        private String message; // "로그아웃이 완료되었습니다."
+        @Schema(description = "로그아웃 메시지", example = "로그아웃이 완료되었습니다.")
+        private String message;
     }
 
     @Getter
     @Builder
     @NoArgsConstructor
     @AllArgsConstructor
+    @Schema(title = "로그인 response")
     public static class LoginResponseDTO {
+        @Schema(description = "발급받은 토큰 목록")
         private TokenResponseDTO.TokenDTO tokens;
         @Schema(description = "로그인 방식", example = "LOCAL")
         private LoginMethod loginMethod;
