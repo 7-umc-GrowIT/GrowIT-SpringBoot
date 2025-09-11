@@ -104,7 +104,7 @@ public interface UserSpecification {
             @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "PWD_400_01", description = "❌ 비밀번호 확인이 일치하지 않습니다.", content = @Content(schema = @Schema(implementation = ApiResponse.class))),
             @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "PWD_400_02", description = "❌ 새로운 비밀번호를 입력해주세요.", content = @Content(schema = @Schema(implementation = ApiResponse.class)))
     })
-    ApiResponse<Void> findPassword(@RequestBody @Valid UserRequestDTO.PasswordDTO passwordDTO);
+    ApiResponse<Void> updatePassword(@RequestBody @Valid UserRequestDTO.PasswordDTO passwordDTO);
 
 
     @GetMapping("/mypage")
