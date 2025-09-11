@@ -71,6 +71,7 @@ public enum ErrorStatus implements BaseErrorCode {
 
     // 비밀번호 에러
     PASSWORD_NOT_MATCH(HttpStatus.BAD_REQUEST, "PWD_400_01", "비밀번호 확인이 일치하지 않습니다."), // UserErrorStatus 로 이동
+    PASSWORD_UPDATE_NO_CHANGE(HttpStatus.BAD_REQUEST, "PWD_400_02", "새로운 비밀번호를 입력해주세요."),
 
     // 탈퇴 관련 에러
     WITHDRAWAL_REASON_NOT_FOUND(HttpStatus.NOT_FOUND, "WITHDRAWAL_404_01", "존재하지 않는 탈퇴 사유입니다."),

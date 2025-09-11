@@ -94,7 +94,7 @@ public class UserController implements UserSpecification {
 
     @Override
     @PatchMapping("/password")
-    public ApiResponse<Void> findPassword(@RequestBody @Valid UserRequestDTO.PasswordDTO passwordDTO) {
+    public ApiResponse<Void> updatePassword(@RequestBody @Valid UserRequestDTO.PasswordDTO passwordDTO) {
         userCommandService.updatePassword(passwordDTO);
         return ApiResponse.onSuccess();
     }
