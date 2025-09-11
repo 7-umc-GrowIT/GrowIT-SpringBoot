@@ -143,8 +143,8 @@ public class UserCommandServiceImpl implements UserCommandService {
                     throw new UserHandler(ErrorStatus.USER_STATUS_INACTIVE);
 
                 // 비밀번호 변경사항 없을 때 예외 처리
-                String password = passwordDTO.getPassword();
-                if (passwordEncoder.matches(password, user.get().getPassword())) {
+                String rawPassword = passwordDTO.getPassword();
+                if (passwordEncoder.matches(rawPassword, user.get().getPassword())) {
                     throw new UserHandler(ErrorStatus.PASSWORD_UPDATE_NO_CHANGE);
                 }
 
