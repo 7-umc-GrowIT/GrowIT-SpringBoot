@@ -3,7 +3,6 @@ package umc.GrowIT.Server.domain;
 import jakarta.persistence.*;
 import lombok.*;
 import umc.GrowIT.Server.domain.common.BaseEntity;
-import umc.GrowIT.Server.domain.enums.CodeStatus;
 
 import java.time.LocalDateTime;
 
@@ -30,23 +29,18 @@ public class AuthenticationCode extends BaseEntity {
     @Column(nullable = false)
     private Boolean isVerified;
 
-    // 사용 가능 여부
-    @Enumerated(EnumType.STRING)
-    @Column(nullable = false)
-    private CodeStatus status;
-
     // 인증 유효기간
     @Column(nullable = false)
     private LocalDateTime expirationDate;
 
-
-
-    public void updateStatus(CodeStatus status) {
-        this.status = status;
+    // 만료 처리
+    public void expire() {
+        this.expirationDate = LocalDateTime.now();
     }
 
-    public void update() {
+    // 인증 처리
+    public void verify() {
         this.isVerified = true;
-        this.status = CodeStatus.EXPIRED;
+        this.expirationDate = LocalDateTime.now();
     }
 }
