@@ -5,22 +5,10 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <title>인증 페이지</title>
-    <!--[if mso]>
-    <noscript>
-        <xml>
-            <o:OfficeDocumentSettings>
-                <o:PixelsPerInch>96</o:PixelsPerInch>
-            </o:OfficeDocumentSettings>
-        </xml>
-    </noscript>
-    <![endif]-->
     <style>
-        /* Reset styles for email clients */
         body, table, td, div, p, a { -webkit-text-size-adjust: 100%; -ms-text-size-adjust: 100%; }
         table, td { mso-table-lspace: 0pt; mso-table-rspace: 0pt; }
         img { -ms-interpolation-mode: bicubic; }
-
-        /* Basic styles */
         body {
             margin: 0 !important;
             padding: 0 !important;
@@ -28,78 +16,49 @@
             width: 100% !important;
             background-color: #2ECC71 !important;
         }
-
-        /* Fallback for dark mode */
         @media (prefers-color-scheme: dark) {
-            body, table, td {
-                background-color: #2ECC71 !important;
-                color: white !important;
-            }
+            body, table, td { background-color: #2ECC71 !important; color: white !important; }
         }
-
-        /* Mobile styles */
         @media screen and (max-width: 600px) {
-            .email-container {
-                width: 100% !important;
-                max-width: 100% !important;
-            }
-            .email-container table {
-                width: 100% !important;
-            }
-            .content-padding {
-                padding: 20px !important;
-            }
-            .logo-text {
-                font-size: 24px !important;
-            }
-            .character-img {
-                width: 150px !important;
-                height: auto !important;
-            }
-            .welcome-text {
-                font-size: 22px !important;
-            }
-            .auth-code {
-                font-size: 20px !important;
-                padding: 12px 24px !important;
-            }
+            .email-container { width: 100% !important; max-width: 100% !important; }
+            .email-container table { width: 100% !important; }
+            .content-padding { padding: 20px !important; }
+            .logo-text { font-size: 24px !important; }
+            .character-img { width: 150px !important; height: auto !important; }
+            .welcome-text { font-size: 22px !important; }
+            .auth-code { font-size: 20px !important; padding: 12px 24px !important; }
         }
     </style>
 </head>
-<body style="margin: 0; padding: 0; background-color: #2ECC71;">
-<!--[if mso]>
-<table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0"><tr><td align="center" style="background-color: #2ECC71;">
-<![endif]-->
-<table role="presentation" cellspacing="0" cellpadding="0" border="0" align="center" width="100%" style="max-width: 600px; margin: 0 auto; background-color: transparent;">
+<body style="margin:0; padding:0; background-color:#2ECC71;">
+<table role="presentation" cellspacing="0" cellpadding="0" border="0" align="center" width="100%" style="max-width:600px; margin:0 auto; background-color:transparent;">
     <tr>
-        <td align="center" style="padding: 20px 0;">
-            <table role="presentation" cellspacing="0" cellpadding="0" border="0" class="email-container" style="width: 90%; max-width: 600px; background: linear-gradient(145deg, #A9DFBF, #82E0AA); border-radius: 15px; box-shadow: 0 4px 6px rgba(0,0,0,0.1);">
+        <td align="center" style="padding:20px 0;">
+            <table role="presentation" cellspacing="0" cellpadding="0" border="0" class="email-container" style="width:90%; max-width:600px; background: linear-gradient(145deg, #A9DFBF, #82E0AA); border-radius:15px; box-shadow:0 4px 6px rgba(0,0,0,0.1);">
                 <tr>
-                    <td class="content-padding" style="padding: 40px 30px; text-align: center;">
-                        <div style="margin-bottom: 20px;">
-                            <strong class="logo-text" style="font-size: 28px; color: #1D8348; letter-spacing: 1px; text-transform: uppercase; font-family: Arial, sans-serif;">GrowIT</strong>
+                    <td class="content-padding" style="padding:40px 30px; text-align:center;">
+                        <div style="margin-bottom:20px;">
+                            <strong class="logo-text" style="font-size:28px; color:#1D8348; letter-spacing:1px; text-transform:uppercase; font-family:Arial, sans-serif;">GrowIT</strong>
                         </div>
 
-                        <!--[if mso]>
-                        <table role="presentation" cellspacing="0" cellpadding="0" border="0" width="100%"><tr><td align="center">
-                        <![endif]-->
-                        <img src="https://growit-server-bucket.s3.ap-northeast-2.amazonaws.com/email/gro.png" alt="GrowIT Character" class="character-img" width="150" style="width: 150px; height: auto; margin: 20px auto; border-radius: 10px; display: block; box-shadow: 0 3px 6px rgba(0,0,0,0.1);">
-                        <!--[if mso]>
-                        </td></tr></table>
-                        <![endif]-->
+                        <img src="https://growit-server-bucket.s3.ap-northeast-2.amazonaws.com/email/gro.png" alt="GrowIT Character" class="character-img" width="150" style="width:150px; height:auto; margin:20px auto; border-radius:10px; display:block; box-shadow:0 3px 6px rgba(0,0,0,0.1);">
 
-                        <h1 class="welcome-text" style="color: white; font-size: 26px; margin: 20px 0; font-weight: 600; font-family: Arial, sans-serif;">안녕하세요!</h1>
+                        <h1 class="welcome-text" style="color:white; font-size:26px; margin:20px 0; font-weight:600; font-family:Arial, sans-serif;">안녕하세요!</h1>
 
-                        <p style="margin: 0 0 25px 0; color: #1A6D3E; line-height: 1.6; font-size: 16px; font-family: Arial, sans-serif;">
+                        <p style="margin:0 0 25px 0; color:#1A6D3E; line-height:1.6; font-size:16px; font-family:Arial, sans-serif;">
                             아래의 인증 코드를 입력해주세요.
                         </p>
 
-                        <div class="auth-code" style="background-color: white; color: #000000; padding: 15px 30px; display: inline-block; border-radius: 8px; font-size: 24px; font-weight: bold; margin: 10px 0; box-shadow: 0 2px 4px rgba(0,0,0,0.1); letter-spacing: 0.5px; font-family: Arial, sans-serif; min-width: 180px; width: 180px; text-align: center;" th:text="${authenticationCode}">
+                        <div class="auth-code" style="background-color:white; color:#000000; padding:15px 30px; display:inline-block; border-radius:8px; font-size:24px; font-weight:bold; margin:10px 0; box-shadow:0 2px 4px rgba(0,0,0,0.1); letter-spacing:0.5px; font-family:Arial, sans-serif; min-width:180px; width:180px; text-align:center;" th:text="${authenticationCode}">
                             [인증 코드]
                         </div>
 
-                        <p style="margin: 25px 0 0 0; color: #1D8348; font-size: 14px; font-family: Arial, sans-serif;">
-                            본 인증 코드는 5분간 유효합니다.
+                        <p style="margin:25px 0 0 0; color:#1D8348; font-size:14px; font-family:Arial, sans-serif;">
+                            본 인증 코드는 1분간 유효합니다.
+                        </p>
+
+                        <p style="margin:5px 0 0 0; color:#1D8348; font-size:12px; font-family:Arial, sans-serif;">
+                            문의가 필요하신 경우, <a href="mailto:growit2025@gmail.com" style="color:#1D8348; text-decoration: underline;">growit2025@gmail.com</a>으로 연락해주시길 바랍니다.
                         </p>
                     </td>
                 </tr>
@@ -107,8 +66,5 @@
         </td>
     </tr>
 </table>
-<!--[if mso]>
-</td></tr></table>
-<![endif]-->
 </body>
 </html>
