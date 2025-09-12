@@ -67,22 +67,22 @@ public class AuthController implements AuthSpecification {
     }
 
     @Override
-    @PostMapping("/email")
-    public ApiResponse<AuthResponseDTO.SendAuthEmailResponseDTO> sendAuthEmail(
+    @PostMapping("/email/send")
+    public ApiResponse<Void> sendAuthEmail(
             @RequestParam AuthType type,
             @RequestBody @Valid AuthRequestDTO.SendAuthEmailRequestDTO request) {
-        AuthResponseDTO.SendAuthEmailResponseDTO result = authService.sendAuthEmail(type, request);
 
-        return ApiResponse.onSuccess(result);
+        authService.sendAuthEmail(type, request);
+        return ApiResponse.onSuccess();
     }
 
     @Override
-    @PostMapping("/verification")
-    public ApiResponse<AuthResponseDTO.VerifyAuthCodeResponseDTO> verifyAuthCode(
+    @PostMapping("/email/verify")
+    public ApiResponse<Void> verifyAuthCode(
             @RequestBody @Valid AuthRequestDTO.VerifyAuthCodeRequestDTO request) {
-        AuthResponseDTO.VerifyAuthCodeResponseDTO result = authService.verifyAuthCode(request);
 
-        return ApiResponse.onSuccess(result);
+        authService.verifyAuthCode(request);
+        return ApiResponse.onSuccess();
     }
 
     @Override
