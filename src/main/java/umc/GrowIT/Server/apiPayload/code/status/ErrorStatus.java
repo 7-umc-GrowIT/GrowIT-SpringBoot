@@ -49,9 +49,6 @@ public enum ErrorStatus implements BaseErrorCode {
     EMAIL_EXISTS_SOCIAL(HttpStatus.CONFLICT, "AUTH_409_02", "이미 소셜 회원가입된 이메일입니다."),
 
 
-    EMAIL_SEND_FAIL(HttpStatus.INTERNAL_SERVER_ERROR, "AUTH_500_01", "이메일 전송에 실패했습니다."),
-    EMAIL_ENCODING_FAIL(HttpStatus.INTERNAL_SERVER_ERROR, "AUTH_500_02", "이메일 내용 인코딩에 실패했습니다."),
-
     // OAuth 관련 에러
     ACCOUNT_BAD_REQUEST(HttpStatus.BAD_REQUEST, "OAUTH_400_01", "요청한 이메일로 가입할 수 없습니다."),
     ACCOUNT_NOT_FOUND(HttpStatus.NOT_FOUND, "OAUTH_404_01", "존재하지 않는 계정입니다."),
