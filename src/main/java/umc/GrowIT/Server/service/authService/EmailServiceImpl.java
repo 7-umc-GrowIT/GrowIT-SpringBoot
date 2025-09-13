@@ -35,7 +35,7 @@ public class EmailServiceImpl implements EmailService {
             // 메일 기본 정보
             helper.setTo(email);
             helper.setFrom(fromEmail, "GrowIT");
-            helper.setSubject("[GrowIT] 인증번호입니다.");
+            helper.setSubject("[GrowIT] 이메일 인증번호 안내");
             helper.setText(setContext(authenticationCode), true);
 
             // 메일 발송
