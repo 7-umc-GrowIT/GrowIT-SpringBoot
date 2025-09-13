@@ -68,12 +68,12 @@ public class AuthController implements AuthSpecification {
 
     @Override
     @PostMapping("/email/send")
-    public ApiResponse<Void> sendAuthEmail(
+    public ApiResponse<AuthResponseDTO.SendAuthEmailResponseDTO> sendAuthEmail(
             @RequestParam AuthType type,
             @RequestBody @Valid AuthRequestDTO.SendAuthEmailRequestDTO request) {
 
-        authService.sendAuthEmail(type, request);
-        return ApiResponse.onSuccess();
+        AuthResponseDTO.SendAuthEmailResponseDTO result = authService.sendAuthEmail(type, request);
+        return ApiResponse.onSuccess(result);
     }
 
     @Override

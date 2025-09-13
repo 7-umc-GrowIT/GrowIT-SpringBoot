@@ -5,7 +5,7 @@ import umc.GrowIT.Server.web.dto.AuthDTO.AuthRequestDTO;
 import umc.GrowIT.Server.web.dto.AuthDTO.AuthResponseDTO;
 
 public interface AuthService {
-    void sendAuthEmail(AuthType type, AuthRequestDTO.SendAuthEmailRequestDTO request);
+    AuthResponseDTO.SendAuthEmailResponseDTO sendAuthEmail(AuthType type, AuthRequestDTO.SendAuthEmailRequestDTO request);
 
     void verifyAuthCode(AuthRequestDTO.VerifyAuthCodeRequestDTO request);
 

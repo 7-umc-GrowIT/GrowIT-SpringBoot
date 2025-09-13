@@ -1,6 +1,7 @@
 package umc.GrowIT.Server.converter;
 
 import umc.GrowIT.Server.domain.AuthenticationCode;
+import umc.GrowIT.Server.web.dto.AuthDTO.AuthResponseDTO;
 
 import java.time.LocalDateTime;
 
@@ -10,7 +11,14 @@ public class AuthenticationCodeConverter {
                 .email(email)
                 .code(authCode)
                 .isVerified(false)
-                .expirationDate(LocalDateTime.now().plusSeconds(62)) // 유효시간 1분 (+ 약간 여유)
+                .expirationDate(LocalDateTime.now().plusMinutes(1))
+                .build()
+                ;
+    }
+
+    public static AuthResponseDTO.SendAuthEmailResponseDTO toSendAuthCodeResponse(AuthenticationCode authCode) {
+        return AuthResponseDTO.SendAuthEmailResponseDTO.builder()
+                .expiration(authCode.getExpirationDate())
                 .build()
                 ;
     }

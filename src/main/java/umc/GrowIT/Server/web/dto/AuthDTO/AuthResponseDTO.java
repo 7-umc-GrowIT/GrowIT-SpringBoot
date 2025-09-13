@@ -8,7 +8,19 @@ import lombok.NoArgsConstructor;
 import umc.GrowIT.Server.domain.enums.LoginMethod;
 import umc.GrowIT.Server.web.dto.TokenDTO.TokenResponseDTO;
 
+import java.time.LocalDateTime;
+
 public class AuthResponseDTO {
+
+    @Getter
+    @Builder
+    @NoArgsConstructor
+    @AllArgsConstructor
+    @Schema(title = "인증 메일 전송 response")
+    public static class SendAuthEmailResponseDTO {
+        @Schema(description = "인증번호 만료기한", example = "2025-09-09T05:32:10.772Z")
+        private LocalDateTime expiration;
+    }
 
     @Getter
     @Builder

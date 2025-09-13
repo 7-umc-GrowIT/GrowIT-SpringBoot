@@ -68,7 +68,7 @@ public interface AuthSpecification {
             @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "AUTH_400_05", description = "❌ 소셜 회원가입 계정은 비밀번호 재설정이 불가능합니다.", content = @Content(schema = @Schema(implementation = ApiResponse.class))),
             @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "AUTH_400_02", description = "❌ 이메일 인증 타입이 잘못되었습니다.", content = @Content(schema = @Schema(implementation = ApiResponse.class)))
     })
-    ApiResponse<Void> sendAuthEmail(
+    ApiResponse<AuthResponseDTO.SendAuthEmailResponseDTO> sendAuthEmail(
             @Parameter(description = "인증 메일 유형 (SIGNUP: 회원가입, PASSWORD_RESET: 비밀번호 재설정)", example = "SIGNUP")
             @RequestParam AuthType type,
             @RequestBody @Valid AuthRequestDTO.SendAuthEmailRequestDTO request

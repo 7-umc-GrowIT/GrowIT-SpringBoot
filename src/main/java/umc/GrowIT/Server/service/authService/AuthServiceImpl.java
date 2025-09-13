@@ -35,7 +35,7 @@ public class AuthServiceImpl implements AuthService {
 
     @Override
     @Transactional
-    public void sendAuthEmail(AuthType type, AuthRequestDTO.SendAuthEmailRequestDTO request) {
+    public AuthResponseDTO.SendAuthEmailResponseDTO sendAuthEmail(AuthType type, AuthRequestDTO.SendAuthEmailRequestDTO request) {
         // 1. type 구분해서 email 체크
         checkEmail(type, request.getEmail());
 
@@ -46,7 +46,8 @@ public class AuthServiceImpl implements AuthService {
         emailService.sendEmailAsync(request.getEmail(), authenticationCode);
 
         // 4. 인증코드 유효성 체크 & 저장
-        saveAuthenticationCode(request.getEmail(), authenticationCode);
+        AuthenticationCode authCode = saveAuthenticationCode(request.getEmail(), authenticationCode);
+        return AuthenticationCodeConverter.toSendAuthCodeResponse(authCode);
     }
 
 
@@ -147,13 +148,13 @@ public class AuthServiceImpl implements AuthService {
     }
 
     // 유효성 체크 & 저장
-    private void saveAuthenticationCode(String email, String authenticationCode) {
+    private AuthenticationCode saveAuthenticationCode(String email, String authenticationCode) {
         // 1. 이전 유효한 인증 코드가 있는지 확인 & 있다면 무효화
         authenticationCodeRepository.findByEmailAndIsVerifiedFalseAndExpirationDateAfter(email, LocalDateTime.now())
                 .ifPresent(AuthenticationCode::expire);
 
         // 2. 새 인증 코드 저장
         AuthenticationCode newAuthenticationCode = AuthenticationCodeConverter.toAuthenticationCode(email, authenticationCode);
-        authenticationCodeRepository.save(newAuthenticationCode);
+        return authenticationCodeRepository.save(newAuthenticationCode);
     }
 }
