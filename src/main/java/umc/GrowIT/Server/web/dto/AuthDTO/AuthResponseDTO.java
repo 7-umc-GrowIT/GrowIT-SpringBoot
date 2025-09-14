@@ -18,24 +18,8 @@ public class AuthResponseDTO {
     @AllArgsConstructor
     @Schema(title = "인증 메일 전송 response")
     public static class SendAuthEmailResponseDTO {
-        @Schema(description = "인증번호 받을 이메일", example = "GrowIT2025@gmail.com")
-        private String email;
-        @Schema(description = "인증 발송 성공 메시지", example = "이메일로 인증번호가 전송되었습니다.")
-        private String message;
-        @Schema(description = "인증번호", example = "T3hUWX1t")
-        private String code;
         @Schema(description = "인증번호 만료기한", example = "2025-09-09T05:32:10.772Z")
         private LocalDateTime expiration;
-    }
-
-    @Getter
-    @Builder
-    @NoArgsConstructor
-    @AllArgsConstructor
-    @Schema(title = "인증 코드 확인 response")
-    public static class VerifyAuthCodeResponseDTO {
-        @Schema(description = "인증 메시지", example = "인증이 완료되었습니다.")
-        private String message;
     }
 
     @Getter
