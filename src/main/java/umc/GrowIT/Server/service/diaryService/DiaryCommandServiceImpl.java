@@ -164,16 +164,6 @@ public class DiaryCommandServiceImpl implements DiaryCommandService{
         // 사용자의 입력을 대화 목록에 추가
         messages.add(new Message("user", userChat));
 
-//        // ChatGPT 요청 생성
-//        ChatGPTRequest gptRequest = new ChatGPTRequest(chatModel, messages);
-//
-//        // API 요청 및 응답 처리
-//        ChatGPTResponse chatGPTResponse = template.postForObject(apiURL, gptRequest, ChatGPTResponse.class);
-//
-//        if (chatGPTResponse.getChoices().isEmpty()) {
-//            throw new OpenAIHandler(ErrorStatus.GPT_RESPONSE_EMPTY);
-//        }
-
         String aiChat = requestGptChat(chatModel, messages);
 
         // ai의 답변을 대화 목록에 추가
@@ -208,37 +198,13 @@ public class DiaryCommandServiceImpl implements DiaryCommandService{
                     .collect(Collectors.toList());
         }
 
-
-        // 기존 대화 내용 길이 체크 추가
-        int totalContentLength = messages.stream()
+        // 기존 대화 내용 길이
+        int userDialogLength = messages.stream()
                 .filter(msg -> msg.getRole().equals("user"))
                 .mapToInt(msg -> msg.getContent().length())
                 .sum();
 
-        String summaryPrompt; // 대화 길이별 프롬프트 선택용
-        String selectedModel; // 대화 길이별 모델 선택용
-
-        if (totalContentLength < 20) { // 사용자 입력이 20자 미만인 경우
-            selectedModel = summaryModel;
-            summaryPrompt = "다음의 내용은 사용자가 AI와 대화한 기록이야." +
-                    " role: user인 경우 사용자의 말이고, role: assistant인 경우 AI가 사용자의 말에 대답하는 말이야." +
-                    " 이 기록을 바탕으로 사용자가 혼자 쓰는 일기처럼 1인칭 시점으로 작성해줘." +
-                    " 대화 내용이 매우 짧으므로 추측하여 내용을 확장하지 말고, 주어진 정보만으로 1-2문장의 간단한 일기로 작성해줘." +
-                    " '~했다', '~였다'로 끝나는 문체를 사용하고, AI와 대화했다는 사실이 드러나지 않도록 해줘.";
-        } else {
-            selectedModel = fineTunedSummaryModel;
-            summaryPrompt = "다음의 내용은 사용자가 AI와 대화한 기록이야." +
-                    " role: user인 경우 사용자의 말이고, role: assistant인 경우 AI가 사용자의 말에 대답하는 말이야." +
-                    " 이 기록을 바탕으로 사용자가 혼자 쓰는 일기처럼 1인칭 시점으로 작성해줘." +
-                    " 기본적으로는 '~했다', '~였다'로 끝나는 문체를 사용하고," +
-                    " '~걸까?', '~는구나' 같은 혼잣말은 전체 글에서 1-2번 정도만 자연스럽게 사용해줘." +
-                    " 사용자의 감정이 자연스럽게 드러나도록 작성하되, 실제 대화 내용에만 기반해줘." +
-                    " 일기에서 AI와 대화했다는 사실이 드러나지 않도록 하고, 날짜는 적지 말아줘.";
-        }
-
-        messages.add(new Message("system", summaryPrompt));
-
-        String aiChat = requestGptChat(selectedModel, messages);
+        String aiChat = summaryDiary(userDialogLength, messages); // 일기요약함수 호출
 
         //일기 생성
         Diary diary = Diary.builder()
@@ -482,4 +448,55 @@ public class DiaryCommandServiceImpl implements DiaryCommandService{
 
         return selectedChallenges;
     }
+    
+    //대화일기 요약 함수
+    private String summaryDiary(int userDialogLength, List<Message> messages) {
+
+        String summaryPrompt; // 대화 길이별 프롬프트 선택용
+        String selectedModel; // 대화 길이별 모델 선택용
+
+        if (userDialogLength < 20) { // 사용자 입력이 20자 미만인 경우
+            selectedModel = summaryModel;
+            summaryPrompt = "다음의 내용은 사용자가 AI와 대화한 기록이야." +
+                    " role: user인 경우 사용자의 말이고, role: assistant인 경우 AI가 사용자의 말에 대답하는 말이야." +
+                    " 이 기록을 바탕으로 사용자가 혼자 쓰는 일기처럼 1인칭 시점으로 작성해줘." +
+                    " 대화 내용이 매우 짧으므로 추측하여 내용을 확장하지 말고, 주어진 정보만으로 1-2문장의 간단한 일기로 작성해줘." +
+                    " '~했다', '~였다'로 끝나는 문체를 사용하고, AI와 대화했다는 사실이 드러나지 않도록 해줘." +
+                    " 대화한 기록의 분량이 너무 짧더라도 약간은 내용 덧붙여서 요약된 후 분량이 최소 50자가 넘어가도록 해줘" +
+                    "하지만 없는 내용을 지어내면 안되고 예를들어 \"치킨을 먹었다.\"라고 써있었다면 고소하고 부드러운 치킨을 먹었다. 이정도로만 늘리는거야";
+        } else {
+            selectedModel = fineTunedSummaryModel;
+            summaryPrompt = "다음의 내용은 사용자가 AI와 대화한 기록이야." +
+                    " role: user인 경우 사용자의 말이고, role: assistant인 경우 AI가 사용자의 말에 대답하는 말이야." +
+                    " 이 기록을 바탕으로 사용자가 혼자 쓰는 일기처럼 1인칭 시점으로 작성해줘." +
+                    " 기본적으로는 '~했다', '~였다'로 끝나는 문체를 사용하고," +
+                    " '~걸까?', '~는구나' 같은 혼잣말은 전체 글에서 1-2번 정도만 자연스럽게 사용해줘." +
+                    " 사용자의 감정이 자연스럽게 드러나도록 작성하되, 실제 대화 내용에만 기반해줘." +
+                    " 일기에서 AI와 대화했다는 사실이 드러나지 않도록 하고, 날짜는 적지 말아줘.";
+        }
+
+        // 최초 요약 시도
+        List<Message> summaryMessages = new ArrayList<>(messages);
+        summaryMessages.add(new Message("system", summaryPrompt));  // message(대화내용이 들어있는 부분)에 프롬프트 명령어를 추가
+        String result = requestGptChat(selectedModel, summaryMessages); // gpt api에게 (일기내용 + 프롬프트) 전달
+        
+        if(result.length() < 50){ // 50글자 이하일경우 프롬프트 내용 추가해서 요약 1회만 재시도
+            // 재시도용 프롬프트 (기존 요약 결과 전달)
+            String retryPrompt = "다음은 이전에 작성한 일기입니다: \"" + result + "\"\n\n" +      // result -> 한번 요약 시도했던 일기
+                    "이 일기는 내용은 좋지만 길이가 부족합니다(" + result.length() + "글자)." +
+                    " 위 내용을 기반으로 하되, 50글자 이상이 되도록 자연스럽게 조금만 늘려주는데" +
+                    " 완전히 새로 쓰지 말고, 보편적으로 사용되는 형용사, 부사를 앞에 붙이는 식으로 늘려줘" +
+                    " 예: '치킨을 먹었다' → '바삭하고 고소한 치킨을 맛있게 먹었다'" +
+                    " '~했다', '~였다' 문체를 유지하고, 없는 내용은 절대 만들지 말아줘";
+
+            // 50자 이상으로 요약 내용 덧붙이기
+            List<Message> retryMessages = new ArrayList<>();
+            retryMessages.add(new Message("system", retryPrompt));
+            result = requestGptChat(selectedModel, retryMessages);
+        }
+
+        return  result; // 최종 요약본
+    }
 }
+
+
