@@ -89,8 +89,8 @@ public interface DiarySpecification {
     })
     ApiResponse<DiaryResponseDTO.CreateDiaryResultDTO> createDiaryByText(@Valid @RequestBody DiaryRequestDTO.CreateDiaryDTO request);
 
-    @PostMapping("/voice")
-    @Operation(summary = "음성 대화하기 API",description = "특정 사용자가 일기를 음성으로 말하며 작성하는 API입니다. 음성내용(STT)을 보내주세요")
+    @PostMapping("/voice/chat")
+    @Operation(summary = "AI와 음성 대화하기 API",description = "AI와 자신의 하루를 음성으로 대화 나누는 API입니다. 음성내용(STT)을 보내주세요")
     @ApiResponses({
             @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "COMMON_200", description = "⭕ SUCCESS"),
     })
