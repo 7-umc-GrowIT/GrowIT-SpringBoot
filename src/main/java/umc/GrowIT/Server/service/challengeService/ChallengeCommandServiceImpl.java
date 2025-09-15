@@ -85,7 +85,7 @@ public class ChallengeCommandServiceImpl implements ChallengeCommandService {
             diaryRepository.findByUserIdAndDateAndStatusForUpdate(userId, date, DiaryStatus.PENDING)
                     .ifPresent(diary -> {
                         // 1) 상태 전이
-                        diary.setStatus(DiaryStatus.COMPLETED);
+                        diary.markAsCompleted(DiaryStatus.COMPLETED);
 
                         // 2) 일기 타입에 따라 CreditSource 결정
                         CreditSource source = (diary.getType() == DiaryType.VOICE)
