@@ -94,13 +94,13 @@ public class DiaryController implements DiarySpecification {
     }
 
     @PostMapping("/voice")
-    public ApiResponse<DiaryResponseDTO.SummaryResultDTO> createDiaryByVoice(@RequestBody DiaryRequestDTO.SummaryDTO request) {
+    public ApiResponse<DiaryResponseDTO.SaveDiaryResultDTO> saveDiaryByVoice(@RequestBody DiaryRequestDTO.SaveVoiceDiaryDTO request) {
 
         //accessToken에서 userId 추출
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         Long userId = (Long) authentication.getPrincipal();
 
-        return ApiResponse.onSuccess(diaryCommandService.createDiaryByVoice(request, userId));
+        return ApiResponse.onSuccess(diaryCommandService.saveDiaryByVoice(request, userId));
     }
 
     @Override

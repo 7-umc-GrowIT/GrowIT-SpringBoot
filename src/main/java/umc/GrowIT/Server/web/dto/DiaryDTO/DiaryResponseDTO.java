@@ -11,8 +11,6 @@ import umc.GrowIT.Server.web.dto.KeywordDTO.KeywordResponseDTO;
 import java.time.LocalDate;
 import java.util.List;
 
-;
-
 public class DiaryResponseDTO {
     @Builder
     @Getter
@@ -93,33 +91,6 @@ public class DiaryResponseDTO {
     public static class VoiceChatResultDTO {
         @Schema(description = "AI의 답변 내용", example = "힘든 하루셨군요. 어떤 일이 있으셨나요?")
         String chat;
-    }
-
-    @Builder
-    @Getter
-    @NoArgsConstructor
-    @AllArgsConstructor
-    @Schema(title = "일기 요약 response")
-    public static class SummaryResultDTO {
-        @Schema(description = "일기 id", example = "1")
-        Long diaryId;
-        @Schema(description = "일기 요약 내용", example = "오늘은 평소보다 더 차분한 하루를 보냈다. 아침에 일어나 창밖을 보니..")
-        String content;
-        @Schema(description = "일기 작성 날짜")
-        LocalDate date;
-        @Schema(description = "크레딧 정보")
-        CreditInfo creditInfo;
-    }
-
-    @Builder
-    @Getter
-    @NoArgsConstructor
-    @AllArgsConstructor
-    public static class CreditInfo {
-        @Schema(description = "크레딧 지급 여부", example = "true")
-        Boolean granted;
-        @Schema(description = "지급된 크레딧 양 (지급되지 않은 경우 0)", example = "2")
-        Integer amount;
     }
 
     @Getter

@@ -3,7 +3,10 @@ package umc.GrowIT.Server.web.dto.DiaryDTO;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 import java.time.LocalDate;
 
@@ -53,7 +56,7 @@ public class DiaryRequestDTO {
     @NoArgsConstructor
     @AllArgsConstructor
     @Schema(title = "음성 일기 임시저장 request")
-    public static class SummaryDTO {
+    public static class SaveVoiceDiaryDTO {
         @NotNull
         @Schema(description = "일기 작성 날짜")
         LocalDate date;

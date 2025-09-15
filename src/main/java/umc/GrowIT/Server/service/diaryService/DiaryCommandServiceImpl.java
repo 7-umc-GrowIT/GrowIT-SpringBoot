@@ -14,11 +14,9 @@ import umc.GrowIT.Server.apiPayload.exception.*;
 import umc.GrowIT.Server.converter.DiaryConverter;
 import umc.GrowIT.Server.converter.FlaskConverter;
 import umc.GrowIT.Server.domain.*;
-import umc.GrowIT.Server.domain.enums.CreditSource;
 import umc.GrowIT.Server.domain.enums.DiaryStatus;
 import umc.GrowIT.Server.domain.enums.DiaryType;
 import umc.GrowIT.Server.repository.*;
-import umc.GrowIT.Server.util.dto.CreditGrantResult;
 import umc.GrowIT.Server.util.CreditUtil;
 import umc.GrowIT.Server.web.dto.DiaryDTO.DiaryRequestDTO;
 import umc.GrowIT.Server.web.dto.DiaryDTO.DiaryResponseDTO;
@@ -102,7 +100,7 @@ public class DiaryCommandServiceImpl implements DiaryCommandService{
         checkDiaryDate(userId, request.getDate());
 
         // 3. 일기 저장
-        Diary diary = DiaryConverter.toDiary(request, user, DiaryType.TEXT);
+        Diary diary = DiaryConverter.toDiary(request.getContent(), request.getDate(), user, DiaryType.TEXT);
         diary = diaryRepository.save(diary);
 
         // 4. 응답
@@ -174,16 +172,15 @@ public class DiaryCommandServiceImpl implements DiaryCommandService{
 
     @Override
     @Transactional
-    public DiaryResponseDTO.SummaryResultDTO createDiaryByVoice(DiaryRequestDTO.SummaryDTO request, Long userId) {
+    public DiaryResponseDTO.SaveDiaryResultDTO saveDiaryByVoice(DiaryRequestDTO.SaveVoiceDiaryDTO request, Long userId) {
+        // 1. 유저 조회
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new UserHandler(ErrorStatus.USER_NOT_FOUND));
 
-        // 유저 조회
-        User user = userRepository.findById(userId).orElseThrow(() -> new UserHandler(ErrorStatus.USER_NOT_FOUND));
-
-        // 일기 날짜 검사
+        // 2. 일기 날짜 검사
         checkDiaryDate(userId, request.getDate());
 
-        // 기존 대화 목록 가져오기
-//        List<Message> messages = conversationHistory.get(userId);
+        // 3. 기존 대화 목록 가져와서 정리
         List<Message> originalMessages = conversationHistory.get(userId);
 
         // 대화 기록에서 대화 시작전 LLM모델에게 설명하는 부분 제거
@@ -195,31 +192,23 @@ public class DiaryCommandServiceImpl implements DiaryCommandService{
                     .collect(Collectors.toList());
         }
 
+        // 4. 대화 내용을 바탕으로 일기 요약
         // 기존 대화 내용 길이
         int userDialogLength = messages.stream()
                 .filter(msg -> msg.getRole().equals("user"))
                 .mapToInt(msg -> msg.getContent().length())
                 .sum();
+        String aiChat = summaryDiary(userDialogLength, messages);
 
-        String aiChat = summaryDiary(userDialogLength, messages); // 일기요약함수 호출
-
-        //일기 생성
-        Diary diary = Diary.builder()
-                .content(aiChat)
-                .user(user)
-                .date(request.getDate())
-                .build();
-
-        //일기 저장
+        // 5. 일기 저장
+        Diary diary = DiaryConverter.toDiary(aiChat, request.getDate(), user, DiaryType.VOICE);
         diary = diaryRepository.save(diary);
 
-        // 사용자의 크레딧 수 증가
-        CreditGrantResult result = creditUtil.grantDiaryCredit(user, diary, CreditSource.VOICE_DIARY);
-
-        // 대화 기록 삭제
+        // 6. 대화 기록 삭제
         conversationHistory.remove(userId);
 
-        return DiaryConverter.toSummaryResultDTO(diary, result);
+        // 7. 응답
+        return DiaryConverter.toSaveResultDTO(diary);
     }
 
 

@@ -6,12 +6,11 @@ import umc.GrowIT.Server.domain.Keyword;
 import umc.GrowIT.Server.domain.User;
 import umc.GrowIT.Server.domain.enums.DiaryStatus;
 import umc.GrowIT.Server.domain.enums.DiaryType;
-import umc.GrowIT.Server.util.dto.CreditGrantResult;
 import umc.GrowIT.Server.web.dto.ChallengeDTO.ChallengeResponseDTO;
-import umc.GrowIT.Server.web.dto.DiaryDTO.DiaryRequestDTO;
 import umc.GrowIT.Server.web.dto.DiaryDTO.DiaryResponseDTO;
 import umc.GrowIT.Server.web.dto.KeywordDTO.KeywordResponseDTO;
 
+import java.time.LocalDate;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -77,18 +76,6 @@ public class DiaryConverter {
                 .build();
     }
 
-    public static DiaryResponseDTO.SummaryResultDTO toSummaryResultDTO(Diary diary, CreditGrantResult result){
-
-        return DiaryResponseDTO.SummaryResultDTO.builder()
-                .diaryId(diary.getId())
-                .content(diary.getContent())
-                .date(diary.getDate())
-                .creditInfo(DiaryResponseDTO.CreditInfo.builder()
-                        .granted(result.isGranted())
-                        .amount(result.isGranted() ? result.getAmount() : 0)
-                        .build())
-                .build();
-    }
 
     // 챌린지 추천
     public static DiaryResponseDTO.AnalyzedDiaryResponseDTO toAnalyzedDiaryDTO(List<Keyword> analyzedEmotions, List<Challenge> dailyChallenges, Challenge randomChallenge) {
@@ -105,11 +92,11 @@ public class DiaryConverter {
                 .build();
     }
 
-    public static Diary toDiary (DiaryRequestDTO.SaveTextDiaryDTO request, User user, DiaryType type) {
+    public static Diary toDiary(String content, LocalDate date, User user, DiaryType type) {
         return Diary.builder()
-                .content(request.getContent())
+                .content(content)
                 .user(user)
-                .date(request.getDate())
+                .date(date)
                 .status(DiaryStatus.PENDING)
                 .type(type)
                 .build()
