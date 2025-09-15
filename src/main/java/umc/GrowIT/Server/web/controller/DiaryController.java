@@ -22,15 +22,6 @@ public class DiaryController implements DiarySpecification {
     private final DiaryQueryService diaryQueryService;
     private final DiaryCommandService diaryCommandService;
 
-    @GetMapping("/has-voice-diary")
-    public ApiResponse<Boolean> hasVoiceDiary(){
-        //accessToken에서 userId 추출
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        Long userId = (Long) authentication.getPrincipal();
-
-        return ApiResponse.onSuccess(diaryQueryService.hasVoiceDiaries(userId));
-    }
-
     @GetMapping("/dates")
     public ApiResponse<DiaryResponseDTO.DiaryDateListDTO> getDiaryDate(@RequestParam Integer year,
                                                                        @RequestParam Integer month){
@@ -40,7 +31,7 @@ public class DiaryController implements DiarySpecification {
 
         return ApiResponse.onSuccess(diaryQueryService.getDiaryDate(year,month,userId));
     }
-    @GetMapping("/")
+    @GetMapping("")
     public ApiResponse<DiaryResponseDTO.DiaryListDTO> getDiaryList(@RequestParam Integer year,
                                                                    @RequestParam Integer month){
         //accessToken에서 userId 추출

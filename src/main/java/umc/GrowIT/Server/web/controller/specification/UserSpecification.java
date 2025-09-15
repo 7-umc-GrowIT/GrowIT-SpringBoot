@@ -124,5 +124,12 @@ public interface UserSpecification {
             @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "USER_401_01", description = "❌ 사용자를 찾을 수 없습니다.", content = @Content(schema = @Schema(implementation = ApiResponse.class))),
             @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "COMMON_400", description = "❌ BAD, 잘못된 요청", content = @Content(schema = @Schema(implementation = ApiResponse.class)))
     })
-    ApiResponse<UserResponseDTO.EmailResponseDTO> getMyEmail ();
+    ApiResponse<UserResponseDTO.EmailResponseDTO> getMyEmail();
+
+    @GetMapping("/me/voice-diary")
+    @Operation(summary = "음성 일기 작성 여부 조회 API",description = "사용자가 한번이라도 음성 일기를 작성했는지의 여부를 조회하는 API입니다.")
+    @ApiResponses({
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "COMMON_200", description = "⭕ SUCCESS"),
+    })
+    ApiResponse<Boolean> hasVoiceDiary();
 }
