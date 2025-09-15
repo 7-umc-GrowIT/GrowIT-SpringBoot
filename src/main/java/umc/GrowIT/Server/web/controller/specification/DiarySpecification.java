@@ -81,7 +81,7 @@ public interface DiarySpecification {
     ApiResponse<Void> deleteDiary(@PathVariable("diaryId") Long diaryId);
 
     @PostMapping("/text")
-    @Operation(summary = "직접 일기 작성하기 API",description = "특정 사용자가 일기를 텍스트로 직접 작성하는 API입니다. 작성내용과 작성일자를 보내주세요")
+    @Operation(summary = "직접 작성한 일기 임시저장하기 API",description = "직접 작성한 일기를 임시저장하는 API입니다. 작성내용과 작성일자를 보내주세요")
     @ApiResponses({
             @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "COMMON_200", description = "⭕ SUCCESS"),
             @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "COMMON_400",description = "❌ 일기는 100자 이상으로 작성해야 합니다.",content = @Content(schema = @Schema(implementation = ApiResponse.class))),
