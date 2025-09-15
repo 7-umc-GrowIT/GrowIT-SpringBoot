@@ -27,6 +27,11 @@ public interface DiaryRepository extends JpaRepository<Diary, Long> {
     @Query("SELECT d FROM Diary d WHERE d.user.id = :userId AND d.date = :date")
     Optional<Diary> findTodayDiaryByUserId(@Param("userId") Long userId, @Param("date") LocalDate date);
 
+    // 일기 상태 변경
+    @Query("select d from Diary d where d.user.id = :userId and d.date = :date and d.status = :diaryStatus")
+    Optional<Diary> findByUserIdAndDateAndStatusForUpdate(@Param("userId") Long userId,
+                                                          @Param("date") LocalDate date,
+                                                          @Param("diaryStatus") DiaryStatus diaryStatus);
 
     @Modifying
     @Query("DELETE FROM Diary d WHERE d.user.id = :userId")

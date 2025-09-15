@@ -47,7 +47,7 @@ public class Diary extends BaseEntity {
     @OneToMany(mappedBy = "diary", cascade = CascadeType.ALL)
     private List<DiaryKeyword> diaryKeywords = new ArrayList<>();
 
-
+    public void setStatus(DiaryStatus status) { this.status = status; }
 
     public void updateContent(String content) {
         this.content = content;

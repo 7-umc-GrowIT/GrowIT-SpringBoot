@@ -119,13 +119,4 @@ public class UserController implements UserSpecification {
         UserResponseDTO.EmailResponseDTO result = userQueryService.getMyEmail(userId);
         return ApiResponse.onSuccess(result);
     }
-
-    @GetMapping("/me/voice-diary")
-    public ApiResponse<Boolean> hasVoiceDiary(){
-        //accessToken에서 userId 추출
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        Long userId = (Long) authentication.getPrincipal();
-
-        return ApiResponse.onSuccess(userQueryService.hasVoiceDiaries(userId));
-    }
 }

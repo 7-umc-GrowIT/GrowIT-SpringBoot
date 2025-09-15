@@ -8,6 +8,9 @@ import umc.GrowIT.Server.apiPayload.code.status.ErrorStatus;
 import umc.GrowIT.Server.apiPayload.exception.*;
 import umc.GrowIT.Server.converter.ChallengeConverter;
 import umc.GrowIT.Server.domain.*;
+import umc.GrowIT.Server.domain.enums.CreditSource;
+import umc.GrowIT.Server.domain.enums.DiaryStatus;
+import umc.GrowIT.Server.domain.enums.DiaryType;
 import umc.GrowIT.Server.domain.enums.UserChallengeType;
 import umc.GrowIT.Server.repository.*;
 import umc.GrowIT.Server.util.CreditUtil;
@@ -28,6 +31,7 @@ public class ChallengeCommandServiceImpl implements ChallengeCommandService {
     private final UserRepository userRepository;
     private final UserChallengeRepository userChallengeRepository;
     private final ChallengeRepository challengeRepository;
+    private final DiaryRepository diaryRepository;
     private final S3Util s3Util;
     private final CreditUtil creditUtil;
 
@@ -77,6 +81,21 @@ public class ChallengeCommandServiceImpl implements ChallengeCommandService {
 
             List<UserChallenge> saved = userChallengeRepository.saveAll(newChallenges);
             userChallenges.addAll(saved);
+
+            diaryRepository.findByUserIdAndDateAndStatusForUpdate(userId, date, DiaryStatus.PENDING)
+                    .ifPresent(diary -> {
+                        // 1) 상태 전이
+                        diary.setStatus(DiaryStatus.COMPLETED);
+
+                        // 2) 일기 타입에 따라 CreditSource 결정
+                        CreditSource source = (diary.getType() == DiaryType.VOICE)
+                                ? CreditSource.VOICE_DIARY
+                                : CreditSource.TEXT_DIARY;
+
+                        // 3) 크레딧 지급
+                        creditUtil.grantDiaryCredit(user, diary, source);
+                    });
+
         }
         return ChallengeConverter.toSelectChallengeDTO(userChallenges);
     }
