@@ -5,7 +5,9 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
+import umc.GrowIT.Server.domain.enums.DiaryStatus;
 import umc.GrowIT.Server.repository.AuthenticationCodeRepository;
+import umc.GrowIT.Server.repository.DiaryRepository;
 
 import java.time.LocalDateTime;
 
@@ -15,19 +17,33 @@ import java.time.LocalDateTime;
 public class Scheduler {
 
     private final AuthenticationCodeRepository authenticationCodeRepository;
+    private final DiaryRepository diaryRepository;
 
     // 인증번호 삭제 스케줄러
     @Transactional
-    @Scheduled(cron = "0 0 0 * * ?") // 매일 자정 실행
+    @Scheduled(cron = "0 0 0 * * ?") // 매일 자정
     public void deleteExpiredAuthenticationCodes() {
         try {
             LocalDateTime now = LocalDateTime.now();
 
-            int count = authenticationCodeRepository.deleteExpiredUnverifiedCodes(now);
+            int deletedCount = authenticationCodeRepository.deleteExpiredUnverifiedCodes(now);
 
-            log.info("[스케줄러] : 인증번호 삭제 진행 (삭제된 데이터 개수 : " + count + "개)");
+            log.info("[스케줄러] : 인증번호 삭제 진행 (삭제된 데이터 개수 : {}개)", deletedCount);
         } catch (Exception e) {
             log.error("[스케줄러] : 인증번호 삭제 실패", e);
+        }
+    }
+
+    // 일기 삭제 스케줄러
+    @Transactional
+    @Scheduled(cron = "0 0 0 * * ?") // 매일 자정
+    public void deletePendingDiaries() {
+        try {
+            int deletedCount = diaryRepository.deleteByStatus(DiaryStatus.PENDING);
+
+            log.info("[스케줄러] : PENDING 상태 일기 삭제 진행 (삭제된 데이터 개수 : {}개)", deletedCount);
+        } catch (Exception e) {
+            log.error("[스케줄러] : PENDING 상태 일기 삭제 실패", e);
         }
     }
 

@@ -7,13 +7,13 @@ public interface DiaryCommandService {
 
     DiaryResponseDTO.ModifyDiaryResultDTO modifyDiary(DiaryRequestDTO.ModifyDiaryDTO request, Long diaryId, Long userId);
 
-    DiaryResponseDTO.CreateDiaryResultDTO createDiary(DiaryRequestDTO.CreateDiaryDTO request, Long userId);
+    DiaryResponseDTO.SaveDiaryResultDTO saveDiaryByText(DiaryRequestDTO.SaveTextDiaryDTO request, Long userId);
 
     void deleteDiary(Long diaryId, Long userId);
 
     DiaryResponseDTO.VoiceChatResultDTO chatByVoice(DiaryRequestDTO.VoiceChatDTO request, Long userId);
 
-    DiaryResponseDTO.SummaryResultDTO createDiaryByVoice(DiaryRequestDTO.SummaryDTO request, Long userId);
+    DiaryResponseDTO.SaveDiaryResultDTO saveDiaryByVoice(DiaryRequestDTO.SaveVoiceDiaryDTO request, Long userId);
 
     DiaryResponseDTO.AnalyzedDiaryResponseDTO analyze(Long diaryId);
 }

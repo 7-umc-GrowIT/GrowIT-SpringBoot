@@ -1,19 +1,12 @@
 package umc.GrowIT.Server.web.controller.specification;
 
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PatchMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestParam;
-
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import jakarta.validation.Valid;
+import org.springframework.web.bind.annotation.*;
 import umc.GrowIT.Server.apiPayload.ApiResponse;
 import umc.GrowIT.Server.web.dto.DiaryDTO.DiaryRequestDTO;
 import umc.GrowIT.Server.web.dto.DiaryDTO.DiaryResponseDTO;
@@ -81,34 +74,33 @@ public interface DiarySpecification {
     ApiResponse<Void> deleteDiary(@PathVariable("diaryId") Long diaryId);
 
     @PostMapping("/text")
-    @Operation(summary = "직접 일기 작성하기 API",description = "특정 사용자가 일기를 텍스트로 직접 작성하는 API입니다. 작성내용과 작성일자를 보내주세요")
+    @Operation(summary = "직접 작성한 일기 임시저장 API",description = "직접 작성한 일기를 임시저장하는 API입니다.")
     @ApiResponses({
             @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "COMMON_200", description = "⭕ SUCCESS"),
             @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "COMMON_400",description = "❌ 일기는 100자 이상으로 작성해야 합니다.",content = @Content(schema = @Schema(implementation = ApiResponse.class))),
             @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "DATE_400_02",description = "❌ 날짜는 오늘 이후로 설정할 수 없습니다.",content = @Content(schema = @Schema(implementation = ApiResponse.class)))
     })
-    ApiResponse<DiaryResponseDTO.CreateDiaryResultDTO> createDiaryByText(@Valid @RequestBody DiaryRequestDTO.CreateDiaryDTO request);
+    ApiResponse<DiaryResponseDTO.SaveDiaryResultDTO> saveDiaryByText(@Valid @RequestBody DiaryRequestDTO.SaveTextDiaryDTO request);
 
-    @PostMapping("/voice")
-    @Operation(summary = "음성 대화하기 API",description = "특정 사용자가 일기를 음성으로 말하며 작성하는 API입니다. 음성내용(STT)을 보내주세요")
+    @PostMapping("/voice/chat")
+    @Operation(summary = "AI와 음성 대화 API",description = "AI와 자신의 하루를 음성으로 대화 나누는 API입니다. 음성내용(STT)을 보내주세요")
     @ApiResponses({
             @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "COMMON_200", description = "⭕ SUCCESS"),
     })
     ApiResponse<DiaryResponseDTO.VoiceChatResultDTO> chatByVoice(@RequestBody DiaryRequestDTO.VoiceChatDTO request);
 
-    @PostMapping("/summary")
-    @Operation(summary = "음성대화 종료 및 요약 후 일기 생성 API",description = "음성 대화를 종료하면서 음성 대화하기 API를 사용하여 대화한 내용을 바탕으로 그 날의 일기를 작성해주는 API입니다. 작성 날짜를 보내주세요.")
+    @PostMapping("/voice")
+    @Operation(summary = "음성으로 작성한 일기 임시저장 API",description = "AI와 대화한 내용을 바탕으로 생성한 일기를 임시저장하는 API입니다.")
     @ApiResponses({
             @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "COMMON_200", description = "⭕ SUCCESS"),
     })
-    ApiResponse<DiaryResponseDTO.SummaryResultDTO> createDiaryByVoice(@RequestBody DiaryRequestDTO.SummaryDTO request);
+    ApiResponse<DiaryResponseDTO.SaveDiaryResultDTO> saveDiaryByVoice(@RequestBody DiaryRequestDTO.SaveVoiceDiaryDTO request);
 
-    @PostMapping("/analyze/{diaryId}")
+    @PostMapping("/{diaryId}/analyze")
     @Operation(
             summary = "일기 분석 API",
             description = "일기 내용을 분석하여, 적절한 감정과 데일리/랜덤 챌린지를 반환하는 API입니다.<br>" +
-                    "일기 ID를 path variable로 전달받아 해당 일기를 분석합니다.<br>" +
-                    "❗Request Header에 JWT Access Token 값을 넣어야 합니다.❗"
+                    "일기 ID를 path variable로 전달받아 해당 일기를 분석합니다."
     )
     @ApiResponses({
             @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "COMMON_200", description = "⭕ SUCCESS"),
