@@ -104,7 +104,7 @@ public class DiaryController implements DiarySpecification {
     }
 
     @Override
-    @PostMapping("/analyze/{diaryId}")
+    @PostMapping("/{diaryId}/analyze")
     public ApiResponse<DiaryResponseDTO.AnalyzedDiaryResponseDTO> analyzeDiary (@PathVariable("diaryId") Long diaryId) {
         DiaryResponseDTO.AnalyzedDiaryResponseDTO result = diaryCommandService.analyze(diaryId);
         return ApiResponse.onSuccess(result);

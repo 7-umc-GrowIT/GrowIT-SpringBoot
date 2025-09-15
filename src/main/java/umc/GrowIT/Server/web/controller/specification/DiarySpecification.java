@@ -103,12 +103,11 @@ public interface DiarySpecification {
     })
     ApiResponse<DiaryResponseDTO.SummaryResultDTO> createDiaryByVoice(@RequestBody DiaryRequestDTO.SummaryDTO request);
 
-    @PostMapping("/analyze/{diaryId}")
+    @PostMapping("/{diaryId}/analyze")
     @Operation(
             summary = "일기 분석 API",
             description = "일기 내용을 분석하여, 적절한 감정과 데일리/랜덤 챌린지를 반환하는 API입니다.<br>" +
-                    "일기 ID를 path variable로 전달받아 해당 일기를 분석합니다.<br>" +
-                    "❗Request Header에 JWT Access Token 값을 넣어야 합니다.❗"
+                    "일기 ID를 path variable로 전달받아 해당 일기를 분석합니다."
     )
     @ApiResponses({
             @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "COMMON_200", description = "⭕ SUCCESS"),
