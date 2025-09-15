@@ -3,8 +3,12 @@ package umc.GrowIT.Server.converter;
 import umc.GrowIT.Server.domain.Challenge;
 import umc.GrowIT.Server.domain.Diary;
 import umc.GrowIT.Server.domain.Keyword;
+import umc.GrowIT.Server.domain.User;
+import umc.GrowIT.Server.domain.enums.DiaryStatus;
+import umc.GrowIT.Server.domain.enums.DiaryType;
 import umc.GrowIT.Server.util.dto.CreditGrantResult;
 import umc.GrowIT.Server.web.dto.ChallengeDTO.ChallengeResponseDTO;
+import umc.GrowIT.Server.web.dto.DiaryDTO.DiaryRequestDTO;
 import umc.GrowIT.Server.web.dto.DiaryDTO.DiaryResponseDTO;
 import umc.GrowIT.Server.web.dto.KeywordDTO.KeywordResponseDTO;
 
@@ -58,16 +62,10 @@ public class DiaryConverter {
                 .build();
     }
 
-    public static DiaryResponseDTO.CreateDiaryResultDTO toCreateResultDTO(Diary diary, CreditGrantResult result){
-
-        return DiaryResponseDTO.CreateDiaryResultDTO.builder()
+    public static DiaryResponseDTO.SaveDiaryResultDTO toSaveResultDTO(Diary diary){
+        return DiaryResponseDTO.SaveDiaryResultDTO.builder()
                 .diaryId(diary.getId())
-                .content(diary.getContent())
                 .date(diary.getDate())
-                .creditInfo(DiaryResponseDTO.CreditInfo.builder()
-                        .granted(result.isGranted())
-                        .amount(result.isGranted() ? result.getAmount() : 0)
-                        .build())
                 .build()
                 ;
     }
@@ -105,5 +103,16 @@ public class DiaryConverter {
                 .emotionKeywords(emotionKeywordsDTOs)
                 .recommendedChallenges(recommendedChallenges)
                 .build();
+    }
+
+    public static Diary toDiary (DiaryRequestDTO.SaveTextDiaryDTO request, User user, DiaryType type) {
+        return Diary.builder()
+                .content(request.getContent())
+                .user(user)
+                .date(request.getDate())
+                .status(DiaryStatus.PENDING)
+                .type(type)
+                .build()
+                ;
     }
 }

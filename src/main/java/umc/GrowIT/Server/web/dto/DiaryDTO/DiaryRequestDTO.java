@@ -13,7 +13,7 @@ public class DiaryRequestDTO {
     @NoArgsConstructor
     @AllArgsConstructor
     @Schema(title = "직접 일기 임시저장 request")
-    public static class CreateDiaryDTO {
+    public static class SaveTextDiaryDTO {
 
         @NotNull
         @Size(min = 100, message = "일기는 100자 이상으로 작성해야 합니다.")

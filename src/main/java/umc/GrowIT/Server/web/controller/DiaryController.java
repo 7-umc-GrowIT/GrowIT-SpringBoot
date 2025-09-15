@@ -76,12 +76,12 @@ public class DiaryController implements DiarySpecification {
         return ApiResponse.onSuccess();
     }
     @PostMapping("/text")
-    public ApiResponse<DiaryResponseDTO.CreateDiaryResultDTO> createDiaryByText(@Valid @RequestBody DiaryRequestDTO.CreateDiaryDTO request){
+    public ApiResponse<DiaryResponseDTO.SaveDiaryResultDTO> saveDiaryByText(@Valid @RequestBody DiaryRequestDTO.SaveTextDiaryDTO request){
         //accessToken에서 userId 추출
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         Long userId = (Long) authentication.getPrincipal();
 
-        return ApiResponse.onSuccess(diaryCommandService.createDiary(request, userId));
+        return ApiResponse.onSuccess(diaryCommandService.saveDiaryByText(request, userId));
     }
     @PostMapping("/voice/chat")
     public ApiResponse<DiaryResponseDTO.VoiceChatResultDTO> chatByVoice(@RequestBody DiaryRequestDTO.VoiceChatDTO request){

@@ -64,16 +64,13 @@ public class DiaryResponseDTO {
     @Getter
     @NoArgsConstructor
     @AllArgsConstructor
-    @Schema(title = "일기 작성 response")
-    public static class CreateDiaryResultDTO {
+    @Schema(title = "일기 저장 response")
+    public static class SaveDiaryResultDTO {
         @Schema(description = "일기 id", example = "1")
         Long diaryId;
-        @Schema(description = "일기 작성 내용", example = "오늘은 미라클 모닝을 해서 아침 8시에 학교에 도착했다. 그런데 강사님께서 ~")
-        String content;
+
         @Schema(description = "일기 작성 날짜")
         LocalDate date;
-        @Schema(description = "크레딧 정보")
-        CreditInfo creditInfo;
     }
 
     @Builder

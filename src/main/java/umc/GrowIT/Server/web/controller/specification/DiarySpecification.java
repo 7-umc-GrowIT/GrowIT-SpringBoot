@@ -87,7 +87,7 @@ public interface DiarySpecification {
             @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "COMMON_400",description = "❌ 일기는 100자 이상으로 작성해야 합니다.",content = @Content(schema = @Schema(implementation = ApiResponse.class))),
             @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "DATE_400_02",description = "❌ 날짜는 오늘 이후로 설정할 수 없습니다.",content = @Content(schema = @Schema(implementation = ApiResponse.class)))
     })
-    ApiResponse<DiaryResponseDTO.CreateDiaryResultDTO> createDiaryByText(@Valid @RequestBody DiaryRequestDTO.CreateDiaryDTO request);
+    ApiResponse<DiaryResponseDTO.SaveDiaryResultDTO> saveDiaryByText(@Valid @RequestBody DiaryRequestDTO.SaveTextDiaryDTO request);
 
     @PostMapping("/voice/chat")
     @Operation(summary = "AI와 음성 대화 API",description = "AI와 자신의 하루를 음성으로 대화 나누는 API입니다. 음성내용(STT)을 보내주세요")
