@@ -40,7 +40,7 @@ public class DiaryController implements DiarySpecification {
 
         return ApiResponse.onSuccess(diaryQueryService.getDiaryDate(year,month,userId));
     }
-    @GetMapping("/")
+    @GetMapping("")
     public ApiResponse<DiaryResponseDTO.DiaryListDTO> getDiaryList(@RequestParam Integer year,
                                                                    @RequestParam Integer month){
         //accessToken에서 userId 추출

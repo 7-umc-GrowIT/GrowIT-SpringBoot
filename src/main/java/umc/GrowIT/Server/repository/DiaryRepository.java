@@ -13,6 +13,7 @@ import java.util.Optional;
 
 public interface DiaryRepository extends JpaRepository<Diary, Long> {
     @Query("SELECT d FROM Diary d WHERE d.user.id = :userId AND YEAR(d.date) = :year AND MONTH(d.date) = :month " +
+            "AND d.status = umc.GrowIT.Server.domain.enums.DiaryStatus.COMPLETED " +
             "ORDER BY d.date DESC")
     List<Diary> findByUserIdAndYearAndMonth(@Param("userId") Long userId,
                                             @Param("year") Integer year,

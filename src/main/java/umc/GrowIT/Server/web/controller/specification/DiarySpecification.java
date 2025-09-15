@@ -32,7 +32,7 @@ public interface DiarySpecification {
             @Parameter(description = "일기 작성 월",
                     example = "9")@RequestParam Integer month);
 
-    @GetMapping("/")
+    @GetMapping("")
     @Operation(summary = "일기 모아보기 API",description = "특정 사용자가 작성한 일기를 모아보는 API입니다. query string으로 year와 month를 넘겨주면 해당 월에 작성한 일기들의 리스트, 작성한 일기 수를 보내줍니다.")
     @ApiResponses({
             @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "COMMON_200", description = "⭕ SUCCESS"),
