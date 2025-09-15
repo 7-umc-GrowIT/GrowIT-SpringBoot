@@ -83,7 +83,7 @@ public class DiaryController implements DiarySpecification {
 
         return ApiResponse.onSuccess(diaryCommandService.createDiary(request, userId));
     }
-    @PostMapping("/voice")
+    @PostMapping("/voice/chat")
     public ApiResponse<DiaryResponseDTO.VoiceChatResultDTO> chatByVoice(@RequestBody DiaryRequestDTO.VoiceChatDTO request){
 
         //accessToken에서 userId 추출
@@ -93,7 +93,7 @@ public class DiaryController implements DiarySpecification {
         return ApiResponse.onSuccess(diaryCommandService.chatByVoice(request, userId));
     }
 
-    @PostMapping("/summary")
+    @PostMapping("/voice")
     public ApiResponse<DiaryResponseDTO.SummaryResultDTO> createDiaryByVoice(@RequestBody DiaryRequestDTO.SummaryDTO request) {
 
         //accessToken에서 userId 추출

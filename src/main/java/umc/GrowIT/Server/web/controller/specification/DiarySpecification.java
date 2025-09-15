@@ -81,7 +81,7 @@ public interface DiarySpecification {
     ApiResponse<Void> deleteDiary(@PathVariable("diaryId") Long diaryId);
 
     @PostMapping("/text")
-    @Operation(summary = "직접 작성한 일기 임시저장하기 API",description = "직접 작성한 일기를 임시저장하는 API입니다. 작성내용과 작성일자를 보내주세요")
+    @Operation(summary = "직접 작성한 일기 임시저장 API",description = "직접 작성한 일기를 임시저장하는 API입니다.")
     @ApiResponses({
             @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "COMMON_200", description = "⭕ SUCCESS"),
             @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "COMMON_400",description = "❌ 일기는 100자 이상으로 작성해야 합니다.",content = @Content(schema = @Schema(implementation = ApiResponse.class))),
@@ -90,14 +90,14 @@ public interface DiarySpecification {
     ApiResponse<DiaryResponseDTO.CreateDiaryResultDTO> createDiaryByText(@Valid @RequestBody DiaryRequestDTO.CreateDiaryDTO request);
 
     @PostMapping("/voice/chat")
-    @Operation(summary = "AI와 음성 대화하기 API",description = "AI와 자신의 하루를 음성으로 대화 나누는 API입니다. 음성내용(STT)을 보내주세요")
+    @Operation(summary = "AI와 음성 대화 API",description = "AI와 자신의 하루를 음성으로 대화 나누는 API입니다. 음성내용(STT)을 보내주세요")
     @ApiResponses({
             @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "COMMON_200", description = "⭕ SUCCESS"),
     })
     ApiResponse<DiaryResponseDTO.VoiceChatResultDTO> chatByVoice(@RequestBody DiaryRequestDTO.VoiceChatDTO request);
 
-    @PostMapping("/summary")
-    @Operation(summary = "음성대화 종료 및 요약 후 일기 생성 API",description = "음성 대화를 종료하면서 음성 대화하기 API를 사용하여 대화한 내용을 바탕으로 그 날의 일기를 작성해주는 API입니다. 작성 날짜를 보내주세요.")
+    @PostMapping("/voice")
+    @Operation(summary = "음성으로 작성한 일기 임시저장 API",description = "AI와 대화한 내용을 바탕으로 생성한 일기를 임시저장하는 API입니다.")
     @ApiResponses({
             @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "COMMON_200", description = "⭕ SUCCESS"),
     })

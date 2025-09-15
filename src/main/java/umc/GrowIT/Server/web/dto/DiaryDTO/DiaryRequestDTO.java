@@ -12,14 +12,16 @@ public class DiaryRequestDTO {
     @Builder
     @NoArgsConstructor
     @AllArgsConstructor
-    @Schema(title = "일기 작성 request")
+    @Schema(title = "직접 일기 임시저장 request")
     public static class CreateDiaryDTO {
-        @Schema(description = "일기 작성 내용", example = "오늘은 미라클 모닝을 해서 아침 8시에 학교에 도착했다. 그런데 강사님께서 ~")
+
         @NotNull
         @Size(min = 100, message = "일기는 100자 이상으로 작성해야 합니다.")
+        @Schema(description = "일기 작성 내용", example = "오늘은 미라클 모닝을 해서 아침 8시에 학교에 도착했다. 그런데 강사님께서 ~")
         String content;
-        @Schema(description = "일기 작성 날짜")
+
         @NotNull
+        @Schema(description = "일기 작성 날짜")
         LocalDate date;
     }
 
@@ -29,9 +31,9 @@ public class DiaryRequestDTO {
     @AllArgsConstructor
     @Schema(title = "일기 수정 request")
     public static class ModifyDiaryDTO {
-        @Schema(description = "일기 수정 내용", example = "오늘은 미라클 모닝을 해서 아침 8시에 학교에 도착했다. 그런데 강사님께서 ~")
         @NotNull
         @Size(min = 100, message = "일기는 100자 이상으로 작성해야 합니다.")
+        @Schema(description = "일기 수정 내용", example = "오늘은 미라클 모닝을 해서 아침 8시에 학교에 도착했다. 그런데 강사님께서 ~")
         String content;
     }
 
@@ -39,10 +41,10 @@ public class DiaryRequestDTO {
     @Builder
     @NoArgsConstructor
     @AllArgsConstructor
-    @Schema(title = "음성 대화 request")
+    @Schema(title = "AI 음성 대화 request")
     public static class VoiceChatDTO {
-        @Schema(description = "사용자의 음성내용", example = "오늘 정말 힘든 하루였어.")
         @NotNull
+        @Schema(description = "사용자의 음성내용", example = "오늘 정말 힘든 하루였어.")
         String chat;
     }
 
@@ -50,10 +52,10 @@ public class DiaryRequestDTO {
     @Builder
     @NoArgsConstructor
     @AllArgsConstructor
-    @Schema(title = "일기 요약 request")
+    @Schema(title = "음성 일기 임시저장 request")
     public static class SummaryDTO {
-        @Schema(description = "일기 작성 날짜")
         @NotNull
+        @Schema(description = "일기 작성 날짜")
         LocalDate date;
     }
 }
