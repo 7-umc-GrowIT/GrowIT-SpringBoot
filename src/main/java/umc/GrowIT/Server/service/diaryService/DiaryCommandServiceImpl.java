@@ -75,7 +75,7 @@ public class DiaryCommandServiceImpl implements DiaryCommandService{
         //유저 조회
         userRepository.findById(userId).orElseThrow(() -> new UserHandler(ErrorStatus.USER_NOT_FOUND));
 
-        Optional<Diary> optionalDiary = diaryRepository.findByUserIdAndId(userId, diaryId);
+        Optional<Diary> optionalDiary = diaryRepository.findCompletedByUserIdAndId(userId, diaryId);
         Diary diary = optionalDiary.orElseThrow(()->new DiaryHandler(ErrorStatus.DIARY_NOT_FOUND));
 
         //기존의 내용과 변경되지 않았을 경우
@@ -113,7 +113,7 @@ public class DiaryCommandServiceImpl implements DiaryCommandService{
         //유저 조회
         userRepository.findById(userId).orElseThrow(() -> new UserHandler(ErrorStatus.USER_NOT_FOUND));
 
-        Optional<Diary> optionalDiary = diaryRepository.findByUserIdAndId(userId, diaryId);
+        Optional<Diary> optionalDiary = diaryRepository.findCompletedByUserIdAndId(userId, diaryId);
         Diary diary = optionalDiary.orElseThrow(()->new DiaryHandler(ErrorStatus.DIARY_NOT_FOUND));
 
         //일기 삭제

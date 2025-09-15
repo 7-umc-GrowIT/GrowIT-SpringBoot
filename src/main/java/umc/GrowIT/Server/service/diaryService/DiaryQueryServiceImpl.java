@@ -54,9 +54,8 @@ public class DiaryQueryServiceImpl implements DiaryQueryService{
 
     @Override
     public DiaryResponseDTO.DiaryDTO getDiary(Long diaryId, Long userId){
-        Optional<Diary> diary = diaryRepository.findByUserIdAndId(userId, diaryId);
-
-        return diary.map(DiaryConverter::toDiaryDTO)
+        return diaryRepository.findCompletedByUserIdAndId(userId, diaryId)
+                .map(DiaryConverter::toDiaryDTO)
                 .orElseThrow(() -> new DiaryHandler(ErrorStatus.DIARY_NOT_FOUND));
     }
 }
