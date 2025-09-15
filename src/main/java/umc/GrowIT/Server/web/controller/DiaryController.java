@@ -67,14 +67,14 @@ public class DiaryController implements DiarySpecification {
         return ApiResponse.onSuccess();
     }
     @PostMapping("/text")
-    public ApiResponse<DiaryResponseDTO.CreateDiaryResultDTO> createDiaryByText(@Valid @RequestBody DiaryRequestDTO.CreateDiaryDTO request){
+    public ApiResponse<DiaryResponseDTO.SaveDiaryResultDTO> saveDiaryByText(@Valid @RequestBody DiaryRequestDTO.SaveTextDiaryDTO request){
         //accessToken에서 userId 추출
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         Long userId = (Long) authentication.getPrincipal();
 
-        return ApiResponse.onSuccess(diaryCommandService.createDiary(request, userId));
+        return ApiResponse.onSuccess(diaryCommandService.saveDiaryByText(request, userId));
     }
-    @PostMapping("/voice")
+    @PostMapping("/voice/chat")
     public ApiResponse<DiaryResponseDTO.VoiceChatResultDTO> chatByVoice(@RequestBody DiaryRequestDTO.VoiceChatDTO request){
 
         //accessToken에서 userId 추출
@@ -84,18 +84,18 @@ public class DiaryController implements DiarySpecification {
         return ApiResponse.onSuccess(diaryCommandService.chatByVoice(request, userId));
     }
 
-    @PostMapping("/summary")
-    public ApiResponse<DiaryResponseDTO.SummaryResultDTO> createDiaryByVoice(@RequestBody DiaryRequestDTO.SummaryDTO request) {
+    @PostMapping("/voice")
+    public ApiResponse<DiaryResponseDTO.SaveDiaryResultDTO> saveDiaryByVoice(@RequestBody DiaryRequestDTO.SaveVoiceDiaryDTO request) {
 
         //accessToken에서 userId 추출
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         Long userId = (Long) authentication.getPrincipal();
 
-        return ApiResponse.onSuccess(diaryCommandService.createDiaryByVoice(request, userId));
+        return ApiResponse.onSuccess(diaryCommandService.saveDiaryByVoice(request, userId));
     }
 
     @Override
-    @PostMapping("/analyze/{diaryId}")
+    @PostMapping("/{diaryId}/analyze")
     public ApiResponse<DiaryResponseDTO.AnalyzedDiaryResponseDTO> analyzeDiary (@PathVariable("diaryId") Long diaryId) {
         DiaryResponseDTO.AnalyzedDiaryResponseDTO result = diaryCommandService.analyze(diaryId);
         return ApiResponse.onSuccess(result);

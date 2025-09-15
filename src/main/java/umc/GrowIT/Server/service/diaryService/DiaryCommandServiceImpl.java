@@ -14,9 +14,9 @@ import umc.GrowIT.Server.apiPayload.exception.*;
 import umc.GrowIT.Server.converter.DiaryConverter;
 import umc.GrowIT.Server.converter.FlaskConverter;
 import umc.GrowIT.Server.domain.*;
-import umc.GrowIT.Server.domain.enums.CreditSource;
+import umc.GrowIT.Server.domain.enums.DiaryStatus;
+import umc.GrowIT.Server.domain.enums.DiaryType;
 import umc.GrowIT.Server.repository.*;
-import umc.GrowIT.Server.util.dto.CreditGrantResult;
 import umc.GrowIT.Server.util.CreditUtil;
 import umc.GrowIT.Server.web.dto.DiaryDTO.DiaryRequestDTO;
 import umc.GrowIT.Server.web.dto.DiaryDTO.DiaryResponseDTO;
@@ -69,6 +69,7 @@ public class DiaryCommandServiceImpl implements DiaryCommandService{
     private final Map<Long, List<Message>> conversationHistory = new HashMap<>();
 
     @Override
+    @Transactional
     public DiaryResponseDTO.ModifyDiaryResultDTO modifyDiary(DiaryRequestDTO.ModifyDiaryDTO request, Long diaryId, Long userId) {
 
         //유저 조회
@@ -90,31 +91,24 @@ public class DiaryCommandServiceImpl implements DiaryCommandService{
 
     @Override
     @Transactional
-    public DiaryResponseDTO.CreateDiaryResultDTO createDiary(DiaryRequestDTO.CreateDiaryDTO request, Long userId) {
+    public DiaryResponseDTO.SaveDiaryResultDTO saveDiaryByText(DiaryRequestDTO.SaveTextDiaryDTO request, Long userId) {
+        // 1. 유저 조회
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new UserHandler(ErrorStatus.USER_NOT_FOUND));
 
-        //유저 조회
-        User user = userRepository.findById(userId).orElseThrow(() -> new UserHandler(ErrorStatus.USER_NOT_FOUND));
-
-        // 일기 날짜 검사
+        // 2. 일기 날짜 검사
         checkDiaryDate(userId, request.getDate());
 
-        //일기 생성
-        Diary diary = Diary.builder()
-                .content(request.getContent())
-                .user(user)
-                .date(request.getDate())
-                .build();
-
-        //일기 저장
+        // 3. 일기 저장
+        Diary diary = DiaryConverter.toDiary(request.getContent(), request.getDate(), user, DiaryType.TEXT);
         diary = diaryRepository.save(diary);
 
-        // 사용자의 크레딧 수 증가
-        CreditGrantResult result = creditUtil.grantDiaryCredit(user, diary, CreditSource.TEXT_DIARY);
-
-        return DiaryConverter.toCreateResultDTO(diary, result);
+        // 4. 응답
+        return DiaryConverter.toSaveResultDTO(diary);
     }
 
     @Override
+    @Transactional
     public void deleteDiary(Long diaryId, Long userId) {
         //유저 조회
         userRepository.findById(userId).orElseThrow(() -> new UserHandler(ErrorStatus.USER_NOT_FOUND));
@@ -127,6 +121,7 @@ public class DiaryCommandServiceImpl implements DiaryCommandService{
     }
 
     @Override
+    @Transactional
     public DiaryResponseDTO.VoiceChatResultDTO chatByVoice(DiaryRequestDTO.VoiceChatDTO request, Long userId) {
 
         //유저 조회
@@ -177,16 +172,15 @@ public class DiaryCommandServiceImpl implements DiaryCommandService{
 
     @Override
     @Transactional
-    public DiaryResponseDTO.SummaryResultDTO createDiaryByVoice(DiaryRequestDTO.SummaryDTO request, Long userId) {
+    public DiaryResponseDTO.SaveDiaryResultDTO saveDiaryByVoice(DiaryRequestDTO.SaveVoiceDiaryDTO request, Long userId) {
+        // 1. 유저 조회
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new UserHandler(ErrorStatus.USER_NOT_FOUND));
 
-        // 유저 조회
-        User user = userRepository.findById(userId).orElseThrow(() -> new UserHandler(ErrorStatus.USER_NOT_FOUND));
-
-        // 일기 날짜 검사
+        // 2. 일기 날짜 검사
         checkDiaryDate(userId, request.getDate());
 
-        // 기존 대화 목록 가져오기
-//        List<Message> messages = conversationHistory.get(userId);
+        // 3. 기존 대화 목록 가져와서 정리
         List<Message> originalMessages = conversationHistory.get(userId);
 
         // 대화 기록에서 대화 시작전 LLM모델에게 설명하는 부분 제거
@@ -198,61 +192,30 @@ public class DiaryCommandServiceImpl implements DiaryCommandService{
                     .collect(Collectors.toList());
         }
 
+        // 4. 대화 내용을 바탕으로 일기 요약
         // 기존 대화 내용 길이
         int userDialogLength = messages.stream()
                 .filter(msg -> msg.getRole().equals("user"))
                 .mapToInt(msg -> msg.getContent().length())
                 .sum();
+        String aiChat = summaryDiary(userDialogLength, messages);
 
-        String aiChat = summaryDiary(userDialogLength, messages); // 일기요약함수 호출
-
-        //일기 생성
-        Diary diary = Diary.builder()
-                .content(aiChat)
-                .user(user)
-                .date(request.getDate())
-                .build();
-
-        //일기 저장
+        // 5. 일기 저장
+        Diary diary = DiaryConverter.toDiary(aiChat, request.getDate(), user, DiaryType.VOICE);
         diary = diaryRepository.save(diary);
 
-        // 사용자의 크레딧 수 증가
-        CreditGrantResult result = creditUtil.grantDiaryCredit(user, diary, CreditSource.VOICE_DIARY);
-
-        // 대화 기록 삭제
+        // 6. 대화 기록 삭제
         conversationHistory.remove(userId);
 
-        return DiaryConverter.toSummaryResultDTO(diary, result);
+        // 7. 응답
+        return DiaryConverter.toSaveResultDTO(diary);
     }
 
-    private void checkDiaryDate(Long userId, LocalDate date) {
-        // 오늘 이후의 날짜를 선택한 경우
-        if (date.isAfter(LocalDate.now())) {
-            throw new DiaryHandler(ErrorStatus.DATE_IS_AFTER);
-        }
-        // 이미 해당 날짜에 작성된 일기가 존재하는 경우
-        if (diaryRepository.existsByUserIdAndDate(userId, date)) {
-            throw new DiaryHandler(ErrorStatus.DIARY_ALREADY_EXISTS);
-        }
-    }
 
-    // ‼️ 정상적으로 테스트되는지 확인 필요
-    private String requestGptChat(String model, List<Message> messages) {
-        // ChatGPT 요청 생성
-        ChatGPTRequest gptRequest = new ChatGPTRequest(model, messages);
-
-        // API 요청 및 응답 처리
-        ChatGPTResponse res = template.postForObject(apiURL, gptRequest, ChatGPTResponse.class);
-
-        if (res.getChoices() == null || res.getChoices().isEmpty() || res.getChoices().get(0) == null || res.getChoices().get(0).getMessage() == null) {
-            throw new OpenAIHandler(ErrorStatus.GPT_RESPONSE_EMPTY);
-        }
-
-        return res.getChoices().get(0).getMessage().getContent();
-    }
 
     // 일기 분석
     @Override
+    @Transactional
     public DiaryResponseDTO.AnalyzedDiaryResponseDTO analyze(Long diaryId) {
         // 1. 일기 조회
         Diary diary = diaryRepository.findById(diaryId)
@@ -292,6 +255,37 @@ public class DiaryCommandServiceImpl implements DiaryCommandService{
 
         // 9. converter작업
         return DiaryConverter.toAnalyzedDiaryDTO(analyzedEmotions, dailyChallenges, randomChallenge);
+    }
+
+
+
+    /*
+        이 아래부터 헬퍼메소드
+    */
+    private void checkDiaryDate(Long userId, LocalDate date) {
+        // 오늘 이후의 날짜를 선택한 경우
+        if (date.isAfter(LocalDate.now())) {
+            throw new DiaryHandler(ErrorStatus.DATE_IS_AFTER);
+        }
+        // 이미 해당 날짜에 작성된 일기가 존재하는 경우
+        if (diaryRepository.existsByUserIdAndDateAndStatus(userId, date, DiaryStatus.COMPLETED)) {
+            throw new DiaryHandler(ErrorStatus.DIARY_ALREADY_EXISTS);
+        }
+    }
+
+    // ‼️ 정상적으로 테스트되는지 확인 필요
+    private String requestGptChat(String model, List<Message> messages) {
+        // ChatGPT 요청 생성
+        ChatGPTRequest gptRequest = new ChatGPTRequest(model, messages);
+
+        // API 요청 및 응답 처리
+        ChatGPTResponse res = template.postForObject(apiURL, gptRequest, ChatGPTResponse.class);
+
+        if (res.getChoices() == null || res.getChoices().isEmpty() || res.getChoices().get(0) == null || res.getChoices().get(0).getMessage() == null) {
+            throw new OpenAIHandler(ErrorStatus.GPT_RESPONSE_EMPTY);
+        }
+
+        return res.getChoices().get(0).getMessage().getContent();
     }
 
 
