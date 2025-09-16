@@ -37,23 +37,21 @@ public class ChallengeCommandServiceImpl implements ChallengeCommandService {
 
     @Override
     @Transactional
-    public ChallengeResponseDTO.SelectChallengeResponseDTO selectChallenges(Long userId, ChallengeRequestDTO.SelectChallengesRequestDTO request) {
+    public void selectChallenges(Long userId, ChallengeRequestDTO.SelectChallengesRequestDTO request) {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new ChallengeHandler(ErrorStatus.USER_NOT_FOUND));
 
         Long diaryId = request.getDiaryId();
 
-        // PENDING 상태의 일기 존재 여부
-        Diary pendingDiary = diaryRepository.findByUserIdAndDiaryIdAndStatusForUpdate(userId, diaryId, DiaryStatus.PENDING)
+        // 일기 존재 여부
+        Diary diary = diaryRepository.findById(diaryId)
                 .orElseThrow(() -> new DiaryHandler(ErrorStatus.DIARY_NOT_FOUND));
 
-        LocalDate date = pendingDiary.getDate();
+        LocalDate date = diary.getDate();
 
         // 전체 선택된 챌린지 개수 초기화
         int dailyChallengeCount = 0;
         int randomChallengeCount = 0;
-
-        List<UserChallenge> userChallenges = new ArrayList<>();
 
         for (ChallengeRequestDTO.SelectChallengeItemDTO item : request.getChallenges()) {
             List<Long> challengeIds = item.getChallengeIds();
@@ -72,11 +70,6 @@ public class ChallengeCommandServiceImpl implements ChallengeCommandService {
                 }
             }
 
-            // 데일리 챌린지와 랜덤 챌린지 합쳐서 최소 1개 이상 선택
-            if (dailyChallengeCount == 0 && randomChallengeCount == 0) {
-                throw new ChallengeHandler(ErrorStatus.CHALLENGE_AT_LEAST);
-            }
-
             // 각 챌린지를 UserChallenge로 생성 및 저장
             List<UserChallenge> newChallenges = challengeIds.stream()
                     .map(challengeId -> {
@@ -86,21 +79,31 @@ public class ChallengeCommandServiceImpl implements ChallengeCommandService {
                     })
                     .toList();
 
-            userChallenges.addAll(userChallengeRepository.saveAll(newChallenges));
+            userChallengeRepository.saveAll(newChallenges);
         }
 
-        // 1. 일기 상태 전이
-        pendingDiary.markAsCompleted(DiaryStatus.COMPLETED);
+        // 데일리 챌린지와 랜덤 챌린지 합쳐서 최소 1개 이상 선택
+        if (dailyChallengeCount == 0 && randomChallengeCount == 0) {
+            throw new ChallengeHandler(ErrorStatus.CHALLENGE_AT_LEAST);
+        }
 
-        // 2. 일기 타입에 따라 CreditSource 결정
-        CreditSource source = (pendingDiary.getType() == DiaryType.VOICE)
-                ? CreditSource.VOICE_DIARY
-                : CreditSource.TEXT_DIARY;
+        // PENDING 경우에만 상태 전이 + 크레딧 지급
+        if (diary.getStatus() == DiaryStatus.PENDING) {
 
-        // 3. 일기 크레딧 지급
-        CreditGrantResult result = creditUtil.grantDiaryCredit(user, pendingDiary, source);
+            // 1. 일기 상태 전이
+            diary.markAsCompleted(DiaryStatus.COMPLETED);
 
-        return ChallengeConverter.toSelectChallengeDTO(userChallenges, result);
+            // 2. 일기 타입에 따라 CreditSource 결정
+            CreditSource source = (diary.getType() == DiaryType.VOICE)
+                    ? CreditSource.VOICE_DIARY
+                    : CreditSource.TEXT_DIARY;
+
+            // 3. 일기 크레딧 지급
+            creditUtil.grantDiaryCredit(user, diary, source);
+
+        } else {
+            throw new DiaryHandler(ErrorStatus.DIARY_NOT_PENDING);
+        }
     }
 
     // 챌린지 인증 이미지 업로드용 Presigned URL 생성
@@ -158,12 +161,12 @@ public class ChallengeCommandServiceImpl implements ChallengeCommandService {
         // 사용자의 크레딧 수 증가
         CreditGrantResult isGranted = creditUtil.grantUserChallengeCredit(user, userChallenge);
 
-        return ChallengeConverter.toCreateProofDTO(userChallenge, isGranted);
+        return ChallengeConverter.toCreateProofDTO(isGranted);
     }
 
     @Override
     @Transactional
-    public ChallengeResponseDTO.ModifyProofDTO updateChallengeProof(Long userId, Long userChallengeId, ChallengeRequestDTO.ProofRequestDTO updateRequest) {
+    public void updateChallengeProof(Long userId, Long userChallengeId, ChallengeRequestDTO.ProofRequestDTO updateRequest) {
         // 유저 챌린지 조회
         UserChallenge userChallenge = userChallengeRepository.findByIdAndUserId(userChallengeId, userId)
                 .orElseThrow(() -> new ChallengeHandler(ErrorStatus.USER_CHALLENGE_NOT_FOUND));
@@ -184,8 +187,6 @@ public class ChallengeCommandServiceImpl implements ChallengeCommandService {
 
         // 인증 이미지 + 소감 업데이트
         userChallenge.updateProof(updateRequest);
-
-        return ChallengeConverter.toChallengeModifyProofDTO(userChallenge);
     }
 
     // 삭제

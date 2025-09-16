@@ -13,8 +13,6 @@ import java.util.Optional;
 
 public interface DiaryRepository extends JpaRepository<Diary, Long> {
 
-    Optional<Diary> findByIdAndUserId(@Param("diaryId") Long diaryId, @Param("userId") Long userId);
-
     @Query("SELECT d FROM Diary d WHERE d.user.id = :userId AND YEAR(d.date) = :year AND MONTH(d.date) = :month " +
             "AND d.status = umc.GrowIT.Server.domain.enums.DiaryStatus.COMPLETED " +
             "ORDER BY d.date DESC")
@@ -35,12 +33,6 @@ public interface DiaryRepository extends JpaRepository<Diary, Long> {
     // 오늘 작성한 일기 조회
     @Query("SELECT d FROM Diary d WHERE d.user.id = :userId AND d.date = :date")
     Optional<Diary> findTodayDiaryByUserId(@Param("userId") Long userId, @Param("date") LocalDate date);
-
-    // 일기 상태 변경
-    @Query("select d from Diary d where d.user.id = :userId and d.id = :diaryId and d.status = :diaryStatus")
-    Optional<Diary> findByUserIdAndDiaryIdAndStatusForUpdate(@Param("userId") Long userId,
-                                                          @Param("diaryId") Long diaryId,
-                                                          @Param("diaryStatus") DiaryStatus diaryStatus);
 
     @Modifying
     @Query("DELETE FROM Diary d WHERE d.user.id = :userId")

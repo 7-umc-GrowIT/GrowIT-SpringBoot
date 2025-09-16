@@ -5,9 +5,9 @@ import umc.GrowIT.Server.web.dto.ChallengeDTO.ChallengeResponseDTO;
 
 public interface ChallengeCommandService {
 
-    ChallengeResponseDTO.SelectChallengeResponseDTO selectChallenges(Long userId, ChallengeRequestDTO.SelectChallengesRequestDTO selectRequestList);
+    void selectChallenges(Long userId, ChallengeRequestDTO.SelectChallengesRequestDTO selectRequestList);
     ChallengeResponseDTO.ProofPresignedUrlResponseDTO createChallengePresignedUrl(Long userId, ChallengeRequestDTO.ProofRequestPresignedUrlDTO request);
     ChallengeResponseDTO.CreateProofDTO createChallengeProof(Long userId, Long userChallengeId, ChallengeRequestDTO.ProofRequestDTO proofRequest);
-    ChallengeResponseDTO.ModifyProofDTO updateChallengeProof(Long userId, Long userChallengeId, ChallengeRequestDTO.ProofRequestDTO updateRequest);
+    void updateChallengeProof(Long userId, Long userChallengeId, ChallengeRequestDTO.ProofRequestDTO updateRequest);
     void delete(Long userChallengeId, Long userId);
 }

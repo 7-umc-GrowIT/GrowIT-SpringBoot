@@ -104,6 +104,7 @@ public enum ErrorStatus implements BaseErrorCode {
     // 일기 관련 에러
     DIARY_CHARACTER_LIMIT(HttpStatus.BAD_REQUEST, "DIARY_400_01", "100자 이내로 작성된 일기입니다."),
     DIARY_SAME_CONTENT(HttpStatus.BAD_REQUEST, "DIARY_400_02", "기존 일기와 동일한 내용입니다."),
+    DIARY_NOT_PENDING(HttpStatus.NOT_FOUND, "DIARY_400_03", "임시저장된 일기가 아닙니다."),
     DIARY_NOT_FOUND(HttpStatus.NOT_FOUND, "DIARY_404_01", "존재하지 않는 일기입니다."),
     DIARY_ALREADY_EXISTS(HttpStatus.CONFLICT, "DIARY_409_01", "해당날짜에 이미 일기가 존재합니다."),
     ANALYZED_DIARY(HttpStatus.CONFLICT, "DIARY_409_02", "이미 분석된 일기입니다."),
