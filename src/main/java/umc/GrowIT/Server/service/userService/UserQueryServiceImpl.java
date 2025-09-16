@@ -12,7 +12,6 @@ import umc.GrowIT.Server.converter.UserConverter;
 import umc.GrowIT.Server.domain.CreditHistory;
 import umc.GrowIT.Server.domain.Gro;
 import umc.GrowIT.Server.domain.User;
-import umc.GrowIT.Server.domain.enums.CreditSource;
 import umc.GrowIT.Server.repository.CreditHistoryRepository;
 import umc.GrowIT.Server.repository.GroRepository;
 import umc.GrowIT.Server.repository.UserRepository;
@@ -74,13 +73,6 @@ public class UserQueryServiceImpl implements UserQueryService {
 
         // 2.결과 반환
         return UserConverter.toEmailResponseDTO(user);
-    }
-
-    @Override
-    public boolean hasVoiceDiaries(Long userId) {
-        User user = userRepository.findById(userId).orElseThrow(() -> new UserHandler(ErrorStatus.USER_NOT_FOUND));
-
-        return creditHistoryRepository.existsByUserAndSource(user, CreditSource.VOICE_DIARY);
     }
 
     /*

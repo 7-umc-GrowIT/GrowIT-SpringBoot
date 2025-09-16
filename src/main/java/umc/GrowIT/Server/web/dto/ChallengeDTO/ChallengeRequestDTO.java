@@ -6,7 +6,6 @@ import jakarta.validation.constraints.Size;
 import lombok.*;
 import umc.GrowIT.Server.domain.enums.UserChallengeType;
 
-import java.time.LocalDate;
 import java.util.List;
 
 public class ChallengeRequestDTO {

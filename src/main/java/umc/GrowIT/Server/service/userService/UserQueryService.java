@@ -11,6 +11,4 @@ public interface UserQueryService {
     UserResponseDTO.CreditHistoryResponseDTO getCreditHistory(Long userId, int year, int month, CreditTransactionType type, int page);
 
     UserResponseDTO.EmailResponseDTO getMyEmail(Long userId);
-
-    boolean hasVoiceDiaries(Long userId);
 }

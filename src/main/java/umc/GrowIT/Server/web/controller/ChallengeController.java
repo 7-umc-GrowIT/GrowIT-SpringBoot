@@ -18,9 +18,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import umc.GrowIT.Server.web.dto.ChallengeDTO.ChallengeResponseDTO;
 
-import java.util.List;
-
-
 @Tag(name = "Challenge", description = "챌린지 관련 API")
 @RestController
 @RequiredArgsConstructor

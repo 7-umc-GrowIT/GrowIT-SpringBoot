@@ -262,6 +262,8 @@ public class DiaryCommandServiceImpl implements DiaryCommandService{
     /*
         이 아래부터 헬퍼메소드
     */
+
+    // 일기 날짜 검사
     private void checkDiaryDate(Long userId, LocalDate date) {
         // 오늘 이후의 날짜를 선택한 경우
         if (date.isAfter(LocalDate.now())) {
@@ -273,7 +275,7 @@ public class DiaryCommandServiceImpl implements DiaryCommandService{
         }
     }
 
-    // ‼️ 정상적으로 테스트되는지 확인 필요
+    // chatgpt 대화 요청
     private String requestGptChat(String model, List<Message> messages) {
         // ChatGPT 요청 생성
         ChatGPTRequest gptRequest = new ChatGPTRequest(model, messages);
