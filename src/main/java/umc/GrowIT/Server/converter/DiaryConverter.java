@@ -64,6 +64,7 @@ public class DiaryConverter {
     public static DiaryResponseDTO.SaveDiaryResultDTO toSaveResultDTO(Diary diary){
         return DiaryResponseDTO.SaveDiaryResultDTO.builder()
                 .diaryId(diary.getId())
+                .content(diary.getContent())
                 .date(diary.getDate())
                 .build()
                 ;
