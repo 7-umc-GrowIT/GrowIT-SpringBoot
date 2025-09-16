@@ -91,15 +91,15 @@ public class ChallengeCommandServiceImpl implements ChallengeCommandService {
             diaryRepository.findByUserIdAndDiaryIdAndStatusForUpdate(userId, diaryId, DiaryStatus.PENDING)
                     .ifPresent(pendingDiary -> {
                         // 1) 상태 전이
-                        diary.markAsCompleted(DiaryStatus.COMPLETED);
+                        pendingDiary.markAsCompleted(DiaryStatus.COMPLETED);
 
                         // 2) 일기 타입에 따라 CreditSource 결정
-                        CreditSource source = (diary.getType() == DiaryType.VOICE)
+                        CreditSource source = (pendingDiary.getType() == DiaryType.VOICE)
                                 ? CreditSource.VOICE_DIARY
                                 : CreditSource.TEXT_DIARY;
 
                         // 3) 크레딧 지급
-                        creditUtil.grantDiaryCredit(user, diary, source);
+                        creditUtil.grantDiaryCredit(user, pendingDiary, source);
                     });
         }
         return ChallengeConverter.toSelectChallengeDTO(userChallenges);
