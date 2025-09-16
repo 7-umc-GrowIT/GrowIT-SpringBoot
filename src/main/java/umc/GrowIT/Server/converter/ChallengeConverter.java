@@ -130,7 +130,7 @@ public class ChallengeConverter {
     }
 
     // 선택한 챌린지 저장
-    public static ChallengeResponseDTO.SelectChallengeResponseDTO toSelectChallengeDTO(List<UserChallenge> userChallenges) {
+    public static ChallengeResponseDTO.SelectChallengeResponseDTO toSelectChallengeDTO(List<UserChallenge> userChallenges, CreditGrantResult result) {
         List<ChallengeResponseDTO.SelectedChallengesInfo> selectedChallenges = userChallenges.stream()
                 .map(userChallenge -> ChallengeResponseDTO.SelectedChallengesInfo.builder()
                         .id(userChallenge.getId())
@@ -143,6 +143,10 @@ public class ChallengeConverter {
 
         return ChallengeResponseDTO.SelectChallengeResponseDTO.builder()
                 .selectedChallenges(selectedChallenges) // 여러 개의 챌린지 리스트 반환
+                .creditInfo(ChallengeResponseDTO.CreditInfo.builder() // 일기 작성에 대한 크레딧 지급
+                        .granted(result.isGranted())
+                        .amount(result.isGranted() ? result.getAmount() : 0)
+                        .build())
                 .build();
     }
 

@@ -34,6 +34,8 @@ public class ChallengeResponseDTO {
     public static class SelectChallengeResponseDTO {
         @Schema(description = "저장한 챌린지 리스트")
         private List<SelectedChallengesInfo> selectedChallenges;
+        @Schema(description = "크레딧 정보")
+        CreditInfo creditInfo;
     }
 
     @Getter

@@ -43,11 +43,11 @@ public class ChallengeCommandServiceImpl implements ChallengeCommandService {
 
         Long diaryId = request.getDiaryId();
 
-        // 일기 존재 여부
-        Diary diary = diaryRepository.findByIdAndUserId(diaryId, userId)
+        // PENDING 상태의 일기 존재 여부
+        Diary pendingDiary = diaryRepository.findByUserIdAndDiaryIdAndStatusForUpdate(userId, diaryId, DiaryStatus.PENDING)
                 .orElseThrow(() -> new DiaryHandler(ErrorStatus.DIARY_NOT_FOUND));
 
-        LocalDate date = diary.getDate();
+        LocalDate date = pendingDiary.getDate();
 
         // 전체 선택된 챌린지 개수 초기화
         int dailyChallengeCount = 0;
@@ -87,22 +87,20 @@ public class ChallengeCommandServiceImpl implements ChallengeCommandService {
                     .toList();
 
             userChallenges.addAll(userChallengeRepository.saveAll(newChallenges));
-
-            diaryRepository.findByUserIdAndDiaryIdAndStatusForUpdate(userId, diaryId, DiaryStatus.PENDING)
-                    .ifPresent(pendingDiary -> {
-                        // 1) 상태 전이
-                        pendingDiary.markAsCompleted(DiaryStatus.COMPLETED);
-
-                        // 2) 일기 타입에 따라 CreditSource 결정
-                        CreditSource source = (pendingDiary.getType() == DiaryType.VOICE)
-                                ? CreditSource.VOICE_DIARY
-                                : CreditSource.TEXT_DIARY;
-
-                        // 3) 크레딧 지급
-                        creditUtil.grantDiaryCredit(user, pendingDiary, source);
-                    });
         }
-        return ChallengeConverter.toSelectChallengeDTO(userChallenges);
+
+        // 1. 일기 상태 전이
+        pendingDiary.markAsCompleted(DiaryStatus.COMPLETED);
+
+        // 2. 일기 타입에 따라 CreditSource 결정
+        CreditSource source = (pendingDiary.getType() == DiaryType.VOICE)
+                ? CreditSource.VOICE_DIARY
+                : CreditSource.TEXT_DIARY;
+
+        // 3. 일기 크레딧 지급
+        CreditGrantResult result = creditUtil.grantDiaryCredit(user, pendingDiary, source);
+
+        return ChallengeConverter.toSelectChallengeDTO(userChallenges, result);
     }
 
     // 챌린지 인증 이미지 업로드용 Presigned URL 생성
