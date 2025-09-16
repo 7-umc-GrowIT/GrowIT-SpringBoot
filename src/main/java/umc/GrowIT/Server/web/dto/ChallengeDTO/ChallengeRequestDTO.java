@@ -46,9 +46,6 @@ public class ChallengeRequestDTO {
         @Schema(description = "일기 ID", example = "123")
         private Long diaryId;
 
-        @Schema(description = "챌린지를 저장하는 날짜(오늘 날짜가 기본값)")
-        private LocalDate date;
-
         @Schema(description = "선택한 챌린지들")
         private List<SelectChallengeItemDTO> challenges;
     }

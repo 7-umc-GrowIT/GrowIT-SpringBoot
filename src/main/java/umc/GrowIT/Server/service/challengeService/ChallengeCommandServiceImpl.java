@@ -42,14 +42,12 @@ public class ChallengeCommandServiceImpl implements ChallengeCommandService {
                 .orElseThrow(() -> new ChallengeHandler(ErrorStatus.USER_NOT_FOUND));
 
         Long diaryId = request.getDiaryId();
-        LocalDate date = request.getDate();
 
         // 일기 존재 여부
-        diaryRepository.findByIdAndUserId(diaryId, userId)
+        Diary diary = diaryRepository.findByIdAndUserId(diaryId, userId)
                 .orElseThrow(() -> new DiaryHandler(ErrorStatus.DIARY_NOT_FOUND));
 
-        // 일기 날짜 검사
-        checkDiaryDate(userId, date);
+        LocalDate date = diary.getDate();
 
         // 전체 선택된 챌린지 개수 초기화
         int dailyChallengeCount = 0;
@@ -91,7 +89,7 @@ public class ChallengeCommandServiceImpl implements ChallengeCommandService {
             userChallenges.addAll(userChallengeRepository.saveAll(newChallenges));
 
             diaryRepository.findByUserIdAndDiaryIdAndStatusForUpdate(userId, diaryId, DiaryStatus.PENDING)
-                    .ifPresent(diary -> {
+                    .ifPresent(pendingDiary -> {
                         // 1) 상태 전이
                         diary.markAsCompleted(DiaryStatus.COMPLETED);
 
@@ -210,19 +208,5 @@ public class ChallengeCommandServiceImpl implements ChallengeCommandService {
 
         // 4. 삭제
         userChallengeRepository.deleteById(userChallengeId);
-    }
-
-    /*
-    이 아래부터 헬퍼메소드
-    */
-    private void checkDiaryDate(Long userId, LocalDate date) {
-        // 오늘 이후의 날짜를 선택한 경우
-        if (date.isAfter(LocalDate.now())) {
-            throw new DiaryHandler(ErrorStatus.DATE_IS_AFTER);
-        }
-        // 이미 해당 날짜에 작성된 일기가 존재하는 경우
-        if (diaryRepository.existsByUserIdAndDateAndStatus(userId, date, DiaryStatus.COMPLETED)) {
-            throw new DiaryHandler(ErrorStatus.DIARY_ALREADY_EXISTS);
-        }
     }
 }
