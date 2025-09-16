@@ -8,6 +8,9 @@ import umc.GrowIT.Server.apiPayload.code.status.ErrorStatus;
 import umc.GrowIT.Server.apiPayload.exception.*;
 import umc.GrowIT.Server.converter.ChallengeConverter;
 import umc.GrowIT.Server.domain.*;
+import umc.GrowIT.Server.domain.enums.CreditSource;
+import umc.GrowIT.Server.domain.enums.DiaryStatus;
+import umc.GrowIT.Server.domain.enums.DiaryType;
 import umc.GrowIT.Server.domain.enums.UserChallengeType;
 import umc.GrowIT.Server.repository.*;
 import umc.GrowIT.Server.util.CreditUtil;
@@ -28,25 +31,31 @@ public class ChallengeCommandServiceImpl implements ChallengeCommandService {
     private final UserRepository userRepository;
     private final UserChallengeRepository userChallengeRepository;
     private final ChallengeRepository challengeRepository;
+    private final DiaryRepository diaryRepository;
     private final S3Util s3Util;
     private final CreditUtil creditUtil;
 
     @Override
     @Transactional
-    public ChallengeResponseDTO.SelectChallengeResponseDTO selectChallenges(Long userId, List<ChallengeRequestDTO.SelectChallengeRequestDTO> selectRequestList) {
+    public void selectChallenges(Long userId, ChallengeRequestDTO.SelectChallengesRequestDTO request) {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new ChallengeHandler(ErrorStatus.USER_NOT_FOUND));
+
+        Long diaryId = request.getDiaryId();
+
+        // 일기 존재 여부
+        Diary diary = diaryRepository.findById(diaryId)
+                .orElseThrow(() -> new DiaryHandler(ErrorStatus.DIARY_NOT_FOUND));
+
+        LocalDate date = diary.getDate();
 
         // 전체 선택된 챌린지 개수 초기화
         int dailyChallengeCount = 0;
         int randomChallengeCount = 0;
 
-        List<UserChallenge> userChallenges = new ArrayList<>();
-
-        for (ChallengeRequestDTO.SelectChallengeRequestDTO selectRequest : selectRequestList) {
-            List<Long> challengeIds = selectRequest.getChallengeIds();
-            UserChallengeType challengeType = selectRequest.getChallengeType();
-            LocalDate date = selectRequest.getDate();
+        for (ChallengeRequestDTO.SelectChallengeItemDTO item : request.getChallenges()) {
+            List<Long> challengeIds = item.getChallengeIds();
+            UserChallengeType challengeType = item.getChallengeType();
 
             // 현재 challengeType에 따라 저장 가능한 최대 개수 확인
             if (challengeType == UserChallengeType.DAILY) {
@@ -61,11 +70,6 @@ public class ChallengeCommandServiceImpl implements ChallengeCommandService {
                 }
             }
 
-            // 데일리 챌린지와 랜덤 챌린지 합쳐서 최소 1개 이상 선택
-            if (dailyChallengeCount == 0 && randomChallengeCount == 0) {
-                throw new ChallengeHandler(ErrorStatus.CHALLENGE_AT_LEAST);
-            }
-
             // 각 챌린지를 UserChallenge로 생성 및 저장
             List<UserChallenge> newChallenges = challengeIds.stream()
                     .map(challengeId -> {
@@ -75,10 +79,31 @@ public class ChallengeCommandServiceImpl implements ChallengeCommandService {
                     })
                     .toList();
 
-            List<UserChallenge> saved = userChallengeRepository.saveAll(newChallenges);
-            userChallenges.addAll(saved);
+            userChallengeRepository.saveAll(newChallenges);
         }
-        return ChallengeConverter.toSelectChallengeDTO(userChallenges);
+
+        // 데일리 챌린지와 랜덤 챌린지 합쳐서 최소 1개 이상 선택
+        if (dailyChallengeCount == 0 && randomChallengeCount == 0) {
+            throw new ChallengeHandler(ErrorStatus.CHALLENGE_AT_LEAST);
+        }
+
+        // PENDING 경우에만 상태 전이 + 크레딧 지급
+        if (diary.getStatus() == DiaryStatus.PENDING) {
+
+            // 1. 일기 상태 전이
+            diary.markAsCompleted(DiaryStatus.COMPLETED);
+
+            // 2. 일기 타입에 따라 CreditSource 결정
+            CreditSource source = (diary.getType() == DiaryType.VOICE)
+                    ? CreditSource.VOICE_DIARY
+                    : CreditSource.TEXT_DIARY;
+
+            // 3. 일기 크레딧 지급
+            creditUtil.grantDiaryCredit(user, diary, source);
+
+        } else {
+            throw new DiaryHandler(ErrorStatus.DIARY_NOT_PENDING);
+        }
     }
 
     // 챌린지 인증 이미지 업로드용 Presigned URL 생성
@@ -136,12 +161,12 @@ public class ChallengeCommandServiceImpl implements ChallengeCommandService {
         // 사용자의 크레딧 수 증가
         CreditGrantResult isGranted = creditUtil.grantUserChallengeCredit(user, userChallenge);
 
-        return ChallengeConverter.toCreateProofDTO(userChallenge, isGranted);
+        return ChallengeConverter.toCreateProofDTO(isGranted);
     }
 
     @Override
     @Transactional
-    public ChallengeResponseDTO.ModifyProofDTO updateChallengeProof(Long userId, Long userChallengeId, ChallengeRequestDTO.ProofRequestDTO updateRequest) {
+    public void updateChallengeProof(Long userId, Long userChallengeId, ChallengeRequestDTO.ProofRequestDTO updateRequest) {
         // 유저 챌린지 조회
         UserChallenge userChallenge = userChallengeRepository.findByIdAndUserId(userChallengeId, userId)
                 .orElseThrow(() -> new ChallengeHandler(ErrorStatus.USER_CHALLENGE_NOT_FOUND));
@@ -162,8 +187,6 @@ public class ChallengeCommandServiceImpl implements ChallengeCommandService {
 
         // 인증 이미지 + 소감 업데이트
         userChallenge.updateProof(updateRequest);
-
-        return ChallengeConverter.toChallengeModifyProofDTO(userChallenge);
     }
 
     // 삭제

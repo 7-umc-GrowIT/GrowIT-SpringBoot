@@ -75,7 +75,7 @@ public class DiaryCommandServiceImpl implements DiaryCommandService{
         //유저 조회
         userRepository.findById(userId).orElseThrow(() -> new UserHandler(ErrorStatus.USER_NOT_FOUND));
 
-        Optional<Diary> optionalDiary = diaryRepository.findByUserIdAndId(userId, diaryId);
+        Optional<Diary> optionalDiary = diaryRepository.findCompletedByUserIdAndId(userId, diaryId);
         Diary diary = optionalDiary.orElseThrow(()->new DiaryHandler(ErrorStatus.DIARY_NOT_FOUND));
 
         //기존의 내용과 변경되지 않았을 경우
@@ -113,7 +113,7 @@ public class DiaryCommandServiceImpl implements DiaryCommandService{
         //유저 조회
         userRepository.findById(userId).orElseThrow(() -> new UserHandler(ErrorStatus.USER_NOT_FOUND));
 
-        Optional<Diary> optionalDiary = diaryRepository.findByUserIdAndId(userId, diaryId);
+        Optional<Diary> optionalDiary = diaryRepository.findCompletedByUserIdAndId(userId, diaryId);
         Diary diary = optionalDiary.orElseThrow(()->new DiaryHandler(ErrorStatus.DIARY_NOT_FOUND));
 
         //일기 삭제
@@ -262,6 +262,8 @@ public class DiaryCommandServiceImpl implements DiaryCommandService{
     /*
         이 아래부터 헬퍼메소드
     */
+
+    // 일기 날짜 검사
     private void checkDiaryDate(Long userId, LocalDate date) {
         // 오늘 이후의 날짜를 선택한 경우
         if (date.isAfter(LocalDate.now())) {
@@ -273,7 +275,7 @@ public class DiaryCommandServiceImpl implements DiaryCommandService{
         }
     }
 
-    // ‼️ 정상적으로 테스트되는지 확인 필요
+    // chatgpt 대화 요청
     private String requestGptChat(String model, List<Message> messages) {
         // ChatGPT 요청 생성
         ChatGPTRequest gptRequest = new ChatGPTRequest(model, messages);

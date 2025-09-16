@@ -18,9 +18,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import umc.GrowIT.Server.web.dto.ChallengeDTO.ChallengeResponseDTO;
 
-import java.util.List;
-
-
 @Tag(name = "Challenge", description = "챌린지 관련 API")
 @RestController
 @RequiredArgsConstructor
@@ -52,12 +49,12 @@ public class ChallengeController implements ChallengeSpecification {
     }
 
     @PostMapping("select")
-    public ApiResponse<ChallengeResponseDTO.SelectChallengeResponseDTO> selectChallenges(@RequestBody List<ChallengeRequestDTO.SelectChallengeRequestDTO> selectRequestList) {
+    public ApiResponse<Void> selectChallenges(@RequestBody ChallengeRequestDTO.SelectChallengesRequestDTO selectRequestList) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         Long userId = (Long) authentication.getPrincipal();
 
-        ChallengeResponseDTO.SelectChallengeResponseDTO response = challengeCommandService.selectChallenges(userId, selectRequestList);
-        return ApiResponse.onSuccess(response);
+        challengeCommandService.selectChallenges(userId, selectRequestList);
+        return ApiResponse.onSuccess();
     }
 
     @PostMapping("presigned-url")
@@ -76,7 +73,6 @@ public class ChallengeController implements ChallengeSpecification {
 
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         Long userId = (Long) authentication.getPrincipal();
-
         ChallengeResponseDTO.CreateProofDTO response = challengeCommandService.createChallengeProof(userId, userChallengeId, proofRequest);
         return ApiResponse.onSuccess(response);
     }
@@ -90,11 +86,11 @@ public class ChallengeController implements ChallengeSpecification {
     }
 
     @PatchMapping("{userChallengeId}")
-    public ApiResponse<ChallengeResponseDTO.ModifyProofDTO> updateChallengeProof(@PathVariable("userChallengeId") Long userChallengeId, @Valid @RequestBody(required = false) ChallengeRequestDTO.ProofRequestDTO updateRequest) {
+    public ApiResponse<Void> updateChallengeProof(@PathVariable("userChallengeId") Long userChallengeId, @Valid @RequestBody(required = false) ChallengeRequestDTO.ProofRequestDTO updateRequest) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         Long userId = (Long) authentication.getPrincipal();
-        ChallengeResponseDTO.ModifyProofDTO response = challengeCommandService.updateChallengeProof(userId, userChallengeId, updateRequest);
-        return ApiResponse.onSuccess(response);
+        challengeCommandService.updateChallengeProof(userId, userChallengeId, updateRequest);
+        return ApiResponse.onSuccess();
     }
 
     @DeleteMapping("{userChallengeId}")

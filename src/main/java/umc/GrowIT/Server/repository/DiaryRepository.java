@@ -12,13 +12,20 @@ import java.util.List;
 import java.util.Optional;
 
 public interface DiaryRepository extends JpaRepository<Diary, Long> {
+
     @Query("SELECT d FROM Diary d WHERE d.user.id = :userId AND YEAR(d.date) = :year AND MONTH(d.date) = :month " +
+            "AND d.status = umc.GrowIT.Server.domain.enums.DiaryStatus.COMPLETED " +
             "ORDER BY d.date DESC")
     List<Diary> findByUserIdAndYearAndMonth(@Param("userId") Long userId,
                                             @Param("year") Integer year,
                                             @Param("month") Integer month);
 
-    Optional<Diary> findByUserIdAndId(Long userId, Long diaryId);
+    @Query("SELECT d FROM Diary d " +
+            "WHERE d.user.id = :userId " +
+            "AND d.id = :diaryId " +
+            "AND d.status = umc.GrowIT.Server.domain.enums.DiaryStatus.COMPLETED")
+    Optional<Diary> findCompletedByUserIdAndId(@Param("userId") Long userId,
+                                               @Param("diaryId") Long diaryId);
 
     @Query("SELECT MAX(d.date) FROM Diary d WHERE d.user.id = :userId") // 마지막 일기 작성 날짜 조회
     Optional<LocalDate> findLastDiaryDateByUserId(@Param("userId") Long userId);
@@ -26,7 +33,6 @@ public interface DiaryRepository extends JpaRepository<Diary, Long> {
     // 오늘 작성한 일기 조회
     @Query("SELECT d FROM Diary d WHERE d.user.id = :userId AND d.date = :date")
     Optional<Diary> findTodayDiaryByUserId(@Param("userId") Long userId, @Param("date") LocalDate date);
-
 
     @Modifying
     @Query("DELETE FROM Diary d WHERE d.user.id = :userId")

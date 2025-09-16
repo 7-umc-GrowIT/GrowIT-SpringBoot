@@ -91,13 +91,8 @@ public class ChallengeConverter {
     }
 
     // 챌린지 인증 작성 결과
-    public static ChallengeResponseDTO.CreateProofDTO toCreateProofDTO(UserChallenge userChallenge, CreditGrantResult result) {
+    public static ChallengeResponseDTO.CreateProofDTO toCreateProofDTO(CreditGrantResult result) {
         return ChallengeResponseDTO.CreateProofDTO.builder()
-                .id(userChallenge.getId())
-                .title(userChallenge.getChallenge().getTitle())
-                .certificationImageName(userChallenge.getCertificationImageName())
-                .thoughts(userChallenge.getThoughts())
-                .certificationDate(userChallenge.getCertificationDate())
                 .creditInfo(ChallengeResponseDTO.CreditInfo.builder()
                         .granted(result.isGranted())
                         .amount(result.isGranted() ? result.getAmount() : 0)
@@ -126,31 +121,6 @@ public class ChallengeConverter {
                 .challengeType(challengeType)
                 .date(date)
                 .completed(false)
-                .build();
-    }
-
-    // 선택한 챌린지 저장
-    public static ChallengeResponseDTO.SelectChallengeResponseDTO toSelectChallengeDTO(List<UserChallenge> userChallenges) {
-        List<ChallengeResponseDTO.SelectedChallengesInfo> selectedChallenges = userChallenges.stream()
-                .map(userChallenge -> ChallengeResponseDTO.SelectedChallengesInfo.builder()
-                        .id(userChallenge.getId())
-                        .challengeType(userChallenge.getChallengeType())
-                        .title(userChallenge.getChallenge().getTitle())
-                        .content(userChallenge.getChallenge().getContent())
-                        .time(userChallenge.getChallenge().getTime())
-                        .build())
-                .toList();
-
-        return ChallengeResponseDTO.SelectChallengeResponseDTO.builder()
-                .selectedChallenges(selectedChallenges) // 여러 개의 챌린지 리스트 반환
-                .build();
-    }
-
-    // 챌린지 수정
-    public static ChallengeResponseDTO.ModifyProofDTO toChallengeModifyProofDTO(UserChallenge userChallenge) {
-        return ChallengeResponseDTO.ModifyProofDTO.builder()
-                .certificationImageName(userChallenge.getCertificationImageName())
-                .thoughts(userChallenge.getThoughts())
                 .build();
     }
 

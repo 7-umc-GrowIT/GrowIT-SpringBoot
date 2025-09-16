@@ -75,7 +75,6 @@ public class UserQueryServiceImpl implements UserQueryService {
         return UserConverter.toEmailResponseDTO(user);
     }
 
-
     /*
         이 아래부터 헬퍼메소드
     */

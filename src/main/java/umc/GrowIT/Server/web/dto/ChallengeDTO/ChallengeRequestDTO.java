@@ -6,7 +6,6 @@ import jakarta.validation.constraints.Size;
 import lombok.*;
 import umc.GrowIT.Server.domain.enums.UserChallengeType;
 
-import java.time.LocalDate;
 import java.util.List;
 
 public class ChallengeRequestDTO {
@@ -42,12 +41,24 @@ public class ChallengeRequestDTO {
     @NoArgsConstructor
     @AllArgsConstructor
     @Schema(title = "챌린지 선택 후 저장 request")
-    public static class SelectChallengeRequestDTO {
+    public static class SelectChallengesRequestDTO {
+        @Schema(description = "일기 ID", example = "123")
+        private Long diaryId;
+
+        @Schema(description = "선택한 챌린지들")
+        private List<SelectChallengeItemDTO> challenges;
+    }
+
+    @Getter
+    @Builder
+    @NoArgsConstructor
+    @AllArgsConstructor
+    @Schema(title = "선택한 챌린지 아이템")
+    public static class SelectChallengeItemDTO {
         @Schema(description = "저장할 챌린지 아이디(리스트)", example = "[60, 63]")
         private List<Long> challengeIds;
+
         @Schema(description = "저장할 챌린지의 타입", example = "DAILY")
         private UserChallengeType challengeType;
-        @Schema(description = "챌린지를 저장하는 날짜(오늘 날짜가 기본값)")
-        private LocalDate date;
     }
 }
