@@ -37,9 +37,12 @@ public class ChallengeCommandServiceImpl implements ChallengeCommandService {
 
     @Override
     @Transactional
-    public ChallengeResponseDTO.SelectChallengeResponseDTO selectChallenges(Long userId, List<ChallengeRequestDTO.SelectChallengeRequestDTO> selectRequestList) {
+    public ChallengeResponseDTO.SelectChallengeResponseDTO selectChallenges(Long userId, ChallengeRequestDTO.SelectChallengesRequestDTO request) {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new ChallengeHandler(ErrorStatus.USER_NOT_FOUND));
+
+        Long diaryId = request.getDiaryId();
+        LocalDate date = request.getDate();
 
         // 전체 선택된 챌린지 개수 초기화
         int dailyChallengeCount = 0;
@@ -47,10 +50,9 @@ public class ChallengeCommandServiceImpl implements ChallengeCommandService {
 
         List<UserChallenge> userChallenges = new ArrayList<>();
 
-        for (ChallengeRequestDTO.SelectChallengeRequestDTO selectRequest : selectRequestList) {
-            List<Long> challengeIds = selectRequest.getChallengeIds();
-            UserChallengeType challengeType = selectRequest.getChallengeType();
-            LocalDate date = selectRequest.getDate();
+        for (ChallengeRequestDTO.SelectChallengeItemDTO item : request.getChallenges()) {
+            List<Long> challengeIds = item.getChallengeIds();
+            UserChallengeType challengeType = item.getChallengeType();
 
             // 현재 challengeType에 따라 저장 가능한 최대 개수 확인
             if (challengeType == UserChallengeType.DAILY) {
@@ -79,10 +81,9 @@ public class ChallengeCommandServiceImpl implements ChallengeCommandService {
                     })
                     .toList();
 
-            List<UserChallenge> saved = userChallengeRepository.saveAll(newChallenges);
-            userChallenges.addAll(saved);
+            userChallenges.addAll(userChallengeRepository.saveAll(newChallenges));
 
-            diaryRepository.findByUserIdAndDateAndStatusForUpdate(userId, date, DiaryStatus.PENDING)
+            diaryRepository.findByUserIdAndDiaryIdAndStatusForUpdate(userId, diaryId, DiaryStatus.PENDING)
                     .ifPresent(diary -> {
                         // 1) 상태 전이
                         diary.markAsCompleted(DiaryStatus.COMPLETED);
@@ -95,7 +96,6 @@ public class ChallengeCommandServiceImpl implements ChallengeCommandService {
                         // 3) 크레딧 지급
                         creditUtil.grantDiaryCredit(user, diary, source);
                     });
-
         }
         return ChallengeConverter.toSelectChallengeDTO(userChallenges);
     }
