@@ -10,6 +10,7 @@ import java.util.List;
 import java.util.Optional;
 
 public interface ItemRepository extends JpaRepository<Item, Long> {
+    // 카테고리별 아이템 조회
     @Query("SELECT i FROM Item i WHERE i.category = :category ORDER BY i.price ASC")
     List<Item> findAllByCategoryOrderByPriceAtAsc(ItemCategory category);
 
