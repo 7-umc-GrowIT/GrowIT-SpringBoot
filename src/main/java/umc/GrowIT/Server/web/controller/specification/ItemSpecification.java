@@ -1,5 +1,6 @@
 package umc.GrowIT.Server.web.controller.specification;
 
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -21,12 +22,13 @@ import umc.GrowIT.Server.web.dto.ItemEquipDTO.ItemEquipResponseDTO;
 
 public interface ItemSpecification {
 
-    @GetMapping("/items")
+    @GetMapping("")
     @Operation(summary = "카테고리별 아이템 조회", description = "상점이나 보유아이템 조회에서 카테고리를 선택했을 때 실행.")
     @ApiResponses({
             @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "COMMON_200", description = "⭕ SUCCESS")
     })
     ApiResponse<ItemResponseDTO.ItemListDTO> getItemList(
+            @AuthenticationPrincipal Long userId,
             @Parameter(description = "아이템 카테고리 (카테고리 명으로 전달)",
                     schema = @Schema(allowableValues = {"BACKGROUND", "OBJECT", "PLANT", "HEAD_ACCESSORY"}),
                     example = "BACKGROUND")
@@ -34,7 +36,7 @@ public interface ItemSpecification {
 
 
 
-    @PatchMapping("/items/{itemId}")
+    @PatchMapping("/{itemId}")
     @Operation(summary = "아이템 착용/해제", description = "아이템의 착용 상태를 변경합니다. " +
             "착용하려면 EQUIPPED를, 해제하려면 UNEQUIPPED를 전달하세요.")
     @ApiResponses({
@@ -43,6 +45,7 @@ public interface ItemSpecification {
             @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "ITEM_409_01", description = "❌ 이미 착용중인 아이템입니다.", content = @Content(schema = @Schema(implementation = ApiResponse.class)))
     })
     ApiResponse<ItemEquipResponseDTO> updateItemStatus(
+            @AuthenticationPrincipal Long userId,
             @Parameter(description = "아이템 ID", example = "1")
             @PathVariable(name = "itemId") Long itemId,
             @Valid @RequestBody @io.swagger.v3.oas.annotations.parameters.RequestBody(
@@ -56,7 +59,7 @@ public interface ItemSpecification {
 
 
 
-    @PostMapping("/items/{itemId}/purchase")
+    @PostMapping("/{itemId}/purchase")
     @Operation(summary = "아이템 구매 API", description = "특정 아이템을 구매하는 API입니다. 아이템 ID를 path variable로 전달받아 해당 아이템을 주문합니다.")
     @ApiResponses({
             @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "COMMON_200", description = "⭕ SUCCESS"),
@@ -67,5 +70,5 @@ public interface ItemSpecification {
             @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "CREDIT_400_01", description = "❌ 보유 크레딧이 부족합니다.", content = @Content(schema = @Schema(implementation = ApiResponse.class)))
     })
     @Parameter(name = "itemId", description = "주문할 아이템의 ID", required = true)
-    ApiResponse<ItemResponseDTO.PurchaseItemResponseDTO> purchaseItem(@PathVariable("itemId") Long itemId);
+    ApiResponse<ItemResponseDTO.PurchaseItemResponseDTO> purchaseItem(@AuthenticationPrincipal Long userId, @PathVariable("itemId") Long itemId);
 }

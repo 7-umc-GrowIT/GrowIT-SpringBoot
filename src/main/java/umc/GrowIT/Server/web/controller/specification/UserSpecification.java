@@ -1,5 +1,6 @@
 package umc.GrowIT.Server.web.controller.specification;
 
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
@@ -32,6 +33,7 @@ public interface UserSpecification {
             @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "COMMON_200", description = "⭕ SUCCESS")
     })
     ApiResponse<ItemResponseDTO.ItemListDTO> getUserItemList(
+            @AuthenticationPrincipal Long userId,
             @Parameter(description = "아이템 카테고리 (카테고리 명으로 전달)",
                     schema = @Schema(allowableValues = {"BACKGROUND", "OBJECT", "PLANT", "HEAD_ACCESSORY"}),
                     example = "BACKGROUND")
@@ -44,7 +46,7 @@ public interface UserSpecification {
             @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "COMMON_200", description = "⭕ SUCCESS"),
             @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "USER_401_01", description = "❌ 이메일 또는 패스워드가 일치하지 않습니다.", content = @Content(schema = @Schema(implementation = ApiResponse.class)))
     })
-    ApiResponse<CreditResponseDTO.CurrentCreditDTO> getUserCredit();
+    ApiResponse<CreditResponseDTO.CurrentCreditDTO> getUserCredit(@AuthenticationPrincipal Long userId);
 
 
     @GetMapping("/credits/total")
@@ -53,7 +55,7 @@ public interface UserSpecification {
             @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "COMMON_200", description = "⭕ SUCCESS"),
             @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "CREDIT_404_01", description = "❌ 크레딧 정보를 찾을 수 없습니다.", content = @Content(schema = @Schema(implementation = ApiResponse.class)))
     })
-    ApiResponse<CreditResponseDTO.TotalCreditDTO> getUserTotalCredit();
+    ApiResponse<CreditResponseDTO.TotalCreditDTO> getUserTotalCredit(@AuthenticationPrincipal Long userId);
 
 
     @PostMapping("/credits/payment")
@@ -72,6 +74,7 @@ public interface UserSpecification {
             @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "COMMON_400", description = "❌ BAD, 잘못된 요청", content = @Content(schema = @Schema(implementation = ApiResponse.class)))
     })
     ApiResponse<UserResponseDTO.CreditHistoryResponseDTO> getCreditHistory (
+            @AuthenticationPrincipal Long userId,
             @Parameter(description = "조회 연도", example = "2025") @RequestParam Integer year,
             @Parameter(description = "조회 월", example = "9") @RequestParam Integer month,
             @Parameter(description = "조회 타입 (ALL, EARN, SPEND)", example = "ALL")
@@ -91,7 +94,7 @@ public interface UserSpecification {
             @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "USER_401_01", description = "❌ 이메일 또는 패스워드가 일치하지 않습니다.", content = @Content(schema = @Schema(implementation = ApiResponse.class))),
             @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "WITHDRAWAL_404_01", description = "❌ 존재하지 않는 탈퇴 사유입니다.", content = @Content(schema = @Schema(implementation = ApiResponse.class)))
     })
-    ApiResponse<Void> withdrawUser(@Valid @RequestBody UserRequestDTO.DeleteUserRequestDTO deleteUserRequestDTO);
+    ApiResponse<Void> withdrawUser(@AuthenticationPrincipal Long userId, @Valid @RequestBody UserRequestDTO.DeleteUserRequestDTO deleteUserRequestDTO);
 
 
     @PatchMapping("/password")
@@ -114,7 +117,7 @@ public interface UserSpecification {
             @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "COMMON_400", description = "❌ BAD, 잘못된 요청", content = @Content(schema = @Schema(implementation = ApiResponse.class))),
             @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "USER_401_01", description = "❌ 이메일 또는 패스워드가 일치하지 않습니다.", content = @Content(schema = @Schema(implementation = ApiResponse.class)))
     })
-    ApiResponse<UserResponseDTO.MyPageDTO> getMyPage();
+    ApiResponse<UserResponseDTO.MyPageDTO> getMyPage(@AuthenticationPrincipal Long userId);
 
 
     @GetMapping("/me/email")
@@ -124,5 +127,5 @@ public interface UserSpecification {
             @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "USER_401_01", description = "❌ 사용자를 찾을 수 없습니다.", content = @Content(schema = @Schema(implementation = ApiResponse.class))),
             @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "COMMON_400", description = "❌ BAD, 잘못된 요청", content = @Content(schema = @Schema(implementation = ApiResponse.class)))
     })
-    ApiResponse<UserResponseDTO.EmailResponseDTO> getMyEmail ();
+    ApiResponse<UserResponseDTO.EmailResponseDTO> getMyEmail(@AuthenticationPrincipal Long userId);
 }

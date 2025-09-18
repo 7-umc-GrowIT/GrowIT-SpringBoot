@@ -3,8 +3,7 @@ package umc.GrowIT.Server.web.controller;
 
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 import umc.GrowIT.Server.apiPayload.ApiResponse;
 import umc.GrowIT.Server.domain.enums.ItemCategory;
@@ -26,21 +25,14 @@ public class ItemController implements ItemSpecification {
 
     @Override
     @GetMapping("")
-    public ApiResponse<ItemResponseDTO.ItemListDTO> getItemList(ItemCategory category) {
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        Long userId = (Long) authentication.getPrincipal(); //사용자 식별 id
-
+    public ApiResponse<ItemResponseDTO.ItemListDTO> getItemList(@AuthenticationPrincipal Long userId, ItemCategory category) {
         return ApiResponse.onSuccess(itemQueryServiceImpl.getItemList(category, userId));
-
     }
 
     //그로 아이템 착용/해제
     @Override
     @PatchMapping("/{itemId}")
-    public ApiResponse<ItemEquipResponseDTO> updateItemStatus(Long itemId, ItemEquipRequestDTO request) {
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        Long userId = (Long) authentication.getPrincipal();
-
+    public ApiResponse<ItemEquipResponseDTO> updateItemStatus(@AuthenticationPrincipal Long userId, @PathVariable Long itemId, @RequestBody ItemEquipRequestDTO request) {
         String status = request.getStatus();
 
         return ApiResponse.onSuccess(itemCommandService.updateItemStatus(userId, itemId, status));
@@ -48,10 +40,7 @@ public class ItemController implements ItemSpecification {
 
     @Override
     @PostMapping("/{itemId}/purchase")
-    public ApiResponse<ItemResponseDTO.PurchaseItemResponseDTO> purchaseItem(Long itemId) {
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        Long userId = (Long) authentication.getPrincipal(); //사용자 식별 id
-
+    public ApiResponse<ItemResponseDTO.PurchaseItemResponseDTO> purchaseItem(@AuthenticationPrincipal Long userId, @PathVariable Long itemId) {
         ItemResponseDTO.PurchaseItemResponseDTO purchasedItem = itemCommandService.purchase(itemId, userId);
 
         return ApiResponse.onSuccess(purchasedItem);

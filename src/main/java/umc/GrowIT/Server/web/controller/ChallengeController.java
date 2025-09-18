@@ -3,8 +3,7 @@ package umc.GrowIT.Server.web.controller;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 import umc.GrowIT.Server.apiPayload.ApiResponse;
 import umc.GrowIT.Server.domain.enums.UserChallengeType;
@@ -28,19 +27,16 @@ public class ChallengeController implements ChallengeSpecification {
     private final ChallengeCommandService challengeCommandService;
 
     @GetMapping("")
-    public ApiResponse<ChallengeResponseDTO.ChallengeHomeDTO> getChallengeHome() {
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        Long userId = (Long) authentication.getPrincipal();
+    public ApiResponse<ChallengeResponseDTO.ChallengeHomeDTO> getChallengeHome(@AuthenticationPrincipal Long userId) {
         return ApiResponse.onSuccess(challengeQueryService.getChallengeHome(userId));
     }
 
     @GetMapping("status")
     public ApiResponse<ChallengeResponseDTO.ChallengeStatusPagedResponseDTO> getChallengeStatus(
+            @AuthenticationPrincipal Long userId,
             @RequestParam(required = false) UserChallengeType challengeType,
             @RequestParam Boolean completed,
             @RequestParam Integer page) {
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        Long userId = (Long) authentication.getPrincipal();
         // 서비스 호출
         ChallengeResponseDTO.ChallengeStatusPagedResponseDTO challengeStatusList = challengeQueryService.getChallengeStatus(userId, challengeType, completed, page);
 
@@ -49,56 +45,38 @@ public class ChallengeController implements ChallengeSpecification {
     }
 
     @PostMapping("select")
-    public ApiResponse<Void> selectChallenges(@RequestBody ChallengeRequestDTO.SelectChallengesRequestDTO selectRequestList) {
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        Long userId = (Long) authentication.getPrincipal();
-
+    public ApiResponse<Void> selectChallenges(@AuthenticationPrincipal Long userId, @RequestBody ChallengeRequestDTO.SelectChallengesRequestDTO selectRequestList) {
         challengeCommandService.selectChallenges(userId, selectRequestList);
         return ApiResponse.onSuccess();
     }
 
     @PostMapping("presigned-url")
-    public ApiResponse<ChallengeResponseDTO.ProofPresignedUrlResponseDTO> getProofPresignedUrl(@Valid @RequestBody ChallengeRequestDTO.ProofRequestPresignedUrlDTO request) {
-
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        Long userId = (Long) authentication.getPrincipal();
-
+    public ApiResponse<ChallengeResponseDTO.ProofPresignedUrlResponseDTO> getProofPresignedUrl(@AuthenticationPrincipal Long userId, @Valid @RequestBody ChallengeRequestDTO.ProofRequestPresignedUrlDTO request) {
         ChallengeResponseDTO.ProofPresignedUrlResponseDTO result = challengeCommandService.createChallengePresignedUrl(userId, request);
 
         return ApiResponse.onSuccess(result);
     }
 
     @PostMapping("{userChallengeId}")
-    public ApiResponse<ChallengeResponseDTO.CreateProofDTO> createChallengeProof(@PathVariable Long userChallengeId, @Valid @RequestBody ChallengeRequestDTO.ProofRequestDTO proofRequest) {
-
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        Long userId = (Long) authentication.getPrincipal();
+    public ApiResponse<ChallengeResponseDTO.CreateProofDTO> createChallengeProof(@AuthenticationPrincipal Long userId, @PathVariable Long userChallengeId, @Valid @RequestBody ChallengeRequestDTO.ProofRequestDTO proofRequest) {
         ChallengeResponseDTO.CreateProofDTO response = challengeCommandService.createChallengeProof(userId, userChallengeId, proofRequest);
         return ApiResponse.onSuccess(response);
     }
 
     @GetMapping("{userChallengeId}")
-    public ApiResponse<ChallengeResponseDTO.ProofDetailsDTO> getChallengeProofDetails(@PathVariable Long userChallengeId) {
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        Long userId = (Long) authentication.getPrincipal();
+    public ApiResponse<ChallengeResponseDTO.ProofDetailsDTO> getChallengeProofDetails(@AuthenticationPrincipal Long userId, @PathVariable Long userChallengeId) {
         ChallengeResponseDTO.ProofDetailsDTO response = challengeQueryService.getChallengeProofDetails(userId, userChallengeId);
         return ApiResponse.onSuccess(response);
     }
 
     @PatchMapping("{userChallengeId}")
-    public ApiResponse<Void> updateChallengeProof(@PathVariable("userChallengeId") Long userChallengeId, @Valid @RequestBody(required = false) ChallengeRequestDTO.ProofRequestDTO updateRequest) {
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        Long userId = (Long) authentication.getPrincipal();
+    public ApiResponse<Void> updateChallengeProof(@AuthenticationPrincipal Long userId, @PathVariable("userChallengeId") Long userChallengeId, @Valid @RequestBody(required = false) ChallengeRequestDTO.ProofRequestDTO updateRequest) {
         challengeCommandService.updateChallengeProof(userId, userChallengeId, updateRequest);
         return ApiResponse.onSuccess();
     }
 
     @DeleteMapping("{userChallengeId}")
-    public ApiResponse<Void> deleteChallenge(@PathVariable("userChallengeId") Long userChallengeId) {
-        //AccessToken에서 userId 추출
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        Long userId = (Long) authentication.getPrincipal();
-
+    public ApiResponse<Void> deleteChallenge(@AuthenticationPrincipal Long userId, @PathVariable("userChallengeId") Long userChallengeId) {
         challengeCommandService.delete(userChallengeId, userId);
         return ApiResponse.onSuccess();
     }

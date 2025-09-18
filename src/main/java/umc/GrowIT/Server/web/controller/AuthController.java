@@ -3,8 +3,7 @@ package umc.GrowIT.Server.web.controller;
 import static umc.GrowIT.Server.apiPayload.code.status.SuccessStatus.NEED_TO_ACCEPT_TERMS;
 
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -110,11 +109,7 @@ public class AuthController implements AuthSpecification {
 
     @Override
     @PostMapping("/logout")
-    public ApiResponse<AuthResponseDTO.LogoutResponseDTO> logout() {
-        // AccessToken에서 userId 추출
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        Long userId = (Long) authentication.getPrincipal();
-
+    public ApiResponse<AuthResponseDTO.LogoutResponseDTO> logout(@AuthenticationPrincipal Long userId) {
         // 로그아웃 처리
         AuthResponseDTO.LogoutResponseDTO result = authService.logout(userId);
 
