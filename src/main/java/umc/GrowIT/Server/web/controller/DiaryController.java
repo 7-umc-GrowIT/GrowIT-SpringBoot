@@ -3,8 +3,7 @@ package umc.GrowIT.Server.web.controller;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 import umc.GrowIT.Server.apiPayload.ApiResponse;
 import umc.GrowIT.Server.service.diaryService.DiaryCommandService;
@@ -23,83 +22,48 @@ public class DiaryController implements DiarySpecification {
     private final DiaryCommandService diaryCommandService;
 
     @GetMapping("/voice/exists")
-    public ApiResponse<Boolean> hasVoiceDiary(){
-        //accessToken에서 userId 추출
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        Long userId = (Long) authentication.getPrincipal();
-
+    public ApiResponse<Boolean> hasVoiceDiary(@AuthenticationPrincipal Long userId){
         return ApiResponse.onSuccess(diaryQueryService.hasVoiceDiaries(userId));
     }
 
     @GetMapping("/dates")
-    public ApiResponse<DiaryResponseDTO.DiaryDateListDTO> getDiaryDate(@RequestParam Integer year,
+    public ApiResponse<DiaryResponseDTO.DiaryDateListDTO> getDiaryDate(@AuthenticationPrincipal Long userId,
+                                                                       @RequestParam Integer year,
                                                                        @RequestParam Integer month){
-        //accessToken에서 userId 추출
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        Long userId = (Long) authentication.getPrincipal();
-
         return ApiResponse.onSuccess(diaryQueryService.getDiaryDate(year,month,userId));
     }
     @GetMapping("")
-    public ApiResponse<DiaryResponseDTO.DiaryListDTO> getDiaryList(@RequestParam Integer year,
+    public ApiResponse<DiaryResponseDTO.DiaryListDTO> getDiaryList(@AuthenticationPrincipal Long userId,
+                                                                   @RequestParam Integer year,
                                                                    @RequestParam Integer month){
-        //accessToken에서 userId 추출
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        Long userId = (Long) authentication.getPrincipal();
-
         return ApiResponse.onSuccess(diaryQueryService.getDiaryList(year,month,userId));
     }
     @GetMapping("/{diaryId}")
-    public ApiResponse<DiaryResponseDTO.DiaryDTO> getDiary(@PathVariable("diaryId") Long diaryId){
-        //accessToken에서 userId 추출
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        Long userId = (Long) authentication.getPrincipal();
-
+    public ApiResponse<DiaryResponseDTO.DiaryDTO> getDiary(@AuthenticationPrincipal Long userId, @PathVariable("diaryId") Long diaryId){
         return ApiResponse.onSuccess(diaryQueryService.getDiary(diaryId, userId));
     }
 
     @PatchMapping("/{diaryId}")
-    public ApiResponse<DiaryResponseDTO.ModifyDiaryResultDTO> modifyDiary(@PathVariable("diaryId") Long diaryId, @Valid @RequestBody DiaryRequestDTO.ModifyDiaryDTO request){
-        //accessToken에서 userId 추출
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        Long userId = (Long) authentication.getPrincipal();
-
+    public ApiResponse<DiaryResponseDTO.ModifyDiaryResultDTO> modifyDiary(@AuthenticationPrincipal Long userId, @PathVariable("diaryId") Long diaryId, @Valid @RequestBody DiaryRequestDTO.ModifyDiaryDTO request){
         return ApiResponse.onSuccess(diaryCommandService.modifyDiary(request, diaryId, userId));
     }
 
     @DeleteMapping("/{diaryId}")
-    public ApiResponse<Void> deleteDiary(@PathVariable("diaryId") Long diaryId){
-        //accessToken에서 userId 추출
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        Long userId = (Long) authentication.getPrincipal();
+    public ApiResponse<Void> deleteDiary(@AuthenticationPrincipal Long userId, @PathVariable("diaryId") Long diaryId){
         diaryCommandService.deleteDiary(diaryId, userId);
         return ApiResponse.onSuccess();
     }
     @PostMapping("/text")
-    public ApiResponse<DiaryResponseDTO.SaveDiaryResultDTO> saveDiaryByText(@Valid @RequestBody DiaryRequestDTO.SaveTextDiaryDTO request){
-        //accessToken에서 userId 추출
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        Long userId = (Long) authentication.getPrincipal();
-
+    public ApiResponse<DiaryResponseDTO.SaveDiaryResultDTO> saveDiaryByText(@AuthenticationPrincipal Long userId, @Valid @RequestBody DiaryRequestDTO.SaveTextDiaryDTO request){
         return ApiResponse.onSuccess(diaryCommandService.saveDiaryByText(request, userId));
     }
     @PostMapping("/voice/chat")
-    public ApiResponse<DiaryResponseDTO.VoiceChatResultDTO> chatByVoice(@RequestBody DiaryRequestDTO.VoiceChatDTO request){
-
-        //accessToken에서 userId 추출
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        Long userId = (Long) authentication.getPrincipal();
-
+    public ApiResponse<DiaryResponseDTO.VoiceChatResultDTO> chatByVoice(@AuthenticationPrincipal Long userId, @RequestBody DiaryRequestDTO.VoiceChatDTO request){
         return ApiResponse.onSuccess(diaryCommandService.chatByVoice(request, userId));
     }
 
     @PostMapping("/voice")
-    public ApiResponse<DiaryResponseDTO.SaveDiaryResultDTO> saveDiaryByVoice(@RequestBody DiaryRequestDTO.SaveVoiceDiaryDTO request) {
-
-        //accessToken에서 userId 추출
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        Long userId = (Long) authentication.getPrincipal();
-
+    public ApiResponse<DiaryResponseDTO.SaveDiaryResultDTO> saveDiaryByVoice(@AuthenticationPrincipal Long userId, @RequestBody DiaryRequestDTO.SaveVoiceDiaryDTO request) {
         return ApiResponse.onSuccess(diaryCommandService.saveDiaryByVoice(request, userId));
     }
 

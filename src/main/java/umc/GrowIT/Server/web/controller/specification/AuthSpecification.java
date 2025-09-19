@@ -1,6 +1,7 @@
 package umc.GrowIT.Server.web.controller.specification;
 
 import io.swagger.v3.oas.annotations.Parameter;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -124,5 +125,5 @@ public interface AuthSpecification {
             @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "AUTH_401_02", description = "❌ 만료된 토큰입니다. 토큰의 만료 시간이 지나 더 이상 유효하지 않습니다.", content = @Content(schema = @Schema(implementation = ApiResponse.class))),
             @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "AUTH_401_05", description = "❌ 토큰이 제공되지 않았습니다.", content = @Content(schema = @Schema(implementation = ApiResponse.class)))
     })
-    ApiResponse<AuthResponseDTO.LogoutResponseDTO> logout();
+    ApiResponse<AuthResponseDTO.LogoutResponseDTO> logout(@AuthenticationPrincipal Long userId);
 }

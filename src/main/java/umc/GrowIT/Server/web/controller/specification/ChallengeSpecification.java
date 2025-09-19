@@ -1,5 +1,6 @@
 package umc.GrowIT.Server.web.controller.specification;
 
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
@@ -28,7 +29,7 @@ public interface ChallengeSpecification {
             @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "COMMON_200", description = "⭕ SUCCESS"),
             @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "COMMON_400", description = "❌ BAD, 잘못된 요청", content = @Content(schema = @Schema(implementation = ApiResponse.class)))
     })
-    ApiResponse<ChallengeResponseDTO.ChallengeHomeDTO> getChallengeHome();
+    ApiResponse<ChallengeResponseDTO.ChallengeHomeDTO> getChallengeHome(@AuthenticationPrincipal Long userId);
 
     @GetMapping("status")
     @Operation(summary = "챌린지 현황 조회 API", description = "챌린지의 진행 상태(미완료/완료 등)를 조회하는 API입니다. <br> " +
@@ -38,6 +39,7 @@ public interface ChallengeSpecification {
             @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "COMMON_400", description = "❌ BAD, 잘못된 요청", content = @Content(schema = @Schema(implementation = ApiResponse.class)))
     })
     ApiResponse<ChallengeResponseDTO.ChallengeStatusPagedResponseDTO> getChallengeStatus(
+            @AuthenticationPrincipal Long userId,
             @Parameter(description = "챌린지 유형",
                     example = "DAILY")
             @RequestParam(required = false) UserChallengeType challengeType,
@@ -64,7 +66,7 @@ public interface ChallengeSpecification {
             @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "DIARY_400_03", description = "❌ 임시저장된 일기가 아닙니다.",content = @Content(schema = @Schema(implementation = ApiResponse.class))),
             @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "DIARY_404_01", description = "❌ 존재하지 않는 일기입니다.",content = @Content(schema = @Schema(implementation = ApiResponse.class)))
     })
-    ApiResponse<Void> selectChallenges(@RequestBody ChallengeRequestDTO.SelectChallengesRequestDTO selectRequestList);
+    ApiResponse<Void> selectChallenges(@AuthenticationPrincipal Long userId, @RequestBody ChallengeRequestDTO.SelectChallengesRequestDTO selectRequestList);
 
     @PostMapping("presigned-url")
     @Operation(summary = "사용자 챌린지 인증 이미지 업로드용 presigned url 생성 API", description = "사용자 챌린지 인증 이미지를 S3에 직접 업로드할 수 있는 presigned url을 생성합니다.")
@@ -72,7 +74,7 @@ public interface ChallengeSpecification {
             @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "COMMON_200", description = "⭕ SUCCESS"),
             @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "S3_400_01", description = "❌ 파일 확장자가 잘못되었습니다.", content = @Content(schema = @Schema(implementation = ApiResponse.class)))
     })
-    ApiResponse<ChallengeResponseDTO.ProofPresignedUrlResponseDTO> getProofPresignedUrl(@Valid @RequestBody ChallengeRequestDTO.ProofRequestPresignedUrlDTO request);
+    ApiResponse<ChallengeResponseDTO.ProofPresignedUrlResponseDTO> getProofPresignedUrl(@AuthenticationPrincipal Long userId, @Valid @RequestBody ChallengeRequestDTO.ProofRequestPresignedUrlDTO request);
 
     @PostMapping("{userChallengeId}")
     @Operation(summary = "사용자 챌린지 인증 작성 API", description = "사용자의 특정 챌린지 인증내역을 작성하는 API입니다. <br>" +
@@ -86,7 +88,7 @@ public interface ChallengeSpecification {
             @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "UC_409_02", description = "❌ 이미 완료된 챌린지입니다.", content = @Content(schema = @Schema(implementation = ApiResponse.class)))
     })
     @Parameter(name = "userChallengeId", description = "인증 작성할 사용자 챌린지의 ID", example = "1")
-    ApiResponse<ChallengeResponseDTO.CreateProofDTO> createChallengeProof(@PathVariable Long userChallengeId,
+    ApiResponse<ChallengeResponseDTO.CreateProofDTO> createChallengeProof(@AuthenticationPrincipal Long userId, @PathVariable Long userChallengeId,
             @Valid @RequestBody ChallengeRequestDTO.ProofRequestDTO proofRequest);
 
     @GetMapping("{userChallengeId}")
@@ -99,7 +101,7 @@ public interface ChallengeSpecification {
             @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "UC_404_01", description = "❌ 사용자 챌린지가 존재하지 않습니다.", content = @Content(schema = @Schema(implementation = ApiResponse.class)))
     })
     @Parameter(name = "userChallengeId", description = "인증 내역을 조회할 사용자 챌린지의 ID", example = "1")
-    ApiResponse<ChallengeResponseDTO.ProofDetailsDTO> getChallengeProofDetails(@PathVariable Long userChallengeId);
+    ApiResponse<ChallengeResponseDTO.ProofDetailsDTO> getChallengeProofDetails(@AuthenticationPrincipal Long userId, @PathVariable Long userChallengeId);
 
 
     @PatchMapping("{userChallengeId}")
@@ -113,7 +115,7 @@ public interface ChallengeSpecification {
             @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "UC_404_01", description = "❌ 사용자 챌린지가 존재하지 않습니다.", content = @Content(schema = @Schema(implementation = ApiResponse.class)))
     })
     @Parameter(name = "userChallengeId", description = "인증 내역을 수정할 사용자 챌린지의 ID", example = "1")
-    ApiResponse<Void> updateChallengeProof(@PathVariable Long userChallengeId,
+    ApiResponse<Void> updateChallengeProof(@AuthenticationPrincipal Long userId, @PathVariable Long userChallengeId,
             @Valid @RequestBody(required = false) ChallengeRequestDTO.ProofRequestDTO updateRequest);
 
     @DeleteMapping("{userChallengeId}")
@@ -131,5 +133,5 @@ public interface ChallengeSpecification {
             @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "UC_409_01", description = "❌ 완료된 챌린지는 삭제가 불가합니다.", content = @Content(schema = @Schema(implementation = ApiResponse.class)))
     })
     @Parameter(name = "userChallengeId", description = "삭제할 사용자 챌린지의 ID", example = "1")
-    ApiResponse<Void> deleteChallenge(@PathVariable("userChallengeId") Long userChallengeId);
+    ApiResponse<Void> deleteChallenge(@AuthenticationPrincipal Long userId, @PathVariable("userChallengeId") Long userChallengeId);
 }
