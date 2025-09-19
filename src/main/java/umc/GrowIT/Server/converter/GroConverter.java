@@ -31,7 +31,7 @@ public class GroConverter {
                 .build();
     }
 
-    public static GroResponseDTO.GroAndEquippedItemsDTO toGroAndEquippedItemsDTO(Gro gro, String groImageUrl, Map<UserItem, String> itemUrls) {
+    public static GroResponseDTO.GroAndEquippedItemsDTO toGroAndEquippedItemsDTO(Gro gro, String groImageUrl, Map<Item, String> itemUrls) {
         // 1. GroDTO 생성
         GroResponseDTO.GroDTO groDTO = GroResponseDTO.GroDTO.builder()
                 .level(gro.getLevel())
@@ -43,8 +43,8 @@ public class GroConverter {
         List<GroResponseDTO.EquippedItemsDTO> equippedItems = itemUrls.entrySet().stream()
                 .map(entry -> GroResponseDTO.EquippedItemsDTO.builder()
                         .id(entry.getKey().getId())
-                        .name(entry.getKey().getItem().getName())
-                        .category(entry.getKey().getItem().getCategory())
+                        .name(entry.getKey().getName())
+                        .category(entry.getKey().getCategory())
                         .itemImageUrl(entry.getValue())
                         .build())
                 .collect(Collectors.toList())

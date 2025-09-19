@@ -51,7 +51,11 @@ public class GroQueryServiceImpl implements GroQueryService {
 
         // 4. 프리사인드 URL 생성
         String groUrl = createGroPreSignedUrl(gro.getLevel());
-        Map<UserItem, String> itemUrls = createItemPreSignedUrl(equippedUserItems);
+        Map<Item, String> itemUrls = createItemPreSignedUrl(
+                equippedUserItems.stream()
+                        .map(UserItem::getItem)
+                        .collect(Collectors.toList())
+        );
 
         // 5. converter 작업
         return GroConverter.toGroAndEquippedItemsDTO(gro, groUrl, itemUrls);
@@ -76,11 +80,11 @@ public class GroQueryServiceImpl implements GroQueryService {
     }
 
     // 착용 중인 이미지에 대한 Pre-signed URL 생성
-    private Map<UserItem, String> createItemPreSignedUrl(List<UserItem> equippedUserItems) {
+    private Map<Item, String> createItemPreSignedUrl(List<Item> equippedUserItems) {
         return equippedUserItems.stream()
                 .collect(Collectors.toMap(
-                        userItem -> userItem,
-                        userItem -> s3Util.toGetPresignedUrl(userItem.getItem().getGroImageKey(), Duration.ofMinutes(15))
+                        item -> item,
+                        item -> s3Util.toGetPresignedUrl(item.getGroImageKey(), Duration.ofMinutes(15))
                 ));
     }
 }

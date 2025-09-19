@@ -65,7 +65,7 @@ public class GroResponseDTO {
     @AllArgsConstructor
     @Schema(title = "착용 아이템 정보")
     public static class EquippedItemsDTO {
-        @Schema(description = "사용자 아이템 ID", example = "1")
+        @Schema(description = "아이템 ID", example = "1")
         private Long id;
 
         @Schema(description = "아이템 이름", example = "체리")
