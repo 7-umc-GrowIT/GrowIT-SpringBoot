@@ -46,10 +46,10 @@ public class DiaryCommandServiceImpl implements DiaryCommandService{
     private String chatModel;
 
     @Value("${openai.model2}")
-    private String summaryModel;
+    private String summaryModel;          // 긴 대화용
 
-    @Value("${openai.model3}")
-    private String fineTunedSummaryModel;
+    @Value("${openai.model3}") 
+    private String fineTunedSummaryModel; // 짧은 대화용
 
     @Value("${openai.keyword-model}")
     private String keywordModel;
@@ -452,7 +452,7 @@ public class DiaryCommandServiceImpl implements DiaryCommandService{
         String selectedModel; // 대화 길이별 모델 선택용
 
         if (userDialogLength < 20) { // 사용자 입력이 20자 미만인 경우
-            selectedModel = summaryModel;
+            selectedModel = fineTunedSummaryModel;
             summaryPrompt = "다음의 내용은 사용자가 AI와 대화한 기록이야." +
                     " role: user인 경우 사용자의 말이고, role: assistant인 경우 AI가 사용자의 말에 대답하는 말이야." +
                     " 이 기록을 바탕으로 사용자가 혼자 쓰는 일기처럼 1인칭 시점으로 작성해줘." +
@@ -461,7 +461,7 @@ public class DiaryCommandServiceImpl implements DiaryCommandService{
                     " 대화한 기록의 분량이 너무 짧더라도 약간은 내용 덧붙여서 요약된 후 분량이 최소 50자가 넘어가도록 해줘" +
                     "하지만 없는 내용을 지어내면 안되고 예를들어 \"치킨을 먹었다.\"라고 써있었다면 고소하고 부드러운 치킨을 먹었다. 이정도로만 늘리는거야";
         } else {
-            selectedModel = fineTunedSummaryModel;
+            selectedModel = summaryModel;
             summaryPrompt = "다음의 내용은 사용자가 AI와 대화한 기록이야." +
                     " role: user인 경우 사용자의 말이고, role: assistant인 경우 AI가 사용자의 말에 대답하는 말이야." +
                     " 이 기록을 바탕으로 사용자가 혼자 쓰는 일기처럼 1인칭 시점으로 작성해줘." +
