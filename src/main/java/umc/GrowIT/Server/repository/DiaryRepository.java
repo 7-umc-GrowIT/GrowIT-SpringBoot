@@ -27,11 +27,14 @@ public interface DiaryRepository extends JpaRepository<Diary, Long> {
     Optional<Diary> findCompletedByUserIdAndId(@Param("userId") Long userId,
                                                @Param("diaryId") Long diaryId);
 
-    @Query("SELECT MAX(d.date) FROM Diary d WHERE d.user.id = :userId") // 마지막 일기 작성 날짜 조회
+    // 마지막 일기 작성 날짜 조회
+    @Query("SELECT MAX(d.date) FROM Diary d WHERE d.user.id = :userId " +
+            "AND d.status = umc.GrowIT.Server.domain.enums.DiaryStatus.COMPLETED")
     Optional<LocalDate> findLastDiaryDateByUserId(@Param("userId") Long userId);
 
     // 오늘 작성한 일기 조회
-    @Query("SELECT d FROM Diary d WHERE d.user.id = :userId AND d.date = :date")
+    @Query("SELECT d FROM Diary d WHERE d.user.id = :userId AND d.date = :date " +
+            "AND d.status = umc.GrowIT.Server.domain.enums.DiaryStatus.COMPLETED")
     Optional<Diary> findTodayDiaryByUserId(@Param("userId") Long userId, @Param("date") LocalDate date);
 
     @Modifying
