@@ -13,6 +13,7 @@ import org.thymeleaf.TemplateEngine;
 import org.thymeleaf.context.Context;
 
 import java.io.UnsupportedEncodingException;
+import java.util.UUID;
 
 @Slf4j
 @Service
@@ -29,10 +30,12 @@ public class EmailServiceImpl implements EmailService {
     @Async
     public void sendEmailAsync(String email, String authenticationCode) {
         try {
+            // MimeMessage 객체 생성
             MimeMessage message = javaMailSender.createMimeMessage();
-            MimeMessageHelper helper = new MimeMessageHelper(message, true, "UTF-8");
+            message.setHeader("References", "<" + UUID.randomUUID() + "@growit.com>");
 
-            // 메일 기본 정보
+            // MimeMessageHelper로 메일 내용 구성
+            MimeMessageHelper helper = new MimeMessageHelper(message, true, "UTF-8");
             helper.setTo(email);
             helper.setFrom(fromEmail, "GrowIT");
             helper.setSubject("[GrowIT] 이메일 인증번호 안내");
