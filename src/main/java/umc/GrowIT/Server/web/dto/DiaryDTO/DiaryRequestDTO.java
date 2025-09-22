@@ -47,6 +47,10 @@ public class DiaryRequestDTO {
     @Schema(title = "AI 음성 대화 request")
     public static class VoiceChatDTO {
         @NotNull
+        @Schema(description = "최초 대화 흐름 여부", example = "false")
+        private Boolean isNewConversation;
+
+        @NotNull
         @Schema(description = "사용자의 음성내용", example = "오늘 정말 힘든 하루였어.")
         private String chat;
 

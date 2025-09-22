@@ -123,15 +123,18 @@ public class DiaryCommandServiceImpl implements DiaryCommandService{
     @Override
     @Transactional
     public DiaryResponseDTO.VoiceChatResultDTO chatByVoice(DiaryRequestDTO.VoiceChatDTO request, Long userId) {
-
-        //유저 조회
+        // 유저 조회
         userRepository.findById(userId).orElseThrow(() -> new UserHandler(ErrorStatus.USER_NOT_FOUND));
-
         String userChat = request.getChat();
 
-        conversationHistory.putIfAbsent(userId, new ArrayList<>());
+        // 최초 대화 흐름인 경우, 기존 대화 목록 삭제
+        if (request.getIsNewConversation()) {
+            log.debug("기존 대화 목록 삭제 : {}", conversationHistory);
+            conversationHistory.remove(userId);
+        }
 
         // 기존 대화 목록 가져오기
+        conversationHistory.putIfAbsent(userId, new ArrayList<>());
         List<Message> messages = conversationHistory.get(userId);
 
         // 처음 대화라면 시스템 프롬프트 추가
