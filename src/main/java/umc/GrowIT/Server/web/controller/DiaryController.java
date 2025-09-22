@@ -59,7 +59,11 @@ public class DiaryController implements DiarySpecification {
     }
     @PostMapping("/voice/chat")
     public ApiResponse<DiaryResponseDTO.VoiceChatResultDTO> chatByVoice(@AuthenticationPrincipal Long userId, @RequestBody DiaryRequestDTO.VoiceChatDTO request){
-        return ApiResponse.onSuccess(diaryCommandService.chatByVoice(request, userId));
+        if (!request.getHasAdditionalChat()) {
+            return ApiResponse.onSuccess(diaryCommandService.chatByVoice(request, userId));
+        } else {
+            return ApiResponse.onSuccess(diaryCommandService.additionalChatByVoice(request, userId));
+        }
     }
 
     @PostMapping("/voice")

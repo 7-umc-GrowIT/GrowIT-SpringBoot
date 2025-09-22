@@ -159,9 +159,39 @@ public class DiaryCommandServiceImpl implements DiaryCommandService{
         // 사용자의 입력을 대화 목록에 추가
         messages.add(new Message("user", userChat));
 
+        // AI의 답변을 대화 목록에 추가
         String aiChat = requestGptChat(chatModel, messages);
+        messages.add(new Message("assistant", aiChat));
 
-        // ai의 답변을 대화 목록에 추가
+        // 대화 기록 유지
+        conversationHistory.put(userId, messages);
+
+        return DiaryConverter.toVoiceChatResultDTO(aiChat);
+    }
+
+    @Override
+    @Transactional
+    public DiaryResponseDTO.VoiceChatResultDTO additionalChatByVoice(DiaryRequestDTO.VoiceChatDTO request, Long userId) {
+        // 유저 조회
+        userRepository.findById(userId).orElseThrow(() -> new UserHandler(ErrorStatus.USER_NOT_FOUND));
+
+        // 요청된 사용자 음성 대화
+        String userChat = request.getChat();
+
+        // 기존 대화 목록 가져오기, 없는 경우 예외 처리
+        List<Message> messages = conversationHistory.get(userId);
+        if (messages == null || messages.isEmpty()) {
+            throw new DiaryHandler(ErrorStatus.CHAT_HISTORY_NOT_FOUND);
+        }
+
+        // 기존 대화 목록에서 가장 최근 메세지인 AI 답변 제거
+        messages.remove(messages.size() - 1);
+
+        // 기존 대화 목록에서 가장 최근 메세지인 사용자 대화에 요청된 할 말 추가
+        messages.get(messages.size() - 1).addContent(userChat);
+
+        // AI의 답변을 대화 목록에 추가
+        String aiChat = requestGptChat(chatModel, messages);
         messages.add(new Message("assistant", aiChat));
 
         // 대화 기록 유지
@@ -210,8 +240,6 @@ public class DiaryCommandServiceImpl implements DiaryCommandService{
         // 7. 응답
         return DiaryConverter.toSaveResultDTO(diary);
     }
-
-
 
     // 일기 분석
     @Override
