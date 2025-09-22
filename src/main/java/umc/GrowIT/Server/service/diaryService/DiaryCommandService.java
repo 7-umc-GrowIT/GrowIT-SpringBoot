@@ -13,6 +13,8 @@ public interface DiaryCommandService {
 
     DiaryResponseDTO.VoiceChatResultDTO chatByVoice(DiaryRequestDTO.VoiceChatDTO request, Long userId);
 
+    DiaryResponseDTO.VoiceChatResultDTO additionalChatByVoice(DiaryRequestDTO.VoiceChatDTO request, Long userId);
+
     DiaryResponseDTO.SaveDiaryResultDTO saveDiaryByVoice(DiaryRequestDTO.SaveVoiceDiaryDTO request, Long userId);
 
     DiaryResponseDTO.AnalyzedDiaryResponseDTO analyze(Long diaryId);
