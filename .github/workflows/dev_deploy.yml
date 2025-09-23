@@ -30,7 +30,7 @@ jobs:
       - name: Grant execute permission for gradlew
         run: chmod +x gradlew
 
-      # 4. prod 프로필로 JAR 빌드
+      # 4. dev 프로필로 JAR 빌드
       - name: Build JAR with Gradle
         uses: gradle/gradle-build-action@v2
         with:
@@ -97,7 +97,7 @@ jobs:
           
           # 애플리케이션 실행
           ssh ec2 "
-            nohup java -Dspring.profiles.active=prod -jar -Xmx1024m ~/GrowItServer.jar > app.log 2>&1 &
+            nohup java -Dspring.profiles.active=dev -jar -Xmx1024m ~/GrowItServer.jar > app.log 2>&1 &
           
             # 실행 확인
             sleep 30
