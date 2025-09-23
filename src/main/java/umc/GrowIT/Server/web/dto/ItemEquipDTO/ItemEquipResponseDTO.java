@@ -10,6 +10,7 @@ import lombok.NoArgsConstructor;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
+@Schema(title = "아이템 착용 response")
 public class ItemEquipResponseDTO {
     @Schema(
             description = "아이템 ID",

@@ -3,11 +3,14 @@ package umc.GrowIT.Server.converter;
 import umc.GrowIT.Server.domain.Challenge;
 import umc.GrowIT.Server.domain.Diary;
 import umc.GrowIT.Server.domain.Keyword;
-import umc.GrowIT.Server.domain.enums.UserChallengeType;
+import umc.GrowIT.Server.domain.User;
+import umc.GrowIT.Server.domain.enums.DiaryStatus;
+import umc.GrowIT.Server.domain.enums.DiaryType;
 import umc.GrowIT.Server.web.dto.ChallengeDTO.ChallengeResponseDTO;
 import umc.GrowIT.Server.web.dto.DiaryDTO.DiaryResponseDTO;
 import umc.GrowIT.Server.web.dto.KeywordDTO.KeywordResponseDTO;
 
+import java.time.LocalDate;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -58,20 +61,13 @@ public class DiaryConverter {
                 .build();
     }
 
-    public static DiaryResponseDTO.CreateDiaryResultDTO toCreateResultDTO(Diary diary){
-
-        return DiaryResponseDTO.CreateDiaryResultDTO.builder()
+    public static DiaryResponseDTO.SaveDiaryResultDTO toSaveResultDTO(Diary diary){
+        return DiaryResponseDTO.SaveDiaryResultDTO.builder()
                 .diaryId(diary.getId())
                 .content(diary.getContent())
                 .date(diary.getDate())
-                .build();
-    }
-
-    public static DiaryResponseDTO.DeleteDiaryResultDTO toDeleteResultDTO(Diary diary){
-
-        return DiaryResponseDTO.DeleteDiaryResultDTO.builder()
-                .message("일기를 삭제했어요.")
-                .build();
+                .build()
+                ;
     }
 
     public static DiaryResponseDTO.VoiceChatResultDTO toVoiceChatResultDTO(String aiChat){
@@ -81,14 +77,6 @@ public class DiaryConverter {
                 .build();
     }
 
-    public static DiaryResponseDTO.SummaryResultDTO toSummaryResultDTO(Diary diary){
-
-        return DiaryResponseDTO.SummaryResultDTO.builder()
-                .diaryId(diary.getId())
-                .content(diary.getContent())
-                .date(diary.getDate())
-                .build();
-    }
 
     // 챌린지 추천
     public static DiaryResponseDTO.AnalyzedDiaryResponseDTO toAnalyzedDiaryDTO(List<Keyword> analyzedEmotions, List<Challenge> dailyChallenges, Challenge randomChallenge) {
@@ -103,5 +91,16 @@ public class DiaryConverter {
                 .emotionKeywords(emotionKeywordsDTOs)
                 .recommendedChallenges(recommendedChallenges)
                 .build();
+    }
+
+    public static Diary toDiary(String content, LocalDate date, User user, DiaryType type) {
+        return Diary.builder()
+                .content(content)
+                .user(user)
+                .date(date)
+                .status(DiaryStatus.PENDING)
+                .type(type)
+                .build()
+                ;
     }
 }

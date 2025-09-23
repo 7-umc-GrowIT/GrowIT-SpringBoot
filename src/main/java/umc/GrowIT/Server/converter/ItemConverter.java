@@ -4,7 +4,6 @@ import umc.GrowIT.Server.domain.Item;
 import umc.GrowIT.Server.domain.User;
 import umc.GrowIT.Server.domain.UserItem;
 import umc.GrowIT.Server.domain.enums.ItemStatus;
-import umc.GrowIT.Server.repository.ItemRepository.ItemRepository;
 import umc.GrowIT.Server.web.dto.ItemDTO.ItemResponseDTO;
 import umc.GrowIT.Server.web.dto.ItemEquipDTO.ItemEquipResponseDTO;
 
@@ -57,9 +56,11 @@ public class ItemConverter {
                 .build();
     }
 
-    public static UserItem toUserItem() {
+    public static UserItem toUserItem(User user, Item item) {
         return UserItem.builder()
                 .status(ItemStatus.UNEQUIPPED)
+                .user(user)
+                .item(item)
                 .build()
                 ;
     }

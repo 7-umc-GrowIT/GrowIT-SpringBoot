@@ -1,20 +1,21 @@
 package umc.GrowIT.Server.service.diaryService;
 
-import umc.GrowIT.Server.web.dto.ChallengeDTO.ChallengeResponseDTO;
 import umc.GrowIT.Server.web.dto.DiaryDTO.DiaryRequestDTO;
 import umc.GrowIT.Server.web.dto.DiaryDTO.DiaryResponseDTO;
 
 public interface DiaryCommandService {
 
-    public DiaryResponseDTO.ModifyDiaryResultDTO modifyDiary(DiaryRequestDTO.ModifyDiaryDTO request, Long diaryId, Long userId);
+    DiaryResponseDTO.ModifyDiaryResultDTO modifyDiary(DiaryRequestDTO.ModifyDiaryDTO request, Long diaryId, Long userId);
 
-    public DiaryResponseDTO.CreateDiaryResultDTO createDiary(DiaryRequestDTO.CreateDiaryDTO request, Long userId);
+    DiaryResponseDTO.SaveDiaryResultDTO saveDiaryByText(DiaryRequestDTO.SaveTextDiaryDTO request, Long userId);
 
-    public DiaryResponseDTO.DeleteDiaryResultDTO deleteDiary(Long diaryId, Long userId);
+    void deleteDiary(Long diaryId, Long userId);
 
-    public DiaryResponseDTO.VoiceChatResultDTO chatByVoice(DiaryRequestDTO.VoiceChatDTO request, Long userId);
+    DiaryResponseDTO.VoiceChatResultDTO chatByVoice(DiaryRequestDTO.VoiceChatDTO request, Long userId);
 
-    public DiaryResponseDTO.SummaryResultDTO createDiaryByVoice(DiaryRequestDTO.SummaryDTO request, Long userId);
+    DiaryResponseDTO.VoiceChatResultDTO additionalChatByVoice(DiaryRequestDTO.VoiceChatDTO request, Long userId);
+
+    DiaryResponseDTO.SaveDiaryResultDTO saveDiaryByVoice(DiaryRequestDTO.SaveVoiceDiaryDTO request, Long userId);
 
     DiaryResponseDTO.AnalyzedDiaryResponseDTO analyze(Long diaryId);
 }

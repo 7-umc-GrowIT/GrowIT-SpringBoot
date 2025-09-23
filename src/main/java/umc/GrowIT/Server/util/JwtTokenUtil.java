@@ -15,7 +15,6 @@ import org.springframework.stereotype.Component;
 import umc.GrowIT.Server.domain.CustomUserDetails;
 import umc.GrowIT.Server.service.userService.UserQueryService;
 import umc.GrowIT.Server.web.dto.TokenDTO.TokenResponseDTO;
-import umc.GrowIT.Server.web.dto.UserDTO.UserResponseDTO;
 
 import java.security.Key;
 import java.util.Collections;
@@ -32,8 +31,11 @@ public class JwtTokenUtil {
     private final UserQueryService userQueryService;
 
     private final Key key;
-    public static final long ACCESS_TOKEN_EXPIRATION_MS = 60L * 60 * 1000; //테스트 용 Access token 만료 시간 1시간
-    public static final long REFRESH_TOKEN_EXPIRATION_MS = 60L * 24 * 60 * 60 * 1000; //테스트 용 Refresh token 만료 시간 60일
+
+    @Value("${jwt.access-token-expiration-ms}")
+    private long ACCESS_TOKEN_EXPIRATION_MS;
+    @Value("${jwt.refresh-token-expiration-ms}")
+    private long REFRESH_TOKEN_EXPIRATION_MS;
 
     public JwtTokenUtil(@Value("${spring.jwt.secretKey}") String secretKey, UserQueryService userQueryService) {
         byte[] keyBytes = Decoders.BASE64.decode(secretKey);
@@ -116,9 +118,14 @@ public class JwtTokenUtil {
         );
     }
 
-    public boolean isUserInactive(String token){
+    public boolean isUserInactive(String token) {
         Claims claims = parseClaims(token);
         Long userId = claims.get("userId", Long.class);
         return userQueryService.isUserInactive(userId);
+    }
+
+    public Long getUserId(String token) {
+        Claims claims = parseClaims(token);
+        return claims.get("userId", Long.class);
     }
 }

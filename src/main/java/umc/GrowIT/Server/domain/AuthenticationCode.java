@@ -3,15 +3,14 @@ package umc.GrowIT.Server.domain;
 import jakarta.persistence.*;
 import lombok.*;
 import umc.GrowIT.Server.domain.common.BaseEntity;
-import umc.GrowIT.Server.domain.enums.CodeStatus;
 
 import java.time.LocalDateTime;
 
 @Entity
 @Getter
 @Builder
-@NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class AuthenticationCode extends BaseEntity {
 
     @Id
@@ -19,7 +18,7 @@ public class AuthenticationCode extends BaseEntity {
     private Long id;
 
     // 이메일
-    @Column(length = 50, nullable = false)
+    @Column(nullable = false, length = 50)
     private String email;
 
     // 인증 코드
@@ -30,20 +29,18 @@ public class AuthenticationCode extends BaseEntity {
     @Column(nullable = false)
     private Boolean isVerified;
 
-    // 사용 가능 여부
-    @Enumerated(EnumType.STRING)
-    private CodeStatus status;
-
     // 인증 유효기간
     @Column(nullable = false)
     private LocalDateTime expirationDate;
 
-    public void updateStatus(CodeStatus status) {
-        this.status = status;
+    // 만료 처리
+    public void expire() {
+        this.expirationDate = LocalDateTime.now();
     }
 
-    public void update() {
+    // 인증 처리
+    public void verify() {
         this.isVerified = true;
-        this.status = CodeStatus.EXPIRED;
+        this.expirationDate = LocalDateTime.now();
     }
 }

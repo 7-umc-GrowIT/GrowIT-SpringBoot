@@ -1,5 +1,6 @@
 package umc.GrowIT.Server.web.dto.KeywordDTO;
 
+import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -10,8 +11,11 @@ public class KeywordResponseDTO {
     @Builder
     @NoArgsConstructor
     @AllArgsConstructor
+    @Schema(title = "감정 키워드 response")
     public static class KeywordDTO {
-        private Long id; // id
-        private String keyword; // 감정
+        @Schema(description = "감정 키워드 id", example = "1")
+        private Long id;
+        @Schema(description = "감정 키워드 내용", example = "행복한")
+        private String keyword;
     }
 }

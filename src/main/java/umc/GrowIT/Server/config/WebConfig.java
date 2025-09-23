@@ -1,13 +1,13 @@
 package umc.GrowIT.Server.config;
 
+import java.util.List;
+
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
-
-import java.util.List;
 
 @Configuration
 public class WebConfig implements WebMvcConfigurer {
@@ -17,10 +17,30 @@ public class WebConfig implements WebMvcConfigurer {
         CorsConfiguration config = new CorsConfiguration();
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
 
-        config.setAllowedOriginPatterns(List.of("*"));
-        config.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
-        config.setAllowedHeaders(List.of("*"));
+        // 허용할 origin 설정 (Swagger UI 웹 테스트용)
+        config.setAllowedOriginPatterns(List.of(
+            "http://localhost:8080",
+            "https://dev.growitserver.shop"
+        ));
+
+        // 허용할 HTTP 메서드
+        config.setAllowedMethods(List.of(
+            "GET", 
+            "POST", 
+            "DELETE", 
+            "PATCH"
+        ));
+
+        // 허용할 헤더
+        config.setAllowedHeaders(List.of(
+            "Authorization", 
+            "Content-Type"
+        ));
+
+        // 인증 정보 허용
         config.setAllowCredentials(true);
+
+        // 모든 경로에 적용
         source.registerCorsConfiguration("/**", config);
 
         return source;

@@ -1,6 +1,7 @@
 package umc.GrowIT.Server.web.dto.OAuthDTO;
 
 import jakarta.validation.constraints.NotEmpty;
+import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -19,5 +20,15 @@ public class OAuthRequestDTO {
         private List<TermRequestDTO.UserTermDTO> userTerms;
 
         private OAuthApiResponseDTO.OAuthUserInfoDTO oauthUserInfo;
+    }
+
+    @Builder
+    @Getter
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class SocialLoginDTO {
+        @NotNull
+        private String code;
+        private String name;
     }
 }

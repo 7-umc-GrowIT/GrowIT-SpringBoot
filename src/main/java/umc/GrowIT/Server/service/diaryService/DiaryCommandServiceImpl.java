@@ -4,17 +4,24 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.http.*;
+import org.springframework.http.MediaType;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.client.RestClient;
 import org.springframework.web.client.RestTemplate;
 import umc.GrowIT.Server.apiPayload.code.status.ErrorStatus;
 import umc.GrowIT.Server.apiPayload.exception.*;
 import umc.GrowIT.Server.converter.DiaryConverter;
+import umc.GrowIT.Server.converter.FlaskConverter;
 import umc.GrowIT.Server.domain.*;
+import umc.GrowIT.Server.domain.enums.DiaryStatus;
+import umc.GrowIT.Server.domain.enums.DiaryType;
 import umc.GrowIT.Server.repository.*;
-import umc.GrowIT.Server.repository.diaryRepository.DiaryRepository;
+import umc.GrowIT.Server.util.CreditUtil;
 import umc.GrowIT.Server.web.dto.DiaryDTO.DiaryRequestDTO;
 import umc.GrowIT.Server.web.dto.DiaryDTO.DiaryResponseDTO;
+import umc.GrowIT.Server.web.dto.FlaskDTO.FlaskRequestDTO;
+import umc.GrowIT.Server.web.dto.FlaskDTO.FlaskResponseDTO;
 import umc.GrowIT.Server.web.dto.OpenAIDTO.ChatGPTRequest;
 import umc.GrowIT.Server.web.dto.OpenAIDTO.ChatGPTResponse;
 import umc.GrowIT.Server.web.dto.OpenAIDTO.Message;
@@ -32,15 +39,17 @@ public class DiaryCommandServiceImpl implements DiaryCommandService{
     private final ChallengeKeywordRepository challengeKeywordRepository;
     private final KeywordRepository keywordRepository;
     private final ChallengeRepository challengeRepository;
-    private final UserChallengeRepository userChallengeRepository;
-    //일기 작성 시 추가되는 크레딧 개수
-    private Integer diaryCredit = 2;
+
+    private final CreditUtil creditUtil;
 
     @Value("${openai.model1}")
     private String chatModel;
 
     @Value("${openai.model2}")
-    private String summaryModel;
+    private String summaryModel;          // 긴 대화용
+
+    @Value("${openai.model3}") 
+    private String fineTunedSummaryModel; // 짧은 대화용
 
     @Value("${openai.keyword-model}")
     private String keywordModel;
@@ -48,21 +57,25 @@ public class DiaryCommandServiceImpl implements DiaryCommandService{
     @Value("${openai.api.url}")
     private String apiURL;
 
+    // 대화&요약용&키워드 분석용
     @Autowired
     private RestTemplate template;
 
-    @Autowired
-    private RestTemplate keywordModelTemplate;
+    // Flask 호출용
+    private final RestClient flaskRestClient;
+
 
     //userId-대화내용 저장용 HashMap
     private final Map<Long, List<Message>> conversationHistory = new HashMap<>();
+
     @Override
+    @Transactional
     public DiaryResponseDTO.ModifyDiaryResultDTO modifyDiary(DiaryRequestDTO.ModifyDiaryDTO request, Long diaryId, Long userId) {
 
         //유저 조회
-        User user = userRepository.findById(userId).orElseThrow(() -> new UserHandler(ErrorStatus.USER_NOT_FOUND));
+        userRepository.findById(userId).orElseThrow(() -> new UserHandler(ErrorStatus.USER_NOT_FOUND));
 
-        Optional<Diary> optionalDiary = diaryRepository.findByUserIdAndId(userId, diaryId);
+        Optional<Diary> optionalDiary = diaryRepository.findByIdAndUserId(diaryId, userId);
         Diary diary = optionalDiary.orElseThrow(()->new DiaryHandler(ErrorStatus.DIARY_NOT_FOUND));
 
         //기존의 내용과 변경되지 않았을 경우
@@ -70,111 +83,87 @@ public class DiaryCommandServiceImpl implements DiaryCommandService{
             throw new DiaryHandler(ErrorStatus.DIARY_SAME_CONTENT);
         }
 
-        diary.setContent(request.getContent());
+        diary.updateContent(request.getContent());
 
         diaryRepository.save(diary);
         return DiaryConverter.toModifyResultDTO(diary);
     }
 
     @Override
-    public DiaryResponseDTO.CreateDiaryResultDTO createDiary(DiaryRequestDTO.CreateDiaryDTO request, Long userId) {
+    @Transactional
+    public DiaryResponseDTO.SaveDiaryResultDTO saveDiaryByText(DiaryRequestDTO.SaveTextDiaryDTO request, Long userId) {
+        // 1. 유저 조회
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new UserHandler(ErrorStatus.USER_NOT_FOUND));
 
-        //유저 조회
-        User user = userRepository.findById(userId).orElseThrow(() -> new UserHandler(ErrorStatus.USER_NOT_FOUND));
+        // 2. 일기 날짜 검사
+        checkDiaryDate(userId, request.getDate());
 
-        //일기 내용이 100자 이상인지 검사
-        if(request.getContent().length()<100){
-            throw new DiaryHandler(ErrorStatus.DIARY_CHARACTER_LIMIT);
-        }
-
-        //날짜 검사(오늘 이후의 날짜 x)
-        if (request.getDate().isAfter(LocalDate.now())) {
-            throw new DiaryHandler(ErrorStatus.DATE_IS_AFTER);
-        }
-
-        //날짜 검사(이미 해당 날짜에 작성된 일기가 존재)
-        if(diaryRepository.existsByUserIdAndDate(userId, request.getDate())){
-            throw new DiaryHandler(ErrorStatus.DIARY_ALREADY_EXISTS);
-        }
-
-        //일기 생성
-        Diary diary = Diary.builder()
-                .content(request.getContent())
-                .user(user)
-                .date(request.getDate())
-                .build();
-
-        //일기 저장
+        // 3. 일기 저장
+        Diary diary = DiaryConverter.toDiary(request.getContent(), request.getDate(), user, DiaryType.TEXT);
         diary = diaryRepository.save(diary);
 
-        //사용자의 크레딧수 증가
-        user.updateCurrentCredit(user.getCurrentCredit() + diaryCredit);
-        user.updateTotalCredit(user.getTotalCredit() + diaryCredit);
-        userRepository.save(user);
-
-        return DiaryConverter.toCreateResultDTO(diary);
+        // 4. 응답
+        return DiaryConverter.toSaveResultDTO(diary);
     }
 
     @Override
-    public DiaryResponseDTO.DeleteDiaryResultDTO deleteDiary(Long diaryId, Long userId) {
+    @Transactional
+    public void deleteDiary(Long diaryId, Long userId) {
         //유저 조회
-        User user = userRepository.findById(userId).orElseThrow(() -> new UserHandler(ErrorStatus.USER_NOT_FOUND));
+        userRepository.findById(userId).orElseThrow(() -> new UserHandler(ErrorStatus.USER_NOT_FOUND));
 
-        Optional<Diary> optionalDiary = diaryRepository.findByUserIdAndId(userId, diaryId);
+        Optional<Diary> optionalDiary = diaryRepository.findByIdAndUserId(diaryId, userId);
         Diary diary = optionalDiary.orElseThrow(()->new DiaryHandler(ErrorStatus.DIARY_NOT_FOUND));
-        LocalDate targetDate = diary.getDate();
 
         //일기 삭제
         diaryRepository.delete(diary);
-
-        //UserChallenge 조회
-        List<UserChallenge> targetUserChallenge = userChallengeRepository.findUserChallengesByDateAndUserId(user.getId(), targetDate);
-
-        //UserChallenge 삭제
-        userChallengeRepository.deleteAll(targetUserChallenge);
-
-
-        return DiaryConverter.toDeleteResultDTO(diary);
     }
 
     @Override
+    @Transactional
     public DiaryResponseDTO.VoiceChatResultDTO chatByVoice(DiaryRequestDTO.VoiceChatDTO request, Long userId) {
-
-        //유저 조회
-        User user = userRepository.findById(userId).orElseThrow(() -> new UserHandler(ErrorStatus.USER_NOT_FOUND));
-
+        // 유저 조회
+        userRepository.findById(userId).orElseThrow(() -> new UserHandler(ErrorStatus.USER_NOT_FOUND));
         String userChat = request.getChat();
 
-        conversationHistory.putIfAbsent(userId, new ArrayList<>());
+        // 최초 대화 흐름인 경우, 기존 대화 목록 삭제
+        if (request.getIsNewConversation()) {
+            log.debug("기존 대화 목록 삭제 : {}", conversationHistory);
+            conversationHistory.remove(userId);
+        }
 
         // 기존 대화 목록 가져오기
+        conversationHistory.putIfAbsent(userId, new ArrayList<>());
         List<Message> messages = conversationHistory.get(userId);
 
-        //처음 대화라면 시스템 프롬프트 추가
-        if(messages.isEmpty()){
-            messages.add(new Message("system", "너는 사용자와 대화하며 일기를 작성하는 챗봇이야." +
-                    " role: user인 경우 사용자의 말이고, role: assistant인 경우 너가 사용자의 말에 대답하는 말이야." +
-                    " 사용자와의 대화 내용을 기억하고 사용자의 마지막말에 대해 상황에 맞게 대답해줘." +
-                    " 그리고 사용자의 말에 공감하며 가끔씩 감정을 이끌어내는 질문을 해야해." +
-                    " 반드시 존댓말을 사용하고 맞춤법은 제대로 맞춰줘."));
+        // 처음 대화라면 시스템 프롬프트 추가
+        if (messages.isEmpty()){
+            messages.add(
+                    new Message(
+                            "system",
+                            "너는 사용자의 하루 이야기를 들어주는 따뜻한 대화 파트너야.\n\n" +
+
+                                    "[규칙]\n" +
+                                    "사용자가 오늘 하루 있었던 일을 이야기하면\n" +
+                                    "- 친구처럼 편안하고 부드러운 대화하기\n" +
+                                    "- 짧고 따뜻하게 공감하거나 리액션하기\n" +
+                                    "- 꼬리질문이나 대화 유도하지 않기\n" +
+                                    "- 오직 사용자가 실제로 말한 표현만 활용하기\n" +
+
+                                    "[출력 형식]\n" +
+                                    "- 1~2문장으로 답변하기\n" +
+                                    "- 사용자가 아무 말도 안 하면, 작은 일이라도 떠올리도록 가볍게 유도하기\n" +
+                                    "- 한국어로 자연스럽게 대화하기"
+                    )
+            );
         }
 
         // 사용자의 입력을 대화 목록에 추가
         messages.add(new Message("user", userChat));
 
-        // ChatGPT 요청 생성
-        ChatGPTRequest gptRequest = new ChatGPTRequest(chatModel, messages);
-
-        // API 요청 및 응답 처리
-        ChatGPTResponse chatGPTResponse = template.postForObject(apiURL, gptRequest, ChatGPTResponse.class);
-
-        if (chatGPTResponse == null || chatGPTResponse.getChoices().isEmpty()) {
-            throw new OpenAIHandler(ErrorStatus.GPT_RESPONSE_EMPTY);
-        }
-
-        String aiChat = chatGPTResponse.getChoices().get(0).getMessage().getContent();
-
-        // ai의 답변을 대화 목록에 추가
+        // AI의 답변을 대화 목록에 추가
+        String aiChat = requestGptChat(chatModel, messages);
         messages.add(new Message("assistant", aiChat));
 
         // 대화 기록 유지
@@ -184,67 +173,80 @@ public class DiaryCommandServiceImpl implements DiaryCommandService{
     }
 
     @Override
-    public DiaryResponseDTO.SummaryResultDTO createDiaryByVoice(DiaryRequestDTO.SummaryDTO request, Long userId) {
+    @Transactional
+    public DiaryResponseDTO.VoiceChatResultDTO additionalChatByVoice(DiaryRequestDTO.VoiceChatDTO request, Long userId) {
+        // 유저 조회
+        userRepository.findById(userId).orElseThrow(() -> new UserHandler(ErrorStatus.USER_NOT_FOUND));
 
-        //유저 조회
-        User user = userRepository.findById(userId).orElseThrow(() -> new UserHandler(ErrorStatus.USER_NOT_FOUND));
+        // 요청된 사용자 음성 대화
+        String userChat = request.getChat();
 
-        //날짜 검사(오늘 이후의 날짜 x)
-        if (request.getDate().isAfter(LocalDate.now())) {
-            throw new DiaryHandler(ErrorStatus.DATE_IS_AFTER);
-        }
-
-        //날짜 검사(이미 해당 날짜에 작성된 일기가 존재)
-        if(diaryRepository.existsByUserIdAndDate(userId, request.getDate())){
-            throw new DiaryHandler(ErrorStatus.DIARY_ALREADY_EXISTS);
-        }
-
-        // 기존 대화 목록 가져오기
+        // 기존 대화 목록 가져오기, 없는 경우 예외 처리
         List<Message> messages = conversationHistory.get(userId);
-
-        // AI에게 대화내용 요약 요청
-        messages.add(new Message("system", "다음의 내용은 사용자가 AI와 대화한 기록이야." +
-                " role: user인 경우 사용자의 말이고, role: assistant인 경우 AI가 사용자의 말에 대답하는 말이야." +
-                " 이 기록을 바탕으로 사용자가 직접 작성한 것 처럼 1인칭 시점으로 일기를 작성해줘." +
-                " 사용자의 감정이 풍부하게 드러나도록 작성해줘." +
-                " 또한 일기에서 AI와 대화했다는 사실이 드러나지 않도록 작성해줘." +
-                " 마지막으로 일기에 날짜는 적지 말아줘."));
-
-        // ChatGPT 요청 생성
-        ChatGPTRequest gptRequest = new ChatGPTRequest(summaryModel, messages);
-
-        // API 요청 및 응답 처리
-        ChatGPTResponse chatGPTResponse = template.postForObject(apiURL, gptRequest, ChatGPTResponse.class);
-
-        if (chatGPTResponse == null || chatGPTResponse.getChoices().isEmpty()) {
-            throw new OpenAIHandler(ErrorStatus.GPT_RESPONSE_EMPTY);
+        if (messages == null || messages.isEmpty()) {
+            throw new DiaryHandler(ErrorStatus.CHAT_HISTORY_NOT_FOUND);
         }
 
-        String aiChat = chatGPTResponse.getChoices().get(0).getMessage().getContent();
+        // 기존 대화 목록에서 가장 최근 메세지인 AI 답변 제거
+        messages.remove(messages.size() - 1);
 
-        //일기 생성
-        Diary diary = Diary.builder()
-                .content(aiChat)
-                .user(user)
-                .date(request.getDate())
-                .build();
+        // 기존 대화 목록에서 가장 최근 메세지인 사용자 대화에 요청된 할 말 추가
+        messages.get(messages.size() - 1).addContent(userChat);
 
-        //일기 저장
+        // AI의 답변을 대화 목록에 추가
+        String aiChat = requestGptChat(chatModel, messages);
+        messages.add(new Message("assistant", aiChat));
+
+        // 대화 기록 유지
+        conversationHistory.put(userId, messages);
+
+        return DiaryConverter.toVoiceChatResultDTO(aiChat);
+    }
+
+    @Override
+    @Transactional
+    public DiaryResponseDTO.SaveDiaryResultDTO saveDiaryByVoice(DiaryRequestDTO.SaveVoiceDiaryDTO request, Long userId) {
+        // 1. 유저 조회
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new UserHandler(ErrorStatus.USER_NOT_FOUND));
+
+        // 2. 일기 날짜 검사
+        checkDiaryDate(userId, request.getDate());
+
+        // 3. 기존 대화 목록 가져와서 정리
+        List<Message> originalMessages = conversationHistory.get(userId);
+
+        // 대화 기록에서 대화 시작전 LLM모델에게 설명하는 부분 제거
+        List<Message> messages = new ArrayList<>();
+        if (originalMessages != null) {
+            messages = originalMessages.stream()
+                    .filter(msg -> !(msg.getRole().equals("system") &&
+                            msg.getContent().contains("너는 사용자와 대화하며 일기를 작성하는 챗봇이야.")))
+                    .collect(Collectors.toList());
+        }
+
+        // 4. 대화 내용을 바탕으로 일기 요약
+        // 기존 대화 내용 길이
+        int userDialogLength = messages.stream()
+                .filter(msg -> msg.getRole().equals("user"))
+                .mapToInt(msg -> msg.getContent().length())
+                .sum();
+        String aiChat = summaryDiary(userDialogLength, messages);
+
+        // 5. 일기 저장
+        Diary diary = DiaryConverter.toDiary(aiChat, request.getDate(), user, DiaryType.VOICE);
         diary = diaryRepository.save(diary);
 
-        //사용자의 크레딧수 증가
-        user.updateCurrentCredit(user.getCurrentCredit() + diaryCredit);
-        user.updateTotalCredit(user.getTotalCredit() + diaryCredit);
-        userRepository.save(user);
-
-        // 대화 기록 삭제
+        // 6. 대화 기록 삭제
         conversationHistory.remove(userId);
 
-        return DiaryConverter.toSummaryResultDTO(diary);
+        // 7. 응답
+        return DiaryConverter.toSaveResultDTO(diary);
     }
 
     // 일기 분석
     @Override
+    @Transactional
     public DiaryResponseDTO.AnalyzedDiaryResponseDTO analyze(Long diaryId) {
         // 1. 일기 조회
         Diary diary = diaryRepository.findById(diaryId)
@@ -258,16 +260,8 @@ public class DiaryCommandServiceImpl implements DiaryCommandService{
         }
 
 
-        // 3. DB에서 감정들 조회
-        List<String> emotions = keywordRepository.findAll()
-                .stream()
-                .map(emotion -> emotion.getName())
-                .toList();
-        log.info("[DB 감정들] : " + emotions.toString());
-
-
-        // 4. OpenAI API 호출하여 감정 반환 & 반환받은 감정 체크 (3개인지, 중복안되었는지, DB와동일한지)
-        List<Keyword> analyzedEmotions = openAIAnalyzeDiary(diary.getContent(), emotions.toString());
+        // 3. OpenAI API 호출하여 감정 반환 & 반환받은 감정 체크 (3개인지, 중복안되었는지)
+        List<Keyword> analyzedEmotions = openAIAnalyzeDiary(diary.getContent());
         log.info("[최종 분석된 감정] : " + analyzedEmotions.stream().map(Keyword::getName).toList().toString());
 
 
@@ -295,23 +289,53 @@ public class DiaryCommandServiceImpl implements DiaryCommandService{
     }
 
 
-    // 일기 분석 (일기 -> 감정)
-    private List<Keyword> openAIAnalyzeDiary(String diaryContent, String emotions) {
 
-        log.info("[프롬프트의 감정들] : " + emotions);
+    /*
+        이 아래부터 헬퍼메소드
+    */
+
+    // 일기 날짜 검사
+    private void checkDiaryDate(Long userId, LocalDate date) {
+        // 오늘 이후의 날짜를 선택한 경우
+        if (date.isAfter(LocalDate.now())) {
+            throw new DiaryHandler(ErrorStatus.DATE_IS_AFTER);
+        }
+        // 이미 해당 날짜에 작성된 일기가 존재하는 경우
+        if (diaryRepository.existsByUserIdAndDateAndStatus(userId, date, DiaryStatus.COMPLETED)) {
+            throw new DiaryHandler(ErrorStatus.DIARY_ALREADY_EXISTS);
+        }
+    }
+
+    // chatgpt 대화 요청
+    private String requestGptChat(String model, List<Message> messages) {
+        // ChatGPT 요청 생성
+        ChatGPTRequest gptRequest = new ChatGPTRequest(model, messages);
+
+        // API 요청 및 응답 처리
+        ChatGPTResponse res = template.postForObject(apiURL, gptRequest, ChatGPTResponse.class);
+
+        if (res.getChoices() == null || res.getChoices().isEmpty() || res.getChoices().get(0) == null || res.getChoices().get(0).getMessage() == null) {
+            throw new OpenAIHandler(ErrorStatus.GPT_RESPONSE_EMPTY);
+        }
+
+        return res.getChoices().get(0).getMessage().getContent();
+    }
+
+
+    // 일기 분석 (일기 -> 감정)
+    private List<Keyword> openAIAnalyzeDiary(String diaryContent) {
 
         // 프롬프트
         String prompt = String.format("""
             [작업]
-            [감정 목록]에 있는 범위에 대해 [일기]분석을 진행하여, 감정 목록에 포함된 감정 3개를 응답으로 주세요. 응답은 다음에 제공되는 감정 목록에 있는 것들로 구성되어야 합니다.
+            [일기]분석을 진행하여, 감정 3개를 응답으로 주세요. 응답은 형용사 형태의 감정들로 구성되어야 합니다.
             
             [수행]
-            [감정 목록]: %s
             [일기]: %s
             
             [응답 예시]
-            [감정 목록에 포함된 감정1, 감정 목록에 포함된 감정2, 감정 목록에 포함된 감정3]
-            """, emotions, diaryContent);
+            [감정1, 감정2, 감정3]
+            """, diaryContent);
 
         Float temperature = 0.0f;
 
@@ -319,10 +343,11 @@ public class DiaryCommandServiceImpl implements DiaryCommandService{
         ChatGPTRequest gptRequest = new ChatGPTRequest(keywordModel, prompt, temperature);
 
         // API 요청 및 응답 처리
-        ChatGPTResponse chatGPTResponse = keywordModelTemplate.postForObject(apiURL, gptRequest, ChatGPTResponse.class);
-        if (chatGPTResponse == null || chatGPTResponse.getChoices().isEmpty()) {
+        ChatGPTResponse chatGPTResponse = template.postForObject(apiURL, gptRequest, ChatGPTResponse.class);
+        if (chatGPTResponse.getChoices().isEmpty()) {
             throw new OpenAIHandler(ErrorStatus.GPT_RESPONSE_EMPTY);
         }
+
         String result = chatGPTResponse.getChoices().get(0).getMessage().getContent();
         log.info("[GPT 결과] : " + result);
 
@@ -346,71 +371,48 @@ public class DiaryCommandServiceImpl implements DiaryCommandService{
             throw new OpenAIHandler(ErrorStatus.EMOTIONS_DUPLICATE);
         }
 
-        // DB에 존재하는 감정인지 체크 & 없으면 유사도 검색
-        List<Keyword> emotionKeywords = checkEmotions(uniqueEmotions.stream().toList());
-
-//         테스트용
-//        Set<String> testEmotions = new HashSet<>();
-//        testEmotions.add("분노");
-//        testEmotions.add("설레는");
-//        testEmotions.add("울적한");
-//        List<Keyword> emotionKeywords = checkEmotions(testEmotions.stream().toList());
-
-        return emotionKeywords;
+        // 유사도 분석을 통해 DB의 감정으로 변환 후 반환
+        return computeSimilarity(emotionsList);
     }
 
 
-    // DB 감정인지 체크 (없으면 유사도 분석)
-    private List<Keyword> checkEmotions(List<String> inputEmotions) {
-        List<Keyword> result = new ArrayList<>();
-        Set<String> dbEmotions = new HashSet<>();
-        List<String> needAnalysis = new ArrayList<>();
+    // 유사도 분석을 통해 DB의 감정으로 변환
+    private List<Keyword> computeSimilarity(List<String> inputEmotions) {
 
-        // 1) DB에 있는지 체크
-        for (String emotion : inputEmotions) {
-            keywordRepository.findByName(emotion).ifPresentOrElse(
-                    keyword -> {
-                        result.add(keyword);
-                        dbEmotions.add(emotion);
-                    },
-                    () -> needAnalysis.add(emotion)
-            );
+        FlaskRequestDTO.EmotionAnalysisRequestDTO request = FlaskConverter.toEmotionAnalysisRequestDTO(inputEmotions);
+        List<Keyword> result = new ArrayList<>();
+
+        // Flask에 모든 감정을 전달하여 유사도 분석 요청
+        log.info("[입력된 감정을 Flask로 전달하여 분석]");
+
+        FlaskResponseDTO.EmotionAnalysisResponseDTO response = flaskRestClient
+                .post()
+                .uri("/analyze_emotions")
+                .contentType(MediaType.APPLICATION_JSON)
+                .body(request)
+                .retrieve()
+                .body(FlaskResponseDTO.EmotionAnalysisResponseDTO.class);
+
+
+        // 응답 오류체크
+        if (response == null || response.getAnalyzedEmotions() == null || response.getAnalyzedEmotions().isEmpty()) {
+            throw new FlaskHandler(ErrorStatus.FLASK_API_CALL_FAILED);
         }
 
-        // 2) DB에 없는 감정이 있다면 Flask에 유사도 분석 요청
-        if (!needAnalysis.isEmpty()) {
-            log.info("[DB 없는 감정 존재 -> 플라스크 API 요청]");
+        List<FlaskResponseDTO.SimilarityResultDTO> analyzedEmotions = response.getAnalyzedEmotions();
 
-            Map<String, Object> request = Map.of(
-                    "emotions", needAnalysis,
-                    "existingEmotions", dbEmotions
-            );
+        for (FlaskResponseDTO.SimilarityResultDTO analysisResult : analyzedEmotions) {
 
-            ResponseEntity<Map> response = template.postForEntity(
-                    "http://localhost:5000/analyze_emotions",
-                    request,
-                    Map.class
-            );
+            String inputEmotion = analysisResult.getInputEmotion();
+            String similarEmotion = analysisResult.getSimilarEmotion();
+            Double similarityScore = analysisResult.getSimilarityScore();
 
-            List<Map<String, Object>> analyzedEmotions = (List<Map<String, Object>>) response.getBody().get("analyzedEmotions");
+            // Flask에서 받은 정보 출력
+            log.info("[Flask 분석 결과] - 입력 감정 : {}, 유사 감정 : {}, 유사도 점수 : {}", inputEmotion, similarEmotion, similarityScore);
 
-            if (analyzedEmotions != null) {
-                for (Map<String, Object> analysisResult : analyzedEmotions) {
-                    String inputEmotion = (String) analysisResult.get("inputEmotion");
-                    String similarEmotion = (String) analysisResult.get("similarEmotion");
-                    Double similarityScore = (Double) analysisResult.get("similarityScore");
-
-                    // Flask에서 받은 정보 출력
-                    log.info("[Flask 분석 결과] - 입력 감정 : {}, 유사 감정 : {}, 유사도 점수 : {}", inputEmotion, similarEmotion, similarityScore);
-
-                    keywordRepository.findByName(similarEmotion)
-                            .ifPresentOrElse(result::add,
-                                    () -> { throw new KeywordHandler(ErrorStatus.KEYWORD_NOT_FOUND); });
-                }
-            }
-            else {
-                throw new FlaskHandler(ErrorStatus.FLASK_API_CALL_FAILED);
-            }
+            keywordRepository.findByName(similarEmotion)
+                    .ifPresentOrElse(result::add,
+                            () -> { throw new KeywordHandler(ErrorStatus.KEYWORD_NOT_FOUND); });
         }
 
         return result;
@@ -419,11 +421,6 @@ public class DiaryCommandServiceImpl implements DiaryCommandService{
 
     // 일기와 감정키워드 연관관계 설정
     private void setDiaryKeyword(Diary diary, List<Keyword> analyzedEmotions) {
-        // Diary의 diaryKeywords 리스트가 null이라면 초기화
-        if (diary.getDiaryKeywords() == null) {
-            diary.setDiaryKeywords(new ArrayList<>());
-        }
-
         // 각 Keyword에 대해 DiaryKeyword 추가
         for (Keyword keyword : analyzedEmotions) {
             DiaryKeyword diaryKeyword = DiaryKeyword.builder()
@@ -478,4 +475,55 @@ public class DiaryCommandServiceImpl implements DiaryCommandService{
 
         return selectedChallenges;
     }
+    
+    //대화일기 요약 함수
+    private String summaryDiary(int userDialogLength, List<Message> messages) {
+
+        String summaryPrompt; // 대화 길이별 프롬프트 선택용
+        String selectedModel; // 대화 길이별 모델 선택용
+
+        if (userDialogLength < 20) { // 사용자 입력이 20자 미만인 경우
+            selectedModel = fineTunedSummaryModel;
+            summaryPrompt = "다음의 내용은 사용자가 AI와 대화한 기록이야." +
+                    " role: user인 경우 사용자의 말이고, role: assistant인 경우 AI가 사용자의 말에 대답하는 말이야." +
+                    " 이 기록을 바탕으로 사용자가 혼자 쓰는 일기처럼 1인칭 시점으로 작성해줘." +
+                    " 대화 내용이 매우 짧으므로 추측하여 내용을 확장하지 말고, 주어진 정보만으로 1-2문장의 간단한 일기로 작성해줘." +
+                    " '~했다', '~였다'로 끝나는 문체를 사용하고, AI와 대화했다는 사실이 드러나지 않도록 해줘." +
+                    " 대화한 기록의 분량이 너무 짧더라도 약간은 내용 덧붙여서 요약된 후 분량이 최소 50자가 넘어가도록 해줘" +
+                    "하지만 없는 내용을 지어내면 안되고 예를들어 \"치킨을 먹었다.\"라고 써있었다면 고소하고 부드러운 치킨을 먹었다. 이정도로만 늘리는거야";
+        } else {
+            selectedModel = summaryModel;
+            summaryPrompt = "다음의 내용은 사용자가 AI와 대화한 기록이야." +
+                    " role: user인 경우 사용자의 말이고, role: assistant인 경우 AI가 사용자의 말에 대답하는 말이야." +
+                    " 이 기록을 바탕으로 사용자가 혼자 쓰는 일기처럼 1인칭 시점으로 작성해줘." +
+                    " 기본적으로는 '~했다', '~였다'로 끝나는 문체를 사용하고," +
+                    " '~걸까?', '~는구나' 같은 혼잣말은 전체 글에서 1-2번 정도만 자연스럽게 사용해줘." +
+                    " 사용자의 감정이 자연스럽게 드러나도록 작성하되, 실제 대화 내용에만 기반해줘." +
+                    " 일기에서 AI와 대화했다는 사실이 드러나지 않도록 하고, 날짜는 적지 말아줘.";
+        }
+
+        // 최초 요약 시도
+        List<Message> summaryMessages = new ArrayList<>(messages);
+        summaryMessages.add(new Message("system", summaryPrompt));  // message(대화내용이 들어있는 부분)에 프롬프트 명령어를 추가
+        String result = requestGptChat(selectedModel, summaryMessages); // gpt api에게 (일기내용 + 프롬프트) 전달
+        
+        if(result.length() < 50){ // 50글자 이하일경우 프롬프트 내용 추가해서 요약 1회만 재시도
+            // 재시도용 프롬프트 (기존 요약 결과 전달)
+            String retryPrompt = "다음은 이전에 작성한 일기입니다: \"" + result + "\"\n\n" +      // result -> 한번 요약 시도했던 일기
+                    "이 일기는 내용은 좋지만 길이가 부족합니다(" + result.length() + "글자)." +
+                    " 위 내용을 기반으로 하되, 50글자 이상이 되도록 자연스럽게 조금만 늘려주는데" +
+                    " 완전히 새로 쓰지 말고, 보편적으로 사용되는 형용사, 부사를 앞에 붙이는 식으로 늘려줘" +
+                    " 예: '치킨을 먹었다' → '바삭하고 고소한 치킨을 맛있게 먹었다'" +
+                    " '~했다', '~였다' 문체를 유지하고, 없는 내용은 절대 만들지 말아줘";
+
+            // 50자 이상으로 요약 내용 덧붙이기
+            List<Message> retryMessages = new ArrayList<>();
+            retryMessages.add(new Message("system", retryPrompt));
+            result = requestGptChat(selectedModel, retryMessages);
+        }
+
+        return  result; // 최종 요약본
+    }
 }
+
+

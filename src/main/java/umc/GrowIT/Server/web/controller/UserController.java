@@ -3,14 +3,15 @@ package umc.GrowIT.Server.web.controller;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 import umc.GrowIT.Server.apiPayload.ApiResponse;
 import umc.GrowIT.Server.domain.enums.ItemCategory;
-import umc.GrowIT.Server.service.CreditService.CreditQueryServiceImpl;
-import umc.GrowIT.Server.service.ItemService.ItemQueryServiceImpl;
+import umc.GrowIT.Server.service.creditService.CreditQueryServiceImpl;
+import umc.GrowIT.Server.service.itemService.ItemQueryServiceImpl;
 import umc.GrowIT.Server.service.userService.UserCommandService;
+import umc.GrowIT.Server.service.userService.UserQueryService;
+import umc.GrowIT.Server.domain.enums.CreditTransactionType;
 import umc.GrowIT.Server.web.controller.specification.UserSpecification;
 import umc.GrowIT.Server.web.dto.CreditDTO.CreditResponseDTO;
 import umc.GrowIT.Server.web.dto.ItemDTO.ItemResponseDTO;
@@ -27,30 +28,24 @@ public class UserController implements UserSpecification {
 
     private final CreditQueryServiceImpl creditQueryService;
     private final UserCommandService userCommandService;
+    private final UserQueryService userQueryService;
     private final ItemQueryServiceImpl itemQueryServiceImpl;
 
     @Override
     @GetMapping("/items")
-    public ApiResponse<ItemResponseDTO.ItemListDTO> getUserItemList(ItemCategory category) {
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        Long userId = (Long) authentication.getPrincipal(); //사용자 식별 id
-
+    public ApiResponse<ItemResponseDTO.ItemListDTO> getUserItemList(@AuthenticationPrincipal Long userId, ItemCategory category) {
         return ApiResponse.onSuccess(itemQueryServiceImpl.getUserOwnedItemList(category, userId));
     }
 
     @Override
     @GetMapping("/credits")
-    public ApiResponse<CreditResponseDTO.CurrentCreditDTO> getUserCredit() {
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        Long userId = (Long) authentication.getPrincipal(); //사용자 식별 id
+    public ApiResponse<CreditResponseDTO.CurrentCreditDTO> getUserCredit(@AuthenticationPrincipal Long userId) {
         return ApiResponse.onSuccess(creditQueryService.getCurrentCredit(userId));
     }
 
     @Override
     @GetMapping("/credits/total")
-    public ApiResponse<CreditResponseDTO.TotalCreditDTO> getUserTotalCredit() {
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        Long userId = (Long) authentication.getPrincipal(); //사용자 식별 id
+    public ApiResponse<CreditResponseDTO.TotalCreditDTO> getUserTotalCredit(@AuthenticationPrincipal Long userId) {
         return ApiResponse.onSuccess(creditQueryService.getTotalCredit(userId));
     }
 
@@ -60,20 +55,50 @@ public class UserController implements UserSpecification {
         return ApiResponse.onSuccess(null);
     }
 
+
+    @Override
+    @GetMapping("/credits/history")
+    public ApiResponse<UserResponseDTO.CreditHistoryResponseDTO> getCreditHistory(
+            @AuthenticationPrincipal Long userId,
+            @RequestParam Integer year,
+            @RequestParam Integer month,
+            @RequestParam CreditTransactionType type,
+            @RequestParam int page
+    ) {
+        return ApiResponse.onSuccess(userQueryService.getCreditHistory(userId, year, month, type, page));
+    }
+
+
+    @Override
+    @DeleteMapping("")
+    public ApiResponse<Void> withdrawUser(
+            @AuthenticationPrincipal Long userId,
+            @Valid @RequestBody UserRequestDTO.DeleteUserRequestDTO deleteUserRequestDTO
+    ) {
+        userCommandService.withdraw(userId, deleteUserRequestDTO);
+        return ApiResponse.onSuccess();
+    }
+
+
     @Override
     @PatchMapping("/password")
-    public ApiResponse<Void> findPassword(@RequestBody @Valid UserRequestDTO.PasswordDTO passwordDTO) {
+    public ApiResponse<Void> updatePassword(@RequestBody @Valid UserRequestDTO.PasswordDTO passwordDTO) {
         userCommandService.updatePassword(passwordDTO);
         return ApiResponse.onSuccess();
     }
 
-    @Override
-    @PatchMapping("")
-    public ApiResponse<UserResponseDTO.DeleteUserResponseDTO> deleteUser() {
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        Long userId = (Long) authentication.getPrincipal();
 
-        UserResponseDTO.DeleteUserResponseDTO deleteUser = userCommandService.delete(userId);
-        return ApiResponse.onSuccess(deleteUser);
+    @Override
+    @GetMapping("/mypage")
+    public ApiResponse<UserResponseDTO.MyPageDTO> getMyPage(@AuthenticationPrincipal Long userId) {
+        UserResponseDTO.MyPageDTO result = userQueryService.getMyPage(userId);
+        return ApiResponse.onSuccess(result);
+    }
+
+    @Override
+    @GetMapping("/me/email")
+    public ApiResponse<UserResponseDTO.EmailResponseDTO> getMyEmail(@AuthenticationPrincipal Long userId) {
+        UserResponseDTO.EmailResponseDTO result = userQueryService.getMyEmail(userId);
+        return ApiResponse.onSuccess(result);
     }
 }

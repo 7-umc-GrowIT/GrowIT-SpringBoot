@@ -10,4 +10,8 @@ import lombok.NoArgsConstructor;
 public class Message {
     private String role;
     private String content;
+
+    public void addContent (String additionalContent) {
+        this.content = this.content + " " + additionalContent;
+    }
 }
