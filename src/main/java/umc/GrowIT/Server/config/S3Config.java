@@ -11,10 +11,10 @@ import software.amazon.awssdk.services.s3.presigner.S3Presigner;
 @Configuration
 public class S3Config {
 
-    @Value("${aws.access-key}")
+    @Value("${aws.accessKey}")
     private String accessKey;
 
-    @Value("${aws.secret-key}")
+    @Value("${aws.secretKey}")
     private String secretKey;
 
     @Bean
