@@ -20,7 +20,8 @@ public class WebConfig implements WebMvcConfigurer {
         // 허용할 origin 설정 (Swagger UI 웹 테스트용)
         config.setAllowedOriginPatterns(List.of(
             "http://localhost:8080",
-            "https://dev.growitserver.shop"
+            "https://dev.growitserver.shop",
+            "https://growitserver.shop"
         ));
 
         // 허용할 HTTP 메서드
