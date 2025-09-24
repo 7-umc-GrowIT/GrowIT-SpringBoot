@@ -37,7 +37,7 @@ public class JwtTokenUtil {
     @Value("${jwt.refresh-token-expiration-ms}")
     private long REFRESH_TOKEN_EXPIRATION_MS;
 
-    public JwtTokenUtil(@Value("${spring.jwt.secretKey}") String secretKey, UserQueryService userQueryService) {
+    public JwtTokenUtil(@Value("${jwt.secretKey}") String secretKey, UserQueryService userQueryService) {
         byte[] keyBytes = Decoders.BASE64.decode(secretKey);
         this.key = Keys.hmacShaKeyFor(keyBytes);
         this.userQueryService = userQueryService;
