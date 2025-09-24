@@ -6,6 +6,7 @@ import io.swagger.v3.oas.models.info.Info;
 import io.swagger.v3.oas.models.security.SecurityRequirement;
 import io.swagger.v3.oas.models.security.SecurityScheme;
 import io.swagger.v3.oas.models.servers.Server;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
@@ -13,6 +14,10 @@ import java.util.List;
 
 @Configuration
 public class SwaggerConfig {
+
+    @Value("${swagger.server-url}")
+    private String serverUrl;
+
     @Bean
     public OpenAPI GrowITAPI() {
         Info info = new Info()
@@ -32,23 +37,11 @@ public class SwaggerConfig {
                         .scheme("bearer")
                         .bearerFormat("JWT"));
 
-        // 여러 서버 환경 설정
-        Server localServer = new Server()
-                .url("http://localhost:8080")
-                .description("local");
-
-        Server devServer = new Server()
-                .url("https://dev.growitserver.shop")
-                .description("dev");
-
-        Server prodServer = new Server()
-                .url("https://growitserver.shop")
-                .description("prod");
 
         return new OpenAPI()
                 .info(info)
                 .addSecurityItem(securityRequirement)
                 .components(components)
-                .servers(List.of(localServer, devServer, prodServer));
+                .servers(List.of(new Server().url(serverUrl)));
     }
 }
