@@ -134,7 +134,9 @@ public class ChallengeCommandServiceImpl implements ChallengeCommandService {
     @Override
     @Transactional
     public ChallengeResponseDTO.CreateProofDTO createChallengeProof(Long userId, Long userChallengeId, ChallengeRequestDTO.ProofRequestDTO proofRequest) {
-        LocalDate today = LocalDate.now(ZoneId.of("Asia/Seoul"));
+        // 타임존 설정 (클라이언트에서 전달되지 않으면 Asia/Seoul로 기본 설정)
+        String timeZone = proofRequest.getTimeZone() != null ? proofRequest.getTimeZone() : "Asia/Seoul";
+        LocalDate today = LocalDate.now(ZoneId.of(timeZone));
 
         LocalDateTime startOfDay = today.atStartOfDay();
         LocalDateTime endOfDay = today.atTime(LocalTime.MAX);
