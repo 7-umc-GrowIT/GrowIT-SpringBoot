@@ -17,8 +17,8 @@ public class KeywordService {
     private final DiaryRepository diaryRepository;
     private final KeywordRepository keywordRepository;
 
-    public List<String> getTodayDiaryKeywords(Long userId) {
-        LocalDate date = LocalDate.now(ZoneId.of("Asia/Seoul"));
+    public List<String> getTodayDiaryKeywords(Long userId, String timeZone) {
+        LocalDate date = LocalDate.now(ZoneId.of(timeZone));
         return diaryRepository.findTodayDiaryByUserId(userId, date)
                 .map(diary -> diary.getDiaryKeywords().stream()
                         .map(diaryKeyword -> diaryKeyword.getKeyword().getName())

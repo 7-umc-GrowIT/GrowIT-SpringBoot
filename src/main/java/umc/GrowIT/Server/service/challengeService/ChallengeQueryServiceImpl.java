@@ -48,13 +48,13 @@ public class ChallengeQueryServiceImpl implements ChallengeQueryService {
     }
 
     @Override
-    public String getDiaryDate(Long userId) {
+    public String getDiaryDate(Long userId, String timeZone) {
         // 사용자가 마지막으로 일기를 작성한 날짜 조회
         LocalDate lastDiaryDate = diaryRepository.findLastDiaryDateByUserId(userId)
-                .orElse(LocalDate.now(ZoneId.of("Asia/Seoul"))); // 작성 기록이 없으면 오늘 날짜를 기본값으로 사용 (한국 시간)
+                .orElse(LocalDate.now(ZoneId.of(timeZone))); // 작성 기록이 없으면 오늘 날짜를 기본값으로 사용
 
         // 오늘 날짜와의 차이를 계산
-        long days = ChronoUnit.DAYS.between(lastDiaryDate, LocalDate.now(ZoneId.of("Asia/Seoul")));
+        long days = ChronoUnit.DAYS.between(lastDiaryDate, LocalDate.now(ZoneId.of(timeZone)));
 
         return "D+" + days;
     }
@@ -62,15 +62,15 @@ public class ChallengeQueryServiceImpl implements ChallengeQueryService {
     // 챌린지 홈 조회
     @Override
     @Transactional
-    public ChallengeResponseDTO.ChallengeHomeDTO getChallengeHome(Long userId) {
-        LocalDate today = LocalDate.now(ZoneId.of("Asia/Seoul"));
+    public ChallengeResponseDTO.ChallengeHomeDTO getChallengeHome(Long userId, String timeZone) {
+        LocalDate today = LocalDate.now(ZoneId.of(timeZone));
 
         // 오늘 날짜의 일기 존재 여부 확인
         Optional<Diary> todayDiary = diaryRepository.findTodayDiaryByUserId(userId, today);
 
         // 감정 키워드 조회
         List<String> keywordNames = todayDiary.isPresent()
-                ? keywordService.getTodayDiaryKeywords(userId)
+                ? keywordService.getTodayDiaryKeywords(userId, timeZone)
                 : Collections.emptyList();
 
         // 오늘 날짜의 일기에서 저장한 챌린지 목록 조회 (최신순, 최대 3개)
@@ -80,7 +80,7 @@ public class ChallengeQueryServiceImpl implements ChallengeQueryService {
                 savedChallenges,
                 getTotalCredits(userId),
                 getTotalDiaries(userId),
-                getDiaryDate(userId),
+                getDiaryDate(userId, timeZone),
                 keywordNames
         );
     }

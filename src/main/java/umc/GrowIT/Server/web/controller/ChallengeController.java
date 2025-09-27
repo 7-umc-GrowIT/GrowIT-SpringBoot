@@ -27,8 +27,9 @@ public class ChallengeController implements ChallengeSpecification {
     private final ChallengeCommandService challengeCommandService;
 
     @GetMapping("")
-    public ApiResponse<ChallengeResponseDTO.ChallengeHomeDTO> getChallengeHome(@AuthenticationPrincipal Long userId) {
-        return ApiResponse.onSuccess(challengeQueryService.getChallengeHome(userId));
+    public ApiResponse<ChallengeResponseDTO.ChallengeHomeDTO> getChallengeHome(@AuthenticationPrincipal Long userId,
+                                                                               @RequestParam(defaultValue = "Asia/Seoul") String timeZone) {
+        return ApiResponse.onSuccess(challengeQueryService.getChallengeHome(userId, timeZone));
     }
 
     @GetMapping("status")

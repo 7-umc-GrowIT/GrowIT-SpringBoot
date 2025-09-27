@@ -29,7 +29,8 @@ public interface ChallengeSpecification {
             @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "COMMON_200", description = "⭕ SUCCESS"),
             @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "COMMON_400", description = "❌ BAD, 잘못된 요청", content = @Content(schema = @Schema(implementation = ApiResponse.class)))
     })
-    ApiResponse<ChallengeResponseDTO.ChallengeHomeDTO> getChallengeHome(@AuthenticationPrincipal Long userId);
+    ApiResponse<ChallengeResponseDTO.ChallengeHomeDTO> getChallengeHome(@AuthenticationPrincipal Long userId,
+                                                                       @Parameter(description = "클라이언트 타임존", example = "Asia/Seoul") @RequestParam(defaultValue = "Asia/Seoul") String timeZone);
 
     @GetMapping("status")
     @Operation(summary = "챌린지 현황 조회 API", description = "챌린지의 진행 상태(미완료/완료 등)를 조회하는 API입니다. <br> " +
