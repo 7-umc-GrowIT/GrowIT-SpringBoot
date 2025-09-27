@@ -20,6 +20,7 @@ import umc.GrowIT.Server.web.dto.ChallengeDTO.ChallengeResponseDTO;
 
 import java.time.Duration;
 import java.time.LocalDate;
+import java.time.ZoneId;
 import java.time.temporal.ChronoUnit;
 import java.util.*;
 
@@ -50,10 +51,10 @@ public class ChallengeQueryServiceImpl implements ChallengeQueryService {
     public String getDiaryDate(Long userId) {
         // 사용자가 마지막으로 일기를 작성한 날짜 조회
         LocalDate lastDiaryDate = diaryRepository.findLastDiaryDateByUserId(userId)
-                .orElse(LocalDate.now()); // 작성 기록이 없으면 오늘 날짜를 기본값으로 사용
+                .orElse(LocalDate.now(ZoneId.of("Asia/Seoul"))); // 작성 기록이 없으면 오늘 날짜를 기본값으로 사용 (한국 시간)
 
         // 오늘 날짜와의 차이를 계산
-        long days = ChronoUnit.DAYS.between(lastDiaryDate, LocalDate.now());
+        long days = ChronoUnit.DAYS.between(lastDiaryDate, LocalDate.now(ZoneId.of("Asia/Seoul")));
 
         return "D+" + days;
     }
@@ -62,7 +63,7 @@ public class ChallengeQueryServiceImpl implements ChallengeQueryService {
     @Override
     @Transactional
     public ChallengeResponseDTO.ChallengeHomeDTO getChallengeHome(Long userId) {
-        LocalDate today = LocalDate.now();
+        LocalDate today = LocalDate.now(ZoneId.of("Asia/Seoul"));
 
         // 오늘 날짜의 일기 존재 여부 확인
         Optional<Diary> todayDiary = diaryRepository.findTodayDiaryByUserId(userId, today);

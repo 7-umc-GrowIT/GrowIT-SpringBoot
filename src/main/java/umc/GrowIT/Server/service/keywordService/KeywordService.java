@@ -6,6 +6,7 @@ import umc.GrowIT.Server.repository.KeywordRepository;
 import umc.GrowIT.Server.repository.DiaryRepository;
 
 import java.time.LocalDate;
+import java.time.ZoneId;
 import java.util.Collections;
 import java.util.List;
 
@@ -17,7 +18,7 @@ public class KeywordService {
     private final KeywordRepository keywordRepository;
 
     public List<String> getTodayDiaryKeywords(Long userId) {
-        LocalDate date = LocalDate.now();
+        LocalDate date = LocalDate.now(ZoneId.of("Asia/Seoul"));
         return diaryRepository.findTodayDiaryByUserId(userId, date)
                 .map(diary -> diary.getDiaryKeywords().stream()
                         .map(diaryKeyword -> diaryKeyword.getKeyword().getName())

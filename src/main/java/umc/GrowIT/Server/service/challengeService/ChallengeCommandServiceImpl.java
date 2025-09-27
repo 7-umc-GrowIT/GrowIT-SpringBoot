@@ -22,6 +22,7 @@ import umc.GrowIT.Server.web.dto.ChallengeDTO.ChallengeResponseDTO;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
+import java.time.ZoneId;
 import java.util.*;
 
 @Service
@@ -133,7 +134,7 @@ public class ChallengeCommandServiceImpl implements ChallengeCommandService {
     @Override
     @Transactional
     public ChallengeResponseDTO.CreateProofDTO createChallengeProof(Long userId, Long userChallengeId, ChallengeRequestDTO.ProofRequestDTO proofRequest) {
-        LocalDate today = LocalDate.now();
+        LocalDate today = LocalDate.now(ZoneId.of("Asia/Seoul"));
 
         LocalDateTime startOfDay = today.atStartOfDay();
         LocalDateTime endOfDay = today.atTime(LocalTime.MAX);
