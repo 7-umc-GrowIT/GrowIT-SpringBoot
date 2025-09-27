@@ -26,6 +26,10 @@ public class DiaryRequestDTO {
         @NotNull
         @Schema(description = "일기 작성 날짜")
         private LocalDate date;
+
+        @Builder.Default //기본값 설정
+        @Schema(description = "클라이언트 타임존", example = "Asia/Seoul")
+        private String timeZone = "Asia/Seoul";
     }
 
     @Getter
@@ -68,5 +72,9 @@ public class DiaryRequestDTO {
         @NotNull
         @Schema(description = "일기 작성 날짜")
         private LocalDate date;
+
+        @Builder.Default
+        @Schema(description = "클라이언트 타임존", example = "Asia/Seoul")
+        private String timeZone = "Asia/Seoul";
     }
 }

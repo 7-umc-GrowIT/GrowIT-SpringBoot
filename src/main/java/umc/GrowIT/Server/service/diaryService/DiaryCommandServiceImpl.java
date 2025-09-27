@@ -27,6 +27,7 @@ import umc.GrowIT.Server.web.dto.OpenAIDTO.ChatGPTResponse;
 import umc.GrowIT.Server.web.dto.OpenAIDTO.Message;
 
 import java.time.LocalDate;
+import java.time.ZoneId;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -96,14 +97,17 @@ public class DiaryCommandServiceImpl implements DiaryCommandService{
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new UserHandler(ErrorStatus.USER_NOT_FOUND));
 
-        // 2. 일기 날짜 검사
-        checkDiaryDate(userId, request.getDate());
+        // 2. 타임존 설정 (클라이언트에서 전달되지 않으면 Asia/Seoul로 기본 설정)
+        String timeZone = request.getTimeZone() != null ? request.getTimeZone() : "Asia/Seoul";
 
-        // 3. 일기 저장
+        // 3. 일기 날짜 검사
+        checkDiaryDate(userId, request.getDate(), timeZone);
+
+        // 4. 일기 저장
         Diary diary = DiaryConverter.toDiary(request.getContent(), request.getDate(), user, DiaryType.TEXT);
         diary = diaryRepository.save(diary);
 
-        // 4. 응답
+        // 5. 응답
         return DiaryConverter.toSaveResultDTO(diary);
     }
 
@@ -210,10 +214,13 @@ public class DiaryCommandServiceImpl implements DiaryCommandService{
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new UserHandler(ErrorStatus.USER_NOT_FOUND));
 
-        // 2. 일기 날짜 검사
-        checkDiaryDate(userId, request.getDate());
+        // 2. 타임존 설정 (클라이언트에서 전달되지 않으면 Asia/Seoul로 기본 설정)
+        String timeZone = request.getTimeZone() != null ? request.getTimeZone() : "Asia/Seoul";
 
-        // 3. 기존 대화 목록 가져와서 정리
+        // 3. 일기 날짜 검사
+        checkDiaryDate(userId, request.getDate(), timeZone);
+
+        // 4. 기존 대화 목록 가져와서 정리
         List<Message> originalMessages = conversationHistory.get(userId);
 
         // 대화 기록에서 대화 시작전 LLM모델에게 설명하는 부분 제거
@@ -225,7 +232,7 @@ public class DiaryCommandServiceImpl implements DiaryCommandService{
                     .collect(Collectors.toList());
         }
 
-        // 4. 대화 내용을 바탕으로 일기 요약
+        // 5. 대화 내용을 바탕으로 일기 요약
         // 기존 대화 내용 길이
         int userDialogLength = messages.stream()
                 .filter(msg -> msg.getRole().equals("user"))
@@ -233,14 +240,14 @@ public class DiaryCommandServiceImpl implements DiaryCommandService{
                 .sum();
         String aiChat = summaryDiary(userDialogLength, messages);
 
-        // 5. 일기 저장
+        // 6. 일기 저장
         Diary diary = DiaryConverter.toDiary(aiChat, request.getDate(), user, DiaryType.VOICE);
         diary = diaryRepository.save(diary);
 
-        // 6. 대화 기록 삭제
+        // 7. 대화 기록 삭제
         conversationHistory.remove(userId);
 
-        // 7. 응답
+        // 8. 응답
         return DiaryConverter.toSaveResultDTO(diary);
     }
 
@@ -295,9 +302,13 @@ public class DiaryCommandServiceImpl implements DiaryCommandService{
     */
 
     // 일기 날짜 검사
-    private void checkDiaryDate(Long userId, LocalDate date) {
-        // 오늘 이후의 날짜를 선택한 경우
-        if (date.isAfter(LocalDate.now())) {
+    private void checkDiaryDate(Long userId, LocalDate date, String timeZone) {
+        // 클라이언트 타임존을 사용하여 현재 날짜 확인
+        ZoneId clientZone = ZoneId.of(timeZone);
+        LocalDate currentDate = LocalDate.now(clientZone);
+
+        // 오늘 이후의 날짜를 선택한 경우 (클라이언트 시간 기준)
+        if (date.isAfter(currentDate)) {
             throw new DiaryHandler(ErrorStatus.DATE_IS_AFTER);
         }
         // 이미 해당 날짜에 작성된 일기가 존재하는 경우
