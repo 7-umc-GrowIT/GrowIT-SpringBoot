@@ -3,6 +3,8 @@ package umc.GrowIT.Server.service.cryptoService;
 import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
+import umc.GrowIT.Server.apiPayload.code.status.ErrorStatus;
+import umc.GrowIT.Server.apiPayload.exception.CryptoHandler;
 
 import javax.crypto.Cipher;
 import javax.crypto.SecretKey;
@@ -26,9 +28,9 @@ public class CryptoService {
     @PostConstruct
     void verify() {
         if (dataKeyring == null || dataKeyring.isEmpty())
-            throw new IllegalStateException("AES 데이터 키가 설정되지 않았습니다.");
+            throw new CryptoHandler(ErrorStatus.CRYPTO_KEY_MISSING);
         if (!dataKeyring.containsKey(activeKeyId))
-            throw new IllegalStateException("activeKeyId에 해당하는 키가 없습니다: " + activeKeyId);
+            throw new CryptoHandler(ErrorStatus.CRYPTO_NO_ACTIVE_KEY);
     }
 
     // 평문 → 암호문
@@ -50,7 +52,7 @@ public class CryptoService {
 
             return "v1:" + activeKeyId + ":" + Base64.getEncoder().encodeToString(ivPlusCt);
         } catch (Exception e) {
-            throw new IllegalStateException("복호화 에러", e);
+            throw new CryptoHandler(ErrorStatus.CRYPTO_ENCRYPT_ERROR);
         }
     }
 
@@ -62,13 +64,13 @@ public class CryptoService {
 
         try {
             String[] parts = stored.split(":", 3);
-            if (parts.length != 3) throw new IllegalArgumentException("암호문 형식이 올바르지 않습니다.");
+            if (parts.length != 3) throw new CryptoHandler(ErrorStatus.CRYPTO_INVALID_FORMAT);
             int keyId = Integer.parseInt(parts[1]);
             SecretKey key = dataKeyring.get(keyId);
-            if (key == null) throw new IllegalStateException("해당 keyId(" + keyId + ")의 키가 존재하지 않습니다.");
+            if (key == null) throw new CryptoHandler(ErrorStatus.CRYPTO_NO_KEY_FOR_ID);
 
             byte[] ivct = Base64.getDecoder().decode(parts[2]);
-            if (ivct.length < IV_LEN + 16) throw new IllegalArgumentException("암호문 길이가 너무 짧습니다.");
+            if (ivct.length < IV_LEN + 16) throw new CryptoHandler(ErrorStatus.CRYPTO_CIPHERTEXT_TOO_SHORT);
 
             byte[] iv = new byte[IV_LEN];
             byte[] ct = new byte[ivct.length - IV_LEN];
@@ -79,7 +81,7 @@ public class CryptoService {
             c.init(Cipher.DECRYPT_MODE, key, new GCMParameterSpec(TAG_BITS, iv));
             return new String(c.doFinal(ct), StandardCharsets.UTF_8);
         } catch (Exception e) {
-            throw new IllegalStateException("복호화 에러", e);
+            throw new CryptoHandler(ErrorStatus.CRYPTO_DECRYPT_ERROR);
         }
     }
 }
