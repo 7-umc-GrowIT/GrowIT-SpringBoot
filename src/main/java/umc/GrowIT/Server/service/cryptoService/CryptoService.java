@@ -52,7 +52,7 @@ public class CryptoService {
 
             return "v1:" + activeKeyId + ":" + Base64.getEncoder().encodeToString(ivPlusCt);
         } catch (Exception e) {
-            throw new CryptoHandler(ErrorStatus.CRYPTO_ENCRYPT_ERROR);
+            throw new CryptoHandler(ErrorStatus.CRYPTO_ENCRYPT_ERROR, e);
         }
     }
 
@@ -81,7 +81,7 @@ public class CryptoService {
             c.init(Cipher.DECRYPT_MODE, key, new GCMParameterSpec(TAG_BITS, iv));
             return new String(c.doFinal(ct), StandardCharsets.UTF_8);
         } catch (Exception e) {
-            throw new CryptoHandler(ErrorStatus.CRYPTO_DECRYPT_ERROR);
+            throw new CryptoHandler(ErrorStatus.CRYPTO_DECRYPT_ERROR, e);
         }
     }
 }

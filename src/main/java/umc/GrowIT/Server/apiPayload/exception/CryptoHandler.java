@@ -6,4 +6,5 @@ public class CryptoHandler extends GeneralException {
     public CryptoHandler(BaseErrorCode code) {
         super(code);
     }
+    public CryptoHandler(BaseErrorCode code, Throwable cause) { super(code, cause); }
 }
