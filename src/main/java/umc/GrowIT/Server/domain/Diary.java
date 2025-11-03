@@ -2,6 +2,7 @@ package umc.GrowIT.Server.domain;
 
 import jakarta.persistence.*;
 import lombok.*;
+import umc.GrowIT.Server.converter.DiaryContentConverter;
 import umc.GrowIT.Server.domain.common.BaseEntity;
 import umc.GrowIT.Server.domain.enums.DiaryStatus;
 import umc.GrowIT.Server.domain.enums.DiaryType;
@@ -25,7 +26,8 @@ public class Diary extends BaseEntity {
     @Column(nullable = false)
     private LocalDate date;
 
-    // 일기 내용
+    // 일기 내용 (암호화하여 저장)
+    @Convert(converter = DiaryContentConverter.class)
     @Lob // 필드를 TEXT로 매핑
     @Column(nullable = false, columnDefinition = "TEXT")
     private String content;
