@@ -139,6 +139,15 @@ public enum ErrorStatus implements BaseErrorCode {
 
     // S3 관련 에러
     S3_BAD_FILE_EXTENSION(HttpStatus.BAD_REQUEST, "S3_400_01", "파일 확장자가 잘못되었습니다."),
+
+    // 암호화 관련 에러
+    CRYPTO_INVALID_FORMAT(HttpStatus.BAD_REQUEST, "CRYPTO_400_01", "암호문 형식이 올바르지 않습니다."),
+    CRYPTO_CIPHERTEXT_TOO_SHORT(HttpStatus.BAD_REQUEST, "CRYPTO_400_02", "암호문 길이가 너무 짧습니다."),
+    CRYPTO_DECRYPT_ERROR(HttpStatus.BAD_REQUEST, "CRYPTO_400_03", "복호화 에러가 발생하였습니다."),
+    CRYPTO_KEY_MISSING(HttpStatus.INTERNAL_SERVER_ERROR, "CRYPTO_500_01", "AES 데이터 키가 설정되지 않았습니다."),
+    CRYPTO_NO_ACTIVE_KEY(HttpStatus.INTERNAL_SERVER_ERROR, "CRYPTO_500_02", "activeKeyId에 해당하는 키가 없습니다."),
+    CRYPTO_NO_KEY_FOR_ID(HttpStatus.INTERNAL_SERVER_ERROR, "CRYPTO_500_03", "해당 keyId의 키가 존재하지 않습니다."),
+    CRYPTO_ENCRYPT_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "CRYPTO_500_04", "암호화 에러가 발생하였습니다."),
     ;
 
     private final HttpStatus httpStatus;
