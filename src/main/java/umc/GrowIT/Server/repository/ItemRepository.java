@@ -11,8 +11,8 @@ import java.util.Optional;
 
 public interface ItemRepository extends JpaRepository<Item, Long> {
     // 카테고리별 아이템 조회
-    @Query("SELECT i FROM Item i WHERE i.category = :category ORDER BY i.price ASC")
-    List<Item> findAllByCategoryOrderByPriceAtAsc(ItemCategory category);
+    @Query("SELECT i FROM Item i WHERE i.category = :category ORDER BY i.id ASC")
+    List<Item> findAllByCategoryOrderByIdAsc(ItemCategory category);
 
     // UserItem을 통해 현재 사용자의 특정 아이템 구매여부 판별
     boolean existsByUserItemsUserIdAndId(Long userId, Long itemId);
