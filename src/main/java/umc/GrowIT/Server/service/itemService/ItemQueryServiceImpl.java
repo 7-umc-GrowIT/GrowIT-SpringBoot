@@ -35,7 +35,7 @@ public class ItemQueryServiceImpl implements ItemQueryService {
     @Override
     @Transactional(readOnly = true)
     public ItemResponseDTO.ItemListDTO getItemList(ItemCategory category, Long userId) {
-        List<Item> itemList = itemRepository.findAllByCategoryOrderByIdAsc(category);
+        List<Item> itemList = itemRepository.findAllByCategoryOrderByPriceAsc(category);
 
         // status 조회 - null 처리 추가
         Map<Long, ItemStatus> itemStatuses = new HashMap<>();
