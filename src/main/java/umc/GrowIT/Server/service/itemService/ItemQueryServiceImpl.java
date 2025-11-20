@@ -2,6 +2,9 @@ package umc.GrowIT.Server.service.itemService;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.cache.Cache;
+import org.springframework.cache.CacheManager;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import umc.GrowIT.Server.converter.ItemConverter;
@@ -26,11 +29,13 @@ public class ItemQueryServiceImpl implements ItemQueryService {
 
     private final ItemRepository itemRepository;
     private final S3Util s3Util;
+    private final PreSignedUrlCacheService preSignedUrlCacheService;
+    private final CacheManager cacheManager;
 
     @Override
     @Transactional(readOnly = true)
     public ItemResponseDTO.ItemListDTO getItemList(ItemCategory category, Long userId) {
-        List<Item> itemList = itemRepository.findAllByCategoryOrderByPriceAtAsc(category);
+        List<Item> itemList = itemRepository.findAllByCategoryOrderByPriceAsc(category);
 
         // status 조회 - null 처리 추가
         Map<Long, ItemStatus> itemStatuses = new HashMap<>();
@@ -47,8 +52,8 @@ public class ItemQueryServiceImpl implements ItemQueryService {
                 ));
 
         // Pre-signed URL 생성
-        Map<Item, String> itemUrls = createItemPreSignedUrl(itemList);
-        Map<Item, String> groItemUrls = createGroItemPreSignedUrl(itemList);
+        Map<Long, String> itemUrls = preSignedUrlCacheService.createItemPreSignedUrl(itemList);
+        Map<Long, String> groItemUrls = preSignedUrlCacheService.createGroItemPreSignedUrl(itemList);
 
         return ItemConverter.toItemListDTO(itemList, userId, itemStatuses, purchaseStatuses, itemUrls, groItemUrls);
     }
@@ -74,29 +79,11 @@ public class ItemQueryServiceImpl implements ItemQueryService {
                 ));
 
         // Pre-signed URL 생성 로직만 추가
-        Map<Item, String> itemUrls = createItemPreSignedUrl(userItems);
-        Map<Item, String> groItemUrls = createGroItemPreSignedUrl(userItems);
+        Map<Long, String> itemUrls = preSignedUrlCacheService.createItemPreSignedUrl(userItems);
+        Map<Long, String> groItemUrls = preSignedUrlCacheService.createGroItemPreSignedUrl(userItems);
 
         // converter에 URL 맵 전달
         return ItemConverter.toItemListDTO(userItems, userId, itemStatuses, purchaseStatuses, itemUrls, groItemUrls);
-    }
-
-    // 상점 리스트용 이미지의 Pre-signed URL 생성
-    private Map<Item, String> createItemPreSignedUrl(List<Item> items) {
-        return items.stream()
-                .collect(Collectors.toMap(
-                        item -> item,
-                        item -> s3Util.toGetPresignedUrl(item.getImageKey(), Duration.ofMinutes(15))
-                ));
-    }
-
-    // 그로 착용용 이미지의 Pre-signed URL 생성
-    private Map<Item, String> createGroItemPreSignedUrl(List<Item> items) {
-        return items.stream()
-                .collect(Collectors.toMap(
-                        item -> item,
-                        item -> s3Util.toGetPresignedUrl(item.getGroImageKey(), Duration.ofMinutes(15))
-                ));
     }
 }
 

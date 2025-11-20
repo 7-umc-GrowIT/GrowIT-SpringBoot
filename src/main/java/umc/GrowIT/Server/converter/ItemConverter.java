@@ -40,8 +40,8 @@ public class ItemConverter {
             Long userId,
             Map<Long, ItemStatus> itemStatuses,
             Map<Long, Boolean> purchaseStatuses,
-            Map<Item, String> itemUrls,
-            Map<Item, String> groItemUrls) {
+            Map<Long, String> itemUrls,
+            Map<Long, String> groItemUrls) {
 
         return ItemResponseDTO.ItemListDTO.builder()
                 .itemList(itemList.stream()
@@ -50,8 +50,8 @@ public class ItemConverter {
                                 userId,
                                 itemStatuses.get(item.getId()),
                                 purchaseStatuses.get(item.getId()),
-                                itemUrls.get(item),
-                                groItemUrls.get(item)))
+                                itemUrls.get(item.getId()),
+                                groItemUrls.get(item.getId())))
                         .collect(Collectors.toList()))
                 .build();
     }
