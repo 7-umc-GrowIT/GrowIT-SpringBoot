@@ -1,70 +1,61 @@
-<p align="center">
-    <img src="https://github.com/user-attachments/assets/8040a8f4-e137-47ea-99e9-8aeaa64008ac" width="300" />
-</p>
+# 🍀 UMC 7th GrowIT Backend
+<img width="1920" height="1080" alt="Image" src="https://github.com/user-attachments/assets/1ae6313f-b9eb-45cd-bfae-a8eec3500fb2" />
 
-> 그로우잇은 음성 기반 AI와 대화하며 일기를 기록하고, 개인 맞춤형 마음챙김 챌린지를 제공해 정신 건강을 체계적으로 관리하는 앱입니다.
+> 🗓 **개발 기간** : 2024.12 ~ 2026.01
+>
+> GrowIT은 음성 기반 AI와 대화하며 일기를 기록하고, 개인 맞춤형 마음 챙김 챌린지를 제공해 정신 건강을 체계적으로 관리하는 앱입니다.
+> 여기서 'IT'은 사용자의 마음을 형상화한 캐릭터를 의미하며, 다양한 챌린지를 수행하며 캐릭터를 성장시킬 수 있습니다.
 
-# ✨Project Information
-> IT 연합 사이드 프로젝트 동아리 UMC-7th (GrowIt 프로젝트 SpringBoot 파트) 
-> 
-> 개발기간: 2024.12 ~ 2025.02 
-
-# 🍀Developers
-
-- ### 쏘영/[김서영](https://github.com/syeongk)
-- ### 벨라/[김승현](https://github.com/sehyeo)
-- ### 애플/[박진성](https://github.com/Jinseong01)
-- ### 레인/[송진우](https://github.com/HSSJW)
-- ### 지니/[장우진](https://github.com/Santoragi)
-
-# 🔨Architecture Diargram
+## ✨ Main Feature
+<img width="7680" height="4320" alt="Image" src="https://github.com/user-attachments/assets/65cc19c6-d68d-47b6-b6f4-76bf843aa886" />
+<img width="7680" height="4320" alt="Image" src="https://github.com/user-attachments/assets/8f8cd2fc-b7dc-45b4-bd52-b3f9eac6d3d3" />
+<img width="7680" height="4320" alt="Image" src="https://github.com/user-attachments/assets/c76b5d68-d343-4e44-9441-cd6ecfbad685" />
+<img width="7680" height="4320" alt="Image" src="https://github.com/user-attachments/assets/deed6b15-2a23-4856-a400-03d69e04b01b" />
+<img width="7680" height="4320" alt="Image" src="https://github.com/user-attachments/assets/649db38f-eb0a-4b1c-8536-f3185673ee8e" />
+<img width="7680" height="4320" alt="Image" src="https://github.com/user-attachments/assets/36496451-f391-4024-b05d-609c9e899901" />
 
 
-<img src="https://github.com/user-attachments/assets/9947beaf-f8ed-4b0e-b9d3-fd021c7a030a" width="700" />
+## 🧱 Architecture Diargram
+<img width="1171" height="739" alt="Image" src="https://github.com/user-attachments/assets/0b90a1d3-2c2d-40c0-a20f-4356086f3ab0" />
 
-- SpringBoot Version: 3.4.1
-- Java Version: Java17
-- OpenAI Model: gpt-4o-mini, gpt fine-tuning model
-
-# 💡Stacks
-
-
-### Environment
-<img src="https://img.shields.io/badge/git-F05032?style=for-the-badge&logo=git&logoColor=white"><img src="https://img.shields.io/badge/github-181717?style=for-the-badge&logo=github&logoColor=white"><img src="https://img.shields.io/badge/amazonaws-232F3E?style=for-the-badge&logo=amazonwebservices&logoColor=white"><img src="https://img.shields.io/badge/INTELLIJ-462679?style=for-the-badge&logo=intellijidea&logoColor=white">
+## 🛠 Tech Stack
 
 ### Development
-<img src="https://img.shields.io/badge/java-007396?style=for-the-badge&logo=java&logoColor=white"><img src="https://img.shields.io/badge/python-3776AB?style=for-the-badge&logo=python&logoColor=white"><img src="https://img.shields.io/badge/springboot-6DB33F?style=for-the-badge&logo=springboot&logoColor=white"><img src="https://img.shields.io/badge/flask-000000?style=for-the-badge&logo=flask&logoColor=white">
+<p>
+  <img src="https://img.shields.io/badge/Java-007396?style=for-the-badge&logo=java&logoColor=white"/>
+  <img src="https://img.shields.io/badge/Spring_Boot-6DB33F?style=for-the-badge&logo=springboot&logoColor=white"/>
+  <img src="https://img.shields.io/badge/Spring_Security-6DB33F?style=for-the-badge&logo=springsecurity&logoColor=white"/>
+  <img src="https://img.shields.io/badge/Python-3776AB?style=for-the-badge&logo=python&logoColor=white"/>
+  <img src="https://img.shields.io/badge/Flask-000000?style=for-the-badge&logo=flask&logoColor=white"/>
+  <img src="https://img.shields.io/badge/MySQL-4479A1?style=for-the-badge&logo=mysql&logoColor=white"/>
+  <img src="https://img.shields.io/badge/OpenAI_API-412991?style=for-the-badge&logo=openai&logoColor=white"/>
+  <img src="https://img.shields.io/badge/JWT-000000?style=for-the-badge&logo=jsonwebtokens&logoColor=white"/>
+  <img src="https://img.shields.io/badge/OAuth2.0-EB5424?style=for-the-badge&logo=oauth&logoColor=white"/>
+  <img src="https://img.shields.io/badge/Swagger-85EA2D?style=for-the-badge&logo=swagger&logoColor=black"/>
+</p>
 
-### Communication
-<img src="https://img.shields.io/badge/discord-5865F2?style=for-the-badge&logo=discord&logoColor=white"><img src="https://img.shields.io/badge/notion-000000?style=for-the-badge&logo=notion&logoColor=white">
+### Infrastructure
+<p>
+  <img src="https://img.shields.io/badge/Amazon_EC2-FF9900?style=for-the-badge&logo=amazonec2&logoColor=white"/>
+  <img src="https://img.shields.io/badge/Amazon_RDS-527FFF?style=for-the-badge&logo=amazonrds&logoColor=white"/>
+  <img src="https://img.shields.io/badge/Amazon_S3-569A31?style=for-the-badge&logo=amazons3&logoColor=white"/>
+  <img src="https://img.shields.io/badge/Nginx-009639?style=for-the-badge&logo=nginx&logoColor=white"/>
+</p>
 
-# 📦주요기능
-
-
-### ⚡️그로 꾸미기
-- 아이템샵에서 여러 아이템 구매
-- 구매한 아이템 착용
-
-<img src="https://github.com/user-attachments/assets/7249f455-9391-43cc-9065-7e37698f30d5" width="200" />
-
-### ️⚡️일기 작성
-- AI와 대화하며 일기 작성하기
-- 직접 작성하기
-- 일기 작성 후 크레딧 획득
-
-<img src="https://github.com/user-attachments/assets/20002ef7-9bdd-4fd1-962c-c84836d9e595" width="200" /><img src="https://github.com/user-attachments/assets/bef25ac2-440b-4bbb-82d1-6f7f72bc6f24" width="200" />
-
-### ⚡️일기 분석 및 챌린지 추천
-- 작성한 일기 분석하여 감정 키워드 추출
-- 감정 키워드와 어울리는 마음가짐 챌린지 추천
-
-<img src="https://github.com/user-attachments/assets/c35ed25f-9d86-48a1-ad73-668306b1e88e" width="200" />
-
-### ⚡️챌린지 인증
-- 선택한 챌린지를 인증하여 크레딧 획득
-
-<img src="https://github.com/user-attachments/assets/4be59c35-8974-4204-965d-89b434cdf1d7" width="500" />
-
-  
+### Tools & Communication
+<p>
+  <img src="https://img.shields.io/badge/Git-F05032?style=for-the-badge&logo=git&logoColor=white"/>
+  <img src="https://img.shields.io/badge/GitHub-181717?style=for-the-badge&logo=github&logoColor=white"/>
+  <img src="https://img.shields.io/badge/GitHub_Actions-2088FF?style=for-the-badge&logo=githubactions&logoColor=white"/>
+  <img src="https://img.shields.io/badge/IntelliJ_IDEA-000000?style=for-the-badge&logo=intellijidea&logoColor=white"/>
+  <img src="https://img.shields.io/badge/Discord-5865F2?style=for-the-badge&logo=discord&logoColor=white"/>
+  <img src="https://img.shields.io/badge/Notion-000000?style=for-the-badge&logo=notion&logoColor=white"/>
+</p>
 
 
+
+
+## 👥 Developers
+|                                   **쏘영/김서영**                                   |                                   **벨라/김승현**                                   |                                   **애플/박진성**                                   |                                   **레인/송진우**                                   |
+|:-----------------------------------------------------------------------------:|:-----------------------------------------------------------------------------:|:-----------------------------------------------------------------------------:|:-----------------------------------------------------------------------------:|
+| [<img src="https://avatars.githubusercontent.com/syeongk" height=150 width=150> <br/> @syeongk](https://github.com/syeongk) | [<img src="https://avatars.githubusercontent.com/sehyeo" height=150 width=150> <br/> @sehyeo](https://github.com/sehyeo) | [<img src="https://avatars.githubusercontent.com/Jinseong01" height=150 width=150> <br/> @Jinseong01](https://github.com/Jinseong01) | [<img src="https://avatars.githubusercontent.com/HSSJW" height=150 width=150> <br/> @HSSJW](https://github.com/HSSJW) |
